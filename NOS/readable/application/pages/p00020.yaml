@@ -1,0 +1,1604 @@
+---
+# ====== Page: Inquire Item ==================================
+id: 20
+identification: 
+  name: Inquire Item
+  alias: INQUIRE-ITEM
+  title: Item Details
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 55rem
+  attributes: 
+  - "close: function() { customEvent('customDialogClose'"
+  - " {modalPageId: 'MODAL_CLOSE_FIXED'});} "
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    function mapP20Keys(){
+        $(document).on('keydown.p20keyevents', (ev) => {
+    
+            const excludedKeys = [
+                "PageUp", 
+                "PageDown",  
+                "ArrowUp", 
+                "ArrowDown"
+            ];
+            if (!excludedKeys.includes(ev.key)) {
+                apex.navigation.dialog.close(true);
+                $(document).off('keydown.p20keyevents');
+            }
+    
+        });
+    }
+    
+  execute-when-page-loads: |
+    mapP20Keys();
+    $x('P20_ITEM_NUM_DISPLAY').focus();
+
+css: 
+  inline: |
+    body {
+        background-color: #226597;;
+    }
+    
+    .render-container {
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 1.125rem;
+    }
+    
+    .upcLabel, .quantityLabel, .priceLabel, .uomLabel, .labelLabel, .pertagLabel {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .upc, .upcLabel {
+        width: 22%;
+    }
+    
+    .pertag, .pertagLabel {
+        width: 12%;
+    
+    }
+    
+    .quantity, .price, .uom, .quantityLabel, .priceLabel, .uomLabel {
+        width: 13%;
+    }
+    
+    .label, .labelLabel {
+        width: 21%;
+        font-weight: bold;
+    }
+    
+    .label {
+        margin-bottom: 0.3rem;
+        align-items: center;
+    }
+    
+    .pertag, .quantity{
+        display: flex;
+        justify-content: flex-end;
+        padding-right: .6rem;
+        align-items: center;
+        margin-bottom: 0.3rem;
+    }
+    
+    .price {
+        display: flex;
+        /* justify-content: space-between; */
+        align-items: center;
+        margin-bottom: 0.3rem;
+        padding-left: 1.3rem;
+    }
+    
+    .upc {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 0.3rem;
+    }
+    
+    .uom {
+        padding-left: 1rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    /* vendor */
+    
+    .vendor-container {
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 1.125rem;
+    }
+    
+    .vendorLabelLabel {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width: 24%;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+    
+    .vendorCodeLabel {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 8%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .vendorNameLabel {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 28%;
+        margin-bottom: 0.5rem;
+        text-align: center !important;
+    
+    }
+    
+    .itemNumberLabel {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .lcfLabel {
+        width: 20%;
+        margin-bottom: 0.5rem;
+        text-align: right;
+    }
+    
+    
+    .vendorLabel {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width: 24%;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+    
+    .vendorCode {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 8%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .vendorName{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 28%;
+        margin-bottom: 0.5rem;
+        text-align: center !important;
+    
+    }
+    
+    .itemNumber {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .lcf {
+        width: 20%;
+        margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+    
+    
+    .t-Dialog-body{
+        label, input, .apex-item-display-only {
+            font-size: 1.125rem;
+        }
+        .apex-item-display-only {
+            margin-left: 0.5rem;
+        }
+        label {
+            font-weight: bold;
+        }
+        background-color: #226597;
+        padding-top: 0;
+    }
+    
+    .t-Region-body{
+        padding: 0.4;
+    }
+    
+    .t-Form-labelContainer{
+       white-space: nowrap;
+       text-align: left;
+    }
+    
+    
+    .white-text {
+        color: white;
+        font-size: 1rem;
+    }
+    
+    
+    .label, .vendorLabel {
+        text-align: left !important;
+        justify-content: flex-start !important;
+    }
+    
+    #P20_ITEM_NUM_DISPLAY:focus {
+        outline: none;
+    }
+    
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Item Info ===================================
+  id: 9120278105604140
+  identification: 
+    name: Item Info
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIT001
+    include-rowid-column: false
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: iteminfo-container
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Item UOM Info ===============================
+  id: 9909837777576928
+  identification: 
+    name: Item UOM Info
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="render-container">
+          <div class="labelLabel"> </div>
+          <div class="quantityLabel"><strong>Qty</strong></div>
+          <div class="pertagLabel"> </div>
+          <div class="uomLabel"><strong>UOM</strong></div>
+          <div class="upcLabel"><strong>UPC</strong></div>
+          <div class="priceLabel"><strong>Price</strong></div>
+      </div>
+      
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Last fields =================================
+  id: 12916153640686815
+  identification: 
+    name: Last fields
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Vendor Info # 12918764971686841
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - t-Form--leftLabels
+    - margin-top-md
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Vendor Info =================================
+  id: 12918764971686841
+  identification: 
+    name: Vendor Info
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="vendor-container">
+          <div class="vendorLabelLabel"> </div>
+          <div class="vendorCodeLabel"><strong>Code</strong></div>
+          <div class="vendorNameLabel"><strong>Vendor Name</strong></div>
+          <div class="itemNumberLabel"><strong>Item No</strong></div>
+          <div class="lcfLabel"><strong>Landed Cost Factor</strong></div>
+      </div>
+      
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P20_ITEM_ID ==============================
+  id: 9120489551604142
+  identification: 
+    name: P20_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Item Info # 9120278105604140
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: ITEM_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_BRAND_ID =============================
+  id: 9120535290604143
+  identification: 
+    name: P20_BRAND_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Item Info # 9120278105604140
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: BRAND_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_SIC_ID ===============================
+  id: 9120656362604144
+  identification: 
+    name: P20_SIC_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 110
+    region: Item Info # 9120278105604140
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: SIC_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_DEPT_ID ==============================
+  id: 9120724079604145
+  identification: 
+    name: P20_DEPT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 130
+    region: Item Info # 9120278105604140
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: DEPT_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_CLASS_ID =============================
+  id: 9120871224604146
+  identification: 
+    name: P20_CLASS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 150
+    region: Item Info # 9120278105604140
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: CLASS_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_ITEM_DESC ============================
+  id: 9120901878604147
+  identification: 
+    name: P20_ITEM_DESC
+    type: Display Only
+
+  label: 
+    label: 'Item Description:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: ITEM_DESC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_ITEM_NUM =============================
+  id: 9121015122604148
+  identification: 
+    name: P20_ITEM_NUM
+    type: Display Only
+
+  label: 
+    label: 'Item Number:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    custom-attributes: 
+    - tabindex="1"
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: ITEM_NUM
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_MIN_STOCK_LVL ========================
+  id: 9121146934604149
+  identification: 
+    name: P20_MIN_STOCK_LVL
+    type: Display Only
+
+  label: 
+    label: 'Min Stock Level:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 90
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: MIN_STOCK_LVL
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_MAX_STOCK_LVL ========================
+  id: 9121202606604150
+  identification: 
+    name: P20_MAX_STOCK_LVL
+    type: Display Only
+
+  label: 
+    label: 'Max Stock Level:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 100
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: MAX_STOCK_LVL
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_FULL_ITEM_DESC =======================
+  id: 9907104366576901
+  identification: 
+    name: P20_FULL_ITEM_DESC
+    type: Display Only
+
+  label: 
+    label: 'Full Item Description:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: FULL_ITEM_DESC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_HAS_SERIAL_NUMBER ====================
+  id: 9907631909576906
+  identification: 
+    name: P20_HAS_SERIAL_NUMBER
+    type: Display Only
+
+  label: 
+    label: 'Has Serial Number:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: HAS_SERIAL_NUMBER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_EXCISE_TAX_RATE ======================
+  id: 9907703397576907
+  identification: 
+    name: P20_EXCISE_TAX_RATE
+    type: Display Only
+
+  label: 
+    label: 'Excise Tax Rate:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Last fields # 12916153640686815
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: EXCISE_TAX_RATE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_SELLING_PRICE_FACTOR =================
+  id: 9907867409576908
+  identification: 
+    name: P20_SELLING_PRICE_FACTOR
+    type: Display Only
+
+  label: 
+    label: 'Selling Price Factor:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Last fields # 12916153640686815
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Info # 9120278105604140
+    column: SELLING_PRICE_FACTOR
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_BRAND_CODE ===========================
+  id: 9907939164576909
+  identification: 
+    name: P20_BRAND_CODE
+    type: Display Only
+
+  label: 
+    label: 'Brand Code:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): 'Select brand_code from nim022 where brand_id = :P20_BRAND_ID'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_BRAND_NAME ===========================
+  id: 9908027641576910
+  identification: 
+    name: P20_BRAND_NAME
+    type: Display Only
+
+  label: 
+    label: 'Brand Name:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): 'Select brand_name from nim022 where brand_code = :P20_BRAND_CODE'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_SIC_CODE =============================
+  id: 9908141827576911
+  identification: 
+    name: P20_SIC_CODE
+    type: Display Only
+
+  label: 
+    label: 'SIC Code:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 120
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): 'select sic_code from nim023 where sic_id = :P20_SIC_ID'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_DEPT_CODE ============================
+  id: 9908216040576912
+  identification: 
+    name: P20_DEPT_CODE
+    type: Display Only
+
+  label: 
+    label: 'Dept Code:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 140
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 6
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): 'select dept_code from nim024 where dept_id = :P20_DEPT_ID'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P20_CLASS_CODE ===========================
+  id: 9908307093576913
+  identification: 
+    name: P20_CLASS_CODE
+    type: Display Only
+
+  label: 
+    label: 'Class Code:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 160
+    region: Item Info # 9120278105604140
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): 'select class_code from nim025 where class_id = :P20_CLASS_ID'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Exit ========================================
+  id: 11805162837825348
+  identification: 
+    button-name: Exit
+    label: Press any key to exit
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - white-text
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: exit
+
+dynamic-actions: 
+- # ====== Dynamic Action: Retrieve NIT002 =====================
+  id: 9910095452576930
+  identification: 
+    name: Retrieve NIT002
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9910110571576931
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process("GET_NIT002_DATA", {
+            pageItems : ["P20_ITEM_ID"]
+        }, {
+            dataType: 'json'
+        })
+        .done((data) => {
+        
+                const labels = [
+                "Smallest Unit:",
+                "Mastercase:",
+                "Inner Pack 1:",
+                "Inner Pack 2:"
+            ];
+        
+            let firstUOMCode = data.length > 0 ? data[0].UOM_CODE : "ea";
+        
+                const pers = [
+                    `per`,               // Use "per" for the first item
+                `${firstUOMCode} per`, // Use "first UOM_CODE per" for the second
+                `${firstUOMCode} per`, // Use "first UOM_CODE per" for the third
+                `${firstUOMCode} per` 
+                ]
+        
+            data.forEach((item, index) => {
+        
+                let label = labels[index] || "Inner pack";
+                let per = pers[index] || "ea per";
+                let formattedPrice = parseFloat(item.PRICE).toFixed(2);
+        
+                $(".render-container").append(`<div class="label">${label}</div>`);
+                $(".render-container").append(`<div class="quantity"><span class="qtySpan">${item.QUANTITY}</span></div>`);
+                $(".render-container").append(`<div class="pertag"><span class="perSpan">${per}</span></div>`);
+                $(".render-container").append(`<div class="uom"><span class="uomSpan">${item.UOM_CODE}</span></div>`);
+                $(".render-container").append(`<div class="upc"><span class="upcSpan">${item.UPC}</span></div>`);
+                $(".render-container").append(`<div class="price"><span class="dollar-sign">$</span><span class="priceSpan">${formattedPrice}</span></div>`);
+            })
+        });
+
+    execution: 
+      sequence: 10
+      event: Retrieve NIT002 # 9910095452576930
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Exit ==========================
+  id: 11805200735825349
+  identification: 
+    name: Click Exit
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Exit # 11805162837825348
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 11805331521825350
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 10
+      event: Click Exit # 11805200735825349
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Retrieve NIT006 =====================
+  id: 12919076795686844
+  identification: 
+    name: Retrieve NIT006
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12919154471686845
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process("GET_NIT007_DATA", {
+            pageItems : ["P20_ITEM_ID"]
+        }, {
+            dataType: 'json'
+        })
+        .done((data) => {
+        
+            console.log(data);
+            
+            const vendorLabel = "Vendor";
+        
+            data.forEach((item, index) => {
+                let label = vendorLabel + " " + (index + 1) + ":";
+        
+                let landedCostFactor = item.LANDED_COST_FACTOR ? parseFloat(item.LANDED_COST_FACTOR).toFixed(2) : '';
+                
+                $(".vendor-container").append(`<div class="vendorLabel">${label}</div>`);
+                $(".vendor-container").append(`<div class="vendorCode"><span class="vCodeSpan">${item.VENDOR_CODE}</span></div>`);
+                $(".vendor-container").append(`<div class="vendorName"><span class="vNameSpan">${item.VENDOR_NAME}</span></div>`);
+                $(".vendor-container").append(`<div class="itemNumber"><span class="vItemNumSpan">${item.ITEM_NUMBER}</span></div>`);
+                $(".vendor-container").append(`<div class="lcf"><span class="dollar-sign">$</span><span class="lcfSpan">${landedCostFactor}</span></div>`);
+            })
+        
+        });
+
+    execution: 
+      sequence: 10
+      event: Retrieve NIT006 # 12919076795686844
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Initialize form Inquire Item ===============
+  id: 9120392826604141
+  identification: 
+    name: Initialize form Inquire Item
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Item Info # 9120278105604140
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_NIT002_DATA ============================
+  id: 9909940081576929
+  identification: 
+    name: GET_NIT002_DATA
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor sys_refcursor;
+      begin
+      
+          OPEN l_cursor FOR 
+          SELECT nit002.uom_id, nit002.quantity, nit002.upc, nit002.price, nim026.uom_code
+          FROM nit002
+          JOIN nim026 ON nit002.uom_id = nim026.uom_id
+          WHERE nit002.item_id = :P20_ITEM_ID
+          ORDER BY 
+              CASE nit002."LEVEL"
+                  WHEN 1 THEN 1
+                  WHEN 4 THEN 2
+                  WHEN 2 THEN 3
+                  WHEN 3 THEN 4
+                  ELSE 5
+              END;  
+          APEX_JSON.write(l_cursor);
+      
+      end;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_NIT007_DATA ============================
+  id: 12918652614686840
+  identification: 
+    name: GET_NIT007_DATA
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor sys_refcursor;
+      begin
+      
+          OPEN l_cursor FOR 
+          SELECT 
+              nit006.vendor_code,
+              nit006.vendor_name,
+              nit006.vendor_id,
+              nit007.item_number,
+              nit007.landed_cost_factor,
+              nit007.vendor_sequence
+              -- ,
+              -- TO_CHAR(nit007.create_date, 'yyyy-mm-dd HH:mm:ss')
+          FROM 
+              NIT006 nit006
+          JOIN 
+              NIT007 nit007 ON nit006.vendor_id = nit007.vendor_id
+          WHERE 
+              nit007.item_id = :P20_item_id
+          ORDER BY nit007.vendor_sequence;
+          APEX_JSON.write(l_cursor);
+      end;
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

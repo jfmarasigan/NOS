@@ -1,0 +1,2983 @@
+---
+# ====== Page: Reservation ===================================
+id: 370
+identification: 
+  name: Reservation
+  alias: RESERVATION
+  title: Reservation
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p6KeyMap = {
+        escape : (v) => {
+            $("#exit").trigger("click");
+        },
+        s : (v) => {
+            $("#s").trigger("click");
+        },
+        a : (v) => {
+            $("#a").trigger("click");
+        },
+        u : (v) => {
+            $("#u").trigger("click");
+        },
+        i : (v) => {
+            $("#i").trigger("click");
+        },
+        t : (v) => {
+            $("#t").trigger("click");
+        },
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        o : (v) => {
+            $("#o").trigger("click");
+        },
+        c : (v) => {
+            $("#c").trigger("click");
+        },
+        h : (v) => {
+            $("#h").trigger("click");
+        },
+        r : (v) => {
+            $("#r").trigger("click");
+        },
+    }
+    
+    function mapP6Keys() {
+        $(document).off('keydown.p6keyevents');
+        $(document).on('keydown.p6keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+                if (p6KeyMap[key]) {
+                    ev.preventDefault();
+                    p6KeyMap[key]();
+                }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP6Keys();
+    }
+  execute-when-page-loads: |
+    mapP6Keys();
+    setTitle("Reservation")
+    
+    // to pop search modal upon loading page
+    $("#s").trigger("click");
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    /* add margin to interactive grid table start */
+    .t-Body-contentInner {
+        padding-inline-end: var(--ut-body-content-padding-x, 2rem);
+        padding-inline-start: var(--ut-body-content-padding-x, 2rem);
+    }
+    /* end */
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #table > table, tr, th {
+        font-size: 1.125rem;
+    }
+    
+    #table > td {
+        font-size: 1.125rem;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .margin-right {
+        margin-right: 3rem;
+    }
+    
+    .mt-3 {
+        margin-top: 3rem;
+    }
+    
+    .mt-2 {
+        margin-top: 2rem;
+    }
+    
+    .ms-1 {
+        margin-left: .5rem;
+    }
+    
+    .ml-2 {
+        margin-left: 2rem;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    /* css for modal 311 start */
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .ui-dialog.pr-li {
+       left: 80% !important;
+    }
+    
+    .ui-dialog.inv-bby-w {
+        left: 78% !important;
+    }
+    
+    .ui-dialog.ship-his {
+        left: 50% !important;
+    }
+    
+    .ui-dialog.pur-order,
+    .ui-dialog.inc-ship {
+        left: 45% !important;
+    }
+    
+    .ui-dialog.res {
+        left: 32% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    /* modal 311 end */
+    
+    /* modify position of inquire modal 314 sstart */
+    .inquire-dialog {
+        left: 67% !important;
+    }
+    /* modal 314 end */
+    
+    /* View height dependent table and buttons - START */
+    .buttons-row {
+        position: absolute;
+        width: 90vw;
+        bottom: 1rem;
+        left: 3rem;
+    }
+    
+    #table .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #table .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #table .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #table .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    /* View height dependent table and buttons - END */
+    
+    
+    
+    #table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .new-line {
+        white-space: break-spaces !important;
+        line-height: 1.3rem;
+    }
+    
+    .col-1:has(#i) {
+        max-width: 15%;
+    }
+    
+    .col-1:has(#r) {
+        margin-left: 6.1rem !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Buttons =====================================
+  id: 58507115766513763
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Reservation List ============================
+  id: 68312076299265971
+  identification: 
+    name: Reservation List
+    title: Reservation List
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          ROWNUM AS "Primary Key",
+          npt018.DATE_CREATED AS "RES_DATE",
+          npt018.RESERVE_ID AS "RES_NO",
+          npt009.DBA AS "CUSTOMER_DBA",
+          npt018.POINT_PERSON AS "POINT_PERSON",
+           
+          -- add space (' ') to column value so that you can add chr(10) || chr(13) to the text
+          -- I did this because for some reason, directly adding chr(10) || chr(13) to the value is not working
+          -- and this is the only method that made it work..
+      
+          -- also, this will only work when you add the class "new-line" to this column
+          (TRANSLATE(npt018.TEL_NUMBER || ' ', ' ', chr(10) || chr(13) ) 
+          ||
+          TRANSLATE(npt018.FAX || ' ', ' ', chr(10) || chr(13) ) 
+          ||
+          npt018.EMAIL) AS "CONTACT_DETAILS",
+          
+          npt018.TOTAL_AMOUNT AS "TOTAL_AMOUNT",
+          npm016.STATUS_NAME AS "STATUS",
+          npt018.EXPIRY_DATE AS "EXPIRY_DATE"
+      FROM
+          NPT018 npt018
+      JOIN
+          NPT009 npt009 ON npt018.CUSTOMER_ID = npt009.CUSTOMER_ID
+      JOIN
+          NPM016 npm016 ON npt018.RESERVE_STATUS_ID = npm016.RESERVE_STATUS_ID
+      WHERE 
+      
+      -- ACTIVE
+      
+          -- check if SEARCH BY EXACT DATE has a value
+          ((:P370_DAY_DATE IS NOT NULL OR :P370_DAY_DATE != '') AND :P370_TOGGLE_ACTIVE = 'ACTIVE') AND
+              (TO_DATE(npt018.DATE_CREATED,'MM/DD/YYYY') = TO_DATE(:P370_DAY_DATE,'MM/DD/YYYY')) AND
+              UPPER(npm016.STATUS_NAME) = 'ACTIVE'
+      
+          OR
+          -- else, check if SEARCH BY MONTH AND YEAR has a value
+             ((:P370_DAY_DATE IS NULL AND (:P370_MONTH_DATE IS NOT NULL OR :P370_MONTH_DATE != '')) AND :P370_TOGGLE_ACTIVE = 'ACTIVE') AND
+              (EXTRACT( MONTH FROM npt018.DATE_CREATED ) || '/' || EXTRACT( YEAR FROM npt018.DATE_CREATED )) = :P370_MONTH_DATE AND
+              UPPER(npm016.STATUS_NAME) = 'ACTIVE'
+          
+          OR
+          -- else, check if SEARCH BY CONTACT PERSON has a value
+             ((:P370_DAY_DATE IS NULL AND (:P370_CONTACT_PERSON IS NOT NULL OR :P370_CONTACT_PERSON != '')) AND
+             (:P370_MONTH_DATE IS NULL AND (:P370_CONTACT_PERSON IS NOT NULL OR :P370_CONTACT_PERSON != '')) AND :P370_TOGGLE_ACTIVE = 'ACTIVE') AND
+              UPPER(npt009.DBA) = UPPER(:P370_CONTACT_PERSON) AND
+              UPPER(npm016.STATUS_NAME) = 'ACTIVE'
+      
+      
+      -- NOT ACTIVE
+      
+          OR
+          -- check if SEARCH BY EXACT DATE has a value
+          ((:P370_DAY_DATE IS NOT NULL OR :P370_DAY_DATE != '') AND :P370_TOGGLE_ACTIVE = 'ACTIVE') AND
+              TO_DATE(npt018.DATE_CREATED,'MM/DD/YYYY') = TO_DATE(:P370_DAY_DATE,'MM/DD/YYYY') AND
+              UPPER(npm016.STATUS_NAME) != 'ACTIVE'
+      
+          OR
+          -- else, check if SEARCH BY MONTH AND YEAR has a value
+             ((:P370_DAY_DATE IS NULL AND (:P370_MONTH_DATE IS NOT NULL OR :P370_MONTH_DATE != '')) AND :P370_TOGGLE_ACTIVE != 'ACTIVE') AND
+              (EXTRACT( MONTH FROM npt018.DATE_CREATED ) || '/' || EXTRACT( YEAR FROM npt018.DATE_CREATED )) = :P370_MONTH_DATE AND
+              UPPER(npm016.STATUS_NAME) != 'ACTIVE'
+          
+          OR
+          -- else, check if SEARCH BY CONTACT PERSON has a value
+             ((:P370_DAY_DATE IS NULL AND (:P370_CONTACT_PERSON IS NOT NULL OR :P370_CONTACT_PERSON != '')) AND
+             (:P370_MONTH_DATE IS NULL AND (:P370_CONTACT_PERSON IS NOT NULL OR :P370_CONTACT_PERSON != '')) AND :P370_TOGGLE_ACTIVE != 'ACTIVE') AND
+              UPPER(npt009.DBA) = UPPER(:P370_CONTACT_PERSON) AND
+              UPPER(npm016.STATUS_NAME) != 'ACTIVE';
+    page-items-to-submit: 
+    - P370_DAY_DATE
+    - P370_MONTH_DATE
+    - P370_CONTACT_PERSON
+    - P370_TOGGLE_ACTIVE
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 68312227818265972
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 300
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 68404754395256458
+      identification: 
+        name: Primary Report
+        alias: 285233
+
+  columns: 
+  - # ====== Column: CONTACT_DETAILS =============================
+    id: 38245249976771133
+    identification: 
+      column-name: CONTACT_DETAILS
+      type: Text Field
+
+    heading: 
+      heading: Contact Details
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      css-classes: 
+      - new-line
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: CONTACT_DETAILS
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TOTAL_AMOUNT ================================
+    id: 38245372229771134
+    identification: 
+      column-name: TOTAL_AMOUNT
+      type: Text Field
+
+    heading: 
+      heading: Total Amount
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TOTAL_AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: RES_DATE ====================================
+    id: 40132275499188945
+    identification: 
+      column-name: RES_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Res Date
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: RES_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: RES_NO ======================================
+    id: 40132359634188946
+    identification: 
+      column-name: RES_NO
+      type: Number Field
+
+    heading: 
+      heading: Res No
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: RES_NO
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CUSTOMER_DBA ================================
+    id: 40132417708188947
+    identification: 
+      column-name: CUSTOMER_DBA
+      type: Textarea
+
+    heading: 
+      heading: Customer DBA
+      alignment: center
+
+    settings: 
+      resizable: true
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 400
+
+    source: 
+      type: Database Column
+      database-column: CUSTOMER_DBA
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: POINT_PERSON ================================
+    id: 40132646281188949
+    identification: 
+      column-name: POINT_PERSON
+      type: Text Field
+
+    heading: 
+      heading: Point Person
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 160
+
+    source: 
+      type: Database Column
+      database-column: POINT_PERSON
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: EXPIRY_DATE =================================
+    id: 68312888120265979
+    identification: 
+      column-name: EXPIRY_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Expiry Date
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 100
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: EXPIRY_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: STATUS ======================================
+    id: 68313101183265981
+    identification: 
+      column-name: STATUS
+      type: Text Field
+
+    heading: 
+      heading: Status
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: STATUS
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: Primary Key =================================
+    id: 70028546499075263
+    identification: 
+      column-name: Primary Key
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: Primary Key
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+page-items: 
+- # ====== Page Item: P370_CONTACT_PERSON ======================
+  id: 40130460775188927
+  identification: 
+    name: P370_CONTACT_PERSON
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P370_RESERVE_STATUS ======================
+  id: 42999461150872737
+  identification: 
+    name: P370_RESERVE_STATUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P370_DAY_DATE ============================
+  id: 68322731460266157
+  identification: 
+    name: P370_DAY_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P370_MONTH_DATE ==========================
+  id: 68322886214266158
+  identification: 
+    name: P370_MONTH_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P370_SELECTED_RESERVATION_NO =============
+  id: 68325244447266182
+  identification: 
+    name: P370_SELECTED_RESERVATION_NO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P370_PREPARED_URL ========================
+  id: 70037986045075436
+  identification: 
+    name: P370_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P370_GET_SUCCESS_MSG =====================
+  id: 70807931859279972
+  identification: 
+    name: P370_GET_SUCCESS_MSG
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P370_SELECTED_GC_STATUS ==================
+  id: 74609738948898183
+  identification: 
+    name: P370_SELECTED_GC_STATUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P370_TOGGLE_ACTIVE =======================
+  id: 76900183523950864
+  identification: 
+    name: P370_TOGGLE_ACTIVE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P370_PRINT_ID ============================
+  id: 76900251437950865
+  identification: 
+    name: P370_PRINT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Back ========================================
+  id: 38245447469771135
+  identification: 
+    button-name: Back
+    label: Back
+
+  layout: 
+    sequence: 150
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-2
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:304:&SESSION.::&DEBUG.:::'
+      page: 304 # Gift Certificate Submenu
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: Search ======================================
+  id: 39882137235250342
+  identification: 
+    button-name: Search
+    label: <u>S </u>- Search
+
+  layout: 
+    sequence: 10
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:374:&SESSION.::&DEBUG.:::'
+      page: 374 # Reservation Search
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Add =========================================
+  id: 39882527496250345
+  identification: 
+    button-name: Add
+    label: <u>A </u>- Add
+
+  layout: 
+    sequence: 30
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:371:&SESSION.::&DEBUG.:::'
+      page: 371 # Reservation Creation
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: Update ======================================
+  id: 39882904956250346
+  identification: 
+    button-name: Update
+    label: <u>U </u>- Update
+
+  layout: 
+    sequence: 50
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: Inquire =====================================
+  id: 39883326125250353
+  identification: 
+    button-name: Inquire
+    label: <u>I </u>- Inquire
+
+  layout: 
+    sequence: 70
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: Print =======================================
+  id: 39883741000250353
+  identification: 
+    button-name: Print
+    label: <u>P </u>- Print Reservation
+
+  layout: 
+    sequence: 90
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: Cancel ======================================
+  id: 39884171171250353
+  identification: 
+    button-name: Cancel
+    label: <u>C </u>- Cancel
+
+  layout: 
+    sequence: 130
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: c
+
+- # ====== Button: Summary =====================================
+  id: 39884546684250354
+  identification: 
+    button-name: Summary
+    label: <u>R </u>- Reservation Summary Print
+
+  layout: 
+    sequence: 160
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 12
+    new-column: true
+    column-span: 1
+    column-css-classes: 
+    - ml-2
+    - mt-2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: r
+
+- # ====== Button: Toggle ======================================
+  id: 39884934381250354
+  identification: 
+    button-name: Toggle
+    label: <u>T </u>- Toggle Status
+
+  layout: 
+    sequence: 80
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: t
+
+- # ====== Button: Complete ====================================
+  id: 39885314985250356
+  identification: 
+    button-name: Complete
+    label: <u>O </u>- Complete
+
+  layout: 
+    sequence: 120
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - mt-2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: o
+
+- # ====== Button: History =====================================
+  id: 42996332030872706
+  identification: 
+    button-name: History
+    label: <u>H </u>- History Updates
+
+  layout: 
+    sequence: 140
+    region: Buttons # 58507115766513763
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: h
+
+dynamic-actions: 
+- # ====== Dynamic Action: If Add Success ======================
+  id: 39897378124250451
+  identification: 
+    name: If Add Success
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39897871519250453
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).ready(function() {
+        
+            apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".apex-page-success").fadeOut(400);
+                        }, 3000);
+        
+                    }
+                }
+            });
+        });
+        
+
+    execution: 
+      sequence: 10
+      event: If Add Success # 39897378124250451
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Show success ========================
+  id: 39898258466250454
+  identification: 
+    name: Show success
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P370_GET_SUCCESS_MSG_1
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39898765660250454
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.message.showPageSuccess( "Successfully released gift certificate" );
+
+    execution: 
+      sequence: 10
+      event: Show success # 39898258466250454
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P370_GET_SUCCESS_MSG_1
+      value: true
+
+- # ====== Dynamic Action: Open inquire popup ==================
+  id: 39899165028250454
+  identification: 
+    name: Open inquire popup
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Inquire # 39883326125250353
+
+  client-side-condition: 
+    type: Item is not null
+    item: P370_SELECTED_RESERVATION_NO
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39899619472250456
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P370_PREPARED_URL := apex_page.get_url(
+               p_page   => 372,
+               p_items  => 'P372_RESERVE_NO',
+               p_values => :P370_SELECTED_RESERVATION_NO
+             );
+        END;
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      items-to-return: 
+      - P370_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Open inquire popup # 39899165028250454
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P370_SELECTED_RESERVATION_NO
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39900175549250456
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        // set url to redirect to release dialog modal
+        let url = $v("P370_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Open inquire popup # 39899165028250454
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P370_PREPARED_URL
+
+- # ====== Dynamic Action: Toggle status =======================
+  id: 39900566204250457
+  identification: 
+    name: Toggle status
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Toggle # 39884934381250354
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39901012609250457
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        console.log("ditooo")
+        console.log($('#P370_TOGGLE_ACTIVE').val())
+        
+        if ($('#P370_TOGGLE_ACTIVE').val() === 'ACTIVE') { 
+            console.log("ditooo1")
+            document.getElementById('P370_TOGGLE_ACTIVE').value='NOT ACTIVE';
+        console.log($('#P370_TOGGLE_ACTIVE').val())
+        } else {
+            console.log("ditooo1")
+            document.getElementById('P370_TOGGLE_ACTIVE').value='ACTIVE';
+        console.log($('#P370_TOGGLE_ACTIVE').val())
+        }
+        console.log($('#P370_TOGGLE_ACTIVE').val())
+
+    execution: 
+      sequence: 20
+      event: Toggle status # 39900566204250457
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 39902575832250460
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Reservation List # 68312076299265971
+
+    execution: 
+      sequence: 30
+      event: Toggle status # 39900566204250457
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: To select 1st cell of the table =============
+    id: 42996230915872705
+    identification: 
+      name: To select 1st cell of the table
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "1000");
+
+    affected-elements: 
+      selection-type: Region
+      region: Reservation List # 68312076299265971
+
+    execution: 
+      sequence: 40
+      event: Toggle status # 39900566204250457
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection Change ====================
+  id: 39902977933250462
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Reservation List # 68312076299265971
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39903482184250464
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        console.log(this.data)
+        console.log(this.data.selectedRecords)
+        
+        if (this.data.selectedRecords.length > 0) {
+            let itemNoSelected = this.data.selectedRecords[0][2];
+            apex.item("P370_SELECTED_RESERVATION_NO").setValue(itemNoSelected);
+        }
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 39902977933250462
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Complete selected reservation =======
+  id: 39903894024250464
+  identification: 
+    name: Complete selected reservation
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Complete # 39885314985250356
+
+  client-side-condition: 
+    type: Item is not null
+    item: P370_SELECTED_RESERVATION_NO
+
+  actions: 
+  - # ====== Action: Get status ==================================
+    id: 39904362437250465
+    identification: 
+      name: Get status
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  VARCHAR(15) := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P370_SELECTED_RESERVATION_NO) > 0 THEN
+            
+                SELECT npm016.STATUS_NAME INTO l_return_value
+                FROM NPM016 npm016
+                WHERE (SELECT RESERVE_STATUS_ID
+                       FROM NPT018 npt018
+                       WHERE npt018.RESERVE_ID = TO_NUMBER(:P370_SELECTED_RESERVATION_NO)) = npm016.RESERVE_STATUS_ID;
+        
+                -- SELECT RESERVE_STATUS_ID INTO l_return_value
+                -- FROM NPT018 npt018
+                -- WHERE npt018.RESERVE_ID = :P370_SELECTED_RESERVATION_NO;
+        
+            END IF;
+        
+            RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P370_RESERVE_STATUS
+
+    execution: 
+      sequence: 20
+      event: Complete selected reservation # 39903894024250464
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Update reservation status ===================
+    id: 39905885478250467
+    identification: 
+      name: Update reservation status
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+        BEGIN
+            UPDATE NPT018
+                SET RESERVE_STATUS_ID = 2,
+                    USER_UPDATE = :app_user,
+                    DATE_UPDATED = SYSDATE
+                WHERE RESERVE_ID = :P370_SELECTED_RESERVATION_NO;
+        END;
+        
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      - P370_PRINT_ID
+
+    execution: 
+      sequence: 70
+      event: Complete selected reservation # 39903894024250464
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_RESERVE_STATUS").val().toLowerCase() !== "cancelled" && $("#P370_RESERVE_STATUS").val().toLowerCase() !== "expired"
+
+  - # ====== Action: Show success ================================
+    id: 39908380363250471
+    identification: 
+      name: Show success
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.message.showPageSuccess( "Reservation status updated to completed" );
+
+    execution: 
+      sequence: 100
+      event: Complete selected reservation # 39903894024250464
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_RESERVE_STATUS").val().toLowerCase() !== "cancelled" && $("#P370_RESERVE_STATUS").val().toLowerCase() !== "expired"
+
+  - # ====== Action: Close success ===============================
+    id: 39908863263250471
+    identification: 
+      name: Close success
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function() {
+            $('.t-Button--closeAlert').click();
+        }, 3000);
+
+    execution: 
+      sequence: 110
+      event: Complete selected reservation # 39903894024250464
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_RESERVE_STATUS").val().toLowerCase() !== "cancelled" && $("#P370_RESERVE_STATUS").val().toLowerCase() !== "expired"
+
+  - # ====== Action: Refresh =====================================
+    id: 39909210244250473
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Reservation List # 68312076299265971
+
+    execution: 
+      sequence: 120
+      event: Complete selected reservation # 39903894024250464
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_RESERVE_STATUS").val().toLowerCase() !== "cancelled" && $("#P370_RESERVE_STATUS").val().toLowerCase() !== "expired"
+
+- # ====== Dynamic Action: Update selected GC ==================
+  id: 39909691828250473
+  identification: 
+    name: Update selected GC
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 39882904956250346
+
+  client-side-condition: 
+    type: Item is not null
+    item: P370_SELECTED_RESERVATION_NO
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39910152355250473
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        -- redirect and pass value to url (which is the update page)
+        BEGIN
+            :P370_PREPARED_URL := apex_page.get_url(
+               p_page   => 317,
+               p_items  => 'P317_GC_NO',
+               p_values => :P370_SELECTED_GC_NO
+             );
+        END;
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      items-to-return: 
+      - P370_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Update selected GC # 39909691828250473
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39910682588250475
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        // set url to redirect to update
+        let url = $v("P370_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Update selected GC # 39909691828250473
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P370_PREPARED_URL
+
+- # ====== Dynamic Action: Open release popup ==================
+  id: 39911067446250475
+  identification: 
+    name: Open release popup
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Summary # 39884546684250354
+
+  client-side-condition: 
+    type: Item is not null
+    item: P370_SELECTED_RESERVATION_NO
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39911561780250475
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        -- redirect and pass value to url (which is the release dialog modal)
+        BEGIN
+            :P370_PREPARED_URL := apex_page.get_url(
+               p_page   => 315,
+               p_items  => 'P315_GET_SELECTED_GC_NO,P315_GET_SEARCHED_YEAR,P315_GET_SEARCHED_GC_NO',
+               p_values => :P370_SELECTED_GC_NO || ',' || :P370_ISSUE_YR || ',' || :P370_GC_NO
+             );
+        END;
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      items-to-return: 
+      - P370_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 40
+      event: Open release popup # 39911067446250475
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P370_SELECTED_RESERVATION_NO
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39912016763250476
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        // set url to redirect to release dialog modal
+        let url = $v("P370_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 50
+      event: Open release popup # 39911067446250475
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P370_PREPARED_URL
+
+- # ====== Dynamic Action: Get Search Value ====================
+  id: 39912417197250476
+  identification: 
+    name: Get Search Value
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 39882137235250342
+
+  actions: 
+  - # ====== Action: Get day date ================================
+    id: 39912931728250476
+    identification: 
+      name: Get day date
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P374_DAY_DATE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P370_DAY_DATE
+
+    execution: 
+      sequence: 20
+      event: Get Search Value # 39912417197250476
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Get month date ==============================
+    id: 39913409607250479
+    identification: 
+      name: Get month date
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P374_MONTH_DATE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P370_MONTH_DATE
+
+    execution: 
+      sequence: 30
+      event: Get Search Value # 39912417197250476
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 39913986829250479
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Reservation List # 68312076299265971
+
+    execution: 
+      sequence: 60
+      event: Get Search Value # 39912417197250476
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: To select 1st cell of the table =============
+    id: 39914442608250481
+    identification: 
+      name: To select 1st cell of the table
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "1000");
+
+    affected-elements: 
+      selection-type: Region
+      region: Reservation List # 68312076299265971
+
+    execution: 
+      sequence: 70
+      event: Get Search Value # 39912417197250476
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Get contact person ==========================
+    id: 40130592347188928
+    identification: 
+      name: Get contact person
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P374_CONTACT_PERSON
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P370_CONTACT_PERSON
+
+    execution: 
+      sequence: 40
+      event: Get Search Value # 39912417197250476
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Open copies popup ===================
+  id: 39914820546250481
+  identification: 
+    name: Open copies popup
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 39883741000250353
+
+  client-side-condition: 
+    type: Item is not null
+    item: P370_SELECTED_RESERVATION_NO
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 39915307388250481
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  VARCHAR(1) := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P370_SELECTED_GC_NO) > 0 THEN
+            
+                SELECT GC_STATUS_ID INTO l_return_value
+                FROM NPT020
+                WHERE GIFT_CERTIFICATE_ID = :P370_SELECTED_GC_NO;
+        
+            END IF;
+        
+            RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P370_SELECTED_GC_STATUS
+
+    execution: 
+      sequence: 20
+      event: Open copies popup # 39914820546250481
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39915861606250482
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P370_PREPARED_URL := apex_page.get_url(
+               p_page   => 313,
+               p_items  => 'P313_SELECTED_GC_NO',
+               p_values => :P370_SELECTED_GC_NO
+             );
+        END;
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      items-to-return: 
+      - P370_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: Open copies popup # 39914820546250481
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_SELECTED_GC_STATUS").val() !== "4" && $("#P370_SELECTED_GC_STATUS").val() !== "5"
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39916370211250482
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P370_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 40
+      event: Open copies popup # 39914820546250481
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_SELECTED_GC_STATUS").val() !== "4" && $("#P370_SELECTED_GC_STATUS").val() !== "5"
+
+- # ====== Dynamic Action: Release GC Close Dialog =============
+  id: 39916784096250482
+  identification: 
+    name: Release GC Close Dialog
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39917221966250484
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".apex-page-success").fadeOut(400);
+                        }, 3000);
+        
+                    }
+                }
+            });
+        
+        // refreshes the table to update the release date
+        // apex.region("table").refresh();
+
+    execution: 
+      sequence: 10
+      event: Release GC Close Dialog # 39916784096250482
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh table to see update =================
+    id: 39917766871250485
+    identification: 
+      name: Refresh table to see update
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Reservation List # 68312076299265971
+
+    execution: 
+      sequence: 20
+      event: Release GC Close Dialog # 39916784096250482
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel selected reservation =========
+  id: 42999629441872739
+  identification: 
+    name: Cancel selected reservation
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Cancel # 39884171171250353
+
+  client-side-condition: 
+    type: Item is not null
+    item: P370_SELECTED_RESERVATION_NO
+
+  actions: 
+  - # ====== Action: Get status ==================================
+    id: 42999779752872740
+    identification: 
+      name: Get status
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  VARCHAR(15) := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P370_SELECTED_RESERVATION_NO) > 0 THEN
+            
+                SELECT npm016.STATUS_NAME INTO l_return_value
+                FROM NPM016 npm016
+                WHERE (SELECT RESERVE_STATUS_ID
+                       FROM NPT018 npt018
+                       WHERE npt018.RESERVE_ID = TO_NUMBER(:P370_SELECTED_RESERVATION_NO)) = npm016.RESERVE_STATUS_ID;
+        
+                -- SELECT RESERVE_STATUS_ID INTO l_return_value
+                -- FROM NPT018 npt018
+                -- WHERE npt018.RESERVE_ID = :P370_SELECTED_RESERVATION_NO;
+        
+            END IF;
+        
+            RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P370_RESERVE_STATUS
+
+    execution: 
+      sequence: 10
+      event: Cancel selected reservation # 42999629441872739
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Update reservation status ===================
+    id: 42999885446872741
+    identification: 
+      name: Update reservation status
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+        BEGIN
+            UPDATE NPT018
+                SET RESERVE_STATUS_ID = 4,
+                    USER_UPDATE = :app_user,
+                    DATE_UPDATED = SYSDATE
+                WHERE RESERVE_ID = :P370_SELECTED_RESERVATION_NO;
+        END;
+        
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      - P370_PRINT_ID
+
+    execution: 
+      sequence: 20
+      event: Cancel selected reservation # 42999629441872739
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_RESERVE_STATUS").val().toLowerCase() !== "completed" && $("#P370_RESERVE_STATUS").val().toLowerCase() !== "expired"
+
+  - # ====== Action: Show success ================================
+    id: 42999970517872742
+    identification: 
+      name: Show success
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.message.showPageSuccess( "Reservation status updated to cancelled" );
+
+    execution: 
+      sequence: 30
+      event: Cancel selected reservation # 42999629441872739
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_RESERVE_STATUS").val().toLowerCase() !== "completed" && $("#P370_RESERVE_STATUS").val().toLowerCase() !== "expired"
+
+  - # ====== Action: Close success ===============================
+    id: 43000028243872743
+    identification: 
+      name: Close success
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function() {
+            $('.t-Button--closeAlert').click();
+        }, 3000);
+
+    execution: 
+      sequence: 40
+      event: Cancel selected reservation # 42999629441872739
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_RESERVE_STATUS").val().toLowerCase() !== "completed" && $("#P370_RESERVE_STATUS").val().toLowerCase() !== "expired"
+
+  - # ====== Action: Refresh =====================================
+    id: 43000148846872744
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Reservation List # 68312076299265971
+
+    execution: 
+      sequence: 50
+      event: Cancel selected reservation # 42999629441872739
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P370_RESERVE_STATUS").val().toLowerCase() !== "completed" && $("#P370_RESERVE_STATUS").val().toLowerCase() !== "expired"
+
+- # ====== Dynamic Action: Open History Update Dialog ==========
+  id: 45464483494718712
+  identification: 
+    name: Open History Update Dialog
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: History # 42996332030872706
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 45464532731718713
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P370_PREPARED_URL := apex_page.get_url(
+               p_page   => 378,
+               p_items  => 'P378_RESERVE_NO',
+               p_values => :P370_SELECTED_RESERVATION_NO
+             );
+        END;
+      items-to-submit: 
+      - P370_SELECTED_RESERVATION_NO
+      items-to-return: 
+      - P370_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Open History Update Dialog # 45464483494718712
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45464785333718715
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P370_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Open History Update Dialog # 45464483494718712
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P370_MONTH_DATE ========================
+  id: 39893406752250443
+  identification: 
+    item-name: P370_MONTH_DATE
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  comments: 
+    comments: this is used to clear the last assigned value
+
+- # ====== Computation: P370_DAY_DATE ==========================
+  id: 39893885794250445
+  identification: 
+    item-name: P370_DAY_DATE
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  comments: 
+    comments: this is used to clear the last assigned value
+
+- # ====== Computation: P370_SELECTED_RESERVATION_NO ===========
+  id: 39894229736250445
+  identification: 
+    item-name: P370_SELECTED_RESERVATION_NO
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+  comments: 
+    comments: this is used to clear the last assigned value
+
+- # ====== Computation: P370_PREPARED_URL ======================
+  id: 39894663422250446
+  identification: 
+    item-name: P370_PREPARED_URL
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+  comments: 
+    comments: this is used to clear the last assigned value
+
+- # ====== Computation: P370_GET_SUCCESS_MSG ===================
+  id: 39895060711250446
+  identification: 
+    item-name: P370_GET_SUCCESS_MSG
+
+  execution: 
+    sequence: 50
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P370_SELECTED_GC_STATUS ================
+  id: 39895457933250446
+  identification: 
+    item-name: P370_SELECTED_GC_STATUS
+
+  execution: 
+    sequence: 60
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P370_TOGGLE_ACTIVE =====================
+  id: 39895820166250446
+  identification: 
+    item-name: P370_TOGGLE_ACTIVE
+
+  execution: 
+    sequence: 70
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "'ACTIVE'"
+
+- # ====== Computation: P370_PRINT_ID ==========================
+  id: 39896264786250448
+  identification: 
+    item-name: P370_PRINT_ID
+
+  execution: 
+    sequence: 80
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P370_CONTACT_PERSON ====================
+  id: 40130688733188929
+  identification: 
+    item-name: P370_CONTACT_PERSON
+
+  execution: 
+    sequence: 90
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P370_RESERVE_STATUS ====================
+  id: 42999590847872738
+  identification: 
+    item-name: P370_RESERVE_STATUS
+
+  execution: 
+    sequence: 100
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+processes: 
+- # ====== Process: GET_SUCCESS_MSG ============================
+  id: 39896527509250448
+  identification: 
+    name: GET_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+         l_msg VARCHAR2(200);
+      BEGIN
+         -- Get the value of the SUCCESS_MSG application item
+         l_msg := apex_util.get_session_state('SUCCESS_MSG');
+         
+         -- Return it as a JSON object
+         apex_json.open_object;
+         apex_json.write('success_msg', l_msg);
+         apex_json.close_object;
+      
+         -- Clear the SUCCESS_MSG after displaying it
+         apex_util.set_session_state('SUCCESS_MSG', NULL);
+      END;
+      
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CLEAR_SUCCESS_MSG ==========================
+  id: 39896984251250450
+  identification: 
+    name: CLEAR_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+      	apex_util.set_session_state('SUCCESS_MSG', null);
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

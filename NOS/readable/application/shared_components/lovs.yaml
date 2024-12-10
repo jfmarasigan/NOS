@@ -1,0 +1,315 @@
+---
+- # ====== List of Values: NIM022.BRAND_CODE ===================
+  id: 10619291982246353
+  identification: 
+    name: NIM022.BRAND_CODE
+
+  subscription: 
+    version-number: 17411043
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM022
+
+  column-mapping: 
+    return: BRAND_ID
+    display: BRAND_CODE
+    default-sort: BRAND_CODE
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NIM024.DEPT_CODE ====================
+  id: 10620208763246387
+  identification: 
+    name: NIM024.DEPT_CODE
+
+  subscription: 
+    version-number: 17411052
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM024
+
+  column-mapping: 
+    return: DEPT_ID
+    display: DEPT_CODE
+    default-sort: DEPT_CODE
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NIM025.CLASS_CODE ===================
+  id: 10620946297246389
+  identification: 
+    name: NIM025.CLASS_CODE
+
+  subscription: 
+    version-number: 17411054
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM025
+
+  column-mapping: 
+    return: CLASS_ID
+    display: CLASS_CODE
+    default-sort: CLASS_CODE
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NIM027.WAREHOUSE_NAME ===============
+  id: 12345846383555865
+  identification: 
+    name: NIM027.WAREHOUSE_NAME
+
+  subscription: 
+    version-number: 22361013
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM027
+
+  column-mapping: 
+    return: WAREHOUSE_ID
+    display: WAREHOUSE_NAME
+    default-sort: WAREHOUSE_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NPM010.ORGANIZATION_TYPE_NAME =======
+  id: 13920414206873050
+  identification: 
+    name: NPM010.ORGANIZATION_TYPE_NAME
+
+  subscription: 
+    version-number: 27173609
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM010
+
+  column-mapping: 
+    return: ORGANIZATION_TYPE_ID
+    display: ORGANIZATION_TYPE_NAME
+    default-sort: ORGANIZATION_TYPE_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NPM003.ACCOUNT_TYPE_NAME ============
+  id: 13921564663873081
+  identification: 
+    name: NPM003.ACCOUNT_TYPE_NAME
+
+  subscription: 
+    version-number: 27173615
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM003
+
+  column-mapping: 
+    return: ACCOUNT_TYPE_ID
+    display: ACCOUNT_TYPE_NAME
+    default-sort: ACCOUNT_TYPE_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NPM003.ACCOUNT_TYPE_CODE ============
+  id: 14283087534817489
+  identification: 
+    name: NPM003.ACCOUNT_TYPE_CODE
+
+  subscription: 
+    version-number: 28431280
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM003
+
+  column-mapping: 
+    return: ACCOUNT_TYPE_ID
+    display: ACCOUNT_TYPE_CODE
+    default-sort: Use Order By from Query
+
+- # ====== List of Values: NPM006.PAYMENT_NAME =================
+  id: 14494800127206898
+  identification: 
+    name: NPM006.PAYMENT_NAME
+
+  subscription: 
+    version-number: 65483145
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM006
+
+  column-mapping: 
+    return: PAYMENT_TERMS_ID
+    display: PAYMENT_TERMS_NAME
+    default-sort: PAYMENT_TERMS_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: VENDORS =============================
+  id: 17949418971432478
+  identification: 
+    name: VENDORS
+
+  subscription: 
+    version-number: 39496326
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT vendor_id,
+             vendor_name,
+             phone_number
+        FROM nit006
+
+  column-mapping: 
+    return: VENDOR_ID
+    display: VENDOR_NAME
+    default-sort: VENDOR_NAME
+    sort-direction: Ascending (Nulls Last)
+
+  columns: 
+  - # ====== Column: VENDOR_ID ===================================
+    id: 17951813359446203
+    identification: 
+      column-name: VENDOR_ID
+      show: false
+
+    layout: 
+      sequence: 10
+
+    source: 
+      data-type: NUMBER
+
+    advanced: 
+      searchable: false
+
+  - # ====== Column: VENDOR_NAME =================================
+    id: 17952221980446204
+    identification: 
+      column-name: VENDOR_NAME
+      show: true
+
+    heading: 
+      heading: Vendor Name
+
+    layout: 
+      sequence: 20
+
+    source: 
+      data-type: VARCHAR2
+
+    advanced: 
+      searchable: true
+
+  - # ====== Column: PHONE_NUMBER ================================
+    id: 17952668444446204
+    identification: 
+      column-name: PHONE_NUMBER
+      show: true
+
+    heading: 
+      heading: Phone Number
+
+    layout: 
+      sequence: 30
+
+    source: 
+      data-type: NUMBER
+
+    advanced: 
+      searchable: true
+
+- # ====== List of Values: NPT009.LEGAL_NAME ===================
+  id: 26897105948890656
+  identification: 
+    name: NPT009.LEGAL_NAME
+
+  subscription: 
+    version-number: 58974411
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPT009
+
+  column-mapping: 
+    return: CUSTOMER_ID
+    display: LEGAL_NAME
+    default-sort: LEGAL_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NPM007.BANK_NAME ====================
+  id: 26897719763890679
+  identification: 
+    name: NPM007.BANK_NAME
+
+  subscription: 
+    version-number: 58974421
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM007
+
+  column-mapping: 
+    return: BANK_ID
+    display: BANK_NAME
+    default-sort: BANK_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NPM005.METHOD_NAME ==================
+  id: 26901614097890685
+  identification: 
+    name: NPM005.METHOD_NAME
+
+  subscription: 
+    version-number: 58974422
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM005
+
+  column-mapping: 
+    return: PAYMENT_METHOD_ID
+    display: METHOD_NAME
+    default-sort: METHOD_NAME
+    sort-direction: Ascending (Nulls Last)
+
+- # ====== List of Values: NPT016.REASON =======================
+  id: 33048713241693128
+  identification: 
+    name: NPT016.REASON
+
+  subscription: 
+    version-number: 74662467
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPT016
+
+  column-mapping: 
+    return: REFUND_ID
+    display: REASON
+    default-sort: REASON
+    sort-direction: Ascending (Nulls Last)
+

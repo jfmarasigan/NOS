@@ -1,0 +1,758 @@
+---
+# ====== Page: POS Cashiering - Blue GCert Payment ===========
+id: 47
+identification: 
+  name: POS Cashiering - Blue GCert Payment
+  alias: POS-CASHIERING-BLUE-GCERT-PAYMENT
+  title: Gift Certificate (BLUE)
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: false
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p47KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        },
+    
+        escape: (v) => {
+            $("#escape").trigger("click");
+        }
+    
+    }
+    
+    function mapP47Keys() {
+        $(document).off('keydown.p47keyevents');
+        $(document).on('keydown.p47keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p47KeyMap[key]) {
+                ev.preventDefault();
+                p47KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP47Keys();
+    
+    $('#P47_CODE').focus();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        label, input {
+            font-size: 1.125rem;
+        }
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P47_CODE =================================
+  id: 18712932765804242
+  identification: 
+    name: P47_CODE
+    type: Text Field
+
+  label: 
+    label: 'Number:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_URL ==================================
+  id: 38713655240254517
+  identification: 
+    name: P47_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_AMOUNT ===============================
+  id: 38713870372254519
+  identification: 
+    name: P47_AMOUNT
+    type: Display Only
+
+  label: 
+    label: 'Amount:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P47_EXISTS ===============================
+  id: 44275668469177740
+  identification: 
+    name: P47_EXISTS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 23637726516246338
+  identification: 
+    button-name: Enter
+    label: Enter
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Submit ==============================
+  id: 25489624945440402
+  identification: 
+    name: Submit
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Enter # 23637726516246338
+
+  actions: 
+  - # ====== Action: Deduct ======================================
+    id: 40394376226268848
+    identification: 
+      name: Deduct
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_balance NUMBER;
+            v_amount  NUMBER;
+        BEGIN
+            v_amount := TO_NUMBER(REPLACE(REPLACE(:P47_AMOUNT, '$', ''), ',', ''));
+        
+            SELECT balance
+              INTO v_balance
+              FROM NPT020
+             WHERE gift_certificate_id = :P47_CODE;
+        
+            IF v_balance > v_amount THEN
+                apex_collection.add_member(
+                    p_collection_name => 'PAYMENT',
+                    p_c001            => 'Gift Certificate',
+                    p_n001            => v_amount, 
+                    p_n002            => v_amount, 
+                    p_n003            => v_amount, 
+                    p_n004            => TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', ''))
+                ); 
+        
+                UPDATE NPT020
+                SET balance = balance - v_amount
+                WHERE gift_certificate_id = :P47_CODE;
+        
+                :P47_URL := apex_page.get_url(
+                    p_page        => 43,
+                    p_clear_cache => '43'
+                );
+            ELSE
+                apex_collection.add_member(
+                    p_collection_name => 'PAYMENT',
+                    p_c001            => 'Gift Certificate',
+                    p_n001            => v_balance 
+                );
+        
+                UPDATE NPT020
+                SET balance = 0
+                WHERE gift_certificate_id = :P47_CODE;
+            END IF;
+        
+        END;
+      items-to-submit: 
+      - P47_CODE
+      - P47_AMOUNT
+      - P41_TOTAL
+      items-to-return: 
+      - P47_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Submit # 25489624945440402
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Redirect ====================================
+    id: 42942254870705410
+    identification: 
+      name: Redirect
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P47_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Submit # 25489624945440402
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close =======================================
+    id: 42943456963705422
+    identification: 
+      name: Close
+      action: Close Dialog
+
+    execution: 
+      sequence: 40
+      event: Submit # 25489624945440402
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Validate ====================================
+    id: 44275519069177739
+    identification: 
+      name: Validate
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var field1 = $v('P47_EXISTS'); 
+        if (field1 < 1 ) {
+            apex.message.clearErrors(); 
+            apex.message.showErrors([{
+                type: 'error',
+                location: 'inline', 
+                pageItem: 'P47_CODE', 
+                message: 'Gift Code does not exist.'
+            }]);
+        
+            return false; 
+        } else {
+            apex.message.clearErrors(); 
+            return true; 
+        }
+        
+
+    execution: 
+      sequence: 10
+      event: Submit # 25489624945440402
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Console Log =========================
+  id: 25490306922440409
+  identification: 
+    name: Console Log
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Clear =======================================
+    id: 25490489563440410
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_AMOUNT
+
+    execution: 
+      sequence: 10
+      event: Console Log # 25490306922440409
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 38714342508254524
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var amount = $v('P47_AMOUNT');  
+        console.log('P47_AMOUNT:', amount);
+
+    execution: 
+      sequence: 10
+      event: Console Log # 25490306922440409
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Value on Amount =================
+  id: 38713977693254520
+  identification: 
+    name: Set Value on Amount
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 38714098141254521
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT SUM(n005)
+        FROM apex_collections
+        WHERE collection_name = 'PURCHASE'
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_AMOUNT
+
+    execution: 
+      sequence: 10
+      event: Set Value on Amount # 38713977693254520
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Check if GCode Exists ===============
+  id: 44275884212177742
+  identification: 
+    name: Check if GCode Exists
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P47_CODE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 44275942265177743
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT count(balance)
+              FROM NPT020
+             WHERE gift_certificate_id = :P47_CODE
+               AND balance = amount;
+      items-to-submit: 
+      - P47_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P47_EXISTS
+
+    execution: 
+      sequence: 10
+      event: Check if GCode Exists # 44275884212177742
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+validations: 
+- # ====== Validation: Validate Code ===========================
+  id: 27426245107078112
+  identification: 
+    name: Validate Code
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: PL/SQL Error
+    pl/sql-code-raising-error: |
+      DECLARE
+          v_code NUMBER;
+      BEGIN
+          SELECT gift_certificate_id INTO v_code
+            FROM NPT020
+           WHERE gift_certificate_id = :P47_CODE
+             AND amount = balance;
+          --  EXCEPTION WHEN NO_DATA_FOUND THEN 
+          --  RAISE_APPLICATION_ERROR(-20001, 'Gift Code is not existing.');
+      END;
+    always-execute: true
+
+  error: 
+    error-message: Gift Code is not existing.
+    display-location: Inline with Field
+    associated-item: P47_CODE # 18712932765804242
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+processes: 
+- # ====== Process: Reduce GC Amount ===========================
+  id: 23637636871246337
+  identification: 
+    name: Reduce GC Amount
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          v_gc_amount NUMBER;
+      BEGIN
+          SELECT gift_certificate_id INTO v_gc_amount FROM NPT020 WHERE gift_certificate_id = :P47_CODE;
+      
+          IF v_gc_amount >= :P47_AMOUNT THEN
+              UPDATE ernan_gcert
+              SET gc_amount = gc_amount - TO_NUMBER(REPLACE(REPLACE(:P47_AMOUNT, '$', ''), ',', ''))
+              WHERE gc_code = :P47_CODE;
+              
+              COMMIT; 
+             -- APEX_UTIL.REDIRECT_URL('f?p=100:41:SESSION'); -- Replace with your actual APP_ID, PAGE_ID, and SESSION
+          ELSE
+              RAISE_APPLICATION_ERROR(-20001, 'Insufficient GC Amount');
+          END IF;
+      EXCEPTION
+          WHEN NO_DATA_FOUND THEN
+              RAISE_APPLICATION_ERROR(-20002, 'No data found for the given condition.');
+      END;
+      
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Process: Add GCert Collection =======================
+  id: 23638107593246342
+  identification: 
+    name: Add GCert Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          apex_collection.add_member(
+                      p_collection_name => 'PAYMENT',
+                      p_c001 => 'Gift Certificate',
+                      p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P47_AMOUNT, '$', ''), ',', '')), 2), 'FM999999999.00')
+                      );
+      END;
+      
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Process: Reduce GC Amount fr Table ==================
+  id: 27426555982078115
+  identification: 
+    name: Reduce GC Amount fr Table
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE ernan_gcert
+              SET gc_amount = gc_amount - TO_NUMBER(REPLACE(REPLACE(:P47_AMOUNT, '$', ''), ',', ''))
+              WHERE gc_code = :P47_CODE;
+
+  execution: 
+    sequence: 40
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Process: Add Collection =============================
+  id: 38713487965254515
+  identification: 
+    name: Add Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          apex_collection.add_member(
+                      p_collection_name => 'PAYMENT',
+                      p_c001 => 'Gift Certificate',
+                      p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P47_AMOUNT, '$', ''), ',', '')), 2), 'FM999999999.00')
+                      );
+      END;
+      
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+branches: 
+- # ====== Branch: Redirect to 2nd Payment =====================
+  id: 27426123761078111
+  identification: 
+    name: Redirect to 2nd Payment
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:92:&SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+      page: 92 # POS Cashiering Main Screen - 2nd Payment
+
+  server-side-condition: 
+    when-button-pressed: Enter # 23637726516246338
+    type: Rows returned
+    sql-query: |
+      SELECT balance
+        FROM NPT020
+       WHERE GIFT_CERTIFICATE_ID = :P47_CODE
+         AND BALANCE < TO_NUMBER(REPLACE(REPLACE(:P47_AMOUNT, '$', ''), ',', ''))
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+

@@ -1,0 +1,1898 @@
+---
+# ====== Page: Delivery Log Test (For Deletion) ==============
+id: 71
+identification: 
+  name: Delivery Log Test (For Deletion)
+  alias: DELIVERY-LOG1
+  title: Delivery Log
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p28KeyMap = {
+        a : (v) => {
+            $("#a").trigger("click");
+        },
+        u : (v) => {
+            $("#u").trigger("click");
+        },
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        escape : (v) => {
+            apex.navigation.redirect($('#P28_EXIT_URL').val());
+        },
+        s : (v) => {
+            $("#s").trigger("click");
+        },
+        i : (v) => {
+            $("#i").trigger("click");
+        }
+    }
+    
+    function mapP28Keys() {
+        $(document).off('keydown.p28keyevents');
+        $(document).on('keydown.p28keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p28KeyMap[key]) {
+                ev.preventDefault();
+                p28KeyMap[key]();
+            }
+        });
+    }
+    
+    document.getElementsByClassName('time')[0].addEventListener('keyup', function(e){
+        this.value = this.value
+        .replace(/[^\d]/g, '')
+        .replace(/^([\d]{4})\d+$/g, '$1')
+        .replace(/\B(?=(\d{2})+(?!\d{1}))/g, ":");
+    
+    });
+  execute-when-page-loads: |
+    setTitle('Delivery Log');
+    mapP28Keys();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #delivery-log .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #delivery-log .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #delivery-log .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #delivery-log .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+     
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #delivery-log table,
+    #delivery-log tr,
+    #delivery-log td{
+        font-size: 1.125rem;
+        border: 0.0625rem solid black;
+    }
+    
+    #delivery-log th{
+            font-size: 1rem;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: black;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .btns{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    .ui-dialog-title{
+        font-size : 1.25rem;
+    }
+    .text-white{
+        color:white;
+    }
+    .text-black{
+        color: black;
+    }
+    .t-Form-labelContainer.col.col-1{
+            text-align: start;
+    }
+    .t-Form-label{
+        font-size:1.125rem;
+        color:white;
+    }
+    #P28_INVOICE_NUMBER_LABEL{
+        font-size:1.125rem;
+        color:black;
+    }
+    
+    .ui-dialog.delivery-inquire{
+        left: 50% !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Delivery Log ================================
+  id: 43575698074383161
+  identification: 
+    name: Delivery Log
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select PRICING_TYPE_ID,
+             PRICING_TYPE_CODE,
+             PRICING_TYPE_DESCRIPTION,
+             CREATE_USER,
+             CREATE_DATE,
+             UPDATE_DATE,
+             UPDATE_USER,
+             'dummy',
+             'AM'
+        from NIM032
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: delivery-log
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 43575806967383162
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                // stickyFooter: true
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 46467545993782102
+      identification: 
+        name: Primary Report
+        alias: 190036
+
+  columns: 
+  - # ====== Column: DUMMY =======================================
+    id: 25232921972376531
+    identification: 
+      column-name: DUMMY
+      type: Text Field
+
+    heading: 
+      heading: Time
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 100
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 5
+
+    source: 
+      type: Database Column
+      database-column: "'DUMMY'"
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      css-classes: 
+      - time
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                width: 120
+            }
+            return options;
+        }
+
+  - # ====== Column: AM/PM =======================================
+    id: 25233268417376534
+    identification: 
+      column-name: AM/PM
+      type: Select List
+
+    heading: 
+      heading: AM/PM
+      alignment: start
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: Static Values
+      static-values: 'STATIC:AM;AM,PM;PM'
+      display-extra-values: true
+      display-null-value: true
+
+    source: 
+      type: Database Column
+      database-column: "'AM'"
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Use List of Values
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                width: 50
+        
+            }
+            return options;
+        }
+
+  - # ====== Column: CREATE_USER =================================
+    id: 46461952950781318
+    identification: 
+      column-name: CREATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Create User
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: CREATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CREATE_DATE =================================
+    id: 46462035681781319
+    identification: 
+      column-name: CREATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Create Date
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CREATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UPDATE_USER =================================
+    id: 46462126901781320
+    identification: 
+      column-name: UPDATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Update User
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UPDATE_DATE =================================
+    id: 46462272375781321
+    identification: 
+      column-name: UPDATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Update Date
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: PRICING_TYPE_ID =============================
+    id: 47580939524086951
+    identification: 
+      column-name: PRICING_TYPE_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 70
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: PRICING_TYPE_ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: PRICING_TYPE_CODE ===========================
+    id: 47581051251086952
+    identification: 
+      column-name: PRICING_TYPE_CODE
+      type: Text Field
+
+    heading: 
+      heading: Pricing Type Code
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 5
+
+    source: 
+      type: Database Column
+      database-column: PRICING_TYPE_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: PRICING_TYPE_DESCRIPTION ====================
+    id: 47581165440086953
+    identification: 
+      column-name: PRICING_TYPE_DESCRIPTION
+      type: Text Field
+
+    heading: 
+      heading: Pricing Type Description
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 30
+
+    source: 
+      type: Database Column
+      database-column: PRICING_TYPE_DESCRIPTION
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Page Controls ===============================
+  id: 46462421315781323
+  identification: 
+    name: Page Controls
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Search/Add Modal ============================
+  id: 46464115774781339
+  identification: 
+    name: Search/Add Modal
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size600x400
+    - t-Form--stretchInputs
+    - t-Form--leftLabels
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: inline-dialog
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P71_INVOICE_NUMBER =======================
+  id: 46468649801781435
+  identification: 
+    name: P71_INVOICE_NUMBER
+    type: Text Field
+
+  label: 
+    label: 'Search By Invoice Number:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Search/Add Modal # 46464115774781339
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 5
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-top-sm
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-black
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P71_EXIT_URL =============================
+  id: 46471542772781458
+  identification: 
+    name: P71_EXIT_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: apex_page.get_url(p_page => 300)
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P71_SELECTED_ITEM ========================
+  id: 47588958722087075
+  identification: 
+    name: P71_SELECTED_ITEM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P71_PREPARED_URL =========================
+  id: 47590146258087087
+  identification: 
+    name: P71_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P71_MODAL_MODE ===========================
+  id: 48721535804536227
+  identification: 
+    name: P71_MODAL_MODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Search/Add Modal # 46464115774781339
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD =========================================
+  id: 27469433342613118
+  identification: 
+    button-name: ADD
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 20
+    region: Page Controls # 46462421315781323
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: UPDATE ======================================
+  id: 27469898645613120
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u>  - Update
+
+  layout: 
+    sequence: 40
+    region: Page Controls # 46462421315781323
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:63:&SESSION.::&DEBUG.:63:P63_MODE:UPDATE'
+      page: 63 # Delivery Log Add/Update Page
+      clear-cache: 63
+      values: 
+        p63_mode: UPDATE
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: INQUIRE =====================================
+  id: 27470246831613120
+  identification: 
+    button-name: INQUIRE
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 50
+    region: Page Controls # 46462421315781323
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: SEARCH ======================================
+  id: 27470627818613121
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 10
+    region: Page Controls # 46462421315781323
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: PRINT =======================================
+  id: 27471030645613121
+  identification: 
+    button-name: PRINT
+    label: <u>P</u> - Print Delivery Info
+
+  layout: 
+    sequence: 70
+    region: Page Controls # 46462421315781323
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: p
+
+dynamic-actions: 
+- # ====== Dynamic Action: On Tab press when empty =============
+  id: 25232206678376524
+  identification: 
+    name: On Tab press when empty
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Column(s)
+    interactive-grid: Delivery Log # 43575698074383161
+    column(s): 
+    - PRICING_TYPE_DESCRIPTION
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'tab';
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 25232369181376525
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: this.browserEvent.preventDefault();
+
+    execution: 
+      sequence: 10
+      event: On Tab press when empty # 25232206678376524
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item / Column is null
+      component-type: Column
+      column: PRICING_TYPE_DESCRIPTION
+
+- # ====== Dynamic Action: New_1 ===============================
+  id: 25232443364376526
+  identification: 
+    name: New_1
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Column(s)
+    interactive-grid: Delivery Log # 43575698074383161
+    column(s): 
+    - CREATE_USER
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 25232544674376527
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p28keyevents');
+
+    execution: 
+      sequence: 10
+      event: New_1 # 25232443364376526
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New_2 ===============================
+  id: 25232684929376528
+  identification: 
+    name: New_2
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Lose Focus
+    selection-type: Column(s)
+    interactive-grid: Delivery Log # 43575698074383161
+    column(s): 
+    - CREATE_USER
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 25232762226376529
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP28Keys();
+
+    execution: 
+      sequence: 10
+      event: New_2 # 25232684929376528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Search/Add Modal close event ========
+  id: 27472546321613140
+  identification: 
+    name: Search/Add Modal close event
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P71_INVOICE_NUMBER
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'escape';
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 27473062584613143
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search/Add Modal # 46464115774781339
+
+    execution: 
+      sequence: 20
+      event: Search/Add Modal close event # 27472546321613140
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Search/Add Close =================
+  id: 27473450698613143
+  identification: 
+    name: On Search/Add Close
+
+  execution: 
+    sequence: 20
+    event-scope: Dynamic
+    static-container-(jquery-selector): '#inline-dialog'
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: dialogclose
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Clear =======================================
+    id: 27473991552613143
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P71_INVOICE_NUMBER
+
+    execution: 
+      sequence: 10
+      event: On Search/Add Close # 27473450698613143
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27474482029613145
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP71Keys();
+
+    execution: 
+      sequence: 20
+      event: On Search/Add Close # 27473450698613143
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Inquire close ====================
+  id: 27474851270613145
+  identification: 
+    name: On Inquire close
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27475315902613145
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP71Keys();
+
+    execution: 
+      sequence: 10
+      event: On Inquire close # 27474851270613145
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On press Enter ======================
+  id: 27475746336613145
+  identification: 
+    name: On press Enter
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P71_INVOICE_NUMBER
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 27476208861613146
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        :P71_PREPARED_URL := apex_page.get_url(
+            p_page => '63',
+            p_clear_cache => '63',
+            p_items => 'P63_MODE',
+            p_values => 'ADD'
+        );
+        END;
+      items-to-return: 
+      - P71_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: On press Enter # 27475746336613145
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item = Value
+      item: P71_MODAL_MODE
+      value: ADD
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27476768320613146
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.navigation.redirect($v('P71_PREPARED_URL'));
+
+    execution: 
+      sequence: 50
+      event: On press Enter # 27475746336613145
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P71_MODAL_MODE
+      value: ADD
+
+  - # ====== Action: Close Region ================================
+    id: 27477267201613146
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search/Add Modal # 46464115774781339
+
+    execution: 
+      sequence: 20
+      event: On press Enter # 27475746336613145
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P71_MODAL_MODE
+      value: ADD
+
+- # ====== Dynamic Action: On A click ==========================
+  id: 27477687679613148
+  identification: 
+    name: On A click
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ADD # 27469433342613118
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 27478186415613148
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: ADD
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P71_MODAL_MODE
+
+    execution: 
+      sequence: 20
+      event: On A click # 27477687679613148
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27478672594613148
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p71keyevents');
+        $('#P71_INVOICE_NUMBER_LABEL').parent().removeClass('col-5');
+        $('#P71_INVOICE_NUMBER_LABEL').parent().addClass('col-4');
+        $('#P71_INVOICE_NUMBER_LABEL').html('Invoice Number:');
+        $('#inline-dialog').parent().find('.ui-dialog-titlebar').find('.ui-dialog-title').html('Add Delivery');
+        
+
+    execution: 
+      sequence: 10
+      event: On A click # 27477687679613148
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 27479163964613148
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search/Add Modal # 46464115774781339
+
+    execution: 
+      sequence: 30
+      event: On A click # 27477687679613148
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On S click ==========================
+  id: 27479571999613150
+  identification: 
+    name: On S click
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH # 27470627818613121
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 27480052642613150
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: SEARCH
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P71_MODAL_MODE
+
+    execution: 
+      sequence: 20
+      event: On S click # 27479571999613150
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Open Region =================================
+    id: 27480545667613150
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search/Add Modal # 46464115774781339
+
+    execution: 
+      sequence: 30
+      event: On S click # 27479571999613150
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27481005443613150
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p71keyevents');
+        $('#P71_INVOICE_NUMBER_LABEL').parent().removeClass('col-4');
+        $('#P71_INVOICE_NUMBER_LABEL').parent().addClass('col-5');
+        $('#P71_INVOICE_NUMBER_LABEL').html('Search by Invoice Number:');
+        $('#inline-dialog').parent().find('.ui-dialog-titlebar').find('.ui-dialog-title').html('Search');
+        
+
+    execution: 
+      sequence: 10
+      event: On S click # 27479571999613150
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New =================================
+  id: 27481451113613151
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: INQUIRE # 27470246831613120
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 27481969790613151
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        :P71_PREPARED_URL := apex_page.get_url(
+            p_page => 42,
+            p_items => 'P42_INVOICE_ID',
+            p_values => :P71_SELECTED_ITEM
+        );
+        END;
+      items-to-submit: 
+      - P71_SELECTED_ITEM
+      items-to-return: 
+      - P71_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: New # 27481451113613151
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27482404958613151
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.navigation.redirect($v('P71_PREPARED_URL'));
+
+    execution: 
+      sequence: 30
+      event: New # 27481451113613151
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27482945916613153
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p71keyevents');
+        
+
+    execution: 
+      sequence: 20
+      event: New # 27481451113613151
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New_3 ===============================
+  id: 30129978095678926
+  identification: 
+    name: New_3
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Lose Focus
+    selection-type: Column(s)
+    interactive-grid: Delivery Log # 43575698074383161
+    column(s): 
+    - DUMMY
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30130071814678927
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var time = $('#C25232921972376531').val();
+        console.log(time.substr(0,2));
+        if(time.length==5){
+            console.log(time.substr(0,2));
+            if(time.substr(0,2)>=8&&time.substr(0,2)<=11){
+                $('#C25232921972376531').val($('#C25232921972376531').val() + ' AM'); 
+            }
+            else{
+                $('#C25232921972376531').val($('#C25232921972376531').val() + ' PM');
+            }
+        }
+        else if(time.length==4){
+            console.log(time.substr(0,1));
+            if(time.substr(0,1)>=8&&time.substr(0,1)<=11){
+                $('#C25232921972376531').val($('#C25232921972376531').val() + ' AM');
+            }
+            else{
+                $('#C25232921972376531').val($('#C25232921972376531').val() + ' PM');
+            }
+        }
+
+    execution: 
+      sequence: 10
+      event: New_3 # 30129978095678926
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Delivery Log - Save Interactive Grid Data ==
+  id: 25232103240376523
+  identification: 
+    name: Delivery Log - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Delivery Log # 43575698074383161
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

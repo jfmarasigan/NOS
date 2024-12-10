@@ -1,0 +1,5644 @@
+---
+# ====== Page: Update Item ===================================
+id: 21
+identification: 
+  name: Update Item
+  alias: UPDATE-ITEM
+  title: Update Item
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/itemmasterfile-validations#MIN#.js'
+  - null
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    let marker = 1;
+    let cloneCtr = 1;
+    
+    function addVendorCodeChangeListener(vendorCodeField, row) {
+        vendorCodeField.on('change', function() {
+            let vendorCode = $(this).val().toUpperCase(); 
+            let vendorNameField = row.find("span[id*='VENDOR_NAME_DISPLAY']"); 
+            
+            apex.server.process("GET_VENDOR_NAME", {
+                x01: vendorCode 
+            }, {
+                dataType: 'text' 
+            }).done((vendorName) => {
+                vendorNameField.text(vendorName);
+            }).fail(() => {
+                console.log("Error retrieving vendor name.");
+            });
+        });
+    }
+    
+    
+    const p21KeyMap = {
+        escape : (v) => {
+            $("#exit").click();
+        },
+        enter : (ev) => {
+            let focusedElement = document.activeElement;
+    
+            console.log(focusedElement);
+    
+            if (!$(focusedElement).hasClass('disableEnter')){
+            $("#submit").click();
+            }
+    /*
+            if ($(focusedElement).closest('.a-PopupLOV-dialog').length) {
+                ev.preventDefault();
+                return; 
+            }
+    
+            $("#submit").click();
+    */
+        },
+        f8 : (v) => {
+            $("#clone").click();
+        }
+    }
+    
+    
+    function mapP21Keys() {
+        $(document).off('keydown.p21keyevents');
+        $(document).on('keydown.p21keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p21KeyMap[key]) {
+                ev.preventDefault();
+                p21KeyMap[key]();
+            }
+        });
+    }
+    
+    
+    // Variables for submit
+    let fieldsToValidate = [
+    //    { id: 'P21_ITEM_NUM', required: true, pattern: 'alphanumeric' },         
+        { id: 'P21_ITEM_DESC', required: true },                            
+        { id: 'P21_FULL_ITEM_DESC', required: true },                       
+        { id: 'P21_BRAND_CODE', required: true, pattern: 'alphabets'},  
+        { id: 'P21_MIN_STOCK_LVL', required: true, pattern: 'numbers' },    
+        { id: 'P21_MAX_STOCK_LVL', required: true, pattern: 'numbers' },    
+        { id: 'P21_HAS_SERIAL_NUMBER', required: true },                    
+        { id: 'P21_SIC_CODE', required: true, pattern: 'alphabets'},
+        { id: 'P21_DEPT_CODE', required: true, pattern: 'alphabets'},
+        { id: 'P21_CLASS_CODE', required: true, pattern: 'alphabets'},    
+        { id: 'P21_UOM_1', required: true },                                  
+        { id: 'P21_UPC_1', required: true, pattern: 'alphanumeric' },         
+        { id: 'P21_PRICE_1', required: true, pattern: 'decimal' },            
+        { id: 'P21_QUANTITY_1', required: true, pattern: 'numbers' },
+        { id: 'P21_UOM_2', required: true },                                  
+        { id: 'P21_UPC_2', required: true, pattern: 'alphanumeric' },         
+        { id: 'P21_PRICE_2', required: true, pattern: 'decimal' },            
+        { id: 'P21_QUANTITY_2', required: true, pattern: 'numbers' }, 
+        { id: 'P21_VENDOR_CODE', required: true, pattern: 'alphabets'},
+        { id: 'P21_ITEM_NUMBER', required: true, pattern: 'alphanumeric' },
+    ];
+    
+    let optionalFieldsGroup1 = [
+        { id: 'P21_QUANTITY_3', pattern: 'numbers' },
+        { id: 'P21_UPC_3', pattern: 'alphanumeric' },
+        { id: 'P21_PRICE_3', pattern: 'decimal' }
+    ];
+    
+    let optionalFieldsGroup2 = [
+        { id: 'P21_QUANTITY_4', pattern: 'numbers' },
+        { id: 'P21_UPC_4', pattern: 'alphanumeric' },
+        { id: 'P21_PRICE_4', pattern: 'decimal' }
+    ];
+    
+    const pagePrefix = "P21_";
+    const isUpdatePage = true;
+    
+    
+    let upcFieldIDs = [
+        pagePrefix + 'UPC_1',
+        pagePrefix + 'UPC_2',
+        pagePrefix + 'UPC_3',
+        pagePrefix + 'UPC_4'
+    ];
+    
+    let uomFieldIDs = [
+        pagePrefix + 'UOM_1',
+        pagePrefix + 'UOM_2',
+        pagePrefix + 'UOM_3',
+        pagePrefix + 'UOM_4'
+    ];
+    
+    let fieldsForBlurValidation = [
+        { id: 'P21_ITEM_NUM', pattern: 'alphanumeric' },         
+        { id: 'P21_ITEM_DESC' },                            
+        { id: 'P21_FULL_ITEM_DESC' },                       
+        { id: 'P21_BRAND_CODE', pattern: 'alphabets'},  
+        { id: 'P21_MIN_STOCK_LVL', pattern: 'numbers' },    
+        { id: 'P21_MAX_STOCK_LVL', pattern: 'numbers' },    
+        { id: 'P21_HAS_SERIAL_NUMBER', pattern: 'yesNo' },                    
+        { id: 'P21_SIC_CODE', pattern: 'alphabets'},
+        { id: 'P21_DEPT_CODE', pattern: 'alphabets'},
+        { id: 'P21_CLASS_CODE', pattern: 'alphabets'},    
+    //    { id: 'P21_UOM_1' },                                  
+        { id: 'P21_UPC_1', pattern: 'alphanumeric' },         
+        { id: 'P21_PRICE_1', pattern: 'decimal' },            
+        { id: 'P21_QUANTITY_1', pattern: 'numbers' },
+    //    { id: 'P21_UOM_2', },                                  
+        { id: 'P21_UPC_2', pattern: 'alphanumeric' },         
+        { id: 'P21_PRICE_2', pattern: 'decimal' },            
+        { id: 'P21_QUANTITY_2', pattern: 'numbers' },
+        { id: 'P21_QUANTITY_3', pattern: 'numbers' },
+    //    { id: 'P21_UOM_3' },
+        { id: 'P21_UPC_3', pattern: 'alphanumeric' },
+        { id: 'P21_PRICE_3', pattern: 'decimal' },
+        { id: 'P21_QUANTITY_4', pattern: 'numbers' },
+    //    { id: 'P21_UOM_4' },
+        { id: 'P21_UPC_4', pattern: 'alphanumeric' },
+        { id: 'P21_PRICE_4', pattern: 'decimal' },
+        { id: 'P21_EXCISE_TAX_RATE', pattern: 'decimal'},
+        { id: 'P21_SELLING_PRICE_FACTOR', pattern: 'decimal'},
+    
+    ];
+    
+    validateFieldsOnBlur(fieldsForBlurValidation);
+    
+    vendorsGroupArray = [];
+    vendorsLCFArray =[
+        { id: 'P21_LANDED_COST_FACTOR', pattern: 'decimal'},
+    ];
+    
+    let exciseAndSelling = [
+        {id: 'P21_EXCISE_TAX_RATE', pattern: 'decimal'},
+        {id: 'P21_SELLING_PRICE_FACTOR', pattern: 'decimal'},
+    ];
+    
+  execute-when-page-loads: |
+    mapP21Keys();
+    
+    $x('P21_ITEM_DESC').focus();
+    
+    setTitle("Update Item")
+    
+    vendorCodeBlur($('#P21_VENDOR_CODE_input'), $('#P21_ITEM_NUMBER'), $('#P21_LANDED_COST_FACTOR'));
+
+css: 
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    
+    #update-form-1, #update-form-2, #update-form-3 {
+        label, input, .apex-item-display-only {
+            font-size: 1.125rem;
+        }
+    }
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; /* Remove the asterisk before the label */
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .btnblue {
+        font-size: 1.125rem;
+        color: white;
+        background-color: #046BC8;
+    }
+    
+    .btn {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .t-Form-labelContainer {
+        white-space: nowrap;
+        text-align: left;
+    }
+    
+    #P21_FULL_ITEM_DESC_CONTAINER .t-Form-labelContainer ,#P21_HAS_SERIAL_NUMBER_CONTAINER .t-Form-labelContainer, #P21_SELLING_PRICE_FACTOR_CONTAINER .t-Form-labelContainer {
+        white-space: normal;
+        text-align: right;
+    }
+    
+    #P21_MIN_STOCK_LVL_CONTAINER .t-Form-labelContainer, #P21_MAX_STOCK_LVL_CONTAINER .t-Form-labelContainer {
+        white-space: nowrap;
+        text-align: left;
+        padding-left: 0;
+    }
+    
+    
+    #P21_MIN_STOCK_LVL_CONTAINER .t-Form-inputContainer, #P21_MAX_STOCK_LVL_CONTAINER .t-Form-inputContainer{
+        padding-right: 0;
+    }
+    
+    
+    #P21_MIN_STOCK_LVL_CONTAINER .t-Form-itemWrapper, #P21_MAX_STOCK_LVL_CONTAINER .t-Form-itemWrapper {
+        justify-content: flex-end;
+    }
+    
+    #P21_VENDOR_NAME_CONTAINER .t-Form-inputContainer{
+        padding: .5rem;
+    }
+    
+    
+    #P21_DEPT_NAME_CONTAINER .t-Form-inputContainer, #P21_SIC_NAME_CONTAINER .t-Form-inputContainer, #P21_CLASS_NAME_CONTAINER .t-Form-inputContainer{
+        padding-left: 0;
+    }
+    
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: New =========================================
+  id: 11803052491825327
+  identification: 
+    name: New
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Update_Item_1 # 14947798290654200
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Header ======================================
+  id: 14947646863654198
+  identification: 
+    name: Header
+    title: Update Item
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Update_Item_1 ===============================
+  id: 14947798290654200
+  identification: 
+    name: Update_Item_1
+    type: Static Content
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - margin-top-none
+    - margin-bottom-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: update-form-3
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Update_Item =================================
+  id: 15138572679215394
+  identification: 
+    name: Update_Item
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIT001
+    include-rowid-column: false
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - margin-bottom-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: update-form-1
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Update_Item_UPC =============================
+  id: 15842612069764190
+  identification: 
+    name: Update_Item_UPC
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIT002
+    include-rowid-column: false
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - margin-top-none
+    - margin-bottom-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: update-form-2
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P21_VENDOR_CODE ==========================
+  id: 11803115661825328
+  identification: 
+    name: P21_VENDOR_CODE
+    type: Text Field with autocomplete
+
+  label: 
+    label: Code
+    alignment: Left
+
+  settings: 
+    fetch-on-type: true
+    use-cache: true
+    maximum-values-in-list: 7
+
+  search: 
+    match-type: Contains & Ignore Case
+    minimum-characters: 1
+
+  layout: 
+    sequence: 50
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: SELECT NIT006.VENDOR_CODE FROM NIT006
+    display-extra-values: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_VENDOR_NAME ==========================
+  id: 11803291005825329
+  identification: 
+    name: P21_VENDOR_NAME
+    type: Display Only
+
+  label: 
+    label: Vendor Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_ITEM_NUMBER ==========================
+  id: 11803378717825330
+  identification: 
+    name: P21_ITEM_NUMBER
+    type: Text Field
+
+  label: 
+    label: Item No
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_LANDED_COST_FACTOR ===================
+  id: 11803482312825331
+  identification: 
+    name: P21_LANDED_COST_FACTOR
+    type: Number Field
+
+  label: 
+    label: Landed Cost Factor
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 80
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G990D00
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 8
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_VENDOR_LABEL =========================
+  id: 11803580725825332
+  identification: 
+    name: P21_VENDOR_LABEL
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - vendors-update
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Vendor 1
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_SMALLEST_UNIT ========================
+  id: 12916554098686819
+  identification: 
+    name: P21_SMALLEST_UNIT
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 40
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Smallest Unit
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_MASTER_CASE ==========================
+  id: 12916614177686820
+  identification: 
+    name: P21_MASTER_CASE
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 120
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Master Case
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_INNER_PACK_1 =========================
+  id: 12916719432686821
+  identification: 
+    name: P21_INNER_PACK_1
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 210
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Inner Pack 1
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_INNER_PACK_2 =========================
+  id: 12916826323686822
+  identification: 
+    name: P21_INNER_PACK_2
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 300
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Inner Pack 2
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_BRAND_ID =============================
+  id: 15153522873215464
+  identification: 
+    name: P21_BRAND_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Update_Item # 15138572679215394
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: BRAND_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_SIC_ID ===============================
+  id: 15153640151215465
+  identification: 
+    name: P21_SIC_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 110
+    region: Update_Item # 15138572679215394
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: SIC_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_DEPT_ID ==============================
+  id: 15153695668215466
+  identification: 
+    name: P21_DEPT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 140
+    region: Update_Item # 15138572679215394
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: DEPT_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_CLASS_ID =============================
+  id: 15153840900215467
+  identification: 
+    name: P21_CLASS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 170
+    region: Update_Item # 15138572679215394
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: CLASS_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_ITEM_DESC ============================
+  id: 15153908648215468
+  identification: 
+    name: P21_ITEM_DESC
+    type: Text Field
+
+  label: 
+    label: 'Item Desc<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 30
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: ITEM_DESC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_ITEM_NUM =============================
+  id: 15154028477215469
+  identification: 
+    name: P21_ITEM_NUM
+    type: Display Only
+
+  label: 
+    label: 'Item No<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--indicatorAsterisk
+    - t-Form-fieldContainer--postTextBlock
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: ITEM_NUM
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_MIN_STOCK_LVL ========================
+  id: 15154088140215470
+  identification: 
+    name: P21_MIN_STOCK_LVL
+    type: Number Field
+
+  label: 
+    label: 'Min Stock Level<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 90
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - margin-right-sm
+    width: 5
+
+  validation: 
+    value-required: true
+    maximum-length: 4
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: MIN_STOCK_LVL
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_MAX_STOCK_LVL ========================
+  id: 15154201518215471
+  identification: 
+    name: P21_MAX_STOCK_LVL
+    type: Number Field
+
+  label: 
+    label: 'Max Stock Level<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 100
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-sm
+    width: 5
+
+  validation: 
+    value-required: true
+    maximum-length: 5
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: MAX_STOCK_LVL
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_FULL_ITEM_DESC =======================
+  id: 15154328357215472
+  identification: 
+    name: P21_FULL_ITEM_DESC
+    type: Text Field
+
+  label: 
+    label: 'Full Item Desc<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 5
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 100
+
+  validation: 
+    value-required: true
+    maximum-length: 4000
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: FULL_ITEM_DESC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_HAS_SERIAL_NUMBER ====================
+  id: 15154781288215477
+  identification: 
+    name: P21_HAS_SERIAL_NUMBER
+    type: Text Field
+
+  label: 
+    label: 'Has serial num?<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: Upper
+    submit-when-enter-pressed: true
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 5
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    width: 5
+
+  validation: 
+    value-required: true
+    maximum-length: 1
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: HAS_SERIAL_NUMBER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_BRAND_CODE ===========================
+  id: 15155329714215482
+  identification: 
+    name: P21_BRAND_CODE
+    type: Popup LOV
+
+  label: 
+    label: 'Brand Code<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 60
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--indicatorAsterisk
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      Select brand_code as d,
+      brand_code as r
+      from nim022
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-'
+
+  advanced: 
+    css-classes: 
+    - disableEnter
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      Select n22.brand_code 
+      from nit001 n1
+      join nim022 n22 ON n1.brand_id = n22.brand_id
+      where n1.item_id = :P21_ITEM_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_BRAND_NAME ===========================
+  id: 15155447809215483
+  identification: 
+    name: P21_BRAND_NAME
+    type: Display Only
+
+  label: 
+    label: 'Brand Name:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 70
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_SIC_CODE =============================
+  id: 15155811824215487
+  identification: 
+    name: P21_SIC_CODE
+    type: Popup LOV
+
+  label: 
+    label: 'SIC Code<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 120
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      Select sic_code as d,
+      sic_code as r
+      from nim023
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-'
+
+  advanced: 
+    css-classes: 
+    - disableEnter
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      Select n23.sic_code 
+      from nit001 n1
+      join nim023 n23 ON n1.sic_id = n23.sic_id
+      where n1.item_id = :P21_ITEM_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_SIC_NAME =============================
+  id: 15155928040215488
+  identification: 
+    name: P21_SIC_NAME
+    type: Display Only
+
+  label: 
+    label: SIC Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 130
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_DEPT_CODE ============================
+  id: 15156359029215492
+  identification: 
+    name: P21_DEPT_CODE
+    type: Popup LOV
+
+  label: 
+    label: 'Dept Code<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 150
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT DEPT_CODE as d,
+      dept_code as r
+      from nim024
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-'
+
+  advanced: 
+    css-classes: 
+    - disableEnter
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      Select n24.dept_code 
+      from nit001 n1
+      join nim024 n24 ON n1.dept_id = n24.dept_id
+      where n1.item_id = :P21_ITEM_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_DEPT_NAME ============================
+  id: 15156444850215493
+  identification: 
+    name: P21_DEPT_NAME
+    type: Display Only
+
+  label: 
+    label: Dept Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 160
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_EXCISE_TAX_RATE ======================
+  id: 15164528165215494
+  identification: 
+    name: P21_EXCISE_TAX_RATE
+    type: Number Field
+
+  label: 
+    label: Excise Tax Rate
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 10
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999G999G999G999G990D00
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 8
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: EXCISE_TAX_RATE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_SELLING_PRICE_FACTOR =================
+  id: 15164705254215495
+  identification: 
+    name: P21_SELLING_PRICE_FACTOR
+    type: Number Field
+
+  label: 
+    label: Selling Price Factor
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 20
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999G999G999G999G990D00
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 8
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: SELLING_PRICE_FACTOR
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_CLASS_CODE ===========================
+  id: 15587562107140047
+  identification: 
+    name: P21_CLASS_CODE
+    type: Popup LOV
+
+  label: 
+    label: 'Class Code<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 180
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      select class_code as d,
+      class_code as r
+      from nim025
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-'
+
+  advanced: 
+    css-classes: 
+    - disableEnter
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      Select n25.class_code 
+      from nit001 n1
+      join nim025 n25 ON n1.class_id = n25.class_id
+      where n1.item_id = :P21_ITEM_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_CLASS_NAME ===========================
+  id: 15587756866140048
+  identification: 
+    name: P21_CLASS_NAME
+    type: Display Only
+
+  label: 
+    label: Class Name
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 190
+    region: Update_Item # 15138572679215394
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UOM_ID_1 =============================
+  id: 15843862460764231
+  identification: 
+    name: P21_UOM_ID_1
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: UOM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UPC_1 ================================
+  id: 15843935653764232
+  identification: 
+    name: P21_UPC_1
+    type: Text Field
+
+  label: 
+    label: 'UPC<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Above
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 14
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: UPC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_PRICE_1 ==============================
+  id: 15843974330764233
+  identification: 
+    name: P21_PRICE_1
+    type: Number Field
+
+  label: 
+    label: 'Price<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 90
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Above
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G990D00
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 8
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: PRICE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_QUANTITY_1 ===========================
+  id: 15844543021764238
+  identification: 
+    name: P21_QUANTITY_1
+    type: Number Field
+
+  label: 
+    label: 'Qty<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 50
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Above
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G999G999G990
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 3
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: QUANTITY
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UOM_1 ================================
+  id: 15844714778764240
+  identification: 
+    name: P21_UOM_1
+    type: Popup LOV
+
+  label: 
+    label: 'UOM <span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic with Current Value
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 70
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 10
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: Select UOM_Code from nim026
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-'
+
+  advanced: 
+    css-classes: 
+    - disableEnter
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_ITEM_ID_2 ============================
+  id: 15845108925764244
+  identification: 
+    name: P21_ITEM_ID_2
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: ITEM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  default: 
+    type: Item
+    item: P21_ITEM_ID
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_ITEM_ID_MASTER =======================
+  id: 15846195169764255
+  identification: 
+    name: P21_ITEM_ID_MASTER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: ITEM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UOM_ID_2 =============================
+  id: 15846320186764256
+  identification: 
+    name: P21_UOM_ID_2
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 110
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: UOM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_QUANTITY_2 ===========================
+  id: 15846408064764257
+  identification: 
+    name: P21_QUANTITY_2
+    type: Number Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 130
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G999G999G990
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 3
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: QUANTITY
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UOM_2 ================================
+  id: 15846467302764258
+  identification: 
+    name: P21_UOM_2
+    type: Popup LOV
+
+  label: 
+    label: Uom 2
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic with Current Value
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 160
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 10
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: Select UOM_CODE from NIM026
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-'
+
+  advanced: 
+    css-classes: 
+    - disableEnter
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      SELECT N26.UOM_CODE
+      FROM NIT002 N2
+      JOIN NIM026 N26 ON N2.UOM_ID = N26.UOM_ID
+      WHERE N2.ITEM_ID = :P21_ITEM_ID
+      AND "LEVEL" = 4
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UPC_2 ================================
+  id: 15846582936764259
+  identification: 
+    name: P21_UPC_2
+    type: Text Field
+
+  label: 
+    label: Upc 2
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 170
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 14
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: UPC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_PRICE_2 ==============================
+  id: 15846709221764260
+  identification: 
+    name: P21_PRICE_2
+    type: Number Field
+
+  label: 
+    label: Price 2
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 180
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G990D00
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 8
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: PRICE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_ITEM_ID_IP1 ==========================
+  id: 15847018281764263
+  identification: 
+    name: P21_ITEM_ID_IP1
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 190
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: ITEM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UOM_ID_3 =============================
+  id: 15847155804764264
+  identification: 
+    name: P21_UOM_ID_3
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 200
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: UOM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_ITEM_ID ==============================
+  id: 15859049373764275
+  identification: 
+    name: P21_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Update_Item # 15138572679215394
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item # 15138572679215394
+    column: ITEM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_QUANTITY_3 ===========================
+  id: 16593464202011815
+  identification: 
+    name: P21_QUANTITY_3
+    type: Number Field
+
+  label: 
+    label: Quantity 3
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 220
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G999G999G990
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 3
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: QUANTITY
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UOM_3 ================================
+  id: 16593571417011816
+  identification: 
+    name: P21_UOM_3
+    type: Popup LOV
+
+  label: 
+    label: Uom 3
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 250
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 10
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      Select uom_code as d,
+      uom_code as r 
+      from nim026
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-'
+    null-return-value: NULL
+
+  advanced: 
+    css-classes: 
+    - disableEnter
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UPC_3 ================================
+  id: 16593677270011817
+  identification: 
+    name: P21_UPC_3
+    type: Text Field
+
+  label: 
+    label: Upc 3
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 260
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 14
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: UPC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_PRICE_3 ==============================
+  id: 16593831120011818
+  identification: 
+    name: P21_PRICE_3
+    type: Number Field
+
+  label: 
+    label: Price 3
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 270
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G990D00
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 8
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: PRICE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_ITEM_ID_IP2 ==========================
+  id: 16594100747011821
+  identification: 
+    name: P21_ITEM_ID_IP2
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 280
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: ITEM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UOM_ID_4 =============================
+  id: 16594192310011822
+  identification: 
+    name: P21_UOM_ID_4
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 290
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: UOM_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_QUANTITY_4 ===========================
+  id: 16594325582011823
+  identification: 
+    name: P21_QUANTITY_4
+    type: Number Field
+
+  label: 
+    label: Quantity 4
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 310
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G999G999G990
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 3
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: QUANTITY
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UOM_4 ================================
+  id: 16594368411011824
+  identification: 
+    name: P21_UOM_4
+    type: Popup LOV
+
+  label: 
+    label: Uom 4
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 330
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 10
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      Select uom_code as d,
+      uom_code as r 
+      from nim026
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: '-'
+
+  advanced: 
+    css-classes: 
+    - disableEnter
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      SELECT N26.UOM_CODE
+      FROM NIT002 N2
+      JOIN NIM026 N26 ON N2.UOM_ID = N26.UOM_ID
+      WHERE N2.ITEM_ID = :P21_ITEM_ID
+      AND "LEVEL" = 3
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_UPC_4 ================================
+  id: 16594501324011825
+  identification: 
+    name: P21_UPC_4
+    type: Text Field
+
+  label: 
+    label: Upc 4
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 340
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 14
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: UPC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_PRICE_4 ==============================
+  id: 16594578984011826
+  identification: 
+    name: P21_PRICE_4
+    type: Number Field
+
+  label: 
+    label: Price 4
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 350
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    format-mask: 999G999G999G999G990D00
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 8
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update_Item_UPC # 15842612069764190
+    column: PRICE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_PER ==================================
+  id: 16703213956522914
+  identification: 
+    name: P21_PER
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 60
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-md
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: per
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_EA_PER ===============================
+  id: 16703393610522915
+  identification: 
+    name: P21_EA_PER
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 140
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_EA_PER_1 =============================
+  id: 16703497755522916
+  identification: 
+    name: P21_EA_PER_1
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 230
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_EA_PER_2 =============================
+  id: 16703573818522917
+  identification: 
+    name: P21_EA_PER_2
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 320
+    region: Update_Item_UPC # 15842612069764190
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P21_VENDOR_SEQ ===========================
+  id: 19846853641977032
+  identification: 
+    name: P21_VENDOR_SEQ
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SUBMIT ======================================
+  id: 12917187366686825
+  identification: 
+    button-name: SUBMIT
+    label: Submit
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: submit
+
+- # ====== Button: ADD_VENDOR ==================================
+  id: 12917581706686829
+  identification: 
+    button-name: ADD_VENDOR
+    label: F8 - Add Another Supplier
+
+  layout: 
+    sequence: 100
+    region: Update_Item_1 # 14947798290654200
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 8
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - btnblue
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: clone
+
+- # ====== Button: Exit ========================================
+  id: 12918192993686835
+  identification: 
+    button-name: Exit
+    label: Esc - To Exit
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 9
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:::'
+      page: 4 # Item Masterfile
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+dynamic-actions: 
+- # ====== Dynamic Action: change UOM Master ===================
+  id: 8434346069335985
+  identification: 
+    name: change UOM Master
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_UOM_2
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8434889011335987
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select uom_id from nim026 where uom_code = :P21_UOM_2'
+      items-to-submit: 
+      - P21_UOM_2
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_UOM_ID_2
+
+    execution: 
+      sequence: 10
+      event: change UOM Master # 8434346069335985
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: change UOM IP1 ======================
+  id: 8435211866335987
+  identification: 
+    name: change UOM IP1
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_UOM_3
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8435753808335989
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select uom_id from nim026 where uom_code = :P21_UOM_3'
+      items-to-submit: 
+      - P21_UOM_3
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_UOM_ID_3
+
+    execution: 
+      sequence: 10
+      event: change UOM IP1 # 8435211866335987
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: change UOM IP2 ======================
+  id: 8436165151335989
+  identification: 
+    name: change UOM IP2
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_UOM_4
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8436693320335989
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select uom_id from nim026 where uom_code = :P21_UOM_4'
+      items-to-submit: 
+      - P21_UOM_4
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_UOM_ID_4
+
+    execution: 
+      sequence: 10
+      event: change UOM IP2 # 8436165151335989
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Change_SIC ==========================
+  id: 8437069560335989
+  identification: 
+    name: Change_SIC
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_SIC_CODE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8437550565335990
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select sic_id from nim023 where sic_code = :P21_SIC_CODE'
+      items-to-submit: 
+      - P21_SIC_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_SIC_ID
+
+    execution: 
+      sequence: 10
+      event: Change_SIC # 8437069560335989
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 8438092758335990
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select sic_name from nim023 where sic_code = :P21_SIC_CODE'
+      items-to-submit: 
+      - P21_SIC_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_SIC_NAME
+
+    execution: 
+      sequence: 20
+      event: Change_SIC # 8437069560335989
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Change_brand ========================
+  id: 8438432932335990
+  identification: 
+    name: Change_brand
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_BRAND_CODE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8438948432335990
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'Select brand_id from nim022 where brand_code = :P21_BRAND_CODE'
+      items-to-submit: 
+      - P21_BRAND_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_BRAND_ID
+
+    execution: 
+      sequence: 10
+      event: Change_brand # 8438432932335990
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 8439460770335992
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'Select brand_name from nim022 where brand_code = :P21_BRAND_CODE'
+      items-to-submit: 
+      - P21_BRAND_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_BRAND_NAME
+
+    execution: 
+      sequence: 20
+      event: Change_brand # 8438432932335990
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Change_dept =========================
+  id: 8439855978335992
+  identification: 
+    name: Change_dept
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_DEPT_CODE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8440303021335992
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'Select dept_id from nim024 where dept_code = :P21_DEPT_CODE'
+      items-to-submit: 
+      - P21_DEPT_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_DEPT_ID
+
+    execution: 
+      sequence: 10
+      event: Change_dept # 8439855978335992
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 8440801665335993
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select dept_name from nim024 where dept_code = :P21_DEPT_CODE'
+      items-to-submit: 
+      - P21_DEPT_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_DEPT_NAME
+
+    execution: 
+      sequence: 20
+      event: Change_dept # 8439855978335992
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Change_class ========================
+  id: 8441211871335993
+  identification: 
+    name: Change_class
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_CLASS_CODE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8441784617335993
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select class_id from nim025 where class_code = :P21_CLASS_CODE'
+      items-to-submit: 
+      - P21_CLASS_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_CLASS_ID
+
+    execution: 
+      sequence: 10
+      event: Change_class # 8441211871335993
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 8442246750335995
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select class_name from nim025 where class_code = :P21_CLASS_CODE'
+      items-to-submit: 
+      - P21_CLASS_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_CLASS_NAME
+
+    execution: 
+      sequence: 20
+      event: Change_class # 8441211871335993
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Change UOM smallest =================
+  id: 8442693811335995
+  identification: 
+    name: Change UOM smallest
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_UOM_1
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8443177737335995
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'select uom_id from nim026 where uom_code = :P21_UOM_1'
+      items-to-submit: 
+      - P21_UOM_1
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_UOM_ID_1
+
+    execution: 
+      sequence: 10
+      event: Change UOM smallest # 8442693811335995
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 16706793118522949
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: $v('P21_UOM_1') + ' per'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_EA_PER
+      - P21_EA_PER_1
+      - P21_EA_PER_2
+
+    execution: 
+      sequence: 20
+      event: Change UOM smallest # 8442693811335995
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Retrieve NIT007 Vendor ==============
+  id: 11802784131825324
+  identification: 
+    name: Retrieve NIT007 Vendor
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 11802882698825325
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process("GET_DATA", {
+            pageItems: ["P21_ITEM_ID"]
+        }, {
+            dataType: 'json'
+        })
+        .done((data) => {
+        
+            if (data.length > 0) {
+        
+                $('#P21_VENDOR_CODE').val(data[0].VENDOR_CODE);
+                $('#P21_VENDOR_NAME_DISPLAY').text(data[0].VENDOR_NAME);
+                $('#P21_ITEM_NUMBER').val(data[0].ITEM_NUMBER);
+        
+                let lcf = parseFloat(data[0].LANDED_COST_FACTOR);
+                if (!isNaN(lcf)) {
+                    $('#P21_LANDED_COST_FACTOR').val(lcf.toFixed(2));
+                } else {
+                    $('#P21_LANDED_COST_FACTOR').val('');
+                }
+        
+                $('#P21_VENDOR_LABEL_DISPLAY').text('Vendor 1');
+                $('#P21_VENDOR_SEQ').val(data[0].VENDOR_SEQUENCE);
+        
+        
+        /*
+                original row
+        */
+        
+                data.slice(1).forEach((item, index) => {
+                    
+                    marker++;
+        
+                    let vendorUpdateClone = $(".row.vendors-update").first().clone();
+        
+                    vendorUpdateClone.find("input, select, a-autocomplete, span.display_only.apex-item-display-only").each(function() {
+                        let currentId = $(this).attr('id');
+                        if (currentId) {
+                            let newId = currentId + "_" + marker; 
+                            $(this).attr('id', newId); 
+        
+        
+                            if (newId.includes('VENDOR_CODE')) {
+                                $(this).val(item.VENDOR_CODE);
+                                addVendorCodeChangeListener($(this), vendorUpdateClone);
+                            }
+                            if (newId.includes('VENDOR_NAME_DISPLAY')) {
+                                $(this).text(item.VENDOR_NAME)
+                            }
+                            if (newId.includes('ITEM_NUMBER')) {
+                                $(this).val(item.ITEM_NUMBER);
+                            }
+                            if (newId.includes('LANDED_COST_FACTOR')) {
+                                $(this).val(item.LANDED_COST_FACTOR);
+                            }
+                            if (newId.includes('VENDOR_SEQ')) {
+                                $(this).val(item.VENDOR_SEQUENCE);
+                            }
+        
+                        }
+                    });
+        
+                    vendorUpdateClone.find("span[id*='VENDOR_LABEL_DISPLAY']").text(`Vendor ${marker}`);
+        
+                    vendorUpdateClone.find("span[id*='error_placeholder']").each(function() {
+                    let currentErrorId = $(this).attr('id');
+                    let newErrorId = currentErrorId ? currentErrorId.replace(/(P21_\w+)(_error_placeholder)/, `$1_${marker}$2`) : currentErrorId;
+                    $(this).attr('id', newErrorId).removeClass('u-visible').addClass('u-hidden');
+                    });
+        
+                    vendorUpdateClone.insertAfter($(".row.vendors-update:last"));
+        
+                    let newVendorCodeField = vendorUpdateClone.find("input[id*='VENDOR_CODE']");
+                    addVendorCodeChangeListener(newVendorCodeField, vendorUpdateClone);
+        
+                    let newVendorField = vendorUpdateClone.find("input[id*='VENDOR_CODE']");
+                    let newVendorItemNo = vendorUpdateClone.find("input[id*='ITEM_NUMBER']");
+                    let newLandedCostFactor = vendorUpdateClone.find("input[id*='LANDED_COST_FACTOR']");
+                    vendorCodeBlur(newVendorField, newVendorItemNo, newLandedCostFactor);
+        
+                    let vendorCloneFieldsGroup = [
+                    { id: newVendorCodeField.attr('id'), pattern: 'alphabets' }, 
+                    { id: newVendorItemNo.attr('id'), pattern: 'alphanumeric' }
+                    ];
+        
+                    let vendorLCF = { id: newLandedCostFactor.attr('id'), pattern: 'decimal'};
+        
+                    vendorsLCFArray.push(vendorLCF);
+        
+                    vendorsGroupArray.push(vendorCloneFieldsGroup);
+        
+                });
+            }
+        
+        });
+        
+        
+        
+        
+        
+
+    execution: 
+      sequence: 10
+      event: Retrieve NIT007 Vendor # 11802784131825324
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change Vendor =======================
+  id: 11803625117825333
+  identification: 
+    name: Change Vendor
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P21_VENDOR_CODE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 11803757101825334
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'Select vendor_name from nit006 where vendor_code = :P21_VENDOR_CODE'
+      items-to-submit: 
+      - P21_VENDOR_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P21_VENDOR_NAME
+
+    execution: 
+      sequence: 10
+      event: Change Vendor # 11803625117825333
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Submit ==============================
+  id: 12917231755686826
+  identification: 
+    name: Submit
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SUBMIT # 12917187366686825
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12917380840686827
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.message.clearErrors();
+        
+        validateAllFields(pagePrefix, fieldsToValidate, upcFieldIDs, [optionalFieldsGroup1, optionalFieldsGroup2], vendorsGroupArray, vendorsLCFArray, isUpdatePage, uomFieldIDs, exciseAndSelling).then(isValid => {
+            if (isValid) {
+        
+            let vendorsData = [];
+            $(".row.vendors-update").each(function() {
+                let vendorObj = {
+                    "vendor_code": $(this).find("input[id*='VENDOR_CODE']").val(),
+                    "item_number": $(this).find("input[id*='ITEM_NUMBER']").val(),
+                    "landed_cost_factor": $(this).find("input[id*='LANDED_COST_FACTOR']").val(),
+                    "vendor_sequence": $(this).find("input[id*='VENDOR_SEQ']").val()
+                };
+                vendorsData.push(vendorObj);
+            });
+        
+        
+            let jsonObject = {
+                "item_id": $("#P21_ITEM_ID").val(),
+                "brand_id": $("#P21_BRAND_ID").val(),
+                "sic_id": $("#P21_SIC_ID").val(),
+                "dept_id": $("#P21_DEPT_ID").val(),
+                "class_id": $("#P21_CLASS_ID").val(),
+                "item_desc": $("#P21_ITEM_DESC").val(),
+                "item_num": $("#P21_ITEM_NUM").val(),
+                "min_stock_lvl": $("#P21_MIN_STOCK_LVL").val(),
+                "max_stock_lvl": $("#P21_MAX_STOCK_LVL").val(),
+                "full_item_desc": $("#P21_FULL_ITEM_DESC").val(),
+                "has_serial_number": $("#P21_HAS_SERIAL_NUMBER").val(),
+                "excise_tax_rate": $("#P21_EXCISE_TAX_RATE").val(),
+                "selling_price_factor": $("#P21_SELLING_PRICE_FACTOR").val(),
+                "uom_id_1": $("#P21_UOM_ID_1").val(),
+                "upc_1": $("#P21_UPC_1").val(),
+                "price_1": $("#P21_PRICE_1").val(),
+                "quantity_1": $("#P21_QUANTITY_1").val(),
+                "uom_id_master": $("#P21_UOM_ID_2").val(),
+                "upc_master": $("#P21_UPC_2").val(),
+                "price_master": $("#P21_PRICE_2").val(),
+                "quantity_master": $("#P21_QUANTITY_2").val(),
+                "uom_id_ip1": $("#P21_UOM_ID_3").val(),
+                "upc_ip1": $("#P21_UPC_3").val(),
+                "price_ip1": $("#P21_PRICE_3").val(),
+                "quantity_ip1": $("#P21_QUANTITY_3").val(),
+                "uom_id_ip2": $("#P21_UOM_ID_4").val(),
+                "upc_ip2": $("#P21_UPC_4").val(),
+                "price_ip2": $("#P21_PRICE_4").val(),
+                "quantity_ip2": $("#P21_QUANTITY_4").val(),
+                "vendor_data": vendorsData
+            };
+        
+            console.log(JSON.stringify(jsonObject))
+            // if validation is ok, send data through ajax
+            apex.server.process("SUBMIT_DATA", {
+                p_clob_01: JSON.stringify(jsonObject)
+        
+            },{
+                dataType: 'json'
+            }).done((data) => {
+                
+                let appId = $v('pFlowId');
+                let sessionId = $v('pInstance'); 
+        
+                apex.navigation.redirect('f?p=' + appId + ':4:' + sessionId);
+        
+            }).fail((jqXHR, textStatus, errorThrown) => {
+                console.log("Error")
+                // do error handling
+            }).always(() => {
+                // do tasks which will happen regardless of success or fail
+            });
+        
+            } else {
+        
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Submit # 12917231755686826
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Vendor ==========================
+  id: 12917629116686830
+  identification: 
+    name: Add Vendor
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ADD_VENDOR # 12917581706686829
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12917709640686831
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let vendorUpdateClone = $(".row.vendors-update").first().clone();
+            
+            marker++;
+        
+            vendorUpdateClone.find("input, select, a-autocomplete, span.display_only.apex-item-display-only").each(function() {
+                let currentId = $(this).attr('id');
+                if (currentId) {
+                    let newId = currentId + "_" + marker; 
+                    $(this).attr('id', newId); 
+                    
+                    // Clear the values for the new row fields
+                    if (newId.includes('VENDOR_CODE') || newId.includes('ITEM_NUMBER') || newId.includes('LANDED_COST_FACTOR') || newId.includes('VENDOR_SEQ') ) {
+                        $(this).val('');
+                        $(this).removeClass('apex-page-item-error')
+                    }
+                    if (newId.includes('VENDOR_NAME')) {
+                        $(this).text(''); 
+                    }
+                }
+            });
+        
+        
+            vendorUpdateClone.find("span[id*='VENDOR_LABEL_DISPLAY']").text(`Vendor ${marker}`);
+        
+            vendorUpdateClone.find("span[id*='error_placeholder']").each(function() {
+            let currentErrorId = $(this).attr('id');
+            let newErrorId = currentErrorId ? currentErrorId.replace(/(P21_\w+)(_error_placeholder)/, `$1_${marker}$2`) : currentErrorId;
+            $(this).attr('id', newErrorId).removeClass('u-visible').addClass('u-hidden');
+            });
+        
+        
+            vendorUpdateClone.insertAfter($(".row.vendors-update:last"));
+        
+            vendorUpdateClone.find("input[id*='VENDOR_CODE']").focus();
+        
+            let newVendorCodeField = vendorUpdateClone.find("input[id*='VENDOR_CODE']");
+            addVendorCodeChangeListener(newVendorCodeField, vendorUpdateClone);
+        
+            let newVendorField = vendorUpdateClone.find("input[id*='VENDOR_CODE']");
+            let newVendorItemNo = vendorUpdateClone.find("input[id*='ITEM_NUMBER']");
+            let newLandedCostFactor = vendorUpdateClone.find("input[id*='LANDED_COST_FACTOR']");
+            vendorCodeBlur(newVendorField, newVendorItemNo, newLandedCostFactor);
+        
+            let vendorCloneFieldsGroup = [
+            { id: newVendorCodeField.attr('id'), pattern: 'alphabets' }, 
+            { id: newVendorItemNo.attr('id'), pattern: 'alphanumeric' }
+            ];
+        
+            let vendorLCF = { id: newLandedCostFactor.attr('id'), pattern: 'decimal'};
+        
+            vendorsLCFArray.push(vendorLCF);
+        
+            vendorsGroupArray.push(vendorCloneFieldsGroup);
+            cloneCtr++;
+        
+          
+
+    execution: 
+      sequence: 10
+      event: Add Vendor # 12917629116686830
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Retrieve NIT002 UOM =================
+  id: 12917804759686832
+  identification: 
+    name: Retrieve NIT002 UOM
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12917905102686833
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process("GET_NIT002_DATA", {
+            pageItems: ["P21_ITEM_ID"]
+        }, {
+            dataType: 'json'
+        })
+        .done((data) => {
+            if (data.length > 0) {
+        
+                let firstUOMCode = '';
+                
+                data.forEach((row, index) => {
+                    
+                    
+                    let upcField = $("#P21_UPC_" + (index + 1));
+                    let priceField = $("#P21_PRICE_" + (index + 1)).prop('disabled', true);
+                    let quantityField = $("#P21_QUANTITY_" + (index + 1));
+                    let uomField = $("#P21_UOM_" + (index + 1));
+                    let uomId = $("#P21_UOM_ID_" + (index + 1));
+        
+                    upcField.val(row.UPC);
+                    //priceField.val(row.PRICE).addClass("is-disabled apex_disabled");
+                    let price = parseFloat(row.PRICE);
+                    if (!isNaN(price)) {
+                        priceField.val(price.toFixed(2)).addClass("is-disabled apex_disabled");
+                    } else {
+                        priceField.val('');
+                    }
+        
+                    quantityField.val(row.QUANTITY);
+                    uomId.val(row.UOM_ID)
+                    uomField.val(row.UOM_CODE); 
+        
+                if (index === 0) {
+                    firstUOMCode = row.UOM_CODE;
+                }
+        
+                });
+        
+                if (firstUOMCode) {
+                $("#P21_EA_PER").text(firstUOMCode + " per");
+                $("#P21_EA_PER_1").text(firstUOMCode + " per");
+                $("#P21_EA_PER_2").text(firstUOMCode + " per");
+                }
+            }
+        
+            trackInitialValues(pagePrefix, upcFieldIDs);
+        
+            if ($("#P21_UPC_4").val().trim() === '') {
+            $("#P21_UOM_4").val('');
+            $("#P21_UOM_4_HIDDENVALUE").val('');
+            }
+        
+            if ($("#P21_UPC_3").val().trim() === '') {
+            $("#P21_UOM_3").val('');
+            $("#P21_UOM_3_HIDDENVALUE").val('');
+            }
+        
+        });
+        
+
+    execution: 
+      sequence: 10
+      event: Retrieve NIT002 UOM # 12917804759686832
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Required Brand Code =====================
+  id: 8432857350335982
+  identification: 
+    name: Required Brand Code
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P21_BRAND_CODE
+    always-execute: false
+
+  error: 
+    error-message: |
+      Brand Code is required.
+      
+    display-location: Inline with Field and in Notification
+    associated-item: P21_BRAND_CODE # 15155329714215482
+
+- # ====== Validation: Required SIC Code =======================
+  id: 8433216880335982
+  identification: 
+    name: Required SIC Code
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Item is NOT NULL
+    item: P21_SIC_CODE
+    always-execute: false
+
+  error: 
+    error-message: SIC Code is required.
+    display-location: Inline with Field and in Notification
+    associated-item: P21_SIC_CODE # 15155811824215487
+
+- # ====== Validation: N or Y ==================================
+  id: 8433697312335984
+  identification: 
+    name: N or Y
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ":P21_HAS_SERIAL_NUMBER IN ('N', 'Y')"
+    always-execute: false
+
+  error: 
+    error-message: Has Serial Number? should be N or Y only
+    display-location: Inline with Field and in Notification
+    associated-item: P21_HAS_SERIAL_NUMBER # 15154781288215477
+
+processes: 
+- # ====== Process: Initialize form Update Item UPC ============
+  id: 8420539551335943
+  identification: 
+    name: Initialize form Update Item UPC
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Update_Item_UPC # 15842612069764190
+
+  execution: 
+    sequence: 30
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Initialize form Update Item ================
+  id: 8430274596335960
+  identification: 
+    name: Initialize form Update Item
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Update_Item # 15138572679215394
+
+  execution: 
+    sequence: 20
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process ====================================
+  id: 8433958081335984
+  identification: 
+    name: Process
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE NIT001
+      SET ITEM_NUM = :P21_ITEM_NUM,
+          ITEM_DESC = :P21_ITEM_DESC,
+          FULL_ITEM_DESC = :P21_FULL_ITEM_DESC,
+          BRAND_ID = :P21_BRAND_ID,
+          SIC_ID = :P21_SIC_ID,
+          DEPT_ID = :P21_DEPT_ID,
+          CLASS_ID = :P21_CLASS_ID,
+          HAS_SERIAL_NUMBER = :P21_HAS_SERIAL_NUMBER,
+          MIN_STOCK_LVL = :P21_MIN_STOCK_LVL,
+          MAX_STOCK_LVL = :P21_MAX_STOCK_LVL,
+          EXCISE_TAX_RATE = :P21_EXCISE_TAX_RATE,
+          SELLING_PRICE_FACTOR = :P21_SELLING_PRICE_FACTOR,
+          UPDATE_USER = :APP_USER,
+          UPDATE_DATE = SYSDATE
+      WHERE ITEM_ID = :P21_ITEM_ID;
+      
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Process: GET_DATA ===================================
+  id: 11802914663825326
+  identification: 
+    name: GET_DATA
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor sys_refcursor;
+      begin
+      
+          OPEN l_cursor FOR 
+          SELECT nit006.vendor_code, nit006.vendor_name, nit007.item_number, nit007.landed_cost_factor, nit007.vendor_sequence
+          FROM nit007
+          JOIN nit006 ON nit006.vendor_id = nit007.vendor_id
+          WHERE nit007.item_id = :P21_ITEM_ID
+          ORDER BY nit007.vendor_sequence;
+      
+          APEX_JSON.write(l_cursor);
+      
+      end;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_VENDOR_NAME ============================
+  id: 11803882131825335
+  identification: 
+    name: GET_VENDOR_NAME
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          l_x01 VARCHAR2(10);
+          l_vendor_name  VARCHAR2(100);
+      BEGIN
+      
+          l_x01 := apex_application.g_x01;
+      
+          -- Retrieve vendor name from the table NIT006 based on vendor_code
+          SELECT vendor_name
+          INTO l_vendor_name
+          FROM NIT006
+          WHERE UPPER(vendor_code) = UPPER(l_x01);
+      
+          -- Return the vendor name as a result to the client-side
+          htp.p(l_vendor_name);
+      
+      EXCEPTION
+          -- Handle case where no vendor is found
+          WHEN NO_DATA_FOUND THEN
+              htp.p('');
+          -- Handle other potential errors
+          WHEN OTHERS THEN
+              htp.p('Error retrieving vendor name');
+      END;
+      
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: SUBMIT_DATA ================================
+  id: 12917438143686828
+  identification: 
+    name: SUBMIT_DATA
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          l_json_clob CLOB;
+          l_json json_object_t;
+      
+          l_item_id nit001.item_id%TYPE;
+          l_brand_id nit001.brand_id%type;
+          l_sic_id nit001.sic_id%type;
+          l_dept_id nit001.dept_id%type;
+          l_class_id nit001.class_id%type;
+          l_item_desc nit001.item_desc%type;
+          l_item_num nit001.item_num%type;
+          l_min_stock_lvl nit001.min_stock_lvl%type;
+          l_max_stock_lvl nit001.max_stock_lvl%type;
+          l_full_item_desc nit001.full_item_desc%type;
+          l_has_serial_number nit001.has_serial_number%type;
+          l_excise_tax_rate nit001.excise_tax_rate%type;
+          l_selling_price_factor nit001.selling_price_factor%type;
+          l_uom_id_1 nit002.uom_id%type;
+          l_upc_1 nit002.upc%type;
+          l_price_1 nit002.price%type;
+          l_quantity_1 nit002.quantity%type;
+          l_quantity_master nit002.quantity%type;
+          l_quantity_ip1 nit002.quantity%type;
+          l_quantity_ip2 nit002.quantity%type;
+          l_uom_id_master nit002.uom_id%type;
+          l_upc_master nit002.upc%type;
+          l_price_master nit002.price%type;
+          l_uom_id_ip1 nit002.uom_id%type;
+          l_upc_ip1 nit002.upc%type;
+          l_price_ip1 nit002.price%type;
+          l_uom_id_ip2 nit002.uom_id%type;
+          l_upc_ip2 nit002.upc%type;
+          l_price_ip2 nit002.price%type;
+          l_vendor_code nit006.vendor_code%type;
+          l_vendor_id nit006.vendor_id%type;
+          l_vendor_item_no nit007.item_number%type;
+          l_landed_cost_factor nit007.landed_cost_factor%type;
+          l_vendor_sequence nit007.vendor_sequence%type;
+      
+          l_old_brand_id nit001.brand_id%type;
+          l_old_sic_id nit001.sic_id%type;
+          l_old_dept_id nit001.dept_id%type;
+          l_old_class_id nit001.class_id%type;
+          l_old_item_desc nit001.item_desc%type;
+          l_old_item_num nit001.item_num%type;
+          l_old_min_stock_lvl nit001.min_stock_lvl%type;
+          l_old_max_stock_lvl nit001.max_stock_lvl%type;
+          l_old_full_item_desc nit001.full_item_desc%type;
+          l_old_has_serial_number nit001.has_serial_number%type;
+          l_old_excise_tax_rate nit001.excise_tax_rate%type;
+          l_old_selling_price_factor nit001.selling_price_factor%type;
+      
+          l_old_brand_code nim022.brand_code%type;
+          l_brand_code nim022.brand_code%type;
+          l_old_sic_code nim023.sic_code%type;
+          l_sic_code nim023.sic_code%type;
+          l_old_dept_code nim024.dept_code%type;
+          l_dept_code nim024.dept_code%type;
+          l_old_class_code nim025.class_code%type;
+          l_class_code nim025.class_code%type;
+      
+          l_old_uom_id_1 nit002.uom_id%type; 
+          l_old_upc_1 nit002.upc%type;
+          l_old_quantity_1 nit002.quantity%type; 
+          l_old_uom_code_1 nim026.uom_code%type;
+          l_uom_code_1 nim026.uom_code%type;
+      
+          l_old_uom_id_master nit002.uom_id%type; 
+          l_old_upc_master nit002.upc%type;
+          l_old_quantity_master nit002.quantity%type; 
+          l_old_uom_code_master nim026.uom_code%type;
+          l_uom_code_master nim026.uom_code%type;
+      
+          l_old_uom_id_ip1 nit002.uom_id%type; 
+          l_old_upc_ip1 nit002.upc%type;
+          l_old_quantity_ip1 nit002.quantity%type; 
+          l_old_uom_code_ip1 nim026.uom_code%type;
+          l_uom_code_ip1 nim026.uom_code%type;
+          v_exists_ip1 INTEGER;
+      
+          l_old_uom_id_ip2 nit002.uom_id%type; 
+          l_old_upc_ip2 nit002.upc%type;
+          l_old_quantity_ip2 nit002.quantity%type; 
+          l_old_uom_code_ip2 nim026.uom_code%type;
+          l_uom_code_ip2 nim026.uom_code%type;
+          v_exists_ip2 INTEGER;
+      
+          l_old_vendor_id nit007.vendor_id%type;
+          l_old_vendor_code nit006.vendor_code%type;
+          l_old_vendor_item_no nit007.item_number%type;
+          l_old_landed_cost_factor nit007.landed_cost_factor%type;
+          l_old_vendor_sequence nit007.vendor_sequence%type;
+          v_exists_vendor INTEGER;
+      
+          l_existing_vendor_id nit007.vendor_id%type;
+          v_exists_in_json INTEGER;
+      
+      BEGIN
+      
+          l_json_clob := apex_application.g_clob_01;
+      
+          l_json := json_object_t.parse(l_json_clob);
+      
+          l_item_id := l_json.get_number('item_id');
+          l_brand_id := l_json.get_number('brand_id');
+          l_sic_id := l_json.get_number('sic_id');
+          l_dept_id := l_json.get_number('dept_id');
+          l_class_id := l_json.get_number('class_id');
+          l_item_desc := l_json.get_string('item_desc');
+          l_item_num := l_json.get_string('item_num');
+          l_min_stock_lvl := l_json.get_number('min_stock_lvl');
+          l_max_stock_lvl := l_json.get_number('max_stock_lvl');
+          l_full_item_desc := l_json.get_string('full_item_desc');
+          l_has_serial_number := l_json.get_string('has_serial_number');
+          l_selling_price_factor := l_json.get_number('selling_price_factor');
+          l_excise_tax_rate := l_json.get_number('excise_tax_rate');
+          l_uom_id_1 := l_json.get_number('uom_id_1');
+          l_upc_1 := l_json.get_string('upc_1');
+          l_price_1 := l_json.get_number('price_1');
+          l_quantity_1 := l_json.get_number('quantity_1');
+          l_quantity_master := l_json.get_number('quantity_master');
+          l_uom_id_master := l_json.get_number('uom_id_master');
+          l_upc_master := l_json.get_string('upc_master');
+          l_price_master := l_json.get_number('price_master');
+          l_uom_id_ip1 := l_json.get_number('uom_id_ip1');
+          l_upc_ip1 := l_json.get_string('upc_ip1');
+          l_price_ip1 := l_json.get_number('price_ip1');
+          l_quantity_ip1 := l_json.get_number('quantity_ip1');
+          l_uom_id_ip2 := l_json.get_number('uom_id_ip2');
+          l_upc_ip2 := l_json.get_string('upc_ip2');
+          l_price_ip2 := l_json.get_number('price_ip2');
+          l_quantity_ip2 := l_json.get_number('quantity_ip2');
+      
+      --NIT001
+          SELECT item_desc, full_item_desc, brand_id, sic_id, dept_id, class_id, has_serial_number,
+              min_stock_lvl, max_stock_lvl, excise_tax_rate, selling_price_factor
+          INTO l_old_item_desc, l_old_full_item_desc, l_old_brand_id, l_old_sic_id, l_old_dept_id, l_old_class_id, l_old_has_serial_number,
+              l_old_min_stock_lvl, l_old_max_stock_lvl, l_old_excise_tax_rate, l_old_selling_price_factor
+          FROM NIT001
+          WHERE item_id = l_item_id;
+      
+          IF l_old_item_desc <> l_item_desc THEN
+      	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+              VALUES (l_item_id, 'ITEM DESC', l_old_item_desc, l_item_desc, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_full_item_desc <> l_full_item_desc THEN
+                  INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'FULL ITEM DESC', l_old_full_item_desc, l_full_item_desc, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_has_serial_number <> l_has_serial_number THEN
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'HAS SERIAL NUM', l_old_has_serial_number, l_has_serial_number, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_selling_price_factor <> l_selling_price_factor THEN
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'SELLING PRICE FACTOR', l_old_selling_price_factor, l_selling_price_factor, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_excise_tax_rate <> l_excise_tax_rate THEN
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'EXCISE TAX RATE', l_old_excise_tax_rate, l_excise_tax_rate, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_brand_id <> l_brand_id THEN
+          	SELECT brand_code
+          	INTO l_old_brand_code
+          	FROM NIM022
+          	WHERE brand_id = l_old_brand_id;
+      
+          	SELECT brand_code
+          	INTO l_brand_code
+          	FROM NIM022
+          	WHERE brand_id = l_brand_id;
+          	
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'BRAND CODE', l_old_brand_code, l_brand_code, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_sic_id <> l_sic_id THEN
+          	SELECT sic_code
+          	INTO l_old_sic_code
+          	FROM NIM023
+          	WHERE sic_id = l_old_sic_id;
+      
+          	SELECT sic_code
+          	INTO l_sic_code
+          	FROM NIM023
+          	WHERE sic_id = l_sic_id;
+          	
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'SIC CODE', l_old_sic_code, l_sic_code, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_dept_id <> l_dept_id THEN
+          	SELECT dept_code
+          	INTO l_old_dept_code
+          	FROM NIM024
+          	WHERE dept_id = l_old_dept_id;
+      
+          	SELECT dept_code
+          	INTO l_dept_code
+          	FROM NIM024
+          	WHERE dept_id = l_dept_id;
+          	
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'DEPT CODE', l_old_dept_code, l_dept_code, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_class_id <> l_class_id THEN
+          	SELECT class_code
+          	INTO l_old_class_code
+          	FROM NIM025
+          	WHERE class_id = l_old_class_id;
+      
+          	SELECT class_code
+          	INTO l_class_code
+          	FROM NIM025
+          	WHERE class_id = l_class_id;
+          	
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'CLASS CODE', l_old_class_code, l_class_code, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          UPDATE NIT001
+          SET item_desc = l_item_desc,
+              full_item_desc = l_full_item_desc,
+              brand_id = l_brand_id,
+              sic_id = l_sic_id,
+              dept_id = l_dept_id,
+              class_id = l_class_id,
+              has_serial_number = l_has_serial_number,
+              min_stock_lvl = l_min_stock_lvl,
+              max_stock_lvl = l_max_stock_lvl,
+              excise_tax_rate = l_excise_tax_rate,
+              selling_price_factor = l_selling_price_factor,
+              update_user = :APP_USER,
+              update_date = SYSDATE
+          WHERE item_id = l_item_id;
+      
+      --NIT002
+      --smallest
+          SELECT uom_id, upc, quantity
+          INTO l_old_uom_id_1, l_old_upc_1, l_old_quantity_1
+          FROM NIT002
+          WHERE item_id = l_item_id
+          AND "LEVEL" = 1;
+      
+          IF l_old_uom_id_1 <> l_uom_id_1 THEN
+          	SELECT uom_code
+          	INTO l_old_uom_code_1
+          	FROM NIM026
+          	WHERE uom_id = l_old_uom_id_1;
+      
+          	SELECT uom_code
+          	INTO l_uom_code_1
+          	FROM NIM026
+          	WHERE uom_id = l_uom_id_1;
+          	
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+              VALUES (l_item_id, 'UOM', l_old_uom_code_1, l_uom_code_1, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+          IF l_old_upc_1 <> l_upc_1 THEN
+      	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+              VALUES (l_item_id, 'UPC', l_old_upc_1, l_upc_1, :APP_USER, SYSTIMESTAMP);
+          END IF; 
+      
+          IF l_old_quantity_1 <> l_quantity_1 THEN
+      	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+              VALUES (l_item_id, 'QUANTITY', l_old_quantity_1, l_quantity_1, :APP_USER, SYSTIMESTAMP);
+          END IF; 
+      
+          UPDATE NIT002
+          SET UOM_ID = l_uom_id_1,
+              UPC = l_upc_1,
+              QUANTITY = l_quantity_1,
+              UPDATE_USER = :app_user,
+              UPDATE_DATE = SYSDATE
+          WHERE item_id = l_item_id
+          AND "LEVEL" = 1;
+      
+          SELECT uom_id, upc, quantity
+          INTO l_old_uom_id_master, l_old_upc_master, l_old_quantity_master
+          FROM NIT002
+          WHERE item_id = l_item_id
+          AND "LEVEL" = 4;
+      
+      --master
+       IF l_old_uom_id_master <> l_uom_id_master THEN
+          	SELECT uom_code
+          	INTO l_old_uom_code_master
+          	FROM NIM026
+          	WHERE uom_id = l_old_uom_id_master;
+      
+          	SELECT uom_code
+          	INTO l_uom_code_master
+          	FROM NIM026
+          	WHERE uom_id = l_uom_id_master;
+          	
+          	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+              VALUES (l_item_id, 'UOM', l_old_uom_code_master, l_uom_code_master, :APP_USER, SYSTIMESTAMP);
+          END IF;
+      
+      
+          IF l_old_upc_master <> l_upc_master THEN
+      	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+              VALUES (l_item_id, 'UPC', l_old_upc_master, l_upc_master, :APP_USER, SYSTIMESTAMP);
+          END IF; 
+      
+         IF l_old_quantity_master <> l_quantity_master THEN
+      	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+              VALUES (l_item_id, 'QUANTITY', l_old_quantity_master, l_quantity_master, :APP_USER, SYSTIMESTAMP);
+          END IF; 
+      
+          UPDATE NIT002
+          SET UOM_ID = l_uom_id_master,
+              UPC = l_upc_master,
+              QUANTITY = l_quantity_master,
+              UPDATE_USER = :app_user,
+              UPDATE_DATE = SYSDATE
+          WHERE item_id = l_item_id
+          AND "LEVEL" = 4;
+      
+      --ip1
+      IF l_uom_id_ip1 IS NOT NULL AND l_upc_ip1 IS NOT NULL THEN
+      
+      	    SELECT COUNT(*)
+              INTO v_exists_ip1
+              FROM NIT002
+              WHERE item_id = l_item_id
+              AND "LEVEL" = 2;
+      
+          IF v_exists_ip1 > 0 THEN
+      
+      		    SELECT uom_id, upc, quantity
+          		INTO l_old_uom_id_ip1, l_old_upc_ip1, l_old_quantity_ip1
+          		FROM NIT002
+          		WHERE item_id = l_item_id
+          		AND "LEVEL" = 2;
+      /*
+              IF l_uom_id_ip1 IS NULL OR l_upc_ip1 IS NULL OR l_price_ip1 IS NULL OR l_quantity_ip1 IS NULL THEN
+                  DELETE FROM NIT002
+                  WHERE item_id = l_item_id
+                  AND "LEVEL" = 2;
+      
+                  INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'Inner Pack 1', 'Existing values', 'Deleted', :APP_USER, SYSTIMESTAMP);
+      
+              ELSE
+      */
+      
+          		IF l_old_uom_id_ip1 <> l_uom_id_ip1 THEN
+              		SELECT uom_code
+              		INTO l_old_uom_code_ip1
+              		FROM NIM026
+              		WHERE uom_id = l_old_uom_id_ip1;
+      
+              		SELECT uom_code
+              		INTO l_uom_code_ip1
+              		FROM NIM026
+              		WHERE uom_id = l_uom_id_ip1;
+              	
+              		INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                      	VALUES (l_item_id, 'UOM', l_old_uom_code_ip1, l_uom_code_ip1, :APP_USER, SYSTIMESTAMP);
+              	END IF;
+      
+              	IF l_old_upc_ip1 <> l_upc_ip1 THEN
+          	    	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  	VALUES (l_item_id, 'UPC', l_old_upc_ip1, l_upc_ip1, :APP_USER, SYSTIMESTAMP);
+              	END IF; 
+          	
+             		IF l_old_quantity_ip1 <> l_quantity_ip1 THEN
+          	    	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  	VALUES (l_item_id, 'QUANTITY', l_old_quantity_ip1, l_quantity_ip1, :APP_USER, SYSTIMESTAMP);
+              	END IF; 
+          	
+                      UPDATE NIT002
+                      SET UOM_ID = l_uom_id_ip1,
+                          UPC = l_upc_ip1,
+                          QUANTITY = l_quantity_ip1,
+                          UPDATE_USER = :app_user,
+                          UPDATE_DATE = SYSDATE
+                      WHERE item_id = l_item_id
+                      AND "LEVEL" = 2;
+      --    	END IF;
+      	    ELSE
+      
+              	SELECT uom_code
+              	INTO l_uom_code_ip1
+              	FROM NIM026
+              	WHERE uom_id = l_uom_id_ip1;
+      
+                  INSERT INTO NIT002 (item_id, UOM_ID, UPC, PRICE, QUANTITY, "LEVEL", CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE)
+                  VALUES (l_item_id, l_uom_id_ip1, l_upc_ip1, l_price_ip1, l_quantity_ip1, 2, :app_user, SYSDATE, :app_user, SYSDATE);
+      
+                  INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'UOM', '-', l_uom_code_ip1, :APP_USER, SYSTIMESTAMP);
+      
+          	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'UPC', '-', l_upc_ip1, :APP_USER, SYSTIMESTAMP);
+          	
+          	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'QUANTITY', '-', l_quantity_ip1, :APP_USER, SYSTIMESTAMP);
+      
+                  INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'PRICE', '-', l_price_ip1, :APP_USER, SYSTIMESTAMP);
+      
+      
+          END IF;
+      END IF;
+      
+          -- ip2
+      IF l_uom_id_ip2 IS NOT NULL AND l_upc_ip2 IS NOT NULL THEN
+      
+      	    SELECT COUNT(*)
+              INTO v_exists_ip2
+              FROM NIT002
+              WHERE item_id = l_item_id
+              AND "LEVEL" = 3;
+      
+          IF v_exists_ip2 > 0 THEN
+      
+      		SELECT uom_id, upc, quantity
+          		INTO l_old_uom_id_ip2, l_old_upc_ip2, l_old_quantity_ip2
+          		FROM NIT002
+          		WHERE item_id = l_item_id
+          		AND "LEVEL" = 3;
+          /*
+              IF l_uom_id_ip2 IS NULL OR l_upc_ip2 IS NULL OR l_quantity_ip2 IS NULL THEN
+                  DELETE FROM NIT002
+                  WHERE item_id = l_item_id
+                  AND "LEVEL" = 3;
+      
+                  INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'Inner Pack 2', 'Existing values', 'Deleted', :APP_USER, SYSTIMESTAMP);
+      
+              ELSE
+          */
+          		IF l_old_uom_id_ip2 <> l_uom_id_ip2 THEN
+              		SELECT uom_code
+              		INTO l_old_uom_code_ip2
+              		FROM NIM026
+              		WHERE uom_id = l_old_uom_id_ip2;
+      
+              		SELECT uom_code
+              		INTO l_uom_code_ip2
+              		FROM NIM026
+              		WHERE uom_id = l_uom_id_ip2;
+              	
+              		INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                      VALUES (l_item_id, 'UOM', l_old_uom_code_ip2, l_uom_code_ip2, :APP_USER, SYSTIMESTAMP);
+              	END IF;
+      
+              	IF l_old_upc_ip2 <> l_upc_ip2 THEN
+          	    	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  	VALUES (l_item_id, 'UPC', l_old_upc_ip2, l_upc_ip2, :APP_USER, SYSTIMESTAMP);
+              	END IF; 
+          	
+             		IF l_old_quantity_ip2 <> l_quantity_ip2 THEN
+          	    	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  	VALUES (l_item_id, 'QUANTITY', l_old_quantity_ip2, l_quantity_ip2, :APP_USER, SYSTIMESTAMP);
+              	END IF; 
+          	
+                      UPDATE NIT002
+                      SET UOM_ID = l_uom_id_ip2,
+                          UPC = l_upc_ip2,
+                          QUANTITY = l_quantity_ip2,
+                          UPDATE_USER = :app_user,
+                          UPDATE_DATE = SYSDATE
+                      WHERE item_id = l_item_id
+                      AND "LEVEL" = 3;
+      --        END IF;
+      	ELSE
+      
+                  SELECT uom_code
+              	INTO l_uom_code_ip2
+              	FROM NIM026
+              	WHERE uom_id = l_uom_id_ip1;
+      
+                  INSERT INTO NIT002 (item_id, UOM_ID, UPC, PRICE, QUANTITY, "LEVEL", CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE)
+                  VALUES (l_item_id, l_uom_id_ip2, l_upc_ip2, l_price_ip2, l_quantity_ip2, 3, :app_user, SYSDATE, :app_user, SYSDATE);
+      
+                  INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'UOM', '-', l_uom_code_ip2, :APP_USER, SYSTIMESTAMP);
+      
+          	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'UPC', '-', l_upc_ip2, :APP_USER, SYSTIMESTAMP);
+          	
+          	    INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'QUANTITY', '-', l_quantity_ip2, :APP_USER, SYSTIMESTAMP);
+      
+                  INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                  VALUES (l_item_id, 'PRICE', '-', l_price_ip2, :APP_USER, SYSTIMESTAMP);
+      
+      
+          END IF;
+      END IF;
+      
+          -- Handle vendor data
+          FOR rec IN (
+              SELECT *
+              FROM JSON_TABLE(
+                  l_json_clob, '$.vendor_data[*]'
+                  COLUMNS (
+                      vendor_code VARCHAR2(50) PATH '$.vendor_code',
+                      vendor_item_no VARCHAR2(50) PATH '$.item_number',
+                      landed_cost_factor NUMBER PATH '$.landed_cost_factor',
+                      vendor_sequence NUMBER PATH '$.vendor_sequence'
+                  )
+              )
+          ) LOOP
+              l_vendor_code := rec.vendor_code;
+              l_vendor_item_no := rec.vendor_item_no;
+              l_landed_cost_factor := rec.landed_cost_factor;
+              l_vendor_sequence := rec.vendor_sequence;
+      
+              -- Retrieve vendor_id from NIT006
+              IF l_vendor_code IS NOT NULL THEN
+                  SELECT vendor_id
+                  INTO l_vendor_id
+                  FROM NIT006
+                  WHERE vendor_code = l_vendor_code;
+              END IF;
+      
+              SELECT COUNT(*)
+              INTO v_exists_vendor
+              FROM NIT007
+              WHERE item_id = l_item_id
+              AND vendor_sequence = l_vendor_sequence;
+      
+      
+              IF v_exists_vendor > 0 THEN
+      
+                  SELECT vendor_id, ITEM_NUMBER, landed_cost_factor
+                  INTO l_old_vendor_id, l_old_vendor_item_no, l_old_landed_cost_factor
+                  FROM NIT007
+                  WHERE item_id = l_item_id
+                  AND vendor_sequence = l_vendor_sequence;
+                
+                  SELECT vendor_code
+                  INTO l_old_vendor_code
+                  FROM NIT006
+                  WHERE vendor_id = l_old_vendor_id;
+      
+                  IF l_vendor_code IS NOT NULL AND l_vendor_item_no IS NOT NULL THEN
+      
+                      IF l_old_vendor_id <> l_vendor_id THEN
+                          INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                      	VALUES (l_item_id, 'VENDOR CODE', l_old_vendor_code, l_vendor_code, :APP_USER, SYSTIMESTAMP);
+              		END IF;
+      
+                      IF l_old_vendor_item_no <> l_vendor_item_no THEN
+              	    	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                      	VALUES (l_item_id, 'VENDOR ITEM NO', l_old_vendor_item_no, l_vendor_item_no, :APP_USER, SYSTIMESTAMP);
+              		END IF; 
+      
+                      IF NVL(l_old_landed_cost_factor, 0) <> NVL(l_landed_cost_factor, 0) THEN
+              	    	INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                      	VALUES (l_item_id, 'LANDED COST FACTOR', NVL(l_old_landed_cost_factor, 0), l_landed_cost_factor, :APP_USER, SYSTIMESTAMP);
+              		END IF; 
+      
+                      UPDATE NIT007
+                      SET VENDOR_ID = l_vendor_id,
+                          ITEM_NUMBER = l_vendor_item_no,
+                          LANDED_COST_FACTOR = l_landed_cost_factor,
+                          UPDATE_USER = :app_user,
+                          UPDATE_DATE = SYSDATE
+                      WHERE item_id = l_item_id
+                      AND vendor_sequence = l_vendor_sequence;
+      /*
+                  ELSE
+                      DELETE FROM NIT007
+                      WHERE item_id = l_item_id
+                      AND vendor_sequence = l_vendor_sequence;
+                      
+                      INSERT INTO NIT003 (item_id, changed_column_name, old_value, new_value, create_user, create_date)
+                      VALUES (l_item_id, 'VENDOR CODE', l_old_vendor_code, 'DELETED', :APP_USER, SYSTIMESTAMP);
+      */
+                  END IF;
+      
+              ELSE
+                  INSERT INTO NIT007 (item_id, vendor_id, ITEM_NUMBER, LANDED_COST_FACTOR, CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE, VENDOR_SEQUENCE)
+                  VALUES (l_item_id, l_vendor_id, l_vendor_item_no, l_landed_cost_factor, :app_user, SYSDATE, :app_user, SYSDATE, (SELECT NVL(MAX(vendor_sequence), 0) + 1 FROM NIT007 WHERE item_id = l_item_id) );
+              END IF;
+      
+          END LOOP;
+      
+          apex_util.set_session_state('SUCCESS_MSG', 'Item updated successfully');
+      
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.close_object;
+      
+      EXCEPTION
+          WHEN OTHERS THEN
+              apex_json.open_object;
+              apex_json.write('message', 'Error: ' || SQLERRM);
+              apex_json.close_object;
+              RAISE;
+      END;
+      
+
+  execution: 
+    sequence: 30
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_NIT002_DATA ============================
+  id: 12918008062686834
+  identification: 
+    name: GET_NIT002_DATA
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          l_item_id NUMBER := :P21_ITEM_ID;
+          l_uom_code NIM026.UOM_CODE%TYPE;
+      BEGIN
+          -- Retrieve data from NIT002 based on ITEM_ID and order by custom levels 1, 4, 2, 3
+          apex_json.open_array;
+      
+          FOR rec IN (SELECT upc, price, quantity, "LEVEL", uom_id 
+                      FROM nit002 
+                      WHERE item_id = l_item_id
+                      ORDER BY CASE 
+                                  WHEN "LEVEL" = 1 THEN 1
+                                  WHEN "LEVEL" = 4 THEN 2
+                                  WHEN "LEVEL" = 2 THEN 3
+                                  WHEN "LEVEL" = 3 THEN 4
+                               END) LOOP
+      
+              apex_json.open_object;
+              apex_json.write('UPC', rec.upc);
+              apex_json.write('PRICE', rec.price);
+              apex_json.write('QUANTITY', rec.quantity);
+              apex_json.write('UOM_ID', rec.uom_id);
+              
+              -- Retrieve the UOM_CODE based on the UOM_ID from NIM026
+              SELECT uom_code INTO l_uom_code FROM nim026 WHERE uom_id = rec.uom_id;
+              apex_json.write('UOM_CODE', l_uom_code);
+      
+              apex_json.close_object;
+          END LOOP;
+      
+          apex_json.close_array;
+      END;
+      
+
+  execution: 
+    sequence: 40
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CHECK_UPC_PROCESS ==========================
+  id: 16702880172522910
+  identification: 
+    name: CHECK_UPC_PROCESS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          l_upc VARCHAR2(50) := apex_application.g_x01;
+          l_count NUMBER;
+      BEGIN
+          -- Check if UPC exists in the NIT002 table
+          SELECT COUNT(*)
+          INTO l_count
+          FROM NIT002
+          WHERE UPPER(upc) = UPPER(l_upc);
+      
+          -- Return JSON response
+          apex_json.open_object;
+          IF l_count > 0 THEN
+              apex_json.write('upc_exists', true);
+          ELSE
+              apex_json.write('upc_exists', false);
+          END IF;
+          apex_json.close_object;
+      END;
+      
+
+  execution: 
+    sequence: 50
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CHECK_ITEM_UNIQUE ==========================
+  id: 16702948328522911
+  identification: 
+    name: CHECK_ITEM_UNIQUE
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          l_count NUMBER;
+          l_item_num VARCHAR2(50) := apex_application.g_x01;
+          l_item_desc VARCHAR2(50) := apex_application.g_x02;
+      BEGIN
+          SELECT COUNT(*)
+          INTO l_count
+          FROM NIT001
+          WHERE UPPER(item_num) = UPPER(l_item_num)
+          AND UPPER(item_desc) = UPPER(l_item_desc);
+      
+      
+          IF l_count > 0 THEN
+      
+              apex_json.open_object;
+              apex_json.write('success', false);
+              apex_json.close_object;
+          ELSE
+      
+              apex_json.open_object;
+              apex_json.write('success', true);
+              apex_json.close_object;
+          END IF;
+      EXCEPTION
+          WHEN OTHERS THEN
+      
+              apex_json.open_object;
+              apex_json.write('success', false);
+              apex_json.write('error_message', SQLERRM);
+              apex_json.close_object;
+      END;
+      
+
+  execution: 
+    sequence: 60
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

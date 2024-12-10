@@ -1,0 +1,1204 @@
+---
+# ====== Page: Collection and Outstanding (Collections Entry) 
+id: 151
+identification: 
+  name: Collection and Outstanding (Collections Entry) - Collection Type Utilities
+  alias: COLLECTION-AND-OUTSTANDING-COLLECTIONS-ENTRY-COLLECTION-TYPE-UTILITIES
+  title: Collection and Outstanding (Collections Entry) - Collection Type Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  execute-when-page-loads: setTitle('Collection and Outstanding (Collections Entry) - Collection type Utilities');
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #collection-type .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #collection-type .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #collection-type .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #collection-type .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+     
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #collection-type table,
+    #collection-type tr,
+    #collection-type td{
+        font-size: 1.125rem;
+        border: 0.0625rem solid black;
+    }
+    
+    #collection-type th{
+            font-size: 1rem;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: black;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .btns{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    .ui-dialog-title{
+        font-size : 1.25rem;
+    }
+    .text-white{
+        color:white;
+    }
+    .text-black{
+        color: black;
+    }
+    .t-Form-labelContainer.col.col-1{
+            text-align: start;
+    }
+    .t-Form-label{
+        font-size:1.125rem;
+        color:white;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Collection type Utilities ===================
+  id: 35238167932472447
+  identification: 
+    name: Collection type Utilities
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select COLLECTION_ID,
+             COLLECTION_TYPE_NAME,
+             COLLECTION_TYPE_DESCRIPTION,
+             USER_CREATED,
+             DATE_CREATED,
+             USER_UPDATED,
+             DATE_UPDATED
+        from NPM015
+        where ( (:P151_SEARCH_NAME IS NOT NULL AND UPPER(COLLECTION_TYPE_NAME) LIKE UPPER('%'||:P151_SEARCH_NAME||'%'))
+                  OR (:P151_SEARCH_NAME IS NULL AND :P151_SEARCH_DESC IS NOT NULL AND UPPER(COLLECTION_TYPE_DESCRIPTION) LIKE UPPER('%'||:P151_SEARCH_DESC||'%'))
+                  OR (:P151_SEARCH_NAME IS NULL AND :P151_SEARCH_DESC IS NULL)
+              )
+    page-items-to-submit: 
+    - P151_SEARCH_NAME
+    - P151_SEARCH_DESC
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: collection-type
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 35238288788472448
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 41227532664394607
+      identification: 
+        name: Primary Report
+        alias: 412276
+
+  columns: 
+  - # ====== Column: COLLECTION_ID ===============================
+    id: 35238339695472449
+    identification: 
+      column-name: COLLECTION_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: COLLECTION_ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: COLLECTION_TYPE_NAME ========================
+    id: 35238498540472450
+    identification: 
+      column-name: COLLECTION_TYPE_NAME
+      type: Text Field
+
+    heading: 
+      heading: Collection Type Name
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 20
+
+    source: 
+      type: Database Column
+      database-column: COLLECTION_TYPE_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: COLLECTION_TYPE_DESCRIPTION =================
+    id: 41221955104388901
+    identification: 
+      column-name: COLLECTION_TYPE_DESCRIPTION
+      type: Text Field
+
+    heading: 
+      heading: Collection Type Description
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 100
+
+    source: 
+      type: Database Column
+      database-column: COLLECTION_TYPE_DESCRIPTION
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: USER_CREATED ================================
+    id: 41222086925388902
+    identification: 
+      column-name: USER_CREATED
+      type: Text Field
+
+    heading: 
+      heading: Created User
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 50
+
+    source: 
+      type: Database Column
+      database-column: USER_CREATED
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: DATE_CREATED ================================
+    id: 41222177200388903
+    identification: 
+      column-name: DATE_CREATED
+      type: Date Picker
+
+    heading: 
+      heading: Date Created
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: DATE_CREATED
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: USER_UPDATED ================================
+    id: 41222224125388904
+    identification: 
+      column-name: USER_UPDATED
+      type: Text Field
+
+    heading: 
+      heading: Last Updated By
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 50
+
+    source: 
+      type: Database Column
+      database-column: USER_UPDATED
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: DATE_UPDATED ================================
+    id: 41222396983388905
+    identification: 
+      column-name: DATE_UPDATED
+      type: Date Picker
+
+    heading: 
+      heading: Date Updated
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: DATE_UPDATED
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Page Controls ===============================
+  id: 41222423815388906
+  identification: 
+    name: Page Controls
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P151_COLLECTION_ID =======================
+  id: 41224440757388926
+  identification: 
+    name: P151_COLLECTION_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P151_PREPARED_URL ========================
+  id: 41224769872388929
+  identification: 
+    name: P151_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P151_SEARCH_NAME =========================
+  id: 42621451790340719
+  identification: 
+    name: P151_SEARCH_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P151_SEARCH_DESC =========================
+  id: 42621512790340720
+  identification: 
+    name: P151_SEARCH_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD =========================================
+  id: 41222543075388907
+  identification: 
+    button-name: ADD
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Page Controls # 41222423815388906
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:152:&SESSION.::&DEBUG.:152::'
+      page: 152 # Collection type utilities add/update
+      clear-cache: 152
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: UPDATE ======================================
+  id: 41222656007388908
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Page Controls # 41222423815388906
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: PRINT =======================================
+  id: 41222732736388909
+  identification: 
+    button-name: PRINT
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 30
+    region: Page Controls # 41222423815388906
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: EXPORT ======================================
+  id: 41222825782388910
+  identification: 
+    button-name: EXPORT
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 40
+    region: Page Controls # 41222423815388906
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: h
+
+- # ====== Button: SEARCH ======================================
+  id: 41223052183388912
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 50
+    region: Page Controls # 41222423815388906
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:153:&SESSION.::&DEBUG.:153::'
+      page: 153 # Collection Type Search
+      clear-cache: 153
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+dynamic-actions: 
+- # ====== Dynamic Action: Go to Update Modal ==================
+  id: 41224228691388924
+  identification: 
+    name: Go to Update Modal
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UPDATE # 41222656007388908
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41224335302388925
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.navigation.redirect($v('P151_PREPARED_URL'));
+
+    execution: 
+      sequence: 20
+      event: Go to Update Modal # 41224228691388924
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 41224803860388930
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        :P151_PREPARED_URL := apex_page.get_url(
+            p_clear_cache => 152,
+            p_page => 152,
+            p_items => 'P152_COLLECTION_ID_1',
+            p_values => :P151_COLLECTION_ID
+        );
+      items-to-submit: 
+      - P151_COLLECTION_ID
+      items-to-return: 
+      - P151_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Go to Update Modal # 41224228691388924
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On Table Item Selection =============
+  id: 41224521238388927
+  identification: 
+    name: On Table Item Selection
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Collection type Utilities # 35238167932472447
+
+  actions: 
+  - # ====== Action: Change Collection ID ========================
+    id: 41224650995388928
+    identification: 
+      name: Change Collection ID
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: getSelectedIGRecord('collection-type');
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P151_COLLECTION_ID
+
+    execution: 
+      sequence: 10
+      event: On Table Item Selection # 41224521238388927
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: New =================================
+  id: 41225001788388932
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 41225101265388933
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Collection type Utilities # 35238167932472447
+
+    execution: 
+      sequence: 30
+      event: New # 41225001788388932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Search Dialog close ==============
+  id: 42622133805340726
+  identification: 
+    name: On Search Dialog close
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: SEARCH # 41223052183388912
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 42621816762340723
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P153_COLLECTION_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P151_SEARCH_NAME
+
+    execution: 
+      sequence: 10
+      event: On Search Dialog close # 42622133805340726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 42621937105340724
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P153_COLLECTION_DESCRIPTION
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P151_SEARCH_DESC
+
+    execution: 
+      sequence: 20
+      event: On Search Dialog close # 42622133805340726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 42622264043340727
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Page Controls # 41222423815388906
+
+    execution: 
+      sequence: 40
+      event: On Search Dialog close # 42622133805340726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+computations: 
+- # ====== Computation: P151_SEARCH_NAME =======================
+  id: 42621632824340721
+  identification: 
+    item-name: P151_SEARCH_NAME
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P151_SEARCH_DESC =======================
+  id: 42621704687340722
+  identification: 
+    item-name: P151_SEARCH_DESC
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+

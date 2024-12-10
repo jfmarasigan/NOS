@@ -1,0 +1,683 @@
+---
+# ====== Page: Pricing Type Utility Update ===================
+id: 183
+identification: 
+  name: Pricing Type Utility Update
+  alias: PRICING-TYPE-UTILITY-UPDATE
+  title: Update
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 40rem
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p183KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+           let activeElement = document.activeElement;
+    
+            if ($(activeElement).is('input')) {
+                var currentField = $(activeElement);
+                var allInputs = $('input:visible:enabled');
+                var currentIndex = allInputs.index(currentField); 
+                var nextField = allInputs.eq(currentIndex + 1);
+    
+                if (currentIndex === allInputs.length - 1) {
+                    $("#submit").trigger("click");
+                } else {
+                    nextField.focus();
+                }
+            } else {
+                $("#submit").trigger("click"); 
+            }
+        }
+    
+    }
+    
+    
+    function mapP183Keys() {
+        $(document).off('keydown.p183keyevents');
+        $(document).on('keydown.p183keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p183KeyMap[key]) {
+                ev.preventDefault();
+                p183KeyMap[key]();
+            }
+        });
+    }
+    
+    
+  execute-when-page-loads: |
+    mapP183Keys();
+    
+    $x('P183_PRICING_TYPE_CODE').focus();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+    }
+    
+    .t-Dialog-body label, .t-Dialog-body input, .t-Dialog-body .apex-item-display-only {
+        font-size: 1.125rem;
+    }
+    
+    .t-Dialog-body label {
+        color: white;
+    }
+    
+    .t-Region-body{
+        background-color: #056AC8;
+        padding-bottom: 0;
+    }
+    
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; 
+    }
+    
+    
+    .white-text {
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .t-Form-error {
+        color: #FFD700;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Form / Table ================================
+  id: 278867423727450029
+  identification: 
+    name: Form / Table
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM032
+    include-rowid-column: false
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P183_PRICING_TYPE_ID =====================
+  id: 82362890676824292
+  identification: 
+    name: P183_PRICING_TYPE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Form / Table # 278867423727450029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 278867423727450029
+    column: PRICING_TYPE_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P183_PRICING_TYPE_CODE ===================
+  id: 82362944534824293
+  identification: 
+    name: P183_PRICING_TYPE_CODE
+    type: Text Field
+
+  label: 
+    label: 'Code<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: Upper
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Form / Table # 278867423727450029
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+    label-column-span: 3
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 5
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 278867423727450029
+    column: PRICING_TYPE_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P183_PRICING_TYPE_DESCRIPTION ============
+  id: 82363030394824294
+  identification: 
+    name: P183_PRICING_TYPE_DESCRIPTION
+    type: Text Field
+
+  label: 
+    label: 'Description<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Form / Table # 278867423727450029
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - margin-right-sm
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 30
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 278867423727450029
+    column: PRICING_TYPE_DESCRIPTION
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P183_CREATE_USER =========================
+  id: 269125469390750221
+  identification: 
+    name: P183_CREATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Form / Table # 278867423727450029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 278867423727450029
+    column: CREATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P183_CREATE_DATE =========================
+  id: 269125549671750222
+  identification: 
+    name: P183_CREATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Form / Table # 278867423727450029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 278867423727450029
+    column: CREATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSTIMESTAMP
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P183_UPDATE_USER =========================
+  id: 269125681593750223
+  identification: 
+    name: P183_UPDATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Form / Table # 278867423727450029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 278867423727450029
+    column: UPDATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P183_UPDATE_DATE =========================
+  id: 269125817662750224
+  identification: 
+    name: P183_UPDATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Form / Table # 278867423727450029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 278867423727450029
+    column: UPDATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSTIMESTAMP
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 41775575836854045
+  identification: 
+    button-name: Enter
+    label: Press enter to add
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - white-text
+    - hiddenbtn
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL INSERT action
+
+  advanced: 
+    static-id: submit
+    custom-attributes: 
+    - tabindex="-1"
+
+dynamic-actions: 
+- # ====== Dynamic Action: Disable Code ========================
+  id: 41783014787876101
+  identification: 
+    name: Disable Code
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41783120251876102
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#P183_PRICING_TYPE_CODE").addClass("is-disabled apex_disabled")
+        .prop("readonly", true)
+        .attr("tabindex", "-1")
+        .on("focus mousedown", function(e) { 
+            e.preventDefault();});
+        
+
+    execution: 
+      sequence: 10
+      event: Disable Code # 41783014787876101
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Rows returned
+      sql-query: |
+        SELECT PRICING_TYPE_CODE FROM NIM032
+        WHERE TRUNC(CREATE_DATE) != TRUNC(SYSDATE)
+        AND PRICING_TYPE_ID = :P183_PRICING_TYPE_ID
+
+validations: 
+- # ====== Validation: Empty_code ==============================
+  id: 41781178101854056
+  identification: 
+    name: Empty_code
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: Item is NOT NULL
+    item: P183_PRICING_TYPE_CODE
+    always-execute: false
+
+  error: 
+    error-message: Field cannot be empty.
+    display-location: Inline with Field
+    associated-item: P183_PRICING_TYPE_CODE # 82362944534824293
+
+- # ====== Validation: Empty_name ==============================
+  id: 41781537861854056
+  identification: 
+    name: Empty_name
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: Item is NOT NULL
+    item: P183_PRICING_TYPE_DESCRIPTION
+    always-execute: false
+
+  error: 
+    error-message: Field cannot be empty.
+    display-location: Inline with Field
+    associated-item: P183_PRICING_TYPE_DESCRIPTION # 82363030394824294
+
+- # ====== Validation: Unique_code =============================
+  id: 41781964242854057
+  identification: 
+    name: Unique_code
+
+  execution: 
+    sequence: 50
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      SELECT PRICING_TYPE_CODE FROM NIM032
+      WHERE UPPER(PRICING_TYPE_CODE) = UPPER(:P183_PRICING_TYPE_CODE)
+      AND PRICING_TYPE_ID != :P183_PRICING_TYPE_ID
+    always-execute: false
+
+  error: 
+    error-message: Pricing Type code already exists.
+    display-location: Inline with Field
+    associated-item: P183_PRICING_TYPE_CODE # 82362944534824293
+
+processes: 
+- # ====== Process: Initialize form Pricing Type Utility Update 
+  id: 41780543770854054
+  identification: 
+    name: Initialize form Pricing Type Utility Update
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Form / Table # 278867423727450029
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Update =====================================
+  id: 41782231987854057
+  identification: 
+    name: Update
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE NIM032 
+      SET PRICING_TYPE_CODE = :P183_PRICING_TYPE_CODE, 
+          PRICING_TYPE_DESCRIPTION = :P183_PRICING_TYPE_DESCRIPTION, 
+          UPDATE_USER = :APP_USER, 
+          UPDATE_DATE = SYSTIMESTAMP
+      WHERE PRICING_TYPE_ID = :P183_PRICING_TYPE_ID;
+      
+      apex_util.set_session_state('SUCCESS_MSG', 'Pricing Type updated successfully');
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 41782661853854059
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: false
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

@@ -1,0 +1,381 @@
+---
+# ====== Page: Update Quantity Reason add/update =============
+id: 155
+identification: 
+  name: Update Quantity Reason add/update
+  alias: UPDATE-QUANTITY-REASON-ADD-UPDATE
+  title: Update Quantity Reason add/update
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    function setModalTitle(){
+        if($v("P155_REASON_ID") == ''){
+            parent.$('.ui-dialog-title').html('Add');
+        }
+        else{
+            parent.$('.ui-dialog-title').html('Update');
+        }
+    }
+  execute-when-page-loads: setModalTitle();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .t-Dialog{
+        background-color: #056AC8;
+    }
+    .white-text{
+        color:white;
+    }
+    .btns{
+        font-size: 1.125rem;
+    }
+    .text-general{
+        font-size: 1.125rem;
+    }
+    .t-Form-label{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Update Quantity Reason ======================
+  id: 83862835358757865
+  identification: 
+    name: Update Quantity Reason
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM028
+    include-rowid-column: false
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P155_REASON_ID ===========================
+  id: 42619854274340703
+  identification: 
+    name: P155_REASON_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Update Quantity Reason # 83862835358757865
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Quantity Reason # 83862835358757865
+    column: QTY_REASON_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P155_REASON_NAME =========================
+  id: 42619918130340704
+  identification: 
+    name: P155_REASON_NAME
+    type: Text Field
+
+  label: 
+    label: 'Reason Name:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Update Quantity Reason # 83862835358757865
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Quantity Reason # 83862835358757865
+    column: REASON_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: On press Enter ======================
+  id: 42641747913368945
+  identification: 
+    name: On press Enter
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P155_COLLECTION_NAME
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 42642291850368946
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P155_COLLECTION_DESC
+
+    execution: 
+      sequence: 10
+      event: On press Enter # 42641747913368945
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: On Press Enter ======================
+  id: 42642618017368950
+  identification: 
+    name: On Press Enter
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P155_COLLECTION_TYPE_NAME
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 42643140773368950
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P155_COLLECTION_TYPE_DESCRIPTION
+
+    execution: 
+      sequence: 10
+      event: On Press Enter # 42642618017368950
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+processes: 
+- # ====== Process: Initialize form Collection type utilities ad
+  id: 42640077068368940
+  identification: 
+    name: Initialize form Collection type utilities add/update
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Update Quantity Reason # 83862835358757865
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Add New Data ===============================
+  id: 42640539029368942
+  identification: 
+    name: Add New Data
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      INSERT INTO NIM028(reason_name, create_user, create_date,
+                          update_user, update_date)
+                  VALUES(:P155_REASON_NAME, :APP_USER, SYSDATE,
+                          :APP_USER, SYSDATE);
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P155_REASON_ID
+
+- # ====== Process: Update Data ================================
+  id: 42640961582368943
+  identification: 
+    name: Update Data
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE NIM028 SET reason_name = :P155_REASON_NAME, update_user = :APP_USER, update_date = SYSDATE
+      WHERE qty_reason_id = :P155_REASON_ID;
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P155_REASON_ID
+
+- # ====== Process: New ========================================
+  id: 42641300290368945
+  identification: 
+    name: New
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

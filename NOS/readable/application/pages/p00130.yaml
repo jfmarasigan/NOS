@@ -1,0 +1,384 @@
+---
+# ====== Page: Shipment Report Options =======================
+id: 130
+identification: 
+  name: Shipment Report Options
+  alias: SHIPMENT-REPORT-OPTIONS
+  title: Report Options
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 480
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+css: 
+  inline: |
+    .t-Dialog {
+        background-color: #056AC8;
+    }
+    
+    .report-options {
+        background-color: #056AC8;
+    }
+    
+    .report-option-boxes {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: white;
+    }
+    
+    .report-option-boxes .report-option-option {
+        font-size: 1.125rem;
+        width: 100%;
+        padding: 0.75rem 0.5rem;
+        box-sizing: border-box;
+        font-weight: 600;
+    }
+    
+    .report-option-boxes .report-option-option:focus  {
+        background-color: rgba(4, 107, 200, 0.4);
+    }
+    
+    .report-buttons {
+        font-size: 1.125rem;
+        text-align: start;
+        background-color: white;
+        outline: white;
+        border-color: white;
+        border-radius: 0%;
+        font-weight: 600;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Report Options ==============================
+  id: 39466557883750302
+  identification: 
+    name: Report Options
+    type: Static Content
+
+  source: 
+    html-code: |
+      <!-- <div class="report-option-boxes">
+          <div class="report-option-option" data-value="1" tabindex="10001">A - Shipment Vessel Information Summary</div>
+          <div class="report-option-option" data-value="2" tabindex="10002">B - Summary of Shipment By Supplier Report</div>
+          <div class="report-option-option" data-value="3" tabindex="10003">C - Shipment Report with Serial Numbers</div>
+          <div class="report-option-option" data-value="4" tabindex="10004">D - Shipment Report</div>
+      </div> -->
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P130_SHIPMENT_ID =========================
+  id: 39466602964750303
+  identification: 
+    name: P130_SHIPMENT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SHIPMENT_VESSEL_INFO_SUMMARY ================
+  id: 39466974637750306
+  identification: 
+    button-name: SHIPMENT_VESSEL_INFO_SUMMARY
+    label: A - Shipment Vessel Information Summary
+
+  layout: 
+    sequence: 10
+    region: Report Options # 39466557883750302
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--stretch
+    css-classes: 
+    - report-buttons
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: SHIPMENT_SUMMARY_SUPPLIER ===================
+  id: 39467013067750307
+  identification: 
+    button-name: SHIPMENT_SUMMARY_SUPPLIER
+    label: B - Summary of Shipment By Supplier Report
+
+  layout: 
+    sequence: 20
+    region: Report Options # 39466557883750302
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--stretch
+    css-classes: 
+    - report-buttons
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: b
+
+- # ====== Button: SHIPMENT_WITH_SERIAL ========================
+  id: 39467181720750308
+  identification: 
+    button-name: SHIPMENT_WITH_SERIAL
+    label: C - Shipment Report with Serial Numbers
+
+  layout: 
+    sequence: 30
+    region: Report Options # 39466557883750302
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--stretch
+    css-classes: 
+    - report-buttons
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: c
+
+- # ====== Button: SHIPMENT_REPORT =============================
+  id: 39467257973750309
+  identification: 
+    button-name: SHIPMENT_REPORT
+    label: D - Shipment Report
+
+  layout: 
+    sequence: 40
+    region: Report Options # 39466557883750302
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--stretch
+    css-classes: 
+    - report-buttons
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: d
+
+dynamic-actions: 
+- # ====== Dynamic Action: Print A =============================
+  id: 39467302894750310
+  identification: 
+    name: Print A
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SHIPMENT_VESSEL_INFO_SUMMARY # 39466974637750306
+
+- # ====== Dynamic Action: Print B =============================
+  id: 39467580878750312
+  identification: 
+    name: Print B
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SHIPMENT_SUMMARY_SUPPLIER # 39467013067750307
+
+- # ====== Dynamic Action: Print C =============================
+  id: 39467755391750314
+  identification: 
+    name: Print C
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SHIPMENT_WITH_SERIAL # 39467181720750308
+
+- # ====== Dynamic Action: Print D =============================
+  id: 39467955770750316
+  identification: 
+    name: Print D
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SHIPMENT_REPORT # 39467257973750309
+
+processes: 
+- # ====== Process: GET_PRINT_VESSEL_INFO_SUMMARY ==============
+  id: 39468147781750318
+  identification: 
+    name: GET_PRINT_VESSEL_INFO_SUMMARY
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: null;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

@@ -1,0 +1,750 @@
+---
+# ====== Page: Brand Utility Update ==========================
+id: 167
+identification: 
+  name: Brand Utility Update
+  alias: BRAND-UTILITY-UPDATE
+  title: Update
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 40rem
+  attributes: 
+  - "close: function() { customEvent('customDialogClose'"
+  - " {modalPageId: 'MODAL_CLOSE_FIXED'});} "
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p167KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+           let activeElement = document.activeElement;
+    
+            if ($(activeElement).is('input')) {
+                var currentField = $(activeElement);
+                var allInputs = $('input:visible:enabled');
+                var currentIndex = allInputs.index(currentField); 
+                var nextField = allInputs.eq(currentIndex + 1);
+    
+                if (currentIndex === allInputs.length - 1) {
+                    $("#submit").trigger("click");
+                } else {
+                    nextField.focus();
+                }
+            } else {
+                $("#submit").trigger("click"); 
+            }
+        }
+    
+    }
+    
+    
+    function mapP167Keys() {
+        $(document).off('keydown.p167keyevents');
+        $(document).on('keydown.p167keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p167KeyMap[key]) {
+                ev.preventDefault();
+                p167KeyMap[key]();
+            }
+        });
+    }
+    
+    
+  execute-when-page-loads: |
+    mapP167Keys();
+    
+    $(document).ready(function () {
+        const codeField = $x('P167_BRAND_CODE');
+        const nameField = $x('P167_BRAND_NAME');
+    
+        if ($(codeField).prop('readonly')) {
+            nameField.focus();
+        } else {
+            codeField.focus();
+        }
+    });
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+    }
+    
+    .t-Dialog-body label, .t-Dialog-body input, .t-Dialog-body .apex-item-display-only {
+        font-size: 1.125rem;
+    }
+    
+    .t-Dialog-body label {
+        color: white;
+    }
+    
+    .t-Region-body{
+        background-color: #056AC8;
+        padding-bottom: 0;
+    }
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; /* Remove the asterisk before the label */
+    }
+    
+    
+    .white-text {
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    
+    .t-Form-error {
+        color: #FFD700;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Form / Table ================================
+  id: 116438583961070295
+  identification: 
+    name: Form / Table
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM022
+    include-rowid-column: false
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P167_BRAND_CODE ==========================
+  id: 71808430989024743
+  identification: 
+    name: P167_BRAND_CODE
+    type: Text Field
+
+  label: 
+    label: 'Code<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: Upper
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Form / Table # 116438583961070295
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 3
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 116438583961070295
+    column: BRAND_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P167_BRAND_NAME ==========================
+  id: 71808519366024744
+  identification: 
+    name: P167_BRAND_NAME
+    type: Text Field
+
+  label: 
+    label: 'Name<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Form / Table # 116438583961070295
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - margin-right-sm
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 116438583961070295
+    column: BRAND_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P167_DESCRIPTION =========================
+  id: 71808636969024745
+  identification: 
+    name: P167_DESCRIPTION
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Form / Table # 116438583961070295
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 116438583961070295
+    column: DESCRIPTION
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P167_BRAND_ID ============================
+  id: 71808761226024746
+  identification: 
+    name: P167_BRAND_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Form / Table # 116438583961070295
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 116438583961070295
+    column: BRAND_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P167_CREATE_USER =========================
+  id: 106692857468370341
+  identification: 
+    name: P167_CREATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Form / Table # 116438583961070295
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 116438583961070295
+    column: CREATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P167_CREATE_DATE =========================
+  id: 106692937749370342
+  identification: 
+    name: P167_CREATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Form / Table # 116438583961070295
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 116438583961070295
+    column: CREATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSTIMESTAMP
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P167_UPDATE_USER =========================
+  id: 106693069671370343
+  identification: 
+    name: P167_UPDATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Form / Table # 116438583961070295
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 116438583961070295
+    column: UPDATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P167_UPDATE_DATE =========================
+  id: 106693205740370344
+  identification: 
+    name: P167_UPDATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Form / Table # 116438583961070295
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 116438583961070295
+    column: UPDATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSTIMESTAMP
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 36090997435318212
+  identification: 
+    button-name: Enter
+    label: Press enter to update
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - white-text
+    - hiddenbtn
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL UPDATE action
+
+  advanced: 
+    static-id: submit
+    custom-attributes: 
+    - tabindex="-1"
+
+dynamic-actions: 
+- # ====== Dynamic Action: Disable Code ========================
+  id: 38762091096655610
+  identification: 
+    name: Disable Code
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 38762162306655611
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#P167_BRAND_CODE").addClass("is-disabled apex_disabled")
+        .prop("readonly", true)
+        .attr("tabindex", "-1")
+        .on("focus mousedown", function(e) { 
+            e.preventDefault();});
+        
+
+    execution: 
+      sequence: 10
+      event: Disable Code # 38762091096655610
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Rows returned
+      sql-query: |
+        SELECT BRAND_CODE FROM NIM022
+        WHERE TRUNC(CREATE_DATE) != TRUNC(SYSDATE)
+        AND BRAND_ID = :P167_BRAND_ID
+
+validations: 
+- # ====== Validation: Code_empty ==============================
+  id: 36406283813386229
+  identification: 
+    name: Code_empty
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P167_BRAND_CODE
+    always-execute: false
+
+  error: 
+    error-message: Field cannot be empty.
+    display-location: Inline with Field
+    associated-item: P167_BRAND_CODE # 71808430989024743
+
+- # ====== Validation: Name_empty ==============================
+  id: 36406366013386230
+  identification: 
+    name: Name_empty
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Item is NOT NULL
+    item: P167_BRAND_NAME
+    always-execute: false
+
+  error: 
+    error-message: Field cannot be empty.
+    display-location: Inline with Field
+    associated-item: P167_BRAND_NAME # 71808519366024744
+
+- # ====== Validation: Unique_code =============================
+  id: 38761811054655608
+  identification: 
+    name: Unique_code
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      SELECT BRAND_CODE FROM NIM022
+      WHERE BRAND_CODE = :P167_BRAND_CODE
+      AND BRAND_ID != :P167_BRAND_ID
+    always-execute: false
+
+  error: 
+    error-message: Brand code already exists.
+    display-location: Inline with Field
+    associated-item: P167_BRAND_CODE # 71808430989024743
+
+- # ====== Validation: Unique_name =============================
+  id: 38761989443655609
+  identification: 
+    name: Unique_name
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      SELECT BRAND_NAME FROM NIM022
+      WHERE UPPER(BRAND_NAME) = UPPER(:P167_BRAND_NAME)
+      AND BRAND_ID != :P167_BRAND_ID
+    always-execute: false
+
+  error: 
+    error-message: Brand name already exists.
+    display-location: Inline with Field
+    associated-item: P167_BRAND_NAME # 71808519366024744
+
+processes: 
+- # ====== Process: Initialize form Brand Utility Update =======
+  id: 36096576281318225
+  identification: 
+    name: Initialize form Brand Utility Update
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Form / Table # 116438583961070295
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Update =====================================
+  id: 36097075671318226
+  identification: 
+    name: Update
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE NIM022 
+      SET BRAND_CODE = :P167_BRAND_CODE, 
+          BRAND_NAME = :P167_BRAND_NAME, 
+          UPDATE_USER = :APP_USER, 
+          UPDATE_DATE = SYSTIMESTAMP
+      WHERE BRAND_ID = :P167_BRAND_ID;
+      
+      
+      apex_util.set_session_state('SUCCESS_MSG', 'Brand updated successfully');
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 36097405861318228
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: false
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

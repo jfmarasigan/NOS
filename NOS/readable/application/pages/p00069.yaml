@@ -1,0 +1,860 @@
+---
+# ====== Page: Discount List Inquire =========================
+id: 69
+identification: 
+  name: Discount List Inquire
+  alias: DISCOUNT-LIST-INQUIRE
+  title: Discount Details
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 750
+  attributes: 
+  - "close: function() { customEvent('customDialogClose'"
+  - " {modalPageId: 'MODAL_CLOSE_FIXED'});} "
+  css-classes: 
+  - inquire-modal
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    function mapP69Keys(){
+        $(document).on('keydown.p69keyevents', (ev) => {
+            apex.navigation.dialog.close(true);
+            $(document).off('keydown.p769keyevents');
+        });
+    }
+  execute-when-page-loads: mapP69Keys();
+
+css: 
+  inline: |
+    .t-Dialog-body, #categories{
+        background-color: #056AC8;
+    }
+    #details .t-Region-body {
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
+    }
+    
+    #details .display_only {
+        font-size: 1.125rem;
+    }
+    #details label {
+        font-size: 1.125rem;
+    }
+    
+    .t-Form-labelContainer:has(> #P69_DISCOUNT_CODE_LABEL),
+    .t-Form-labelContainer:has(> #P69_DISCOUNT_DESC_LABEL),
+    .t-Form-labelContainer:has(> #P69_TYPE_LABEL),
+    .t-Form-labelContainer:has(> #P69_CATEGORY_LABEL),
+    .t-Form-labelContainer:has(> #P69_EFFECTIVE_DATE_RANGE_LABEL) {
+        text-align: start;
+    }
+    
+    /* #discountGrid table,
+    #discountGrid tr,
+    #discountGrid td,
+    #discountGrid th {
+        font-size: 1.125rem;
+    }
+    #departmentGrid table,
+    #departmentGrid tr,
+    #departmentGrid td,
+    #departmentGrid th {
+        font-size: 1.125rem;
+    }
+    #sicGrid table,
+    #sicGrid tr,
+    #sicGrid td,
+    #sicGrid th {
+        font-size: 1.125rem;
+    }
+    #classGrid table,
+    #classGrid tr,
+    #classGrid td,
+    #classGrid th {
+        font-size: 1.125rem;
+    }
+    #ICL-grid table,
+    #ICL-grid tr,
+    #ICL-grid td,
+    #ICL-grid th {
+        font-size: 1.125rem;
+    }
+    #ISL-grid table,
+    #ISL-grid tr,
+    #ISL-grid td,
+    #ISL-grid th {
+        font-size: 1.125rem;
+    }
+    #IDL-grid table,
+    #IDL-grid tr,
+    #IDL-grid td,
+    #IDL-grid th {
+        font-size: 1.125rem;
+    } */
+    #discount-list table,
+    #discount-list tr,
+    #discount-list td,
+    #discount-list th {
+        font-size: 1.125rem;
+    }
+    
+    /* #departmentGrid_ig, #sicGrid_ig, #classGrid_ig {
+        border: 0.0625rem solid #046BC8;
+    } */
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header {
+        border-color: #046BC8;
+    }
+    
+    /* #departmentGrid .a-GV-header a, #departmentGrid th.a-GV-header,
+    #sicGrid .a-GV-header a, #sicGrid th.a-GV-header,
+    #classGrid .a-GV-header a, #classGrid th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    } */
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Details =====================================
+  id: 22268626665028345
+  identification: 
+    name: Details
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT  
+          DISCOUNT_ID,
+          DISCOUNT_CODE,
+          DISCOUNT_DESC,
+          TYPE,
+          CATEGORY,
+          -- CASE
+          --     WHEN TYPE = 'Percent' THEN
+          --     'Percent - ' ||  DISCOUNT_VALUE || '%'
+          --     ELSE 
+          --     'Fixed - ' || DISCOUNT_VALUE
+          -- END AS DISCOUNT_VALUE,
+          DATE_FROM || ' - ' || DATE_TO AS EFFECTIVE_DATE_RANGE
+      FROM NPT008
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: details
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Categories Header ===========================
+  id: 22491344658163601
+  identification: 
+    name: Categories Header
+    type: Static Content
+
+  source: 
+    html-code: '<h3 style="font-size:1.125rem;color:white;margin-top:0;text-align:center">Discount List</h3>'
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Categories ==================================
+  id: 22491479403163602
+  identification: 
+    name: Categories
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: categories
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Discount List ===============================
+  id: 22491680117163604
+  identification: 
+    name: Discount List
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: Function Body returning SQL Query
+    language: PL/SQL
+    pl/sql-function-body-returning-sql-query: |
+      BEGIN
+          IF :P69_CATEGORY = 'Class' THEN
+              return q'~
+                  SELECT
+                      CLASS_ID AS ID, CLASS_NAME AS SUBCATEGORY, DISCOUNT_VALUE AS VALUE 
+                  FROM NPT030
+                  WHERE DISCOUNT_ID = :P69_DISCOUNT_ID
+              ~';
+          ELSIF :P69_CATEGORY = 'Department' THEN
+              return q'~
+                  SELECT
+                      DEPT_ID AS ID, DEPT_NAME AS SUBCATEGORY, DISCOUNT_VALUE AS VALUE 
+                  FROM NPT029
+                  WHERE DISCOUNT_ID = :P69_DISCOUNT_ID
+              ~';
+          ELSE
+              return q'~
+                  SELECT
+                      SIC_ID AS ID, SIC_NAME AS SUBCATEGORY, DISCOUNT_VALUE AS VALUE 
+                  FROM NPT028
+                  WHERE DISCOUNT_ID = :P69_DISCOUNT_ID
+              ~';
+          END IF;
+      END; 
+    page-items-to-submit: 
+    - P69_DISCOUNT_ID
+
+  layout: 
+    sequence: 10
+    parent-region: Categories # 22491479403163602
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: 4
+    new-column: true
+    column-span: 6
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: discount-list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 22491702411163605
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 300
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 22503992086305193
+      identification: 
+        name: Primary Report
+        alias: 225040
+
+  columns: 
+  - # ====== Column: ID ==========================================
+    id: 38737565356412648
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: SUBCATEGORY =================================
+    id: 38737662926412649
+    identification: 
+      column-name: SUBCATEGORY
+      type: Text Field
+
+    heading: 
+      heading: Sub-Category
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: SUBCATEGORY
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: VALUE =======================================
+    id: 38737790258412650
+    identification: 
+      column-name: VALUE
+      type: Number Field
+
+    heading: 
+      heading: Value
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: VALUE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+page-items: 
+- # ====== Page Item: P69_DISCOUNT_ID ==========================
+  id: 22268855582028347
+  identification: 
+    name: P69_DISCOUNT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Details # 22268626665028345
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Details # 22268626665028345
+    column: DISCOUNT_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P69_DISCOUNT_CODE ========================
+  id: 38737030675412643
+  identification: 
+    name: P69_DISCOUNT_CODE
+    type: Display Only
+
+  label: 
+    label: 'Discount Code:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Details # 22268626665028345
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Details # 22268626665028345
+    column: DISCOUNT_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P69_DISCOUNT_DESC ========================
+  id: 38737107470412644
+  identification: 
+    name: P69_DISCOUNT_DESC
+    type: Display Only
+
+  label: 
+    label: 'Discount Desc:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Details # 22268626665028345
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Details # 22268626665028345
+    column: DISCOUNT_DESC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P69_TYPE =================================
+  id: 38737251463412645
+  identification: 
+    name: P69_TYPE
+    type: Display Only
+
+  label: 
+    label: 'Discount Type:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Details # 22268626665028345
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Details # 22268626665028345
+    column: TYPE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P69_CATEGORY =============================
+  id: 38737345702412646
+  identification: 
+    name: P69_CATEGORY
+    type: Display Only
+
+  label: 
+    label: 'Category:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Details # 22268626665028345
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Details # 22268626665028345
+    column: CATEGORY
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P69_EFFECTIVE_DATE_RANGE =================
+  id: 38737416502412647
+  identification: 
+    name: P69_EFFECTIVE_DATE_RANGE
+    type: Display Only
+
+  label: 
+    label: Eff Date Range
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Details # 22268626665028345
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Details # 22268626665028345
+    column: EFFECTIVE_DATE_RANGE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+processes: 
+- # ====== Process: Initialize form Discount List Inquire ======
+  id: 22268736414028346
+  identification: 
+    name: Initialize form Discount List Inquire
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Details # 22268626665028345
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+

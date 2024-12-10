@@ -1,0 +1,1302 @@
+---
+# ====== Page: Inquire Purchase Order ========================
+id: 48
+identification: 
+  name: Inquire Purchase Order
+  alias: INQUIRE-PURCHASE-ORDER
+  title: Inquire Purchase Order
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p8KeyMap = {
+        escape: (v) => {
+            $("#exit").trigger("click");
+        }
+    }
+    
+    function mapP8Keys() {
+        $(document).off('keydown.p8keyevents');
+        $(document).on('keydown.p8keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p8KeyMap[key]) {
+                ev.preventDefault();
+                p8KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP8Keys();
+    setTitle("Inquire Purchase Order")
+
+css: 
+  inline: |
+    #inquire label,
+    #inquire span {
+        font-size: 1.125rem !important;
+        color: white;
+    }
+    
+    .t-Form-labelContainer {
+        text-align: start !important;
+    }
+    
+    .t-Region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #table table,
+    #table tr,
+    #table th {
+        font-size: 1rem;
+    }
+    
+    #table td {
+        font-size: 1.125rem;
+    }
+    
+    .po-info {
+        font-size: 1.125rem;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    #table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(1) {
+        width: 12rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(2) {
+        width: 8rem;
+    }
+    
+    
+    #table .a-GV-table colgroup col:nth-child(3) {
+        width: 25rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(6),
+    #table .a-GV-table colgroup col:nth-child(8),
+    #table .a-GV-table colgroup col:nth-child(10) {
+        width: 7rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(4),
+    #table .a-GV-table colgroup col:nth-child(5),
+    #table .a-GV-table colgroup col:nth-child(7) {
+        width: 5rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(9) {
+        width: 6rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Inquire Purchase Order ======================
+  id: 16372700343200904
+  identification: 
+    name: Inquire Purchase Order
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          CASE
+              WHEN nit013.VENDOR_ID = :P48_VENDOR_ID THEN nit007.item_number
+              ELSE NULL
+          END AS "VENDOR_ITEM_NUM",
+          nit001.item_num AS "ITEM_NUM",
+          nit001.item_desc AS "ITEM_DESC",
+          nit013.qty AS "NO_CS",
+          (SELECT nit002.quantity
+           FROM NIT002 nit002
+           WHERE nit002.item_id = nit001.item_id
+           AND nit002."LEVEL" = 1) AS "UT_CS",
+          nit013.vendor_price AS "VENDOR_PRICE",
+          (SELECT nim026_uom.uom_code          
+           FROM NIM026 nim026_uom
+           JOIN NIT002 nit002_uom ON nim026_uom.uom_id = nit002_uom.uom_id
+           WHERE nit002_uom.item_id = nit001.item_id
+           AND nit002_uom."LEVEL" = 1) AS "INT_UOM",
+          nit013.internal_price AS "INT_PRICE",
+          (SELECT nim026_uom_code.UOM_CODE
+           FROM NIM026 nim026_uom_code
+           WHERE nim026_uom_code.UOM_ID = nit013.external_uom_id) AS "EXT_UOM",
+          nit013.external_price AS "EXT_PRICE",
+          (SELECT nit002_price.PRICE
+           FROM NIT002 nit002_price
+           WHERE nit002_price.ITEM_ID = nit001.ITEM_ID
+           AND nit002_price."LEVEL" = 1) AS "SELL_PRX"
+      FROM
+          NIT013 nit013
+      JOIN
+          NIT001 nit001 ON nit013.ITEM_ID = nit001.ITEM_ID
+      JOIN
+          NIT002 nit002 ON nit001.ITEM_ID = nit002.ITEM_ID
+      JOIN
+          NIM026 nim026 ON nit002.UOM_ID = nim026.UOM_ID
+      LEFT JOIN
+          NIT007 nit007 ON nit001.ITEM_ID = nit007.ITEM_ID AND nit013.VENDOR_ID = nit007.VENDOR_ID
+      WHERE
+          nit013.PO_ID = :P48_PO_NO
+          AND nit002.UOM_ID = (SELECT MAX(UOM_ID) FROM NIT002 WHERE ITEM_ID = nit013.ITEM_ID)
+    page-items-to-submit: 
+    - P48_PO_NO
+    - P48_VENDOR_ID
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 16373299948200909
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 450
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 16373631902200909
+      identification: 
+        name: Primary Report
+        alias: 163737
+
+  columns: 
+  - # ====== Column: VENDOR_ITEM_NUM =============================
+    id: 22393891400487201
+    identification: 
+      column-name: VENDOR_ITEM_NUM
+      type: Text Field
+
+    heading: 
+      heading: Vendor Item Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 80
+
+    source: 
+      type: Database Column
+      database-column: VENDOR_ITEM_NUM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: ITEM_NUM ====================================
+    id: 22393996677487202
+    identification: 
+      column-name: ITEM_NUM
+      type: Text Field
+
+    heading: 
+      heading: Item Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: ITEM_NUM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: ITEM_DESC ===================================
+    id: 22394061780487203
+    identification: 
+      column-name: ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: NO_CS =======================================
+    id: 22394135219487204
+    identification: 
+      column-name: NO_CS
+      type: Number Field
+
+    heading: 
+      heading: '# / Cs'
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: NO_CS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UT_CS =======================================
+    id: 22394227645487205
+    identification: 
+      column-name: UT_CS
+      type: Number Field
+
+    heading: 
+      heading: Ut / Cs
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UT_CS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: VENDOR_PRICE ================================
+    id: 22394319756487206
+    identification: 
+      column-name: VENDOR_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Vendor Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999G999G999G999G990D00
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: VENDOR_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: INT_UOM =====================================
+    id: 22394448717487207
+    identification: 
+      column-name: INT_UOM
+      type: Text Field
+
+    heading: 
+      heading: Int UOM
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 16
+
+    source: 
+      type: Database Column
+      database-column: INT_UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: INT_PRICE ===================================
+    id: 22394531021487208
+    identification: 
+      column-name: INT_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Int Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999G999G999G999G990D00
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: INT_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: EXT_UOM =====================================
+    id: 22394673107487209
+    identification: 
+      column-name: EXT_UOM
+      type: Text Field
+
+    heading: 
+      heading: Ext UOM
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 16
+
+    source: 
+      type: Database Column
+      database-column: EXT_UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: EXT_PRICE ===================================
+    id: 22394787328487210
+    identification: 
+      column-name: EXT_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Ext Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 100
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999G999G999G999G990D00
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: EXT_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: SELL_PRX ====================================
+    id: 22394862946487211
+    identification: 
+      column-name: SELL_PRX
+      type: Number Field
+
+    heading: 
+      heading: Sell Prx
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 110
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999G999G999G999G990D00
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: SELL_PRX
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Line Item Details ===========================
+  id: 21978992370914340
+  identification: 
+    name: Line Item Details
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-md
+    - margin-bottom-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: inquire
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P48_PO_NO ================================
+  id: 21978723334914338
+  identification: 
+    name: P48_PO_NO
+    type: Display Only
+
+  label: 
+    label: PO No
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Line Item Details # 21978992370914340
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: 'PO No: &nbsp;'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P48_TOTAL_QTY_CS =========================
+  id: 21979091231914341
+  identification: 
+    name: P48_TOTAL_QTY_CS
+    type: Display Only
+
+  label: 
+    label: Total Qty (in cs)
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Line Item Details # 21978992370914340
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-md
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: 'Total Qty (in cs): &nbsp;'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P48_PO_VALUE =============================
+  id: 21979102546914342
+  identification: 
+    name: P48_PO_VALUE
+    type: Display Only
+
+  label: 
+    label: PO Value
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Line Item Details # 21978992370914340
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-md
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: 'Total Internal PO Value:&nbsp;$ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P48_PO_VALUE_EXT =========================
+  id: 26625821815248015
+  identification: 
+    name: P48_PO_VALUE_EXT
+    type: Display Only
+
+  label: 
+    label: Po Value Ext
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Line Item Details # 21978992370914340
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: 'Total External PO Value:&nbsp;$ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P48_VENDOR_ID ============================
+  id: 29988101427862733
+  identification: 
+    name: P48_VENDOR_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Exit ========================================
+  id: 16246098677344113
+  identification: 
+    button-name: Exit
+    label: Exit
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:29:&SESSION.::&DEBUG.:::'
+      page: 29 # Review Purchase Order
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+dynamic-actions: 
+- # ====== Dynamic Action: Select First Row ====================
+  id: 22395146093487214
+  identification: 
+    name: Select First Row
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 22395227599487215
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function() {
+            $(".a-GV-cell").first().trigger("click");
+        }, 500);
+
+    execution: 
+      sequence: 10
+      event: Select First Row # 22395146093487214
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 22395309697487216
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var grid = apex.region("table").widget().interactiveGrid("getViews", "grid");
+        var model = grid.model;
+        var total = 0;
+        
+        model.forEach(function(row) {
+            var price = model.getValue(row, "NO_CS");
+        
+            if (!isNaN(price) && price !== null) {
+                total += parseFloat(price);
+            }
+        });
+        
+        apex.item("P48_TOTAL_QTY_CS").setValue(total);
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P48_TOTAL_QTY_CS
+
+    execution: 
+      sequence: 20
+      event: Select First Row # 22395146093487214
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 25844552733615024
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var grid = apex.region("table").widget().interactiveGrid("getViews", "grid");
+        var model = grid.model;
+        var poTotal = 0;
+        var extPoTotal = 0;
+        
+        model.forEach(function(row) {
+            var qty = model.getValue(row, "NO_CS");
+            var utCs = model.getValue(row, "UT_CS");
+            var price = model.getValue(row, "INT_PRICE");
+            var extPrice = model.getValue(row, "EXT_PRICE");
+        
+            if (!isNaN(price) && !isNaN(utCs) && !isNaN(qty)) {
+                poTotal += parseFloat((qty * utCs) * price);
+                extPoTotal += parseFloat((qty * utCs) * extPrice);
+            }
+        });
+        
+        poTotal = poTotal.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        
+        extPoTotal = extPoTotal.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        
+        apex.item("P48_PO_VALUE").setValue(poTotal);
+        apex.item("P48_PO_VALUE_EXT").setValue(extPoTotal);
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P48_PO_VALUE
+      - P48_PO_VALUE_EXT
+
+    execution: 
+      sequence: 30
+      event: Select First Row # 22395146093487214
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

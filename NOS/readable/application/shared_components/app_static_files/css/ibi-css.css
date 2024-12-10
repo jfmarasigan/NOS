@@ -1,0 +1,58 @@
+#table-wrapper {
+    color: white;
+    background-color: #056AC8;
+    border: none;
+}
+
+#table1 table,
+#table1 tr,
+#table1 th {
+    font-size: 1rem;
+}
+
+#table1 td {
+    font-size: 1.125rem;
+    color: black;
+}
+
+.color-w {
+    color: white;
+}
+
+.fs-1 {
+    font-size: 1rem;
+}
+
+.fw-600 {
+    font-weight: 600;
+}
+
+.header {
+    font-size: 1.5rem;
+}
+.p-2 {
+    padding: 0 1rem 1rem 1rem;
+}
+
+.center-align {
+    text-align: center;
+}
+
+.a-GV-header a, th.a-GV-header {
+    color: black;
+    font-size: 1rem;
+}
+
+.a-IG,
+.a-GV-table .a-GV-cell, th.a-GV-header{
+    border-color: 	#5A5A5A !important;
+}
+
+.a-GV-cell,
+.a-GV-header {
+    pointer-events: none;
+}
+
+#table1 .a-GV-table {
+    width: 100% !important;
+}

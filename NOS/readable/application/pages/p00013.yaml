@@ -1,0 +1,556 @@
+---
+# ====== Page: Pricelist =====================================
+id: 13
+identification: 
+  name: Pricelist
+  alias: PRICELIST
+  title: Pricelist
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 250
+  attributes: 
+  - "close: function() { customEvent('customDialogClose'"
+  - " {modalPageId: 'MODAL_CLOSE_FIXED'});} "
+  css-classes: 
+  - pr-li
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/ibi-css#MIN#.css'
+  inline: |
+    .t-Dialog-body {
+        background-color: #056AC8;
+        padding: 0rem .75rem .25rem .75rem !important;
+    }
+    
+    .t-Region-body {
+        padding: .75rem .25rem 0 .25rem;
+    }
+    
+    .mt-1 {
+        margin-top: 1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Footer ======================================
+  id: 6769576940011520
+  identification: 
+    name: Footer
+    type: Static Content
+
+  source: 
+    html-code: '<span style="font-size: 1.2rem;">Press any key to exit</span>'
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - center-align
+    - color-w
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Header ======================================
+  id: 6769620030011521
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: Pricelist
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - header
+    - color-w
+    - fw-600
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Pricelist ===================================
+  id: 7045086774558010
+  identification: 
+    name: Pricelist
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          null AS "PRICE/UOM",
+          TO_CHAR(nit002.price, '9999999.99') AS "PRICE",
+          nim026.uom_code AS "UOM"
+      FROM
+          NIT002 nit002
+      JOIN
+          NIM026 nim026 ON nit002.uom_id = nim026.uom_id
+      WHERE
+          nit002.item_id = :P13_ITEM_ID
+
+  layout: 
+    sequence: 30
+    parent-region: Table Wrapper # 7251579346235023
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table1
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 7045549674558012
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: false
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 200
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 7045955302558012
+      identification: 
+        name: Primary Report
+        alias: 70460
+
+  columns: 
+  - # ====== Column: PRICE/UOM ===================================
+    id: 6769895202011523
+    identification: 
+      column-name: PRICE/UOM
+      type: HTML Expression
+
+    heading: 
+      heading: PRICE&#x2F;UOM
+      alignment: center
+
+    settings: 
+      html-expression: |
+        <div style="display: flex; justify-content: space-between;">
+            <span><b>$</b></span>
+            <span>&PRICE./&UOM.</span>
+        </div>
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: PRICE/UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: PRICE =======================================
+    id: 10469689713962443
+    identification: 
+      column-name: PRICE
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: PRICE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UOM =========================================
+    id: 10469785394962444
+    identification: 
+      column-name: UOM
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 40
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Table Wrapper ===============================
+  id: 7251579346235023
+  identification: 
+    name: Table Wrapper
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    - margin-bottom-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table-wrapper
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Item Number =================================
+  id: 7251654607235024
+  identification: 
+    name: Item Number
+    type: Static Content
+
+  source: 
+    html-code: 'Item : &P13_ITEM_NUM.'
+
+  layout: 
+    sequence: 10
+    parent-region: Table Wrapper # 7251579346235023
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - fw-600
+    - p-2
+    - fs-1
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P13_ITEM_ID ==============================
+  id: 7250915418235017
+  identification: 
+    name: P13_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Pricelist # 7045086774558010
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P13_ITEM_NUM =============================
+  id: 7251715260235025
+  identification: 
+    name: P13_ITEM_NUM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+processes: 
+- # ====== Process: Get Item Number ============================
+  id: 7251891682235026
+  identification: 
+    name: Get Item Number
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          SELECT nit001.item_num
+          INTO :P13_ITEM_NUM
+          FROM NIT001 nit001
+          WHERE nit001.item_id = :P13_ITEM_ID;
+      END;
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+

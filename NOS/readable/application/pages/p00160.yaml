@@ -1,0 +1,560 @@
+---
+# ====== Page: Utilities =====================================
+id: 160
+identification: 
+  name: Utilities
+  alias: UTILITIES
+  title: Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p160KeyMap = {
+        escape : (v) => {
+            $("#exit").click();
+        },
+        f8 : (v) => {
+            $("#proceed").click();
+        }
+    
+    }
+    
+    
+    function mapP160Keys() {
+        $(document).off('keydown.p160keyevents');
+        $(document).on('keydown.p160keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p160KeyMap[key]) {
+                ev.preventDefault();
+                p160KeyMap[key]();
+            }
+        });
+    }
+    
+    
+  execute-when-page-loads: |
+    mapP160Keys();
+    
+    setTitle("Utilities")
+    $x("P160_MODULE").focus()
+    
+
+css: 
+  inline: |
+    body, #buttons-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; /* Remove the asterisk before the label */
+    }
+    
+    
+    #list-container label, #list-container input, #list-container .apex-item-display-only{
+        font-size: 1.125rem;
+    }
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hiddenbtn, .a-GV-loadMore, .icon-search {
+        display: none;
+    }
+    
+    .ui-dialog{
+        border: none; 
+        border-radius: 0; 
+    }
+    
+    .a-PopupLOV-search {
+        padding: 0.2rem !important;
+        /* padding-inline-start: unset !important; */
+        font-size: 1.125rem !important;
+    }
+    
+    .a-IconList-item, .a-PopupLOV-search {
+        font-size: 1.125rem !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: List ========================================
+  id: 19848021186977044
+  identification: 
+    name: List
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: list-container
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Button ======================================
+  id: 19848327181977047
+  identification: 
+    name: Button
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: buttons-region
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P160_MODULE ==============================
+  id: 19848188919977045
+  identification: 
+    name: P160_MODULE
+    type: Popup LOV
+
+  label: 
+    label: 'Module<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: List # 19848021186977044
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 5
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT DISTINCT n011.screen
+      FROM NIM036 n036
+      JOIN NPM011 n011 ON n036.module_id = n011.module_id;
+      
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P160_TYPE ================================
+  id: 19848280861977046
+  identification: 
+    name: P160_TYPE
+    type: Popup LOV
+
+  label: 
+    label: 'Type<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 30
+    region: List # 19848021186977044
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 5
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT n036.table_name
+      FROM NIM036 n036
+      JOIN NPM011 n011 ON n036.module_id = n011.module_id
+      WHERE UPPER(n011.screen) = UPPER(:P160_MODULE)
+      
+    display-extra-values: true
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P160_MODULE
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P160_PREPARED_URL ========================
+  id: 37727917784533415
+  identification: 
+    name: P160_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Proceed =====================================
+  id: 19848426521977048
+  identification: 
+    button-name: Proceed
+    label: <u>F8</u> - Proceed
+
+  layout: 
+    sequence: 10
+    region: Button # 19848327181977047
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 6
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: proceed
+
+- # ====== Button: Exit ========================================
+  id: 19848632901977050
+  identification: 
+    button-name: Exit
+    label: Exit
+
+  layout: 
+    sequence: 20
+    region: Button # 19848327181977047
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:1:&SESSION.::&DEBUG.:::'
+      page: 1 # Main Menu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+dynamic-actions: 
+- # ====== Dynamic Action: Click Proceed =======================
+  id: 37727727949533413
+  identification: 
+    name: Click Proceed
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Proceed # 19848426521977048
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37727867901533414
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let targetPage;
+        apex.message.clearErrors();
+        
+        if ($v('P160_MODULE') === "Item Masterfile") {
+            switch ($v('P160_TYPE')) {
+                case null:
+                    apex.message.showErrors({
+                    type: "error",
+                    location: "inline",
+                    pageItem: "P160_TYPE",
+                    message: "Type can not be empty"
+                });
+                return;
+                case "Department":
+                    targetPage = 161;
+                    break;
+                case "Brand":
+                    targetPage = 165;
+                    break;
+                case "SIC":
+                    targetPage = 168
+                    break;
+                case "UOM":
+                    targetPage = 171
+                    break;
+                case "Class":
+                    targetPage = 174
+                    break;
+                default :
+                    apex.message.showErrors({
+                    type: "error",
+                    location: "inline",
+                    pageItem: "P160_TYPE",
+                    message: "Invalid type."
+                });
+                return;
+            }
+        } else if ($v('P160_MODULE') === "Review Purchase Orders") {
+            targetPage = 1;
+        } else if ($v('P160_MODULE') === "Update Inventory Balance") {
+            targetPage = 1;
+        } else {
+            apex.message.showErrors({
+                type: "error",
+                location: "inline",
+                pageItem: "P160_MODULE",
+                message: "Invalid module"
+            });
+            return;
+        }
+        
+        
+        
+        
+        let url = `f?p=&APP_ID.:${targetPage}:&APP_SESSION.`;
+        
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Click Proceed # 37727727949533413
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Clear Session ==============================
+  id: 37728134391533417
+  identification: 
+    name: Clear Session
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear all Items on the Current Page
+
+  execution: 
+    sequence: 10
+    point: After Header
+    run-process: Once Per Page Visit (default)
+

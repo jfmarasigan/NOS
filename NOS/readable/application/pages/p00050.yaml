@@ -1,0 +1,2806 @@
+---
+# ====== Page: Transfer Records ==============================
+id: 50
+identification: 
+  name: Transfer Records
+  alias: TRANSFER-RECORDS
+  title: Transfer Records
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const ICON_OK_LARGE = "fa fa-lg fa-check-circle";
+    const ICON_FAIL_LARGE = "fa fa-lg fa-times-circle msg-icon-yellow";
+    let lastSelected = null;
+    const p50KeyMap = {
+        u : (v) => {
+            $("#u").trigger("click");
+        },
+    
+        i : (v) => {
+            $("#i").trigger("click");
+        },
+    
+        d : (v) => {
+            $("#d").trigger("click");
+        },
+    
+        a : (v) => {
+            if($("#printingOptions").is(':visible')){
+                $("#a2").trigger("click");
+            } else {
+                $("#a").trigger("click");
+            }
+        },
+    
+        b : (v) => {
+            if($("#printingOptions").is(':visible')){
+                $("#b").trigger("click");
+            }
+        },
+    
+        s : (v) => {
+            $("#s").trigger("click");
+        },
+    
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+    
+        h : (v) => {
+            $("#h").trigger("click");
+        },
+    
+        c : (v) => {
+            $("#c").trigger("click");
+        },
+    
+        o : (v) => {
+            $("#o").trigger("click");
+        },
+    
+        escape : (v) => {
+            if(!$("#printingOptions").is(':visible')){
+                $.event.trigger("exit");
+            }
+        },
+        
+        home: (v) => {
+            $("#top").trigger("click");
+        },
+        end: (v) => {
+            $("#bottom").trigger("click");
+        }
+    }
+    
+    function mapP50Keys() {
+        $(document).off('keydown.p50keyevents');
+        $(document).on('keydown.p50keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p50KeyMap[key]) {
+                ev.preventDefault();
+                p50KeyMap[key]();
+            }
+        });
+    }
+    
+    function selectFirstRow() {
+        let region = apex.region("transferList")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        let rec = model.recordAt(0);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+    
+    function selectLastRow() {
+        let region = apex.region("transferList")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        
+        let totalRec = model.getTotalRecords();
+        let rec = model.recordAt(totalRec - 1);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+  execute-when-page-loads: |
+    mapP50Keys();
+    setTitle("Transfer List");
+
+css: 
+  inline: |
+    /* View height dependent table and buttons - START */
+    /* .buttons-row {
+        position: absolute;
+        width: 96vw;
+        bottom: 1.75rem;
+    } */
+    
+    #printingOptions, #a2, #b {
+        padding-top: 0;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    #a2, #b{
+        outline: none;
+    }
+    
+    .ui-dialog-titlebar{
+        border-bottom: 0;
+    }
+    
+    #transferList .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #transferList .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #transferList .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #transferList .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .format-size{
+        font-size: 1.01rem;
+        font-family: Arial;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+    }
+    
+    .t-Form-labelContainer{
+        text-align: left;
+    }
+    
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        /* color: #056BC9; */
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+    
+    table, body, #content, #nav{
+        background-color: rgb(30, 58, 138);
+        overflow: hidden;
+    }
+    
+    table, tr, td, th {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    
+    .btns {
+        font-size: 1.125rem;
+        font-family: Arial;
+        background-color: rgb(30, 58, 138);
+        color: white;
+        margin-top: 0.5rem;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.125rem;
+        font-family: Arial;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #056BC9;
+        color: white;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .ui-dialog.modal-dialog--pullout{
+        left: 40% !important;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    } 
+    
+    .a-GV-header-sort{
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Navigation Menu =============================
+  id: 10220110378449141
+  identification: 
+    name: Navigation Menu
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: Content # 10904163791353208
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: nav
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Content =====================================
+  id: 10904163791353208
+  identification: 
+    name: Content
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: content
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Transfer List ===============================
+  id: 18918448978729202
+  identification: 
+    name: Transfer List
+    title: Transfer List
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          transfer_id AS "Transfer ID",
+          is_posted AS "Posted",
+          transfer_date,
+          fromwarehouse_id || ' - ' || (SELECT location_desc FROM NIM027 WHERE warehouse_id = fromwarehouse_id) AS "Transfer From Location",
+          towarehouse_id || ' - ' || (SELECT location_desc FROM NIM027 WHERE warehouse_id = towarehouse_id) AS "Transfer Destination Location",
+          delivery_name,
+          receiver
+      FROM
+          NIT010 nit10
+      WHERE
+          :P50_START_WITH IS NOT NULL AND transfer_id LIKE :P50_START_WITH || '%'
+      
+    page-items-to-submit: 
+    - P50_START_WITH
+
+  layout: 
+    sequence: 30
+    parent-region: Content # 10904163791353208
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-IRR-region--noBorders
+    - t-Form--labelsAbove
+    - margin-top-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: transferList
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 18918555962729203
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - PDF
+      - Excel
+      send-as-email: true
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 600
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                // stickyFooter: true
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 18946398670872204
+      identification: 
+        name: Primary Report
+        alias: 189464
+
+  columns: 
+  - # ====== Column: Transfer ID =================================
+    id: 18918611130729204
+    identification: 
+      column-name: Transfer ID
+      type: Number Field
+
+    heading: 
+      heading: Transfer ID
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: Transfer ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: TRANSFER_DATE ===============================
+    id: 18918767612729205
+    identification: 
+      column-name: TRANSFER_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Transfer Date
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: TRANSFER_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: Transfer From Location ======================
+    id: 18918858065729206
+    identification: 
+      column-name: Transfer From Location
+      type: Text Field
+
+    heading: 
+      heading: Transfer From Location
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 243
+
+    source: 
+      type: Database Column
+      database-column: Transfer From Location
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: Transfer Destination Location ===============
+    id: 18918953996729207
+    identification: 
+      column-name: Transfer Destination Location
+      type: Text Field
+
+    heading: 
+      heading: Transfer Destination Location
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 243
+
+    source: 
+      type: Database Column
+      database-column: Transfer Destination Location
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: DELIVERY_NAME ===============================
+    id: 18919047676729208
+    identification: 
+      column-name: DELIVERY_NAME
+      type: Text Field
+
+    heading: 
+      heading: Delivery Man
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: DELIVERY_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: RECEIVER ====================================
+    id: 18919188153729209
+    identification: 
+      column-name: RECEIVER
+      type: Text Field
+
+    heading: 
+      heading: Receiver
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: RECEIVER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: Posted ======================================
+    id: 26844980918736923
+    identification: 
+      column-name: Posted
+      type: Text Field
+
+    heading: 
+      heading: P
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 4
+
+    source: 
+      type: Database Column
+      database-column: Posted
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Transfer List
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Printing Options ============================
+  id: 45277893992848228
+  identification: 
+    name: Printing Options
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: printingOptions
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P50_SELECTED_ID ==========================
+  id: 10904218668353209
+  identification: 
+    name: P50_SELECTED_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Content # 10904163791353208
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P50_START_WITH ===========================
+  id: 10904525761353212
+  identification: 
+    name: P50_START_WITH
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Content # 10904163791353208
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P50_PREPARED_URL =========================
+  id: 10904934846353216
+  identification: 
+    name: P50_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Content # 10904163791353208
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P50_PREVIOUS =============================
+  id: 11426096623400429
+  identification: 
+    name: P50_PREVIOUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Content # 10904163791353208
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P50_SELECTED_STATUS ======================
+  id: 26845733758736931
+  identification: 
+    name: P50_SELECTED_STATUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Content # 10904163791353208
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P50_IS_VALID =============================
+  id: 26846133780736935
+  identification: 
+    name: P50_IS_VALID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Content # 10904163791353208
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P50_PRINT_SELECTION ======================
+  id: 45278845168848238
+  identification: 
+    name: P50_PRINT_SELECTION
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Content # 10904163791353208
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Add =========================================
+  id: 10220299040449142
+  identification: 
+    button-name: Add
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:51:&SESSION.::&DEBUG.:::'
+      page: 51 # New Transfer
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 7, 20) = 'Y'"
+
+- # ====== Button: Print =======================================
+  id: 10220590368449145
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 70
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 7, 22) = 'Y'"
+
+- # ====== Button: Top =========================================
+  id: 10220668965449146
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 110
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: top
+
+- # ====== Button: Update ======================================
+  id: 10220701987449147
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 7, 21) = 'Y'"
+
+- # ====== Button: Export ======================================
+  id: 10220865225449148
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 90
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: h
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 7, 23) = 'Y'"
+
+- # ====== Button: Bottom ======================================
+  id: 10220947766449149
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 120
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: bottom
+
+- # ====== Button: Inquire =====================================
+  id: 10221066761449150
+  identification: 
+    button-name: Inquire
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 40
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: Search ======================================
+  id: 10903483970353201
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 100
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:54:&SESSION.::&DEBUG.::P54_START_WITH:&P50_START_WITH.'
+      page: 54 # Transfer Search
+      values: 
+        p54_start_with: '&P50_START_WITH.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Print_Content ===============================
+  id: 16029202838346122
+  identification: 
+    button-name: Print_Content
+    label: <u>C</u> - Print Content
+
+  layout: 
+    sequence: 80
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: c
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 7, 22) = 'Y'"
+
+- # ====== Button: Post ========================================
+  id: 26845016082736924
+  identification: 
+    button-name: Post
+    label: <u>O</u> - Post
+
+  layout: 
+    sequence: 60
+    region: Navigation Menu # 10220110378449141
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: o
+
+- # ====== Button: Dotmatrix ===================================
+  id: 45278144530848231
+  identification: 
+    button-name: Dotmatrix
+    label: <u>A</u> - Dotmatrix
+
+  layout: 
+    sequence: 10
+    region: Printing Options # 45277893992848228
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a2
+
+- # ====== Button: Graphic =====================================
+  id: 45278253708848232
+  identification: 
+    button-name: Graphic
+    label: <u>B</u> - Graphic
+
+  layout: 
+    sequence: 20
+    region: Printing Options # 45277893992848228
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: b
+
+dynamic-actions: 
+- # ====== Dynamic Action: Go to top ===========================
+  id: 10903784489353204
+  identification: 
+    name: Go to top
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 10220668965449146
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 10903809512353205
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        selectFirstRow()
+        
+
+    execution: 
+      sequence: 10
+      event: Go to top # 10903784489353204
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Go to bottom ========================
+  id: 10903953597353206
+  identification: 
+    name: Go to bottom
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 10220947766449149
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 10904044904353207
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectLastRow()
+
+    execution: 
+      sequence: 10
+      event: Go to bottom # 10903953597353206
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Search =========================
+  id: 10904668620353213
+  identification: 
+    name: Open Search
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 10903483970353201
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18920928723729227
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p50keyevents');
+
+    execution: 
+      sequence: 20
+      event: Open Search # 10904668620353213
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 18921389494729231
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: NULL
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P50_START_WITH
+
+    execution: 
+      sequence: 10
+      event: Open Search # 10904668620353213
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Inquire =============================
+  id: 12126973123406425
+  identification: 
+    name: Inquire
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Inquire # 10221066761449150
+
+  client-side-condition: 
+    type: Item is not null
+    item: P50_SELECTED_ID
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 12127079647406426
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P50_PREPARED_URL := apex_page.get_url(
+               p_page   => 53,
+               p_items  => 'P53_TRANSFER_ID',
+               p_values => :P50_SELECTED_ID
+            );
+        END;
+      items-to-submit: 
+      - P50_SELECTED_ID
+      items-to-return: 
+      - P50_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Inquire # 12126973123406425
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12127110068406427
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P50_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Inquire # 12126973123406425
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Pass ID to page 52 ==================
+  id: 12894031148147726
+  identification: 
+    name: Pass ID to page 52
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 10220701987449147
+
+  client-side-condition: 
+    type: Item is not null
+    item: P50_SELECTED_ID
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 12894167761147727
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P50_PREPARED_URL := apex_page.get_url(
+               p_page   => 52,
+               p_items  => 'P52_TRANSFER_ID',
+               p_values => :P50_SELECTED_ID
+            );
+        END;
+      items-to-submit: 
+      - P50_SELECTED_ID
+      items-to-return: 
+      - P50_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Pass ID to page 52 # 12894031148147726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_SELECTED_STATUS
+      value: N
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12894229797147728
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P50_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Pass ID to page 52 # 12894031148147726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_SELECTED_STATUS
+      value: N
+
+- # ====== Dynamic Action: Print_1 =============================
+  id: 15249876883369635
+  identification: 
+    name: Print_1
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 10220590368449145
+
+  client-side-condition: 
+    type: Item is not null
+    item: P50_SELECTED_ID
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 45278502205848235
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 45277893992848228
+
+    execution: 
+      sequence: 30
+      event: Print_1 # 15249876883369635
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 45278919155848239
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 1
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P50_PRINT_SELECTION
+
+    execution: 
+      sequence: 10
+      event: Print_1 # 15249876883369635
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Search ==============================
+  id: 16027716517346107
+  identification: 
+    name: Search
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  client-side-condition: 
+    type: Item != Value
+    item: P50_PREVIOUS
+    value: 54
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16027819774346108
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $("#s").trigger("click");
+
+    execution: 
+      sequence: 10
+      event: Search # 16027716517346107
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Print_2 =============================
+  id: 16029067625346120
+  identification: 
+    name: Print_2
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 10220865225449148
+
+  client-side-condition: 
+    type: Item is not null
+    item: P50_SELECTED_ID
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 45279379685848243
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 3
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P50_PRINT_SELECTION
+
+    execution: 
+      sequence: 10
+      event: Print_2 # 16029067625346120
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Open Region =================================
+    id: 45279473454848244
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 45277893992848228
+
+    execution: 
+      sequence: 20
+      event: Print_2 # 16029067625346120
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print_3 =============================
+  id: 16029591760346125
+  identification: 
+    name: Print_3
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print_Content # 16029202838346122
+
+  client-side-condition: 
+    type: Item is not null
+    item: P50_SELECTED_ID
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 45279116914848241
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 2
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P50_PRINT_SELECTION
+
+    execution: 
+      sequence: 10
+      event: Print_3 # 16029591760346125
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Open Region =================================
+    id: 45279272302848242
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 45277893992848228
+
+    execution: 
+      sequence: 30
+      event: Print_3 # 16029591760346125
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Exit ================================
+  id: 16029769070346127
+  identification: 
+    name: Exit
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: exit
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16029900216346128
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P50_PREPARED_URL := apex_page.get_url(
+               p_page   => 300
+            );
+        END;
+      items-to-return: 
+      - P50_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Exit # 16029769070346127
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16030015233346129
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P50_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Exit # 16029769070346127
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection change ====================
+  id: 18919284315729210
+  identification: 
+    name: Selection change
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Transfer List # 18918448978729202
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18919349071729211
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var selectedNumber;
+        var selectedStatus;
+        
+        model=this.data.model;
+        
+        if(this.data != null){
+            if(this.data.selectedRecords[0] != null){
+                selectedNumber = model.getValue(this.data.selectedRecords[0], "Transfer ID");
+                selectedStatus = model.getValue(this.data.selectedRecords[0], "Posted");
+            }
+        }
+        apex.item("P50_SELECTED_ID").setValue(selectedNumber);
+        apex.item("P50_SELECTED_STATUS").setValue(selectedStatus);
+        
+
+    execution: 
+      sequence: 10
+      event: Selection change # 18919284315729210
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Search close ========================
+  id: 18920638467729224
+  identification: 
+    name: Search close
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 10903483970353201
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 18920702091729225
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P54_START_WITH
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P50_START_WITH
+
+    execution: 
+      sequence: 10
+      event: Search close # 18920638467729224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 18920826368729226
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Transfer List # 18918448978729202
+
+    execution: 
+      sequence: 20
+      event: Search close # 18920638467729224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18921800433729236
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "500");
+
+    execution: 
+      sequence: 30
+      event: Search close # 18920638467729224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Rebind keys =========================
+  id: 18921082523729228
+  identification: 
+    name: Rebind keys
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 10903483970353201
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18921125204729229
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP50Keys();
+        selectFirstRow();
+
+    execution: 
+      sequence: 10
+      event: Rebind keys # 18921082523729228
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Post Update =========================
+  id: 26845172858736925
+  identification: 
+    name: Post Update
+
+  execution: 
+    sequence: 150
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Post # 26845016082736924
+
+  client-side-condition: 
+    type: Item = Value
+    item: P50_SELECTED_STATUS
+    value: N
+
+  actions: 
+  - # ====== Action: Update Warehouse ============================
+    id: 26845487815736928
+    identification: 
+      name: Update Warehouse
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_item NUMBER;
+            v_uom NUMBER;
+            v_new_qty NUMBER;
+            v_old_qty NUMBER;
+            v_dest NUMBER;
+            v_from NUMBER;
+        BEGIN
+            SELECT FROMWAREHOUSE_ID INTO v_from FROM NIT010 WHERE TRANSFER_ID = :P50_SELECTED_ID;
+            SELECT TOWAREHOUSE_ID INTO v_dest FROM NIT010 WHERE TRANSFER_ID = :P50_SELECTED_ID;
+            
+            FOR i in (SELECT ITEM_ID, UOM_ID, QTY FROM NIT011 WHERE TRANSFER_ID = :P50_SELECTED_ID) LOOP   
+                --SET VALUES 
+                v_item := i.ITEM_ID;
+                v_uom := i.UOM_ID;
+                v_new_qty := i.QTY;
+                
+                SELECT QTY 
+                INTO v_old_qty 
+                FROM NIT004 
+                WHERE 
+                    WAREHOUSE_ID = v_from AND
+                    ITEM_ID = v_item AND
+                    UOM_ID = v_uom;
+                
+                --TAKE FROM SOURCE
+                UPDATE
+                    NIT004
+                SET
+                    QTY = QTY - v_new_qty
+                WHERE
+                    WAREHOUSE_ID = v_from AND
+                    ITEM_ID = v_item AND
+                    UOM_ID = v_uom;
+                
+                --ADD TO DESTINATION
+                INSERT INTO NIT004 VALUES (v_item, v_dest, :APP_USER, SYSDATE(), '', '', v_new_qty, v_uom);
+            END LOOP;
+            
+        EXCEPTION 
+            WHEN dup_val_on_index THEN
+                UPDATE
+                    NIT004
+                SET
+                    QTY = QTY + v_new_qty,
+                    UPDATE_USER = :APP_USER,
+                    UPDATE_DATE = SYSDATE()
+                WHERE
+                    WAREHOUSE_ID = v_dest AND
+                    ITEM_ID = v_item AND
+                    UOM_ID = v_uom;
+        END;
+      items-to-submit: 
+      - P50_SELECTED_ID
+
+    execution: 
+      sequence: 60
+      event: Post Update # 26845172858736925
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_IS_VALID
+      value: 1
+
+  - # ====== Action: Success =====================================
+    id: 26845955315736933
+    identification: 
+      name: Success
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Transfer List # 18918448978729202
+
+    execution: 
+      sequence: 70
+      event: Post Update # 26845172858736925
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_IS_VALID
+      value: 1
+
+  - # ====== Action: Check if sufficient =========================
+    id: 26846218895736936
+    identification: 
+      name: Check if sufficient
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_item NUMBER;
+            v_uom NUMBER;
+            v_new_qty NUMBER;
+            v_old_qty NUMBER;
+            v_dest NUMBER;
+            v_from NUMBER;
+        BEGIN
+            SELECT FROMWAREHOUSE_ID INTO v_from FROM NIT010 WHERE TRANSFER_ID = :P50_SELECTED_ID;
+            SELECT TOWAREHOUSE_ID INTO v_dest FROM NIT010 WHERE TRANSFER_ID = :P50_SELECTED_ID;
+            
+            FOR i in (SELECT ITEM_ID, UOM_ID, QTY FROM NIT011 WHERE TRANSFER_ID = :P50_SELECTED_ID) LOOP   
+                --SET VALUES 
+                v_item := i.ITEM_ID;
+                v_uom := i.UOM_ID;
+                v_new_qty := i.QTY;
+                
+                :P50_IS_VALID := 1;
+                SELECT QTY 
+                INTO v_old_qty 
+                FROM NIT004 
+                WHERE 
+                    WAREHOUSE_ID = v_from AND
+                    ITEM_ID = v_item AND
+                    UOM_ID = v_uom;
+                IF v_old_qty < v_new_qty THEN
+                    :P50_IS_VALID := 0;
+                    EXIT;
+                END IF;
+            END LOOP;
+             
+            IF :P50_IS_VALID = 1 THEN
+                UPDATE NIT010
+                SET IS_POSTED = 'Y'
+                WHERE TRANSFER_ID = :P50_SELECTED_ID; 
+            END IF;
+        
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                :P50_IS_VALID := 0;
+        END;
+      items-to-submit: 
+      - P50_SELECTED_ID
+      - P50_IS_VALID
+      items-to-return: 
+      - P50_IS_VALID
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Post Update # 26845172858736925
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35459386710234025
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message: `Insufficient items from source warehouse for transfer!`,
+            icon: ICON_FAIL_LARGE,
+            width: 500,
+            timeout: 1500,
+            timeoutActive: true
+        });
+
+    execution: 
+      sequence: 30
+      event: Post Update # 26845172858736925
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_IS_VALID
+      value: 0
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35459458115234026
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message: `Transfer Complete!`,
+            icon: ICON_OK_LARGE,
+            width: 230,
+            timeout: 1500,
+            timeoutActive: true
+        });
+
+    execution: 
+      sequence: 40
+      event: Post Update # 26845172858736925
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_IS_VALID
+      value: 1
+
+- # ====== Dynamic Action: Print Dotmatrix =====================
+  id: 45278640203848236
+  identification: 
+    name: Print Dotmatrix
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Dotmatrix # 45278144530848231
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15249911918369636
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("TRANSFER_LIST", "pdf", { 
+            fileName: "TransferList_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_TRANSFER_ID : $v("P50_SELECTED_ID"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print Dotmatrix # 45278640203848236
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_PRINT_SELECTION
+      value: 1
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16028949405346119
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("TRANSFER_LIST_XLS", "xlsx", { 
+            fileName: "TransferList_" + datestamp + ".xlsx",
+            mode : "print",
+            parameters : {
+                P_TRANSFER_ID : $v("P50_SELECTED_ID"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 50
+      event: Print Dotmatrix # 45278640203848236
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_PRINT_SELECTION
+      value: 3
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45279019798848240
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("ITEM_LINE", "pdf", { 
+            fileName: "TransferListContents_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_TRANSFER_ID : $v("P50_SELECTED_ID"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 30
+      event: Print Dotmatrix # 45278640203848236
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_PRINT_SELECTION
+      value: 2
+
+- # ====== Dynamic Action: Print Graphic =======================
+  id: 45279580276848245
+  identification: 
+    name: Print Graphic
+
+  execution: 
+    sequence: 170
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Graphic # 45278253708848232
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45279704902848247
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("TRANSFER_LIST", "pdf", { 
+            fileName: "TransferList_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_TRANSFER_ID : $v("P50_SELECTED_ID"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print Graphic # 45279580276848245
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_PRINT_SELECTION
+      value: 1
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45279894204848248
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("ITEM_LINE", "pdf", { 
+            fileName: "TransferListContents_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_TRANSFER_ID : $v("P50_SELECTED_ID"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Print Graphic # 45279580276848245
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_PRINT_SELECTION
+      value: 2
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45279941389848249
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("TRANSFER_LIST_XLS", "xlsx", { 
+            fileName: "TransferList_" + datestamp + ".xlsx",
+            mode : "print",
+            parameters : {
+                P_TRANSFER_ID : $v("P50_SELECTED_ID"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 30
+      event: Print Graphic # 45279580276848245
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P50_PRINT_SELECTION
+      value: 3
+

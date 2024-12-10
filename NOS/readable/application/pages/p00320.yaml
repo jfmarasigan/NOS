@@ -1,0 +1,2308 @@
+---
+# ====== Page: Statement Of Account ==========================
+id: 320
+identification: 
+  name: Statement Of Account
+  alias: STATEMENT-OF-ACCOUNT
+  title: Statement Of Account
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p320KeyMap = {
+        d : (v) => {
+            $("#d").trigger("click");
+        },
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        e : (v) => {
+            $("#e").trigger("click");
+        },
+        escape : (v) => {
+            if(!($("#printingOptions").is(':visible') || $("#exportOptions").is(':visible'))){
+                $.event.trigger("exit");
+            }
+        },
+        home : (v) => {
+            $("#home").trigger("click");
+        },
+        
+        end : (v) => {
+            $("#end").trigger("click");
+        },
+    
+        a : (v) => {
+            if($("#printingOptions").is(':visible')){
+                $("#a").trigger("click");
+            } else if($("#exportOptions").is(':visible')){
+                $("#a2").trigger("click");
+            }
+        },
+    
+        b : (v) => {
+            if($("#printingOptions").is(':visible')){
+                $("#b").trigger("click");
+            } else if($("#exportOptions").is(':visible')){
+                $("#b2").trigger("click");
+            }
+        },
+        
+    }
+    
+    function mapP320Keys() {
+        $(document).off('keydown.p320keyevents');
+        $(document).on('keydown.p320keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p320KeyMap[key]) {
+                ev.preventDefault();
+                p320KeyMap[key]();
+            }
+        });
+    }
+    
+    function selectFirstRow() {
+        let region = apex.region("soa")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        let rec = model.recordAt(0);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+    
+    function selectLastRow() {
+        let region = apex.region("soa")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        
+        let totalRec = model.getTotalRecords();
+        let rec = model.recordAt(totalRec - 1);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+  execute-when-page-loads: |
+    setTitle("Statement of Account")
+    
+    // to pop search modal upon loading page
+    $("#s").trigger("click");
+
+css: 
+  inline: |
+    #home, #end{
+        display: none;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    #printingOptions, #exportOptions, #a, #b , #a2, #b2{
+        padding-top: 0;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    #a, #b, #a2, #b2{
+        outline: none;
+    }
+    
+    .ui-dialog-titlebar{
+        padding-bottom: 0;
+        background-color: #056AC8;
+        color: white;
+        border-bottom: 0;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+        padding-bottom: 0.2rem;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .apex-item-display-only{
+        text-align: right!important;
+    }
+    
+    .format-size{
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .input-size{
+        color: black;
+        font-size: 1.125rem;
+    }
+    
+    .breakdown{
+        text-align: end!important;
+    }
+    table{
+        width: 100%!important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #table > table, tr, th {
+        font-size: 1.125rem;
+    }
+    
+    #table > td {
+        font-size: 1.125rem;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    .buttons-row {
+        position: absolute;
+        width: 95vw;
+        bottom: 1.75rem;
+    }
+    
+    #table .a-IG {
+        height: calc(60vh + 2px) !important;
+    } 
+    
+    #table .a-IG-contentContainer {
+        height: 60vh !important;
+    }
+    
+    #table .a-IG-gridView.a-GV {
+        height: 60vh !important;
+    }
+    
+    #table .a-GV-bdy {
+        height: calc(60vh - 2.5625rem) !important;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .mt-3 {
+        margin-top: 3rem;
+    }
+    
+    .ms-1 {
+        margin-left: .5rem;
+    }
+    
+    .ml-25 {
+        margin-left: 2.5rem;
+    }
+    
+    .ml-3 {
+        margin-left: 3rem;
+    }
+    
+    .pl-05 {
+        padding-left: 0.5rem;
+    }
+    
+    .pl-2 {
+        padding-left: 2rem;
+    }
+    
+    .text-white {
+        color: white;
+    }
+    
+    .label-font-size {
+        font-size: 1.125rem;
+    }
+    
+    .border-top {
+        border-top: solid 1px white;
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, .3rem);
+        padding-block-start: var(--ut-field-padding-y, .3rem);
+    }
+    
+    #s {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Details =====================================
+  id: 19492908990090516
+  identification: 
+    name: Details
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    - t-Form--leftLabels
+    - margin-top-sm
+    - margin-left-lg
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 19493352760090520
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Statement Of Account ========================
+  id: 24891495021707357
+  identification: 
+    name: Statement Of Account
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          DATE_CREATED,
+          INVOICE_ID,
+          TOTAL_AMOUNT,
+          OUTSTANDING_BALANCE
+      FROM
+          NPT001
+      WHERE
+          CUSTOMER_ID = (SELECT CUSTOMER_ID FROM NPT009 WHERE LOWER(DBA) = LOWER(:P320_DBA)) AND
+          OUTSTANDING_BALANCE > 0
+    page-items-to-submit: 
+    - P320_DBA
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 7
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: soa
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 24891945032707360
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 525
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: true,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 24892363332707360
+      identification: 
+        name: Primary Report
+        alias: 248924
+
+  columns: 
+  - # ====== Column: INVOICE_ID ==================================
+    id: 28549076433120010
+    identification: 
+      column-name: INVOICE_ID
+      type: Text Field
+
+    heading: 
+      heading: Invoice Number
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: DATE_CREATED ================================
+    id: 28550077937120020
+    identification: 
+      column-name: DATE_CREATED
+      type: Date Picker
+
+    heading: 
+      heading: Invoice Date
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 150
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: DATE_CREATED
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TOTAL_AMOUNT ================================
+    id: 35459720911234029
+    identification: 
+      column-name: TOTAL_AMOUNT
+      type: Number Field
+
+    heading: 
+      heading: Total Amount
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 170
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TOTAL_AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: OUTSTANDING_BALANCE =========================
+    id: 43923903726603242
+    identification: 
+      column-name: OUTSTANDING_BALANCE
+      type: Number Field
+
+    heading: 
+      heading: Outstanding Balance
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 180
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: OUTSTANDING_BALANCE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Payment Terms ===============================
+  id: 26312156911216501
+  identification: 
+    name: Payment Terms
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - t-Form--leftLabels
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: terms
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Printing Options ============================
+  id: 45275724771848207
+  identification: 
+    name: Printing Options
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: printingOptions
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P320_LEGAL_NAME ==========================
+  id: 19493019652090517
+  identification: 
+    name: P320_LEGAL_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Details # 19492908990090516
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: 'SELECT LEGAL_NAME FROM NPT009 WHERE lower(DBA) = lower(:P320_DBA)'
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_PAYMENT_TERMS =======================
+  id: 19493144007090518
+  identification: 
+    name: P320_PAYMENT_TERMS
+    type: Display Only
+
+  label: 
+    label: '<span class="label-font-size text-white">Payment Terms: </span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: Payment Terms # 26312156911216501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+    column-css-classes: 
+    - ml-25
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--normalDisplay
+    css-classes: 
+    - right
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          PAYMENT_TERMS_NAME
+      FROM 
+          NPM006
+      WHERE
+          PAYMENT_TERMS_ID = (SELECT PAYMENT_TERMS_ID FROM NPT009 WHERE LOWER(DBA) = LOWER(:P320_DBA))
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_DBA =================================
+  id: 19493297809090519
+  identification: 
+    name: P320_DBA
+    type: Text Field
+
+  label: 
+    label: '<span class="label-font-size text-white">DBA: </span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Details # 19492908990090516
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_TOTAL ===============================
+  id: 26312284291216502
+  identification: 
+    name: P320_TOTAL
+    type: Display Only
+
+  label: 
+    label: '<span class="label-font-size text-white"> TOTAL: </span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Payment Terms # 26312156911216501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+    column-css-classes: 
+    - border-top
+    - ml-3
+    - pl-05
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--normalDisplay
+    css-classes: 
+    - right
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      BEGIN
+          IF :P320_CURRENT + :P320_FIRST_LINE + :P320_SECOND_LINE + :P320_THIRD_LINE = 0 THEN
+              RETURN 0;
+          ELSE
+              RETURN TO_CHAR(:P320_CURRENT + :P320_FIRST_LINE + :P320_SECOND_LINE + :P320_THIRD_LINE, '999999.99');
+          END IF;
+      END;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0.00
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_THIRD_LINE ==========================
+  id: 26312307441216503
+  identification: 
+    name: P320_THIRD_LINE
+    type: Display Only
+
+  label: 
+    label: '<span class="label-font-size text-white"> 61 & over: </span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Payment Terms # 26312156911216501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+    column-css-classes: 
+    - ml-3
+    - pl-05
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--normalDisplay
+    css-classes: 
+    - right
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          v_term_id NUMBER;
+          v_additional NUMBER;
+          v_sum NUMBER;
+      BEGIN
+          SELECT payment_terms_id INTO v_term_id FROM NPT009 WHERE LOWER(dba) = LOWER(:P320_DBA);
+          SELECT AMOUNT INTO v_additional FROM NPM006 WHERE PAYMENT_TERMS_ID = v_term_id;
+          SELECT
+              SUM(npt1.OUTSTANDING_BALANCE)
+          INTO
+              v_sum
+          FROM
+              NPT001 npt1,
+              NPM006 npm6
+          WHERE
+              npt1.CUSTOMER_ID = :P320_CUSTOMER_ID AND
+              npm6.PAYMENT_TERMS_ID = v_term_id AND
+              npt1.DATE_CREATED + npm6.DAYS < TO_DATE(:P320_AS_OF_DATE) AND
+              TO_DATE(:P320_AS_OF_DATE) - (npt1.DATE_CREATED + npm6.DAYS) >= 61;
+          RETURN TO_CHAR(-v_sum, '999999.99');
+      EXCEPTION
+          WHEN NO_DATA_FOUND THEN
+              RETURN '0.00';
+      END;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0.00
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_SECOND_LINE =========================
+  id: 26312481831216504
+  identification: 
+    name: P320_SECOND_LINE
+    type: Display Only
+
+  label: 
+    label: '<span class="label-font-size text-white"> 31 - 60: </span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Payment Terms # 26312156911216501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+    column-css-classes: 
+    - ml-3
+    - pl-05
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--normalDisplay
+    css-classes: 
+    - right
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          v_term_id NUMBER;
+          v_additional NUMBER;
+          v_sum NUMBER;
+      BEGIN
+          SELECT payment_terms_id INTO v_term_id FROM NPT009 WHERE LOWER(dba) = LOWER(:P320_DBA);
+          SELECT AMOUNT INTO v_additional FROM NPM006 WHERE PAYMENT_TERMS_ID = v_term_id;
+          SELECT
+              SUM(npt1.OUTSTANDING_BALANCE)
+          INTO
+              v_sum
+          FROM
+              NPT001 npt1,
+              NPM006 npm6
+          WHERE
+              npt1.CUSTOMER_ID = :P320_CUSTOMER_ID AND
+              npm6.PAYMENT_TERMS_ID = v_term_id AND
+              npt1.DATE_CREATED + npm6.DAYS < TO_DATE(:P320_AS_OF_DATE) AND
+              TO_DATE(:P320_AS_OF_DATE) - (npt1.DATE_CREATED + npm6.DAYS) > 30 AND
+              TO_DATE(:P320_AS_OF_DATE) - (npt1.DATE_CREATED + npm6.DAYS) < 61;
+          RETURN TO_CHAR(-v_sum, '999999.99');
+      EXCEPTION
+          WHEN NO_DATA_FOUND THEN
+              RETURN '0.00';
+      END;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0.00
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_FIRST_LINE ==========================
+  id: 26312570766216505
+  identification: 
+    name: P320_FIRST_LINE
+    type: Display Only
+
+  label: 
+    label: '<span class="label-font-size text-white"> 01 - 30: </span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Payment Terms # 26312156911216501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+    column-css-classes: 
+    - ml-3
+    - pl-05
+    - null
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          v_term_id NUMBER;
+          v_additional NUMBER;
+          v_sum NUMBER;
+      BEGIN
+          SELECT payment_terms_id INTO v_term_id FROM NPT009 WHERE LOWER(dba) = LOWER(:P320_DBA);
+          SELECT AMOUNT INTO v_additional FROM NPM006 WHERE PAYMENT_TERMS_ID = v_term_id;
+          SELECT
+              SUM(npt1.OUTSTANDING_BALANCE)
+          INTO
+              v_sum
+          FROM
+              NPT001 npt1,
+              NPM006 npm6
+          WHERE
+              npt1.CUSTOMER_ID = :P320_CUSTOMER_ID AND
+              npm6.PAYMENT_TERMS_ID = v_term_id AND
+              npt1.DATE_CREATED + npm6.DAYS < TO_DATE(:P320_AS_OF_DATE) AND
+              TO_DATE(:P320_AS_OF_DATE) - (npt1.DATE_CREATED + npm6.DAYS) < 31;
+          RETURN TO_CHAR(-v_sum, '999999.99');
+      EXCEPTION
+          WHEN NO_DATA_FOUND THEN
+              RETURN '0.00';
+      END;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0.00
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_CURRENT =============================
+  id: 26312645458216506
+  identification: 
+    name: P320_CURRENT
+    type: Display Only
+
+  label: 
+    label: '<span class="label-font-size text-white"> Current: </span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Payment Terms # 26312156911216501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+    column-css-classes: 
+    - ml-3
+    - pl-05
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          v_term_id NUMBER;
+          v_additional NUMBER;
+          v_sum NUMBER;
+      BEGIN
+          SELECT payment_terms_id INTO v_term_id FROM NPT009 WHERE LOWER(dba) = LOWER(:P320_DBA);
+          SELECT AMOUNT INTO v_additional FROM NPM006 WHERE PAYMENT_TERMS_ID = v_term_id;
+          SELECT
+              SUM(npt1.OUTSTANDING_BALANCE)
+          INTO
+              v_sum
+          FROM
+              NPT001 npt1,
+              NPM006 npm6
+          WHERE
+              npt1.CUSTOMER_ID = :P320_CUSTOMER_ID AND
+              npm6.PAYMENT_TERMS_ID = v_term_id AND
+              npt1.DATE_CREATED + npm6.DAYS >= TO_DATE(:P320_AS_OF_DATE);
+          RETURN TO_CHAR(-v_sum, '999999.99');
+      EXCEPTION
+          WHEN NO_DATA_FOUND THEN
+              RETURN '0.00';
+      END;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0.00
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_AS_OF_DATE ==========================
+  id: 26312719704216507
+  identification: 
+    name: P320_AS_OF_DATE
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Payment Terms # 26312156911216501
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - label-font-size
+    - text-white
+    - null
+    pre-text: <span class="label-font-size text-white">as of </span>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: SELECT SYSDATE FROM DUAL
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_CUSTOMER_ID =========================
+  id: 30681230475189150
+  identification: 
+    name: P320_CUSTOMER_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Details # 19492908990090516
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: 'SELECT CUSTOMER_ID FROM NPT009 WHERE lower(DBA) = lower(:P320_DBA)'
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_PREPARED_URL ========================
+  id: 33211802671998140
+  identification: 
+    name: P320_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P320_PRINT_TYPE ==========================
+  id: 45280028970848250
+  identification: 
+    name: P320_PRINT_TYPE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Details # 19492908990090516
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Print =======================================
+  id: 19493596311090522
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print SOA
+
+  layout: 
+    sequence: 30
+    region: Buttons # 19493352760090520
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: Change ======================================
+  id: 28550475531120024
+  identification: 
+    button-name: Change
+    label: <u>D</u> - Change DBA
+
+  layout: 
+    sequence: 10
+    region: Buttons # 19493352760090520
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - pl-2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: d
+
+- # ====== Button: Export ======================================
+  id: 28550597091120025
+  identification: 
+    button-name: Export
+    label: <u>E</u> - Export as Excel
+
+  layout: 
+    sequence: 20
+    region: Buttons # 19493352760090520
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - null
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: e
+
+- # ====== Button: Home ========================================
+  id: 43924764531603250
+  identification: 
+    button-name: Home
+    label: home
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: home
+
+- # ====== Button: End =========================================
+  id: 45275154964848201
+  identification: 
+    button-name: End
+    label: end
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: end
+
+- # ====== Button: Dotmatrix ===================================
+  id: 45275898700848208
+  identification: 
+    button-name: Dotmatrix
+    label: <u>A</u> - Dotmatrix
+
+  layout: 
+    sequence: 10
+    region: Printing Options # 45275724771848207
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: Graphic =====================================
+  id: 45275948760848209
+  identification: 
+    button-name: Graphic
+    label: <u>B</u> - Graphic
+
+  layout: 
+    sequence: 30
+    region: Printing Options # 45275724771848207
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: b
+
+dynamic-actions: 
+- # ====== Dynamic Action: Focus ===============================
+  id: 28550659691120026
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Change # 28550475531120024
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 28550719686120027
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P320_DBA
+
+    execution: 
+      sequence: 10
+      event: Focus # 28550659691120026
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35456988739234001
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p320keyevents')
+
+    execution: 
+      sequence: 30
+      event: Focus # 28550659691120026
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export ==============================
+  id: 30680831492189146
+  identification: 
+    name: Export
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 28550597091120025
+
+  server-side-condition: 
+    type: Rows returned
+    sql-query: |
+      SELECT
+          npt1.DATE_CREATED,
+          npt1.INVOICE_ID,
+          npt1.TOTAL_AMOUNT
+      FROM
+          NPT001 npt1
+      WHERE
+          npt1.CUSTOMER_ID = (SELECT CUSTOMER_ID FROM NPT009 WHERE LOWER(DBA) = LOWER(:P320_DBA))
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 45597540232188001
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 1
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P320_PRINT_TYPE
+
+    execution: 
+      sequence: 10
+      event: Export # 30680831492189146
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Open Region =================================
+    id: 45597791903188003
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 45275724771848207
+
+    execution: 
+      sequence: 20
+      event: Export # 30680831492189146
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print ===============================
+  id: 30681031377189148
+  identification: 
+    name: Print
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 19493596311090522
+
+  server-side-condition: 
+    type: Rows returned
+    sql-query: |
+      SELECT
+          npt1.DATE_CREATED,
+          npt1.INVOICE_ID,
+          npt1.TOTAL_AMOUNT
+      FROM
+          NPT001 npt1
+      WHERE
+          npt1.CUSTOMER_ID = (SELECT CUSTOMER_ID FROM NPT009 WHERE LOWER(DBA) = LOWER(:P320_DBA))
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 45276068562848210
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 45275724771848207
+
+    execution: 
+      sequence: 30
+      event: Print # 30681031377189148
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 45597670272188002
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 2
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P320_PRINT_TYPE
+
+    execution: 
+      sequence: 20
+      event: Print # 30681031377189148
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Exit ================================
+  id: 33211695599998138
+  identification: 
+    name: Exit
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: exit
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 33211781708998139
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P320_PREPARED_URL := apex_page.get_url(
+               p_page   => 306
+            );
+        END;
+      items-to-return: 
+      - P320_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Exit # 33211695599998138
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33211963048998141
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P320_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Exit # 33211695599998138
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Unfocus on Search ===================
+  id: 33212740670998149
+  identification: 
+    name: Unfocus on Search
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Lose Focus
+    selection-type: Item(s)
+    item(s): 
+    - P320_DBA
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33212881500998150
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP320Keys();
+
+    execution: 
+      sequence: 10
+      event: Unfocus on Search # 33212740670998149
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus on table ======================
+  id: 35458795181234019
+  identification: 
+    name: Focus on table
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35458426434234016
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "500");
+
+    execution: 
+      sequence: 10
+      event: Focus on table # 35458795181234019
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P320_DBA
+
+- # ====== Dynamic Action: top =================================
+  id: 45275250434848202
+  identification: 
+    name: top
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Home # 43924764531603250
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45275306025848203
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectFirstRow();
+
+    execution: 
+      sequence: 10
+      event: top # 45275250434848202
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: last ================================
+  id: 45275434970848204
+  identification: 
+    name: last
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: End # 45275154964848201
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45275510307848205
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectLastRow();
+
+    execution: 
+      sequence: 10
+      event: last # 45275434970848204
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print Dotmatrix =====================
+  id: 45276170283848211
+  identification: 
+    name: Print Dotmatrix
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Dotmatrix # 45275898700848208
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45276943903848219
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "-";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "-";
+        }
+        else{
+            datestamp = datestamp + "-0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "-0" + d.getDate();
+        }
+        generateReport("SOA_XLS", "xlsx", { 
+            fileName: "SOA " + $v("P320_LEGAL_NAME") + " as of " + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                dba : $v("P320_DBA"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print Dotmatrix # 45276170283848211
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P320_PRINT_TYPE
+      value: 1
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45277710424848227
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "-";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "-";
+        }
+        else{
+            datestamp = datestamp + "-0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "-0" + d.getDate();
+        }
+        generateReport("SOA_MAIN", "pdf", { 
+            fileName: "SOA " + $v("P320_LEGAL_NAME") + " as of " + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_DBA : $v("P320_DBA"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 30
+      event: Print Dotmatrix # 45276170283848211
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P320_PRINT_TYPE
+      value: 2
+
+- # ====== Dynamic Action: Print Graphic =======================
+  id: 45276321163848213
+  identification: 
+    name: Print Graphic
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Graphic # 45275948760848209
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45277252302848222
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "-";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "-";
+        }
+        else{
+            datestamp = datestamp + "-0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "-0" + d.getDate();
+        }
+        generateReport("SOA_XLS", "xlsx", { 
+            fileName: "SOA " + $v("P320_LEGAL_NAME") + " as of " + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                dba : $v("P320_DBA"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print Graphic # 45276321163848213
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P320_PRINT_TYPE
+      value: 1
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45277669183848226
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "-";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "-";
+        }
+        else{
+            datestamp = datestamp + "-0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "-0" + d.getDate();
+        }
+        generateReport("SOA_MAIN", "pdf", { 
+            fileName: "SOA " + $v("P320_LEGAL_NAME") + " as of " + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_DBA : $v("P320_DBA"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Print Graphic # 45276321163848213
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P320_PRINT_TYPE
+      value: 2
+

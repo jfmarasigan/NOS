@@ -1,0 +1,1186 @@
+---
+# ====== Page: Update Inventory Balance - Warehouse Location U
+id: 157
+identification: 
+  name: Update Inventory Balance - Warehouse Location Utilities
+  alias: UPDATE-INVENTORY-BALANCE-WAREHOUSE-LOCATION-UTILITIES
+  title: Update Inventory Balance - Warehouse Location Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  execute-when-page-loads: setTitle('Update Inventory Balance - Warehouse Location Utilities');
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #warehouse-location .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #warehouse-location .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #warehouse-location .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #warehouse-location .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+     
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #warehouse-location table,
+    #warehouse-location tr,
+    #warehouse-location td{
+        font-size: 1.125rem;
+        border: 0.0625rem solid black;
+    }
+    
+    #warehouse-location th{
+            font-size: 1rem;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: black;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .btns{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    .ui-dialog-title{
+        font-size : 1.25rem;
+    }
+    .text-white{
+        color:white;
+    }
+    .text-black{
+        color: black;
+    }
+    .t-Form-labelContainer.col.col-1{
+            text-align: start;
+    }
+    .t-Form-label{
+        font-size:1.125rem;
+        color:white;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Warehouse Location Utilities ================
+  id: 120502539455275313
+  identification: 
+    name: Warehouse Location Utilities
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select WAREHOUSE_ID,
+             WAREHOUSE_LOCATION,
+             LOCATION_DESC,
+             CREATE_USER,
+             CREATE_DATE,
+             UPDATE_USER,
+             UPDATE_DATE
+        from NIM027
+        where( :P157_SEARCH_LOCATION IS NOT NULL AND UPPER(WAREHOUSE_LOCATION) LIKE UPPER('%'||:P157_SEARCH_LOCATION||'%')
+               OR :P157_SEARCH_LOCATION IS NULL AND :P157_SEARCH_DESC IS NOT NULL AND UPPER(LOCATION_DESC) LIKE UPPER('%'||:P157_SEARCH_DESC||'%')
+               OR :P157_SEARCH_LOCATION IS NULL AND :P157_SEARCH_DESC IS NULL
+              )
+    page-items-to-submit: 
+    - P157_SEARCH_LOCATION
+    - P157_SEARCH_DESC
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: warehouse-location
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 120502660311275314
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 126491904187197473
+      identification: 
+        name: Primary Report
+        alias: 412276
+
+  columns: 
+  - # ====== Column: WAREHOUSE_ID ================================
+    id: 42620407043340709
+    identification: 
+      column-name: WAREHOUSE_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 70
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: WAREHOUSE_ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: WAREHOUSE_LOCATION ==========================
+    id: 42620517536340710
+    identification: 
+      column-name: WAREHOUSE_LOCATION
+      type: Text Field
+
+    heading: 
+      heading: Warehouse Location
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 1
+
+    source: 
+      type: Database Column
+      database-column: WAREHOUSE_LOCATION
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: LOCATION_DESC ===============================
+    id: 42620652268340711
+    identification: 
+      column-name: LOCATION_DESC
+      type: Text Field
+
+    heading: 
+      heading: Location Desc
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 50
+
+    source: 
+      type: Database Column
+      database-column: LOCATION_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CREATE_USER =================================
+    id: 83883632389868522
+    identification: 
+      column-name: CREATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Create User
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: CREATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CREATE_DATE =================================
+    id: 83883759652868523
+    identification: 
+      column-name: CREATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Create Date
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CREATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UPDATE_USER =================================
+    id: 85276571481820274
+    identification: 
+      column-name: UPDATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Update User
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UPDATE_DATE =================================
+    id: 85276677671820275
+    identification: 
+      column-name: UPDATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Update Date
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Page Controls ===============================
+  id: 126486795338191772
+  identification: 
+    name: Page Controls
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P157_SEARCH_LOCATION =====================
+  id: 42622961441340734
+  identification: 
+    name: P157_SEARCH_LOCATION
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P157_SEARCH_DESC =========================
+  id: 42623156743340736
+  identification: 
+    name: P157_SEARCH_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P157_WAREHOUSE_ID ========================
+  id: 126501453889191895
+  identification: 
+    name: P157_WAREHOUSE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P157_PREPARED_URL ========================
+  id: 126501783004191898
+  identification: 
+    name: P157_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD =========================================
+  id: 42657457053479575
+  identification: 
+    button-name: ADD
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Page Controls # 126486795338191772
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:158:&SESSION.::&DEBUG.:158::'
+      page: 158 # Warehouse Location add/update
+      clear-cache: 158
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: UPDATE ======================================
+  id: 42657890252479575
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Page Controls # 126486795338191772
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: PRINT =======================================
+  id: 42658266592479576
+  identification: 
+    button-name: PRINT
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 30
+    region: Page Controls # 126486795338191772
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: EXPORT ======================================
+  id: 42658690176479576
+  identification: 
+    button-name: EXPORT
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 40
+    region: Page Controls # 126486795338191772
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: h
+
+- # ====== Button: SEARCH ======================================
+  id: 42659065429479576
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 50
+    region: Page Controls # 126486795338191772
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:159:&SESSION.::&DEBUG.:159::'
+      page: 159 # Warehouse Location Search
+      clear-cache: 159
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+dynamic-actions: 
+- # ====== Dynamic Action: On Search Dialog Close ==============
+  id: 42623373716340738
+  identification: 
+    name: On Search Dialog Close
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: SEARCH # 42659065429479576
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 42623482084340739
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P159_WAREHOUSE_LOCATION
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P157_SEARCH_LOCATION
+
+    execution: 
+      sequence: 10
+      event: On Search Dialog Close # 42623373716340738
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 42623527946340740
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P159_LOCATION_DESCRIPTION
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P157_SEARCH_DESC
+
+    execution: 
+      sequence: 20
+      event: On Search Dialog Close # 42623373716340738
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: New =================================
+  id: 42663766409479584
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 42664238519479584
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Warehouse Location Utilities # 120502539455275313
+
+    execution: 
+      sequence: 10
+      event: New # 42663766409479584
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Update Modal ==================
+  id: 42664690323479585
+  identification: 
+    name: Go to Update Modal
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UPDATE # 42657890252479575
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 42665140481479585
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        :P157_PREPARED_URL := apex_page.get_url(
+            p_clear_cache => 158,
+            p_page => 158,
+            p_items => 'P158_WAREHOUSE_ID',
+            p_values => :P157_WAREHOUSE_ID
+        );
+      items-to-submit: 
+      - P157_WAREHOUSE_ID
+      items-to-return: 
+      - P157_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Go to Update Modal # 42664690323479585
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42665634084479585
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.navigation.redirect($v('P157_PREPARED_URL'));
+
+    execution: 
+      sequence: 20
+      event: Go to Update Modal # 42664690323479585
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Table Item Selection =============
+  id: 42666049181479585
+  identification: 
+    name: On Table Item Selection
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Warehouse Location Utilities # 120502539455275313
+
+  actions: 
+  - # ====== Action: Change Warehouse ID =========================
+    id: 42666565349479587
+    identification: 
+      name: Change Warehouse ID
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: getSelectedIGRecord('warehouse-location');
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P157_WAREHOUSE_ID
+
+    execution: 
+      sequence: 10
+      event: On Table Item Selection # 42666049181479585
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+computations: 
+- # ====== Computation: P157_SEARCH_LOCATION ===================
+  id: 42623046384340735
+  identification: 
+    item-name: P157_SEARCH_LOCATION
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: null
+
+- # ====== Computation: P157_SEARCH_DESC =======================
+  id: 42623233223340737
+  identification: 
+    item-name: P157_SEARCH_DESC
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: null
+

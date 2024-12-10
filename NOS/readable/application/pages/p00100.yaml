@@ -1,0 +1,6114 @@
+---
+# ====== Page: Review Shipment Orders ========================
+id: 100
+identification: 
+  name: Review Shipment Orders
+  alias: REVIEW-SHIPMENT-ORDERS
+  title: Review Shipment Orders
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/review-shipment-orders.min.js'
+  execute-when-page-loads: initialize();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/review-shipment-orders.min.css'
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search Bar ==================================
+  id: 12167359108578430
+  identification: 
+    name: Search Bar
+    title: Search By
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size720x480
+    - t-Form--stretchInputs
+    css-classes: 
+    - is-active-modal
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-bar
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 12167698346578433
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="shipment-buttons1"></div>
+      <div class="shipment-buttons2"></div>
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - margin-bottom-none
+    - margin-left-md
+    - margin-right-md
+    css-classes: 
+    - menu-buttons
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Search Field ================================
+  id: 12168481221578441
+  identification: 
+    name: Search Field
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Search Bar # 12167359108578430
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-field
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Shipment Records ============================
+  id: 15059777565627908
+  identification: 
+    name: Shipment Records
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: 'SELECT * FROM TABLE(shipment_records_pkg.get_shipment_records(:P100_SEARCH, :P100_SORT, null));'
+    page-items-to-submit: 
+    - P100_SEARCH
+    - P100_SORT
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-md
+    - margin-right-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: shipment-records
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: '<div class="shipment-tg-header">Sorted By: <span class="sort-col">Vendor Code</span></div>'
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 15059827171627909
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    messages: 
+      when-no-data-found: No shipments found
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 600
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 15082763450692032
+      identification: 
+        name: Primary Report
+        alias: 150828
+
+  columns: 
+  - # ====== Column: SHIP_NO =====================================
+    id: 15060063737627911
+    identification: 
+      column-name: SHIP_NO
+      type: Text Field
+
+    heading: 
+      heading: Ship No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: SHIP_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: P ===========================================
+    id: 15060193450627912
+    identification: 
+      column-name: P
+      type: Text Field
+
+    heading: 
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: P
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: VESSEL_NAME =================================
+    id: 15060219181627913
+    identification: 
+      column-name: VESSEL_NAME
+      type: Text Field
+
+    heading: 
+      heading: Vessel Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: VESSEL_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ETD =========================================
+    id: 15060306096627914
+    identification: 
+      column-name: ETD
+      type: Text Field
+
+    heading: 
+      heading: ETD
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: ETD
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ETA =========================================
+    id: 15060482548627915
+    identification: 
+      column-name: ETA
+      type: Text Field
+
+    heading: 
+      heading: ETA
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: ETA
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CONTAINER_NO ================================
+    id: 15060524060627916
+    identification: 
+      column-name: CONTAINER_NO
+      type: Text Field
+
+    heading: 
+      heading: Container No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 100
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: CONTAINER_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: VENDOR ======================================
+    id: 19392444649535016
+    identification: 
+      column-name: VENDOR
+      type: Text Field
+
+    heading: 
+      heading: Vendor
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: VENDOR
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: SHIPMENT_ID =================================
+    id: 27344917784391835
+    identification: 
+      column-name: SHIPMENT_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SHIPMENT_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: SHIPMENT_NUMBER =============================
+    id: 35156813509966940
+    identification: 
+      column-name: SHIPMENT_NUMBER
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 110
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SHIPMENT_NUMBER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+- # ====== Region: Vendor Payment ==============================
+  id: 17926617956262943
+  identification: 
+    name: Vendor Payment
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size720x480
+    - t-Form--stretchInputs
+    css-classes: 
+    - js-dialog-size800x560
+    - is-active-modal
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: vp-modal
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: VP Grid =====================================
+  id: 17926728170262944
+  identification: 
+    name: VP Grid
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT null vendor,
+             null check_date,
+             null bank_code,
+             null check_number,
+             null amount
+        from dual
+
+  layout: 
+    sequence: 20
+    parent-region: Vendor Payment # 17926617956262943
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: vp-grid
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    footer-text: <div class="vp-footer">Press any key to exit</div>
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17926849201262945
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 440
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 19385879545534773
+      identification: 
+        name: Primary Report
+        alias: 193859
+
+  columns: 
+  - # ====== Column: VENDOR ======================================
+    id: 17926986498262946
+    identification: 
+      column-name: VENDOR
+      type: Text Field
+
+    heading: 
+      heading: Vendor
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: VENDOR
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CHECK_DATE ==================================
+    id: 17927014195262947
+    identification: 
+      column-name: CHECK_DATE
+      type: Text Field
+
+    heading: 
+      heading: Check Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: CHECK_DATE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CHECK_NUMBER ================================
+    id: 17927203945262949
+    identification: 
+      column-name: CHECK_NUMBER
+      type: Text Field
+
+    heading: 
+      heading: Check Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: CHECK_NUMBER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: AMOUNT ======================================
+    id: 17927345949262950
+    identification: 
+      column-name: AMOUNT
+      type: Text Field
+
+    heading: 
+      heading: Amount
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: AMOUNT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: BANK_CODE ===================================
+    id: 42426218295064032
+    identification: 
+      column-name: BANK_CODE
+      type: Text Field
+
+    heading: 
+      heading: Bank
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BANK_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: VP Shipment No ==============================
+  id: 19390968288535001
+  identification: 
+    name: VP Shipment No
+    type: Static Content
+
+  source: 
+    html-code: '<p class="vp-ship-no">Shipment No: &P100_SEARCH.-<span class="vp-ship-seq-no">99999</span></p>'
+
+  layout: 
+    sequence: 10
+    parent-region: Vendor Payment # 17926617956262943
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--textContent
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: vp-ship-no-label
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Sort ========================================
+  id: 19392731215535019
+  identification: 
+    name: Sort
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="sort-boxes">
+          <div class="sort-option" data-value="1" tabindex="10001">Vendor Code</div>
+          <div class="sort-option" data-value="2" tabindex="10002">Shipment Number</div>
+          <div class="sort-option" data-value="3" tabindex="10003">ETA</div>
+          <div class="sort-option" data-value="4" tabindex="10004">Container Number</div>
+      </div>
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-nosize
+    css-classes: 
+    - js-dialog-size220x225
+    - sort
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: sort-modal
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Warehouse Location ==========================
+  id: 27345315994391839
+  identification: 
+    name: Warehouse Location
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: wh-location
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Popup =======================================
+  id: 30552023656940701
+  identification: 
+    name: Popup
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="r-popup-div">
+          <div class="r-popup-icon"></div>
+          <div class="r-popup"></div>
+      </div>
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Popup
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size600x400
+    css-classes: 
+    - r-popup-box
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: r-popup-box
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Supervisor Approval =========================
+  id: 30554071133940721
+  identification: 
+    name: Supervisor Approval
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: supervisor-approval
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Report Options ==============================
+  id: 35157794242966949
+  identification: 
+    name: Report Options
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="report-option-boxes">
+          <div class="report-option-option" data-value="r1">A - Shipment Vessel Information Summary</div>
+          <div class="report-option-option" data-value="r2">B - Summary of Shipment By Supplier Report</div>
+          <div class="report-option-option" data-value="r3">C - Shipment Report with Serial Numbers</div>
+          <div class="report-option-option" data-value="r4">D - Shipment Report</div>
+      </div>
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - report-options
+    - js-dialog-size480x225
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: report-options-modal
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Shipment Vessel Information Summary =========
+  id: 39469371819750330
+  identification: 
+    name: Shipment Vessel Information Summary
+    type: Static Content
+
+  layout: 
+    sequence: 100
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - js-dialog-size480x90
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Summary of Shipment By Supplier Report ======
+  id: 39469834806750335
+  identification: 
+    name: Summary of Shipment By Supplier Report
+    type: Static Content
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - js-dialog-size500x90
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Print Inventory Costing Sheet Options =======
+  id: 39470380591750340
+  identification: 
+    name: Print Inventory Costing Sheet Options
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="pic-option-boxes">
+          <div class="pic-option-option" data-value="p1">A - Individual Shipment Report</div>
+          <div class="pic-option-option" data-value="p2">B - All Shipment Report (for a period)</div>
+      </div>
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - pic-options
+    - js-dialog-size480x130
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Print Inventory Costing Sheet ===============
+  id: 39470745958750344
+  identification: 
+    name: Print Inventory Costing Sheet
+    type: Static Content
+
+  layout: 
+    sequence: 140
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - js-dialog-size500x90
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Shipment with Duplicate Container No ========
+  id: 39667709245745205
+  identification: 
+    name: Shipment with Duplicate Container No
+    type: Static Content
+
+  layout: 
+    sequence: 150
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - js-dialog-size500x90
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Printing Options ============================
+  id: 42423135783064001
+  identification: 
+    name: Printing Options
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="printing-option-boxes">
+          <div class="printing-option-option" data-value="1">A - Dot Matrix Printer</div>
+          <div class="printing-option-option" data-value="2">B - Graphics Printer</div>
+      </div>
+
+  layout: 
+    sequence: 160
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - printing-options
+    - js-dialog-size480x130
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Print Options ===============================
+  id: 42425170593064021
+  identification: 
+    name: Print Options
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="nprint-option-boxes">
+          <div class="nprint-option-option" data-value="1">A - Shipment Record</div>
+          <div class="nprint-option-option" data-value="2">B - Shipment Record Vendors & Invoices</div>
+      </div>
+
+  layout: 
+    sequence: 130
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-dialog-autoheight
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - nprint-options
+    - js-dialog-size480x130
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P100_SEARCH ==============================
+  id: 12168539774578442
+  identification: 
+    name: P100_SEARCH
+    type: Text Field
+
+  label: 
+    label: 'Shipments of Year :'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Search Field # 12168481221578441
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    format-mask: 9990
+    width: 30
+    value-placeholder: YYYY
+
+  validation: 
+    value-required: false
+    maximum-length: 4
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_SURL ================================
+  id: 15655671853560918
+  identification: 
+    name: P100_SURL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: APEX_PAGE.GET_URL(p_page => 301)
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_ID ==================================
+  id: 15656249881560924
+  identification: 
+    name: P100_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REPORT_DATA =========================
+  id: 16268669222399147
+  identification: 
+    name: P100_REPORT_DATA
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: Printing Options # 42423135783064001
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_SORT ================================
+  id: 19395327679535045
+  identification: 
+    name: P100_SORT
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_SHIPMENT_SEQ ========================
+  id: 27344854657391834
+  identification: 
+    name: P100_SHIPMENT_SEQ
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_WAREHOUSE ===========================
+  id: 27345403269391840
+  identification: 
+    name: P100_WAREHOUSE
+    type: Popup LOV
+
+  label: 
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Warehouse Location # 27345315994391839
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    css-classes: 
+    - fs-1125
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT warehouse_location d, warehouse_id r 
+        FROM nim027
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+    initialization-javascript-function: |
+      function( options ) {
+          options.defaultGridColumnOptions = {
+              noHeaderActivate: true
+          };
+          options.defaultGridOptions = {
+              resizeColumns: false,
+              columnSort: false,
+              pagination : {
+                  scroll : true,
+                  loadMore : false
+              }   
+          };
+          return options;
+      }
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_LOCATION_DESC =======================
+  id: 30553532924940716
+  identification: 
+    name: P100_LOCATION_DESC
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 20
+    region: Warehouse Location # 27345315994391839
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - fs-1125
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Select a warehouse
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_SUPERVISOR_USER_ID ==================
+  id: 30554108188940722
+  identification: 
+    name: P100_SUPERVISOR_USER_ID
+    type: Text Field
+
+  label: 
+    label: User ID
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Supervisor Approval # 30554071133940721
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - fs-1125
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    custom-attributes: 
+    - autocomplete="username"
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_SUPERVISOR_PW =======================
+  id: 30554299722940723
+  identification: 
+    name: P100_SUPERVISOR_PW
+    type: Password
+
+  label: 
+    label: Password
+    alignment: Left
+
+  settings: 
+    submit-when-enter-pressed: false
+
+  layout: 
+    sequence: 20
+    region: Supervisor Approval # 30554071133940721
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - fs-1125
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    custom-attributes: 
+    - autocomplete="current-password"
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_SHIPMENT_NUM ========================
+  id: 35156751651966939
+  identification: 
+    name: P100_SHIPMENT_NUM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REP_MONTH_FROM ======================
+  id: 39469484705750331
+  identification: 
+    name: P100_REP_MONTH_FROM
+    type: Text Field
+
+  label: 
+    label: Month From
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Shipment Vessel Information Summary # 39469371819750330
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--xlarge
+    css-classes: 
+    - rep-option
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REP_MONTH_TO ========================
+  id: 39469525584750332
+  identification: 
+    name: P100_REP_MONTH_TO
+    type: Text Field
+
+  label: 
+    label: Month To
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Shipment Vessel Information Summary # 39469371819750330
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--xlarge
+    css-classes: 
+    - rep-option
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REP_VENDOR_CODE =====================
+  id: 39469953143750336
+  identification: 
+    name: P100_REP_VENDOR_CODE
+    type: Text Field
+
+  label: 
+    label: Vendor Code
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Summary of Shipment By Supplier Report # 39469834806750335
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 7
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--xlarge
+    css-classes: 
+    - rep-option
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REP_PIC_MONTH =======================
+  id: 39470808112750345
+  identification: 
+    name: P100_REP_PIC_MONTH
+    type: Number Field
+
+  label: 
+    label: Month
+    alignment: Left
+
+  settings: 
+    number-alignment: Center
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 20
+    region: Print Inventory Costing Sheet # 39470745958750344
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 6
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--xlarge
+    css-classes: 
+    - rep-option
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REP_DUP_MONTH =======================
+  id: 39667801609745206
+  identification: 
+    name: P100_REP_DUP_MONTH
+    type: Number Field
+
+  label: 
+    label: Month
+    alignment: Left
+
+  settings: 
+    number-alignment: Center
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 30
+    region: Shipment with Duplicate Container No # 39667709245745205
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 6
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--xlarge
+    css-classes: 
+    - rep-option
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REPORT_NAME =========================
+  id: 42423259564064002
+  identification: 
+    name: P100_REPORT_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Printing Options # 42423135783064001
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_FILENAME ============================
+  id: 42423368508064003
+  identification: 
+    name: P100_FILENAME
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: Printing Options # 42423135783064001
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REPORT_SPINNER_ON ===================
+  id: 42423520609064005
+  identification: 
+    name: P100_REPORT_SPINNER_ON
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Printing Options # 42423135783064001
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REPORT_AFFIX_NAME ===================
+  id: 42424002712064010
+  identification: 
+    name: P100_REPORT_AFFIX_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: Printing Options # 42423135783064001
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P100_REPORT_FORMAT =======================
+  id: 42424155472064011
+  identification: 
+    name: P100_REPORT_FORMAT
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: Printing Options # 42423135783064001
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD =========================================
+  id: 12168610362578443
+  identification: 
+    button-name: ADD
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:101:&SESSION.::&DEBUG.:101::'
+      page: 101 # Add/Update New Shipment
+      clear-cache: 101
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: btn-add
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 81) = 'Y'"
+
+- # ====== Button: UPDATE ======================================
+  id: 12168719326578444
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-update
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 82) = 'Y'"
+
+- # ====== Button: INQUIRE =====================================
+  id: 12168825596578445
+  identification: 
+    button-name: INQUIRE
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 30
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-inquire
+    custom-attributes: 
+    - tabindex="-1"
+
+- # ====== Button: REPORTS =====================================
+  id: 12168932478578446
+  identification: 
+    button-name: REPORTS
+    label: <u>R</u> - Reports
+
+  layout: 
+    sequence: 40
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-reports
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 84) = 'Y'"
+
+- # ====== Button: RECEIVE =====================================
+  id: 12169025786578447
+  identification: 
+    button-name: RECEIVE
+    label: <u>E</u> - Receive
+
+  layout: 
+    sequence: 50
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-receive
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 86) = 'Y'"
+
+- # ====== Button: POST ========================================
+  id: 12169176750578448
+  identification: 
+    button-name: POST
+    label: <u>P</u> - Post
+
+  layout: 
+    sequence: 60
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-post
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 87) = 'Y'"
+
+- # ====== Button: UNPOST ======================================
+  id: 12169201819578449
+  identification: 
+    button-name: UNPOST
+    label: <u>H</u> - Unpost
+
+  layout: 
+    sequence: 70
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-unpost
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 88) = 'Y'"
+
+- # ====== Button: VENDOR_PAYMENT ==============================
+  id: 12169338380578450
+  identification: 
+    button-name: VENDOR_PAYMENT
+    label: <u>V</u> - Vendor Payment
+
+  layout: 
+    sequence: 90
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-vendor-payt
+    custom-attributes: 
+    - tabindex="-1"
+
+- # ====== Button: SORT ========================================
+  id: 15059070163627901
+  identification: 
+    button-name: SORT
+    label: <u>O</u> - Sort
+
+  layout: 
+    sequence: 130
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-sort
+    custom-attributes: 
+    - tabindex="-1"
+
+- # ====== Button: PRINT_INVENTORY_COSTING_SHEET ===============
+  id: 15059106672627902
+  identification: 
+    button-name: PRINT_INVENTORY_COSTING_SHEET
+    label: <u>C</u> - Print Inventory Costing Sheet
+
+  layout: 
+    sequence: 140
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-print-inv
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 91) = 'Y'"
+
+- # ====== Button: PRINT_SHIPMENT_DUP_CONT =====================
+  id: 15059211918627903
+  identification: 
+    button-name: PRINT_SHIPMENT_DUP_CONT
+    label: <u>D</u> - Print Shipment with Duplicate Container No.
+
+  layout: 
+    sequence: 150
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+    - s-button-2x
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-print-ship
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 92) = 'Y'"
+
+- # ====== Button: SEARCH ======================================
+  id: 15059370402627904
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 160
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-search
+    custom-attributes: 
+    - tabindex="-1"
+
+- # ====== Button: TOP =========================================
+  id: 15059431058627905
+  identification: 
+    button-name: TOP
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 170
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-top
+    custom-attributes: 
+    - tabindex="-1"
+
+- # ====== Button: BOTTOM ======================================
+  id: 15059531936627906
+  identification: 
+    button-name: BOTTOM
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 180
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-bottom
+    custom-attributes: 
+    - tabindex="-1"
+
+- # ====== Button: EXIT ========================================
+  id: 15059667810627907
+  identification: 
+    button-name: EXIT
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 190
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:1:&SESSION.::&DEBUG.:100::'
+      page: 1 # Main Menu
+      clear-cache: 100
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: btn-exit
+    custom-attributes: 
+    - tabindex="-1"
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: POST_ALL_PO =================================
+  id: 27344315193391829
+  identification: 
+    button-name: POST_ALL_PO
+    label: <u>T</u> - Post All PO
+
+  layout: 
+    sequence: 110
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-post-all-po
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 93) = 'Y'"
+
+- # ====== Button: PRINT =======================================
+  id: 27344471857391830
+  identification: 
+    button-name: PRINT
+    label: <u>N</u> - Print
+
+  layout: 
+    sequence: 100
+    region: Buttons # 12167698346578433
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--padBottom
+    css-classes: 
+    - s-button
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: btn-print
+    custom-attributes: 
+    - tabindex="-1"
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 23, 90) = 'Y'"
+
+dynamic-actions: 
+- # ====== Dynamic Action: Open search modal ===================
+  id: 15060735942627918
+  identification: 
+    name: Open search modal
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH # 15059370402627904
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 15060804335627919
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search Bar # 12167359108578430
+
+    execution: 
+      sequence: 20
+      event: Open search modal # 15060735942627918
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16265529953399116
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: activeModal = 'search-bar';
+
+    execution: 
+      sequence: 40
+      event: Open search modal # 15060735942627918
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Search keydown events ===============
+  id: 15061122673627922
+  identification: 
+    name: Search keydown events
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P100_SEARCH
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key === "Enter" || this.browserEvent.key === "Escape"
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15061219050627923
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.browserEvent.preventDefault();
+        this.browserEvent.stopPropagation();
+        activeModal = null;
+
+    affected-elements: 
+      selection-type: Region
+      region: Search Field # 12168481221578441
+
+    execution: 
+      sequence: 10
+      event: Search keydown events # 15061122673627922
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh on enter ============================
+    id: 15061615209627927
+    identification: 
+      name: Refresh on enter
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Shipment Records # 15059777565627908
+
+    execution: 
+      sequence: 40
+      event: Search keydown events # 15061122673627922
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: this.browserEvent.key === "Enter" && this.triggeringElement.value !== ""
+
+  - # ====== Action: Close modal dialog ==========================
+    id: 15657195598560933
+    identification: 
+      name: Close modal dialog
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search Bar # 12167359108578430
+
+    execution: 
+      sequence: 30
+      event: Search keydown events # 15061122673627922
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set global vars =============================
+    id: 19392021742535012
+    identification: 
+      name: Set global vars
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        forRefresh = true;
+        
+        apex.server.process("SET_SEARCH", {
+            pageItems: ["P100_SEARCH"]
+        });
+
+    execution: 
+      sequence: 20
+      event: Search keydown events # 15061122673627922
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: this.browserEvent.key === "Enter" && this.triggeringElement.value !== ""
+
+- # ====== Dynamic Action: On record select ====================
+  id: 15656009570560922
+  identification: 
+    name: On record select
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Shipment Records # 15059777565627908
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15656123486560923
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.selectedRecords?.length > 0) {
+            const model = this.data.model;
+            const selectedRecord = this.data.selectedRecords[0];
+            const recordId = model.getRecordId(selectedRecord);
+            $("#P100_ID").val(model.getRecordId(selectedRecord));
+            $("#P100_SHIPMENT_SEQ").val(model.getRecordValue(recordId, "SHIP_NO"));
+            $("#P100_SHIPMENT_NUM").val(model.getRecordValue(recordId, "SHIPMENT_NUMBER"));
+            
+            if (forRefresh) {
+                setTimeout(() => {
+                    $("#btn-bottom").trigger("click");
+                    $("#btn-top").trigger("click");
+                    forRefresh = false;
+                }, 100);
+            }
+        } else {
+            $("#P100_ID").val("");
+            $("#P100_SHIPMENT_SEQ").val("");
+            $("#P100_SHIPMENT_NUM").val("");
+        }
+
+    execution: 
+      sequence: 10
+      event: On record select # 15656009570560922
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to inquire screen ================
+  id: 15656612810560928
+  identification: 
+    name: Go to inquire screen
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: INQUIRE # 12168825596578445
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15656778293560929
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.page.submit({
+            request: "INQUIRE",
+            set: { "P100_ID" : $v("P100_ID") },
+            showWait: false
+        }); 
+
+    execution: 
+      sequence: 10
+      event: Go to inquire screen # 15656612810560928
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Post shipment =======================
+  id: 16268477423399145
+  identification: 
+    name: Post shipment
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: POST # 12169176750578448
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16268817618399149
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const shipNo = $v("P100_SHIPMENT_NUM");
+        
+        apex.server.process("POST_SHIPMENT", {
+            x01: $v("P100_ID")
+        })
+        .done(data => {
+            if (data.message === "OK") {
+                forRefresh = true;
+                apex.region(SHIPMENT_IG).call('getActions').invoke("refresh");
+                showPopup({
+                    message: `Shipment No. ${shipNo} successfully posted.`,
+                    icon: ICON_OK_LARGE,
+                    width: 430
+                });
+            } else {
+                showPopup({
+                    message: data.message,
+                    icon: ICON_FAIL_LARGE,
+                    width: 430
+                });
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Post shipment # 16268477423399145
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open vendor payment modal ===========
+  id: 19391026833535002
+  identification: 
+    name: Open vendor payment modal
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: VENDOR_PAYMENT # 12169338380578450
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 19391121838535003
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Vendor Payment # 17926617956262943
+
+    execution: 
+      sequence: 30
+      event: Open vendor payment modal # 19391026833535002
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 19392169406535013
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: '$(".vp-ship-no").text(`Shipment No: ${$("#P100_SEARCH").val()} - ${$("#P100_SHIPMENT_SEQ").val().padStart(3, "0")}`);'
+
+    execution: 
+      sequence: 10
+      event: Open vendor payment modal # 19391026833535002
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 32277732237470425
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Vendor Payment # 17926617956262943
+
+    execution: 
+      sequence: 20
+      event: Open vendor payment modal # 19391026833535002
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open sort modal =====================
+  id: 19392896566535020
+  identification: 
+    name: Open sort modal
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SORT # 15059070163627901
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 19392976736535021
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Sort # 19392731215535019
+
+    execution: 
+      sequence: 10
+      event: Open sort modal # 19392896566535020
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 19395226158535044
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentSortValue = $v("P100_SORT") || 1;
+        $(`.sort .sort-option[data-value='${currentSortValue}']`).focus();
+        $(`.sort .sort-option[data-value='${currentSortValue}']`).addClass("sort-active");
+
+    execution: 
+      sequence: 20
+      event: Open sort modal # 19392896566535020
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Sort refresh ========================
+  id: 19395427947535046
+  identification: 
+    name: Sort refresh
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P100_SORT
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 30553385969940714
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Shipment Records # 15059777565627908
+
+    execution: 
+      sequence: 20
+      event: Sort refresh # 19395427947535046
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open warehouse modal ================
+  id: 27345084397391836
+  identification: 
+    name: Open warehouse modal
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: RECEIVE # 12169025786578447
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 27345210604391838
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Warehouse Location # 27345315994391839
+
+    execution: 
+      sequence: 20
+      event: Open warehouse modal # 27345084397391836
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set warehouse location for Receive mo
+  id: 27345539793391841
+  identification: 
+    name: 'Set warehouse location for Receive modal '
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P100_WAREHOUSE
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27345670462391842
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process("GET_WH_LOCATION_DESC", {
+            x01: $v("P100_WAREHOUSE") 
+        })
+        .done(data => {
+            $("#P100_LOCATION_DESC").text(data.ld);
+        });
+
+    execution: 
+      sequence: 10
+      event: 'Set warehouse location for Receive modal ' # 27345539793391841
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Warehouse location on enter key down 
+  id: 27345788036391843
+  identification: 
+    name: Warehouse location on enter key down
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P100_WAREHOUSE
+
+  actions: 
+  - # ====== Action: Enter key event =============================
+    id: 27345867299391844
+    identification: 
+      name: Enter key event
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const wh = $v("P100_WAREHOUSE");
+        const shipmentId = $v("P100_ID");
+        const shipNo = $v("P100_SHIPMENT_NUM");
+        
+        apex.server.process("RECEIVE_SHIPMENT", {
+            pageItems: ["P100_ID", "P100_WAREHOUSE"]
+        })
+        .done(data => {
+            if (data.message !== "OK") {
+                showPopup({
+                    message: data.message,
+                    icon: ICON_FAIL_LARGE,
+                    width: 410
+                });
+            } else {
+                forRefresh = true;
+                apex.region(SHIPMENT_IG).widget().interactiveGrid("getActions").invoke("refresh");
+                showPopup({
+                    message: `Shipment No. ${shipNo} sucessfully received.`,
+                    icon: ICON_OK_LARGE,
+                    width: 430
+                });
+            }
+            $.event.trigger("close-wh-location");
+        });
+        
+
+    execution: 
+      sequence: 10
+      event: Warehouse location on enter key down # 27345788036391843
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: this.browserEvent.key?.toLowerCase() === "enter"
+
+  - # ====== Action: Close Region ================================
+    id: 27345957778391845
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Warehouse Location # 27345315994391839
+
+    execution: 
+      sequence: 20
+      event: Warehouse location on enter key down # 27345788036391843
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: this.browserEvent.key?.toLowerCase() === "escape"
+
+- # ====== Dynamic Action: Close sort modal ====================
+  id: 30552106870940702
+  identification: 
+    name: Close sort modal
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: close-sort
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 30552208180940703
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Sort # 19392731215535019
+
+    execution: 
+      sequence: 20
+      event: Close sort modal # 30552106870940702
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close vendor payment modal ==========
+  id: 30552317531940704
+  identification: 
+    name: Close vendor payment modal
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: close-vp-modal
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 30552457058940705
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Vendor Payment # 17926617956262943
+
+    execution: 
+      sequence: 20
+      event: Close vendor payment modal # 30552317531940704
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Vendor payment key events ===========
+  id: 30552539073940706
+  identification: 
+    name: Vendor payment key events
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: activeModal === 'vp-modal'
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 30552805255940709
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Vendor Payment # 17926617956262943
+
+    execution: 
+      sequence: 20
+      event: Vendor payment key events # 30552539073940706
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30553289653940713
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.browserEvent.preventDefault();
+        this.browserEvent.stopImmediatePropagation();
+        activeModal = null;
+
+    execution: 
+      sequence: 10
+      event: Vendor payment key events # 30552539073940706
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close warehouse location modal ======
+  id: 30553755855940718
+  identification: 
+    name: Close warehouse location modal
+
+  execution: 
+    sequence: 170
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: close-wh-location
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 30553826810940719
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Warehouse Location # 27345315994391839
+
+    execution: 
+      sequence: 20
+      event: Close warehouse location modal # 30553755855940718
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32276349226470411
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: activeModal = null;
+
+    execution: 
+      sequence: 10
+      event: Close warehouse location modal # 30553755855940718
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open unpost modal ===================
+  id: 30554365679940724
+  identification: 
+    name: Open unpost modal
+
+  execution: 
+    sequence: 190
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UNPOST # 12169201819578449
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 30554508959940726
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Supervisor Approval # 30554071133940721
+
+    execution: 
+      sequence: 30
+      event: Open unpost modal # 30554365679940724
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close unpost modal ==================
+  id: 30554780726940728
+  identification: 
+    name: Close unpost modal
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: close-supervisor-approval
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 30554846453940729
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Supervisor Approval # 30554071133940721
+
+    execution: 
+      sequence: 10
+      event: Close unpost modal # 30554780726940728
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On unpost submit ====================
+  id: 30554958922940730
+  identification: 
+    name: On unpost submit
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P100_SUPERVISOR_PW
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === "enter"
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30555005024940731
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process("UNPOST", {
+            x01: $v("P100_SUPERVISOR_USER_ID"),
+            x02: $v("P100_SUPERVISOR_PW"),
+            x03: $v("P100_ID")
+        })
+        .done(data => {
+            if (data.message !== "success") {
+                apex.message.showErrors([
+                    {
+                        type: "error",
+                        location: "inline",
+                        pageItem: "P100_SUPERVISOR_USER_ID",
+                        message: data.message
+                    },
+                    {
+                        type: "error",
+                        location: "inline",
+                        pageItem: "P100_SUPERVISOR_PW",
+                        message: data.message
+                    }
+                ]);
+                $("#P100_SUPERVISOR_USER_ID").focus();
+            } else {
+                $.event.trigger("UNPOST_SUCCESS");
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: On unpost submit # 30554958922940730
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On unpost success ===================
+  id: 30555246527940733
+  identification: 
+    name: On unpost success
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: UNPOST_SUCCESS
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 30555385966940734
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Supervisor Approval # 30554071133940721
+
+    execution: 
+      sequence: 10
+      event: On unpost success # 30555246527940733
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 30555416286940735
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Shipment Records # 15059777565627908
+
+    execution: 
+      sequence: 20
+      event: On unpost success # 30555246527940733
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Post All PO =========================
+  id: 30555676143940737
+  identification: 
+    name: Post All PO
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: POST_ALL_PO # 27344315193391829
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30555726981940738
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process("POST_ALL_PO", {
+            x01: $v('P100_ID')
+        })
+        .done(data => {
+            showPopup({
+                message: data.message,
+                icon: ICON_OK_LARGE
+            });
+        });
+
+    execution: 
+      sequence: 10
+      event: Post All PO # 30555676143940737
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open popup ==========================
+  id: 30555981329940740
+  identification: 
+    name: Open popup
+
+  execution: 
+    sequence: 230
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: OPEN_POPUP
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 30556030411940741
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Popup # 30552023656940701
+
+    execution: 
+      sequence: 10
+      event: Open popup # 30555981329940740
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close popup =========================
+  id: 30556164164940742
+  identification: 
+    name: Close popup
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: CLOSE_POPUP
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 30556292058940743
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Popup # 30552023656940701
+
+    execution: 
+      sequence: 10
+      event: Close popup # 30556164164940742
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to update screen =================
+  id: 31309564601578727
+  identification: 
+    name: Go to update screen
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UPDATE # 12168719326578444
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 31309662969578728
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.page.submit({
+            request: "UPDATE",
+            set: { "P100_ID" : $v("P100_ID") },
+            showWait: false
+        }); 
+
+    execution: 
+      sequence: 10
+      event: Go to update screen # 31309564601578727
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On top press ========================
+  id: 32275978608470407
+  identification: 
+    name: On top press
+
+  execution: 
+    sequence: 250
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: TOP # 15059431058627905
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32276085149470408
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGFirstRecordFirstCell(SHIPMENT_IG, "VENDOR");
+
+    execution: 
+      sequence: 10
+      event: On top press # 32275978608470407
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On bottom press =====================
+  id: 32276102529470409
+  identification: 
+    name: On bottom press
+
+  execution: 
+    sequence: 260
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: BOTTOM # 15059531936627906
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32276255186470410
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGLastRecordFirstCell(SHIPMENT_IG);
+
+    execution: 
+      sequence: 10
+      event: On bottom press # 32276102529470409
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open report options =================
+  id: 35157871474966950
+  identification: 
+    name: Open report options
+
+  execution: 
+    sequence: 270
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: REPORTS # 12168932478578446
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39466815198750305
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process("GET_REPORT_OPTIONS_URL", {
+            x01: $v("P100_ID")
+        })
+        .done(data => {
+            apex.navigation.redirect(data.url);
+        });
+
+    execution: 
+      sequence: 10
+      event: Open report options # 35157871474966950
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Open Region =================================
+    id: 39468214484750319
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Options # 35157794242966949
+
+    execution: 
+      sequence: 20
+      event: Open report options # 35157871474966950
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close report option modal ===========
+  id: 39468376788750320
+  identification: 
+    name: Close report option modal
+
+  execution: 
+    sequence: 150
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: close-report-options
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 39468470144750321
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Sort # 19392731215535019
+
+    execution: 
+      sequence: 10
+      event: Close report option modal # 39468376788750320
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Execute Report Option A =============
+  id: 39468504391750322
+  identification: 
+    name: Execute Report Option A
+
+  execution: 
+    sequence: 290
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: EXEC_REPORT_OPT_A
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $v("P100_SEARCH") !== "" && withSearchResults()
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39468687478750323
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        activeModal = "shipment-vessel-info-summary"
+        
+        $s("P100_REP_MONTH_FROM", "");
+        $s("P100_REP_MONTH_TO", "");
+
+    execution: 
+      sequence: 10
+      event: Execute Report Option A # 39468504391750322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 39469694993750333
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Shipment Vessel Information Summary # 39469371819750330
+
+    execution: 
+      sequence: 30
+      event: Execute Report Option A # 39468504391750322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 39469721111750334
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Options # 35157794242966949
+
+    execution: 
+      sequence: 20
+      event: Execute Report Option A # 39468504391750322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39668942878745217
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const message = $v("P100_SEARCH") !== "" ? "There are no records found for the entered year input" :
+                                                   "Search must be performed before printing this report";
+        
+        showGPopup({
+            message : message,
+            icon: ICON_FAIL_LARGE,
+            width: 500
+        });
+        activeModal = null;
+
+    execution: 
+      sequence: 10
+      event: Execute Report Option A # 39468504391750322
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 39669026754745218
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Options # 35157794242966949
+
+    execution: 
+      sequence: 20
+      event: Execute Report Option A # 39468504391750322
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Execute Report Option B =============
+  id: 39468725915750324
+  identification: 
+    name: Execute Report Option B
+
+  execution: 
+    sequence: 300
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: EXEC_REPORT_OPT_B
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $v("P100_SEARCH") !== "" && withSearchResults()
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39468886525750325
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: activeModal = "shipment-summary-supplier"
+
+    execution: 
+      sequence: 10
+      event: Execute Report Option B # 39468725915750324
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 39470035389750337
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Options # 35157794242966949
+
+    execution: 
+      sequence: 20
+      event: Execute Report Option B # 39468725915750324
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 39470151136750338
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Summary of Shipment By Supplier Report # 39469834806750335
+
+    execution: 
+      sequence: 40
+      event: Execute Report Option B # 39468725915750324
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39669129249745219
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const message = $v("P100_SEARCH") !== "" ? "There are no records found for the entered year input" :
+                                                   "Search must be performed before printing this report";
+        
+        showGPopup({
+            message : message,
+            icon: ICON_FAIL_LARGE,
+            width: 500
+        });
+        activeModal = null;
+
+    execution: 
+      sequence: 10
+      event: Execute Report Option B # 39468725915750324
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 39669214567745220
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Options # 35157794242966949
+
+    execution: 
+      sequence: 30
+      event: Execute Report Option B # 39468725915750324
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Execute Report Option C =============
+  id: 39468950541750326
+  identification: 
+    name: Execute Report Option C
+
+  execution: 
+    sequence: 310
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: EXEC_REPORT_OPT_C
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $v("P100_ID") !== ""
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39469074023750327
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currDateStr = getRepCurrentDateString();
+        setPrintingOptions({
+            reportName : "SHIPMENT_REPORT",
+            fileName : `SHIPMENT_REPORT_WITH_SERIAL_NUMBERS_${currDateStr}.pdf`,
+            data : {
+                P_SHIPMENT_ID : $v("P100_ID"),
+                P_WITH_SERIAL_NOS : "Y"
+            },
+            format : "pdf",
+            spinnerEnabled : "Y",
+            affixFontName : "Y"
+        });
+
+    execution: 
+      sequence: 10
+      event: Execute Report Option C # 39468950541750326
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39669367907745221
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message : "A shipment record must be selected before printing this report",
+            icon: ICON_FAIL_LARGE
+        });
+        activeModal = null;
+
+    execution: 
+      sequence: 10
+      event: Execute Report Option C # 39468950541750326
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 39669497111745222
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Options # 35157794242966949
+
+    execution: 
+      sequence: 30
+      event: Execute Report Option C # 39468950541750326
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Execute Report Option D =============
+  id: 39469129118750328
+  identification: 
+    name: Execute Report Option D
+
+  execution: 
+    sequence: 320
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: EXEC_REPORT_OPT_D
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $v("P100_ID") !== ""
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39469275507750329
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currDateStr = getRepCurrentDateString();
+        setPrintingOptions({
+            reportName : "SHIPMENT_REPORT",
+            fileName : `SHIPMENT_REPORT_${currDateStr}.pdf`,
+            data : {
+                P_SHIPMENT_ID : $v("P100_ID"),
+                P_WITH_SERIAL_NOS : "N"
+            },
+            format : "pdf",
+            spinnerEnabled : "Y",
+            affixFontName : "Y"
+        });
+
+    execution: 
+      sequence: 10
+      event: Execute Report Option D # 39469129118750328
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39669562022745223
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message : "A shipment record must be selected before printing this report",
+            icon: ICON_FAIL_LARGE
+        });
+        activeModal = null;
+
+    execution: 
+      sequence: 20
+      event: Execute Report Option D # 39469129118750328
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 39669627819745224
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Options # 35157794242966949
+
+    execution: 
+      sequence: 40
+      event: Execute Report Option D # 39469129118750328
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open PIC options ====================
+  id: 39470456918750341
+  identification: 
+    name: Open PIC options
+
+  execution: 
+    sequence: 280
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: PRINT_INVENTORY_COSTING_SHEET # 15059106672627902
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $v("P100_SEARCH") !== "" && withSearchResults()
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 39470631643750343
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Print Inventory Costing Sheet Options # 39470380591750340
+
+    execution: 
+      sequence: 20
+      event: Open PIC options # 39470456918750341
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39668880273745216
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message : "Search must be performed before printing this report",
+            icon: ICON_FAIL_LARGE
+        });
+        activeModal = null;
+
+    execution: 
+      sequence: 10
+      event: Open PIC options # 39470456918750341
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Execute PIC Option A ================
+  id: 39470934188750346
+  identification: 
+    name: Execute PIC Option A
+
+  execution: 
+    sequence: 330
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: EXEC_PIC_OPT_A
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39471063099750347
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const shipmentId = $v("P100_ID");
+        
+        if (shipmentId !== "") {
+            setPrintingOptions({
+                reportName : "SHIPMENT_INV_COSTING_SHEET",
+                fileName : `SHIPMENT_INV_COSTING_SHEET_${$v("P100_SHIPMENT_NUM")}.pdf`,
+                data : {
+                    P_SHIPMENT_ID : $v("P100_ID")
+                },
+                format : "pdf",
+                spinnerEnabled : "Y"
+            });
+        } else {
+            showGPopup({
+                message : "A shipment record needs to be selected before printing this report",
+                icon: ICON_FAIL_LARGE
+            });
+        }
+
+    execution: 
+      sequence: 10
+      event: Execute PIC Option A # 39470934188750346
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Execute PIC Option B ================
+  id: 39471105800750348
+  identification: 
+    name: Execute PIC Option B
+
+  execution: 
+    sequence: 340
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: EXEC_PIC_OPT_B
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 39471332449750350
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Print Inventory Costing Sheet Options # 39470380591750340
+
+    execution: 
+      sequence: 20
+      event: Execute PIC Option B # 39471105800750348
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 39667379380745201
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Print Inventory Costing Sheet # 39470745958750344
+
+    execution: 
+      sequence: 40
+      event: Execute PIC Option B # 39471105800750348
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39667420139745202
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: activeModal = "pic-sheet"
+
+    execution: 
+      sequence: 10
+      event: Execute PIC Option B # 39471105800750348
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open duplicate container month ======
+  id: 39667572932745203
+  identification: 
+    name: Open duplicate container month
+
+  execution: 
+    sequence: 370
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: PRINT_SHIPMENT_DUP_CONT # 15059211918627903
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $v("P100_SEARCH") !== "" && withSearchResults()
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 39667694132745204
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Shipment with Duplicate Container No # 39667709245745205
+
+    execution: 
+      sequence: 10
+      event: Open duplicate container month # 39667572932745203
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39668743763745215
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message : "Search must be performed before printing this report",
+            icon: ICON_FAIL_LARGE
+        });
+        activeModal = null;
+
+    execution: 
+      sequence: 10
+      event: Open duplicate container month # 39667572932745203
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open nprint options =================
+  id: 39667933894745207
+  identification: 
+    name: Open nprint options
+
+  execution: 
+    sequence: 380
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: PRINT # 27344471857391830
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39668080501745208
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: activeModal = "nprint-options";
+
+    execution: 
+      sequence: 10
+      event: Open nprint options # 39667933894745207
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 42425209974064022
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Print Options # 42425170593064021
+
+    execution: 
+      sequence: 20
+      event: Open nprint options # 39667933894745207
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print Shipment Vessel Info Summary ==
+  id: 39668158175745209
+  identification: 
+    name: Print Shipment Vessel Info Summary
+
+  execution: 
+    sequence: 390
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Press
+    selection-type: Item(s)
+    item(s): 
+    - P100_REP_MONTH_TO
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === "enter"
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39668259532745210
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let repMonthFrom = $v("P100_REP_MONTH_FROM");
+        let repMonthTo = $v("P100_REP_MONTH_TO");
+        
+        let monthFromElem = document.querySelector("#P100_REP_MONTH_FROM");
+        let monthToElem = document.querySelector("#P100_REP_MONTH_TO");
+        
+        if (repMonthFrom !== "" && repMonthTo !=="") {
+            const currDateStr = getRepCurrentDateString();
+            setPrintingOptions({
+                reportName : "SHIPMENT_VESSEL_INFO_SUMMARY_REPORT",
+                fileName : `SHIPMENT_VESSEL_INFORMATION_SUMMARY_REPORT_${currDateStr}.pdf`,
+                data : {
+                    P_MONTH_FROM : repMonthFrom,
+                    P_MONTH_TO : repMonthTo,
+                    P_YEAR : $v("P100_SEARCH"),
+                    P_SORT : $v("P100_SORT") || "1"
+                },
+                format : "pdf",
+                spinnerEnabled : "Y",
+                affixFontName : "Y"
+            });
+        } else if (repMonthFrom === "") {
+            monthFromElem.setCustomValidity("This field is required");
+            monthFromElem.reportValidity();
+        } else {
+            monthToElem.setCustomValidity("This field is required");
+            monthToElem.reportValidity();
+        }
+        
+
+    execution: 
+      sequence: 10
+      event: Print Shipment Vessel Info Summary # 39668158175745209
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print Summary of Shipment by Supplier
+  id: 39668302464745211
+  identification: 
+    name: Print Summary of Shipment by Supplier
+
+  execution: 
+    sequence: 400
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Press
+    selection-type: Item(s)
+    item(s): 
+    - P100_REP_VENDOR_CODE
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === "enter"
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39668487688745212
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let repVendorCode = $v("P100_REP_VENDOR_CODE");
+        let repVendorCodeElem = document.querySelector("#P100_REP_VENDOR_CODE");
+        const currDateStr = getRepCurrentDateString();
+        
+        if (repVendorCode !== "") {
+            setPrintingOptions({
+                reportName : "SHIPMENT_SUMMARY_BY_SUPPLIER",
+                fileName : `SHIPMENT_SUMMARY_BY_SUPPLIER_${currDateStr}.pdf`,
+                data : {
+                    P_YEAR : $v("P100_SEARCH"),
+                    P_VENDOR_CODE : repVendorCode
+                },
+                format : "pdf",
+                spinnerEnabled : "Y",
+                affixFontName : "Y"
+            });
+        } else {
+            repVendorCodeElem.setCustomValidity("This field is required");
+            repVendorCodeElem.reportValidity();
+        }
+
+    execution: 
+      sequence: 10
+      event: Print Summary of Shipment by Supplier # 39668302464745211
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print Shipment with Duplicate Contain
+  id: 39668513225745213
+  identification: 
+    name: Print Shipment with Duplicate Container report
+
+  execution: 
+    sequence: 410
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Press
+    selection-type: Item(s)
+    item(s): 
+    - P100_REP_DUP_MONTH
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === "enter"
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39668638024745214
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const repDupMonth = $v("P100_REP_DUP_MONTH");
+        const repDupMonthElem = document.querySelector("#P100_REP_DUP_MONTH");
+        const yearSearch = $v("P100_SEARCH");
+        const currDateStr = getRepCurrentDateString();
+        
+        if (repDupMonth !== "") {
+            setPrintingOptions({
+                reportName : "SHIPMENT_WITH_DUPLICATE_CONTAINER",
+                fileName : `SHIPMENT_WITH_DUPLICATE_CONTAINER_NO_${currDateStr}.pdf`,
+                data : {
+                    P_YEAR : yearSearch,
+                    P_MONTH : repDupMonth,
+                    P_SORT : $v("P100_SORT") || "1"
+                },
+                format : "pdf",
+                spinnerEnabled : "Y",
+                affixFontName : "Y"
+            });
+        } else {
+            repDupMonthElem.setCustomValidity("This field is required");
+            repDupMonthElem.reportValidity();
+        }
+
+    execution: 
+      sequence: 10
+      event: Print Shipment with Duplicate Container report # 39668513225745213
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Printing Options ===============
+  id: 42423658904064006
+  identification: 
+    name: Open Printing Options
+
+  execution: 
+    sequence: 420
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: OPEN_PRINTING_OPTIONS
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 42423703702064007
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 42423135783064001
+
+    execution: 
+      sequence: 80
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42423832455064008
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: activeModal = "printing-options";
+
+    execution: 
+      sequence: 90
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Ship Dup Container Report Popup =======
+    id: 42423997174064009
+    identification: 
+      name: Close Ship Dup Container Report Popup
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Shipment with Duplicate Container No # 39667709245745205
+
+    execution: 
+      sequence: 10
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: activeModal === "ship-dup-container"
+
+  - # ====== Action: Close PIC Report Popup ======================
+    id: 42424604955064016
+    identification: 
+      name: Close PIC Report Popup
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Print Inventory Costing Sheet Options # 39470380591750340
+
+    execution: 
+      sequence: 20
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: activeModal === "pic-options"
+
+  - # ====== Action: Close PIC Report Sheet Popup ================
+    id: 42424723666064017
+    identification: 
+      name: Close PIC Report Sheet Popup
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Print Inventory Costing Sheet # 39470745958750344
+
+    execution: 
+      sequence: 30
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: activeModal === "pic-sheet"
+
+  - # ====== Action: Close Ship Vessel Summary Popup =============
+    id: 42424872487064018
+    identification: 
+      name: Close Ship Vessel Summary Popup
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Shipment Vessel Information Summary # 39469371819750330
+
+    execution: 
+      sequence: 40
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: activeModal === 'shipment-vessel-info-summary'
+
+  - # ====== Action: Close Report Options Popup ==================
+    id: 42424938766064019
+    identification: 
+      name: Close Report Options Popup
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Options # 35157794242966949
+
+    execution: 
+      sequence: 60
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: activeModal === 'report-options'
+
+  - # ====== Action: Close Ship Summary Supplier Popup ===========
+    id: 42425058833064020
+    identification: 
+      name: Close Ship Summary Supplier Popup
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Summary of Shipment By Supplier Report # 39469834806750335
+
+    execution: 
+      sequence: 50
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: activeModal === 'shipment-summary-supplier'
+
+  - # ====== Action: Close Nprint Options Popup ==================
+    id: 42426054117064030
+    identification: 
+      name: Close Nprint Options Popup
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Print Options # 42425170593064021
+
+    execution: 
+      sequence: 70
+      event: Open Printing Options # 42423658904064006
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: activeModal === 'nprint-options'
+
+- # ====== Dynamic Action: Close Printing Options ==============
+  id: 42424279063064012
+  identification: 
+    name: Close Printing Options
+
+  execution: 
+    sequence: 430
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: CLOSE_PRINTING_OPTIONS
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 42424368154064013
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 42423135783064001
+
+    execution: 
+      sequence: 20
+      event: Close Printing Options # 42424279063064012
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42424584259064015
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: activeModal = null;
+
+    execution: 
+      sequence: 10
+      event: Close Printing Options # 42424279063064012
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Execute Print A =====================
+  id: 42425376955064023
+  identification: 
+    name: Execute Print A
+
+  execution: 
+    sequence: 350
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: EXEC_PRINT_A
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42425497656064024
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setPrintingOptions({
+            reportName : "SHIPMENT_RECORD_PRINT",
+            fileName : `SHIPMENT_RECORD_${$v("P100_SHIPMENT_NUM")}.pdf`,
+            data : {
+                P_SHIPMENT_ID : $v("P100_ID")
+            },
+            format : "pdf",
+            spinnerEnabled : "Y",
+            affixFontName : "Y"
+        });
+        
+
+    execution: 
+      sequence: 10
+      event: Execute Print A # 42425376955064023
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Execute Print B =====================
+  id: 42425736353064027
+  identification: 
+    name: Execute Print B
+
+  execution: 
+    sequence: 360
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: EXEC_PRINT_B
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42425804395064028
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setPrintingOptions({
+            reportName : "SHIPMENT_RECORD_VENDOR_INV_PRINT",
+            fileName : `SHIPMENT_RECORD_VENDOR_INVOICE_${$v("P100_SHIPMENT_NUM")}.pdf`,
+            data : {
+                P_SHIPMENT_ID : $v("P100_ID")
+            },
+            format : "pdf",
+            spinnerEnabled : "Y",
+            affixFontName : "N"
+        });
+        
+
+    execution: 
+      sequence: 10
+      event: Execute Print B # 42425736353064027
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print Inventory Costing Sheet By mont
+  id: 42426306597064033
+  identification: 
+    name: Print Inventory Costing Sheet By month
+
+  execution: 
+    sequence: 440
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Press
+    selection-type: Item(s)
+    item(s): 
+    - P100_REP_PIC_MONTH
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === "enter"
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42426467631064034
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setPrintingOptions({
+            reportName : "SHIPMENT_INV_COSTING_SHEET",
+            fileName : `SHIPMENT_INV_COSTING_SHEET_${$v("P100_REP_PIC_MONTH")}${$v("P100_SEARCH")}.pdf`,
+            data : {
+                P_MONTH : $v("P100_REP_PIC_MONTH")
+            },
+            format : "pdf",
+            spinnerEnabled : "Y"
+        });
+
+    execution: 
+      sequence: 10
+      event: Print Inventory Costing Sheet By month # 42426306597064033
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Clear Session ==============================
+  id: 19392221034535014
+  identification: 
+    name: Clear Session
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear all Items on the Current Page
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: SET_SEARCH =================================
+  id: 19392520151535017
+  identification: 
+    name: SET_SEARCH
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      begin
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.write('s', :P100_SEARCH);
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_WH_LOCATION_DESC =======================
+  id: 30553634891940717
+  identification: 
+    name: GET_WH_LOCATION_DESC
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_wh_id         nim027.warehouse_id%TYPE;
+          v_location      nim027.location_desc%TYPE;
+      begin
+          v_wh_id := TO_NUMBER(apex_application.g_x01);
+      
+          SELECT location_desc
+            INTO v_location
+            FROM nim027
+           WHERE warehouse_id = v_wh_id;
+      
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.write('ld', v_location);
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: UNPOST =====================================
+  id: 30555174551940732
+  identification: 
+    name: UNPOST
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_user_id       npm009.user_name%TYPE;
+          v_pw            varchar2(100);
+          v_shipment_id   nit016.shipment_id%TYPE;
+      
+          v_result        boolean;
+          v_msg           varchar2(20) := 'success';
+      begin
+          v_user_id := apex_application.g_x01;
+          v_pw := apex_application.g_x02;
+          v_shipment_id := TO_NUMBER(apex_application.g_x03);
+      
+          v_result := nos_authentication_pkg.nos_authentication2(v_user_id, v_pw);
+      
+          IF v_result THEN
+              UPDATE nit016
+                 SET is_posted = 'N'
+               WHERE shipment_id = v_shipment_id;
+          ELSE
+              v_msg := 'Invalid credentials';
+          END IF;
+      
+          apex_json.open_object;
+          apex_json.write('message', v_msg);
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 30
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: POST_ALL_PO ================================
+  id: 30555818750940739
+  identification: 
+    name: POST_ALL_PO
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_shipment_id   nit016.shipment_id%TYPE;
+          v_msg           varchar2(200);    
+      begin
+          v_shipment_id := TO_NUMBER(apex_application.g_x01);
+      
+          v_msg := shipment_Records_pkg.post_all_po(v_shipment_id);
+      
+          apex_json.open_object;
+          apex_json.write('message', v_msg);
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 40
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: POST_SHIPMENT ==============================
+  id: 30556376700940744
+  identification: 
+    name: POST_SHIPMENT
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_shipment_id   nit016.shipment_id%TYPE;
+          v_msg           varchar2(100);    
+      begin
+          v_shipment_id := TO_NUMBER(apex_application.g_x01);
+          v_msg := shipment_records_pkg.post_shipment(p_shipment_id => v_shipment_id);
+      
+          apex_json.open_object;
+          apex_json.write('message', v_msg);
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 50
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: RECEIVE_SHIPMENT ===========================
+  id: 30556481226940745
+  identification: 
+    name: RECEIVE_SHIPMENT
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_shipment_id   nit016.shipment_id%TYPE := :P100_ID;
+          v_wh_id         nit016.warehouse_id%TYPE := :P100_WAREHOUSE;
+          v_msg           varchar2(200);    
+      begin
+          v_msg := shipment_records_pkg.receive_shipment(v_shipment_id, v_wh_id);
+      
+          apex_json.open_object;
+          apex_json.write('message', v_msg);
+          apex_json.write('sid', :P100_ID);
+          apex_json.write('wh', :P100_WAREHOUSE);
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 60
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_REPORT_OPTIONS_URL =====================
+  id: 39466765923750304
+  identification: 
+    name: GET_REPORT_OPTIONS_URL
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          l_url varchar2(2000);
+      BEGIN
+          l_url := APEX_PAGE.GET_URL(p_page => 130,
+                                     p_items => 'P130_SHIPMENT_ID',
+                                     p_values => apex_application.g_x01);         
+      
+          apex_json.open_object; 
+          apex_json.write('url', l_url); 
+          apex_json.close_all; 
+      END;
+      
+
+  execution: 
+    sequence: 70
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+branches: 
+- # ====== Branch: Go to update ================================
+  id: 15656801916560930
+  identification: 
+    name: Go to update
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:101:&SESSION.::&DEBUG.::P101_SHIPMENT_ID:&P100_ID.&success_msg=#SUCCESS_MSG#'
+      page: 101 # Add/Update New Shipment
+      values: 
+        p101_shipment_id: '&P100_ID.'
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: UPDATE
+
+- # ====== Branch: Go to print modal ===========================
+  id: 16268925130399150
+  identification: 
+    name: Go to print modal
+
+  execution: 
+    sequence: 30
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:30000:&SESSION.::&DEBUG.::PRINT_DATA:&P100_REPORT_DATA.&success_msg=#SUCCESS_MSG#'
+      page: 30000
+      values: 
+        print_data: '&P100_REPORT_DATA.'
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: PRINT
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Branch: Go to inquire ===============================
+  id: 31309738469578729
+  identification: 
+    name: Go to inquire
+
+  execution: 
+    sequence: 20
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:103:&SESSION.::&DEBUG.:103:P103_SHIPMENT_ID:&P100_ID.&success_msg=#SUCCESS_MSG#'
+      page: 103 # Inquire Shipment Information
+      clear-cache: 103
+      values: 
+        p103_shipment_id: '&P100_ID.'
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: INQUIRE
+

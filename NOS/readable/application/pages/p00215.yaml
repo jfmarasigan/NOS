@@ -1,0 +1,715 @@
+---
+# ====== Page: Customer Payment Terms Utilities Add ==========
+id: 215
+identification: 
+  name: Customer Payment Terms Utilities Add
+  alias: CUSTOMER-PAYMENT-TERMS-UTILITIES-ADD
+  title: Add
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 40rem
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p215KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+            $("#enter").trigger("click"); 
+        }
+    }
+    
+    function mapP215Keys() {
+        $(document).off('keydown.p215keyevents');
+        $(document).on('keydown.p215keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p215KeyMap[key]) {
+                ev.preventDefault();
+                p215KeyMap[key]();
+            }
+        });
+    }
+    
+    $("#P215_AMOUNT, #P215_SPLIT_COUNT, #P215_DAYS")
+        .keypress(function(e){
+            if(
+                e.key == "1" || e.key == "2" ||
+                e.key == "3" || e.key == "4" ||
+                e.key == "5" || e.key == "6" ||
+                e.key == "7" || e.key == "8" ||
+                e.key == "9" || e.key == "0"
+            ){
+                return true;
+            } else {
+                return false;
+            }
+    });
+  execute-when-page-loads: |
+    mapP215Keys();
+    
+    $x('P215_PAYMENT_TERMS_NAME').focus();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+    }
+    
+    .t-Dialog-body label, .t-Dialog-body input, .t-Dialog-body .apex-item-display-only {
+        font-size: 1.125rem;
+    }
+    
+    .t-Dialog-body label {
+        color: white;
+    }
+    
+    .t-Region-body{
+        background-color: #056AC8;
+        padding-bottom: 0;
+    }
+    
+    .t-Form-error {
+        color: #FFD700;
+    }
+    
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; /* Remove the asterisk before the label */
+    }
+    
+    
+    .white-text {
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Form ========================================
+  id: 43434990184832029
+  identification: 
+    name: Form
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM006
+    include-rowid-column: false
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P215_PAYMENT_TERMS_ID ====================
+  id: 43435145611832031
+  identification: 
+    name: P215_PAYMENT_TERMS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form # 43434990184832029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: PAYMENT_TERMS_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P215_AMOUNT ==============================
+  id: 43435209844832032
+  identification: 
+    name: P215_AMOUNT
+    type: Number Field
+
+  label: 
+    label: Amount
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 30
+    region: Form # 43434990184832029
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 9
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: AMOUNT
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P215_SPLIT_COUNT =========================
+  id: 43435386340832033
+  identification: 
+    name: P215_SPLIT_COUNT
+    type: Number Field
+
+  label: 
+    label: Split Count
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 40
+    region: Form # 43434990184832029
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 2
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: SPLIT_COUNT
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P215_USER_CREATED ========================
+  id: 43435425711832034
+  identification: 
+    name: P215_USER_CREATED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Form # 43434990184832029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: USER_CREATED
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P215_DATE_CREATED ========================
+  id: 43435522747832035
+  identification: 
+    name: P215_DATE_CREATED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Form # 43434990184832029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P215_USER_UPDATE =========================
+  id: 43435617245832036
+  identification: 
+    name: P215_USER_UPDATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Form # 43434990184832029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: USER_UPDATE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P215_DATE_UPDATED ========================
+  id: 43435728859832037
+  identification: 
+    name: P215_DATE_UPDATED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Form # 43434990184832029
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: DATE_UPDATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P215_PAYMENT_TERMS_NAME ==================
+  id: 43435813458832038
+  identification: 
+    name: P215_PAYMENT_TERMS_NAME
+    type: Text Field
+
+  label: 
+    label: 'Name <span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Form # 43434990184832029
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: PAYMENT_TERMS_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P215_DAYS ================================
+  id: 43435950719832039
+  identification: 
+    name: P215_DAYS
+    type: Number Field
+
+  label: 
+    label: Days
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 50
+    region: Form # 43434990184832029
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 3
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43434990184832029
+    column: DAYS
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 43436015029832040
+  identification: 
+    button-name: Enter
+    label: Enter
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: enter
+
+validations: 
+- # ====== Validation: Empty Name ==============================
+  id: 43436162894832041
+  identification: 
+    name: Empty Name
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P215_PAYMENT_TERMS_NAME
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P215_PAYMENT_TERMS_NAME # 43435813458832038
+
+- # ====== Validation: Unique Name =============================
+  id: 43436261770832042
+  identification: 
+    name: Unique Name
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: No Rows returned
+    sql-query: 'SELECT 1 FROM NPM006 WHERE UPPER(PAYMENT_TERMS_NAME) = UPPER(:P215_PAYMENT_TERMS_NAME)'
+    always-execute: false
+
+  error: 
+    error-message: Name already exists.
+    display-location: Inline with Field
+    associated-item: P215_PAYMENT_TERMS_NAME # 43435813458832038
+
+processes: 
+- # ====== Process: Initialize form Customer Payment Terms Utili
+  id: 43435049357832030
+  identification: 
+    name: Initialize form Customer Payment Terms Utilities Add
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Form # 43434990184832029
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Payment Term Add ===========================
+  id: 43436364786832043
+  identification: 
+    name: Payment Term Add
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          INSERT INTO NPM006 (
+              PAYMENT_TERMS_NAME, 
+              AMOUNT, 
+              SPLIT_COUNT,
+              DAYS, 
+              USER_CREATED, 
+              DATE_CREATED, 
+              USER_UPDATE, 
+              DATE_UPDATED
+          )
+          VALUES (
+              :P215_PAYMENT_TERMS_NAME, 
+              NVL(:P215_AMOUNT, 0), 
+              NVL(:P215_SPLIT_COUNT, 0),
+              NVL(:P215_DAYS, 0),
+              v('APP_USER'), 
+              SYSTIMESTAMP, 
+              v('APP_USER'), 
+              SYSTIMESTAMP
+          );
+      
+          apex_util.set_session_state('SUCCESS_MSG', 'Payment Term added successfully');
+      END;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 43436469939832044
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

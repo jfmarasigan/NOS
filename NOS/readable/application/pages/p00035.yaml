@@ -1,0 +1,3078 @@
+---
+# ====== Page: POS Cashiering Main Screen ====================
+id: 35
+identification: 
+  name: POS Cashiering Main Screen
+  alias: POS-CASHIERING-MAIN-SCREEN
+  title: Cashiering
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#onscan.min.js'
+  - '#APP_FILES#onscan#MIN#.js'
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    
+    const p35KeyMap = {
+        f2 : (v) => {
+            $("#f2").trigger("click");
+        },
+    
+        f3 : (v) => {
+            $("#f3").trigger("click");
+        },
+    
+        f4 : (v) => {
+            $("#f4").trigger("click");
+        },
+        
+        f8 : (v) => {
+            $("#f8").trigger("click");
+        },
+    
+        f12 : (v) => {
+            $("#f12").trigger("click");
+        },
+    
+        home: (v) => {
+            console.log("to-top");
+            $("#to-top").trigger("click");
+        },
+    
+        escape: (v) => {
+            console.log("to-top");
+            $("#esc").trigger("click");
+        },
+    
+        end: (v) => {
+            console.log("to bottom");
+            $("#to-bottom").trigger("click");
+        }
+    }
+    
+    function mapP35Keys() {
+        $(document).off('keydown.p35keyevents');
+        $(document).on('keydown.p35keyevents', (ev) => {
+            console.log(`KeyboardEvent: key='${ev.key}' | code='${ev.code}'`);
+            var key = ev.key?.toLowerCase();
+            if (p35KeyMap[key]) {
+                ev.preventDefault();
+                p35KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP35Keys();
+    }
+  execute-when-page-loads: |
+    mapP35Keys();
+    
+    $(document).on("keydown.posevent", function(ev) {
+        var eventBlacklist = {
+            'input': true,
+            'textarea': true,
+            'select': true
+        };
+    
+        var tagName = document.activeElement.tagName.toLowerCase();
+        var id = document.activeElement.id;
+        var shortcut = ev.code;
+    
+        if (tagName === 'input' && ev.key === 'Enter' && id === 'quantity') {
+            document.activeElement.blur();
+        }
+    
+    
+    });
+    
+    onScan.attachTo(document, {onScan: function(sScancode, iQuantity){
+        apex.item("P35_BARCODE").setValue(JSON.parse(sScancode));
+        console.log(JSON.parse(sScancode))
+    }});
+    
+    
+    $("#f5").trigger("click");
+    
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/menu#MIN#.css'
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #orders table, #orders tr, #orders td, #orders th {
+         font-size: 1.125rem;
+    }
+    
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    #orders .a-IG {
+        height: calc(65vh + 2px) !important;
+    } 
+    
+    #orders .a-IG-contentContainer {
+        height: 65vh !important;
+    }
+    
+    #orders .a-IG-gridView.a-GV {
+        height: 65vh !important;
+    }
+    
+    .t-Form-label{
+        color: white;
+        font-size: 1.125rem;
+        white-space: nowrap;
+    }
+    
+    .apex-item-display-only {
+        color: white;
+        font-size: 1.125rem;
+        white-space: nowrap;
+        display: flex;
+    }
+    
+    .t-Button-label {
+        font-size: 1.125rem;
+        white-space: nowrap;
+        font-family: Arial;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Buttons =====================================
+  id: 9703688063553743
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 160
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Orders ======================================
+  id: 37207015479281235
+  identification: 
+    name: Orders
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT c001 ITEM_NO, 
+             c002 CO, 
+             c003 ITEM_DESCRIPTION, 
+             n001 QTY, 
+             n002 REG_PRICE, 
+             c004 UOM, 
+             n003 DISC, 
+             c005 DT,
+             n004 NET_PRICE,
+             n005 EXTENDED_PRICE
+      FROM apex_collections
+      WHERE collection_name = 'PURCHASE'
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: orders
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 37207159790281236
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 38665546317896831
+      identification: 
+        name: Primary Report
+        alias: 386656
+
+  columns: 
+  - # ====== Column: ITEM_NO =====================================
+    id: 37207295424281237
+    identification: 
+      column-name: ITEM_NO
+      type: Text Field
+
+    heading: 
+      heading: Item No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: ITEM_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: CO ==========================================
+    id: 37207312561281238
+    identification: 
+      column-name: CO
+      type: Text Field
+
+    heading: 
+      heading: CO
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: CO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: ITEM_DESCRIPTION ============================
+    id: 37207406116281239
+    identification: 
+      column-name: ITEM_DESCRIPTION
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESCRIPTION
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: QTY =========================================
+    id: 37207563452281240
+    identification: 
+      column-name: QTY
+      type: Number Field
+
+    heading: 
+      heading: Qty
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 60
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: QTY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: quantity
+
+  - # ====== Column: REG_PRICE ===================================
+    id: 37207683181281241
+    identification: 
+      column-name: REG_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Reg Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: REG_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: UOM =========================================
+    id: 37207784071281242
+    identification: 
+      column-name: UOM
+      type: Text Field
+
+    heading: 
+      heading: UOM
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: DISC ========================================
+    id: 37207878974281243
+    identification: 
+      column-name: DISC
+      type: Number Field
+
+    heading: 
+      heading: Disc
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: DISC
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: DT ==========================================
+    id: 37207994523281244
+    identification: 
+      column-name: DT
+      type: Text Field
+
+    heading: 
+      heading: DT
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 100
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: DT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: NET_PRICE ===================================
+    id: 37208005311281245
+    identification: 
+      column-name: NET_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Net Price
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 110
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: NET_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: EXTENDED_PRICE ==============================
+    id: 37208134353281246
+    identification: 
+      column-name: EXTENDED_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Extended Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 120
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: EXTENDED_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Header ======================================
+  id: 38713132331254512
+  identification: 
+    name: Header
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - t-Form--slimPadding
+    - t-Form--stretchInputs
+    - t-Form--leftLabels
+    - margin-top-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Header 2 ====================================
+  id: 38716626724254547
+  identification: 
+    name: Header 2
+    type: Static Content
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - t-Form--stretchInputs
+    - t-Form--leftLabels
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P35_SUB ==================================
+  id: 11449756222525325
+  identification: 
+    name: P35_SUB
+    type: Display Only
+
+  label: 
+    label: '<b>Sub-Total:</b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 100
+    region: Header 2 # 38716626724254547
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 7
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--postTextBlock
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_DISCOUNT =============================
+  id: 11449899459525326
+  identification: 
+    name: P35_DISCOUNT
+    type: Display Only
+
+  label: 
+    label: '<b>Total Discount:</b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 110
+    region: Header 2 # 38716626724254547
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_TOTAL ================================
+  id: 11449937233525327
+  identification: 
+    name: P35_TOTAL
+    type: Display Only
+
+  label: 
+    label: '<b>Total Amount:</b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 120
+    region: Header 2 # 38716626724254547
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 11
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_CUSTOMER_FIELD =======================
+  id: 16917291056497018
+  identification: 
+    name: P35_CUSTOMER_FIELD
+    type: Display Only
+
+  label: 
+    label: '<b>Customer (DBA): </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Header # 38713132331254512
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - margin-left-none
+    - t-Form-fieldContainer--boldDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_URL ==================================
+  id: 18257830548008506
+  identification: 
+    name: P35_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 170
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_INVOICE_NO ===========================
+  id: 35547641814882707
+  identification: 
+    name: P35_INVOICE_NO
+    type: Display Only
+
+  label: 
+    label: '<b>Invoice No: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Header # 38713132331254512
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    - margin-bottom-sm
+    - margin-right-lg
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_INVOICE_DATE =========================
+  id: 35547716446882708
+  identification: 
+    name: P35_INVOICE_DATE
+    type: Display Only
+
+  label: 
+    label: '<b>Invoice Date: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Header # 38713132331254512
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    - margin-bottom-sm
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_ORDER_WRITER =========================
+  id: 35547832677882709
+  identification: 
+    name: P35_ORDER_WRITER
+    type: Display Only
+
+  label: 
+    label: '<b>Order Writer: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Header # 38713132331254512
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_BARCODE ==============================
+  id: 37208286778281247
+  identification: 
+    name: P35_BARCODE
+    type: Text Field
+
+  label: 
+    label: Barcode
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Orders # 37207015479281235
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_QOH ==================================
+  id: 38716099666254541
+  identification: 
+    name: P35_QOH
+    type: Display Only
+
+  label: 
+    label: <b>QOH</b>
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: Header 2 # 38716626724254547
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--postTextBlock
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P35_QTY ==================================
+  id: 42944764576705435
+  identification: 
+    name: P35_QTY
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 130
+    region: Header 2 # 38716626724254547
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--postTextBlock
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Customer ====================================
+  id: 9703759774553744
+  identification: 
+    button-name: Customer
+    label: F5 - SELECT CUSTOMER
+
+  layout: 
+    sequence: 140
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 4
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:31:&SESSION.::&DEBUG.:::'
+      page: 31 # POS Cashiering - Enter Customer
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: f5
+
+- # ====== Button: Search ======================================
+  id: 9703839824553745
+  identification: 
+    button-name: Search
+    label: F6 - SEARCH ITEM
+
+  layout: 
+    sequence: 20
+    region: Buttons # 9703688063553743
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 6
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:38:&SESSION.::&DEBUG.:38::'
+      page: 38 # POS Cashiering Item Search
+      clear-cache: 38
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: f6
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: Scan ========================================
+  id: 9704020371553747
+  identification: 
+    button-name: Scan
+    label: F7 - SCAN PRICE
+
+  layout: 
+    sequence: 30
+    region: Buttons # 9703688063553743
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:30:&SESSION.::&DEBUG.:::'
+      page: 30 # POS Cashiering Screen Scan Price
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: f7
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: Pay =========================================
+  id: 11450069922525328
+  identification: 
+    button-name: Pay
+    label: '<u> F8 </u>  - Pay '
+
+  layout: 
+    sequence: 130
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 12
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: f8
+
+- # ====== Button: Opening-Balance =============================
+  id: 19652157200695404
+  identification: 
+    button-name: Opening-Balance
+    label: Opening Balance
+
+  layout: 
+    sequence: 150
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:64:&SESSION.::&DEBUG.:64::'
+      page: 64 # POS Cashiering - Opening Balance
+      clear-cache: 64
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: f4
+
+- # ====== Button: Change-Quantity =============================
+  id: 27426872438078118
+  identification: 
+    button-name: Change-Quantity
+    label: <u>F3 </u> - Change Qty
+
+  layout: 
+    sequence: 120
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: f3
+
+- # ====== Button: Escape ======================================
+  id: 33263342546129947
+  identification: 
+    button-name: Escape
+    label: Escape
+
+  layout: 
+    sequence: 80
+    region: Buttons # 9703688063553743
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:305:&SESSION.::&DEBUG.:::'
+      page: 305 # Order Entry and Invoicing
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+- # ====== Button: Search-Item =================================
+  id: 35547921164882710
+  identification: 
+    button-name: Search-Item
+    label: <u> F2 </u>  - Search Item
+
+  layout: 
+    sequence: 110
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: f2
+
+- # ====== Button: Closing-Balance =============================
+  id: 43697024407573546
+  identification: 
+    button-name: Closing-Balance
+    label: <u> F12 </u>  - Closing Balance
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 6
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:65:&SESSION.::&DEBUG.:65::'
+      page: 65 # POS Cashiering - Closing Balance
+      clear-cache: 65
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: f12
+
+dynamic-actions: 
+- # ====== Dynamic Action: Update Quantity (Table) =============
+  id: 14725854215463432
+  identification: 
+    name: Update Quantity (Table)
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Orders # 37207015479281235
+    column(s): 
+    - QTY
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 14725930549463433
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        declare
+            v_seq_id    NUMBER;
+            v_price     NUMBER;
+            v_qty       NUMBER;
+        begin
+            select seq_id, n002
+              into v_seq_id, v_price
+              from apex_collections 
+             where collection_name = 'PURCHASE'
+               and c001 = :P35_BARCODE;
+               
+                APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => 'PURCHASE',
+                    p_seq => v_seq_id,
+                    p_attr_number => 1,
+                    p_number_value => :QTY);
+        
+                APEX_COLLECTION.UPDATE_MEMBER_ATTRIBUTE (
+                    p_collection_name => 'PURCHASE',
+                    p_seq => v_seq_id,
+                    p_attr_number => 5,
+                    p_number_value => :QTY * v_price);
+        
+            select seq_id, n001
+              into v_seq_id, v_qty
+              from apex_collections 
+             where collection_name = 'PURCHASE'
+               and c001 = :P35_BARCODE;
+        
+                IF v_qty = 0 THEN
+                    APEX_COLLECTION.DELETE_MEMBER(
+                    p_collection_name => 'PURCHASE',
+                    p_seq => v_seq_id );
+                END IF;
+        end;
+      items-to-submit: 
+      - ITEM_ID
+      - QTY
+
+    execution: 
+      sequence: 10
+      event: Update Quantity (Table) # 14725854215463432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14726074882463434
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        // Remove "changed" status of the Interactive Grid
+        setTimeout(function () {
+            var ig = apex.region("orders"); // Specify your region name or Static ID
+            var view = ig.widget().interactiveGrid("getViews", "grid");
+            var model = view.model;
+        
+            // Clear the changes
+            model.clearChanges();
+        
+            // Optionally, refresh the grid to apply changes
+            ig.refresh();  // Uncomment if you want the grid to refresh
+        }, 100);
+        
+
+    affected-elements: 
+      selection-type: Column(s)
+      column(s): 
+      - QTY
+
+    execution: 
+      sequence: 20
+      event: Update Quantity (Table) # 14725854215463432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 38713040867254511
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Column(s)
+      column(s): 
+      - QTY
+
+    execution: 
+      sequence: 40
+      event: Update Quantity (Table) # 14725854215463432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Customer Value ==================
+  id: 18259655158008524
+  identification: 
+    name: Set Customer Value
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Customer # 9703759774553744
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 18259726504008525
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT c001 
+          FROM apex_collections 
+         WHERE collection_name = 'ORDERS'
+           AND seq_id = (SELECT MAX(seq_id) 
+                           FROM apex_collections
+                          WHERE collection_name = 'ORDERS')
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_CUSTOMER_FIELD
+
+    execution: 
+      sequence: 10
+      event: Set Customer Value # 18259655158008524
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 18259823679008526
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_CUSTOMER_FIELD
+
+    execution: 
+      sequence: 20
+      event: Set Customer Value # 18259655158008524
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Total Value =====================
+  id: 18712245828804235
+  identification: 
+    name: Set Total Value
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P35_DISCOUNT
+    - P35_SUB
+
+  actions: 
+  - # ====== Action: Total =======================================
+    id: 18712336857804236
+    identification: 
+      name: Total
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: "TO_CHAR(TO_NUMBER(REPLACE(REPLACE(NVL(:P35_SUB, 0), '$', ''), ',', '')) - TO_NUMBER(REPLACE(REPLACE(NVL(:P35_DISCOUNT, 0), '$', ''), ',', '')), 'FM9990.00' ) "
+      items-to-submit: 
+      - P35_SUB
+      - P35_DISCOUNT
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_TOTAL
+
+    execution: 
+      sequence: 10
+      event: Set Total Value # 18712245828804235
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: QOH =========================================
+    id: 42945192730705439
+    identification: 
+      name: QOH
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT 
+            'LOC' || nim027.warehouse_location
+        FROM 
+            NIM027 nim027,
+            NIT004 nit004,
+            NIT002 nit002
+        WHERE
+            NIM027.warehouse_id = NIT004.warehouse_id
+         AND
+            NIT002.uom_id = NIT004.uom_id
+         AND 
+            NIT002.item_id = NIT004.item_id
+         AND 
+            NIT002.upc = :P35_BARCODE
+        ORDER BY 
+            nit004.qty DESC
+        FETCH FIRST 3 ROWS ONLY;
+        
+      items-to-submit: 
+      - P35_BARCODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_QOH
+
+    execution: 
+      sequence: 20
+      event: Set Total Value # 18712245828804235
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: QTY =========================================
+    id: 42945256975705440
+    identification: 
+      name: QTY
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT 
+            nit004.qty
+        FROM 
+            NIM027 nim027,
+            NIT004 nit004,
+            NIT002 nit002
+        WHERE
+            NIM027.warehouse_id = NIT004.warehouse_id
+         AND
+            NIT002.uom_id = NIT004.uom_id
+         AND 
+            NIT002.item_id = NIT004.item_id
+         AND 
+            NIT002.upc = :P35_BARCODE
+        ORDER BY 
+            nit004.qty DESC
+        FETCH FIRST 3 ROWS ONLY;
+        
+      items-to-submit: 
+      - P35_BARCODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_QTY
+
+    execution: 
+      sequence: 30
+      event: Set Total Value # 18712245828804235
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Add Payment Collection ==============
+  id: 23638421332246345
+  identification: 
+    name: Add Payment Collection
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Pay # 11450069922525328
+
+  actions: 
+  - # ====== Action: Add Collection ==============================
+    id: 23638551484246346
+    identification: 
+      name: Add Collection
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            apex_collection.add_member(
+                        p_collection_name => 'ORDERS',
+                        p_c002 => '',
+                        p_n001 => TO_CHAR(:P35_SUB, 'FM9990.00' ),
+                        p_n002 => TO_CHAR(:P35_DISCOUNT, 'FM9990.00' ),
+                        p_n003 => TO_CHAR(:P35_TOTAL, 'FM9990.00' )
+                        );
+        END;
+      items-to-submit: 
+      - P35_TOTAL
+      items-to-return: 
+      - P35_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Add Payment Collection # 23638421332246345
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Send Total Value ============================
+    id: 29425211050978933
+    identification: 
+      name: Send Total Value
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P35_URL := apex_page.get_url(
+               p_page   => 41,
+               p_items  => 'P41_TOTAL',
+               p_values => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P35_TOTAL, '$', ''), ',', '')), 2), 'FM999999999.00')
+             );
+        END;
+      items-to-submit: 
+      - P35_TOTAL
+      items-to-return: 
+      - P35_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Add Payment Collection # 23638421332246345
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 29425303935978934
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P35_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Add Payment Collection # 23638421332246345
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable Key =================================
+    id: 35547306039882704
+    identification: 
+      name: Disable Key
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p35keyevents');
+
+    execution: 
+      sequence: 40
+      event: Add Payment Collection # 23638421332246345
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus Quantity ======================
+  id: 27426637851078116
+  identification: 
+    name: Focus Quantity
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Change-Quantity # 27426872438078118
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27426757229078117
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $(document).ready(function() {
+            // Select the last cell in the fourth column
+            const lastCellInFifthColumn = $("tr").find("td:nth-child(4)").last();
+            // Trigger click event
+            lastCellInFifthColumn.trigger("click");
+            // Trigger double click event
+            lastCellInFifthColumn.trigger("dblclick");
+          });
+        }, 300);
+        
+
+    execution: 
+      sequence: 40
+      event: Focus Quantity # 27426637851078116
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 38716439812254545
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Orders # 37207015479281235
+
+    execution: 
+      sequence: 20
+      event: Focus Quantity # 27426637851078116
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Refresh =====================================
+    id: 38716535752254546
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_TOTAL
+      - P35_SUB
+
+    execution: 
+      sequence: 30
+      event: Focus Quantity # 27426637851078116
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+- # ====== Dynamic Action: Close Search Dialog =================
+  id: 33262352750129937
+  identification: 
+    name: Close Search Dialog
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 9703839824553745
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 33262471627129938
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT c001
+        FROM apex_collections
+        WHERE collection_name = 'SEARCH'
+          AND seq_id = (SELECT MAX(seq_id)
+                          FROM apex_collections
+                         WHERE collection_name = 'SEARCH') 
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_BARCODE
+
+    execution: 
+      sequence: 20
+      event: Close Search Dialog # 33262352750129937
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 33262782251129941
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_BARCODE
+
+    execution: 
+      sequence: 30
+      event: Close Search Dialog # 33262352750129937
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 33262978656129943
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_BARCODE
+
+    execution: 
+      sequence: 40
+      event: Close Search Dialog # 33262352750129937
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Disable Key 1 =======================
+  id: 34404402717626239
+  identification: 
+    name: Disable Key 1
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Customer # 9703759774553744
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34404558437626240
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p35keyevents');
+
+    execution: 
+      sequence: 10
+      event: Disable Key 1 # 34404402717626239
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Key 1 ========================
+  id: 34404660525626241
+  identification: 
+    name: Enable Key 1
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Customer # 9703759774553744
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34404717774626242
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP35Keys();
+
+    execution: 
+      sequence: 10
+      event: Enable Key 1 # 34404660525626241
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Disable Key 2 =======================
+  id: 34404889288626243
+  identification: 
+    name: Disable Key 2
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 9703839824553745
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34404977409626244
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p35keyevents');
+
+    execution: 
+      sequence: 10
+      event: Disable Key 2 # 34404889288626243
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Disable Key 3 =======================
+  id: 34405010837626245
+  identification: 
+    name: Disable Key 3
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Scan # 9704020371553747
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34405153251626246
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p35keyevents');
+
+    execution: 
+      sequence: 10
+      event: Disable Key 3 # 34405010837626245
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Key 2 ========================
+  id: 34405250935626247
+  identification: 
+    name: Enable Key 2
+
+  execution: 
+    sequence: 150
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 9703839824553745
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34405384987626248
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP35Keys();
+
+    execution: 
+      sequence: 10
+      event: Enable Key 2 # 34405250935626247
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Key 3 ========================
+  id: 34405466626626249
+  identification: 
+    name: Enable Key 3
+
+  execution: 
+    sequence: 190
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Scan # 9704020371553747
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34405507121626250
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP35Keys();
+
+    execution: 
+      sequence: 10
+      event: Enable Key 3 # 34405466626626249
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Key 5 ========================
+  id: 35547413009882705
+  identification: 
+    name: Enable Key 5
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Pay # 11450069922525328
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35547593684882706
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP35Keys();
+
+    execution: 
+      sequence: 10
+      event: Enable Key 5 # 35547413009882705
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Search Item =========================
+  id: 37205753444281222
+  identification: 
+    name: Search Item
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search-Item # 35547921164882710
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37205844635281223
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        focusOnIGLastRecordFirstCell("orders");
+        apex.region("orders").widget().interactiveGrid("getActions").invoke("selection-add-row");
+
+    execution: 
+      sequence: 10
+      event: Search Item # 37205753444281222
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Scan Barcode ========================
+  id: 37208399296281248
+  identification: 
+    name: Scan Barcode
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P35_BARCODE
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 37208482667281249
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_seq_id number;
+            v_item_id number;
+            v_product_name varchar(35);    
+            v_price number;
+            v_qty number;
+            v_total number;
+            v_brand varchar(10);
+            v_uom varchar(10);
+        
+        BEGIN
+            BEGIN
+                SELECT a.item_id, a.item_desc, b.price, b.price total, UPPER(c.uom_code), d.brand_code INTO v_item_id, v_product_name, v_price, v_total, v_uom, v_brand
+                  FROM NIT001 a, NIT002 b, NIM026 c, NIM022 d
+                 WHERE a.item_id = b.item_id
+                   AND b.uom_id = c.uom_id
+                   AND a.brand_id = d.brand_id
+                   AND b.upc = :P35_BARCODE;
+             
+            SELECT seq_id, n001 INTO v_seq_id, v_qty 
+            FROM apex_collections
+            WHERE collection_name = 'PURCHASE'
+            AND c001 = :P35_BARCODE;
+            EXCEPTION WHEN NO_DATA_FOUND THEN v_seq_id := 0; END;
+            
+            IF v_seq_id != 0 THEN
+                v_qty := v_qty + 1;
+                v_total := v_price * v_qty;
+            
+                    apex_collection.update_member_attribute (
+                        p_collection_name => 'PURCHASE',
+                        p_seq => v_seq_id,
+                        p_attr_number => 1,
+                        p_number_value => v_qty
+                        );
+        
+                    apex_collection.update_member_attribute (
+                        p_collection_name => 'PURCHASE',
+                        p_seq => v_seq_id,
+                        p_attr_number => 5,
+                        p_number_value => v_total
+                        );
+        
+            ELSIF v_seq_id = 0 AND v_item_id IS NOT NULL THEN
+                apex_collection.add_member(
+                    p_collection_name => 'PURCHASE',
+                    p_c001 => :P35_BARCODE,
+                    p_c002 => v_brand,
+                    p_c003 => v_product_name,
+                    p_n001 => 1,
+                    p_n002 => v_price,
+                    p_c004 => v_uom,
+                    p_n003 => 123,
+                    p_c005 => 'DT',
+                    p_n004 => 321,
+                    p_n005 => v_total);
+        END IF;
+        END;
+      items-to-submit: 
+      - P35_BARCODE
+
+    execution: 
+      sequence: 10
+      event: Scan Barcode # 37208399296281248
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 37208592431281250
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Orders # 37207015479281235
+
+    execution: 
+      sequence: 30
+      event: Scan Barcode # 37208399296281248
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Sub-Total =======================
+  id: 38712018438254501
+  identification: 
+    name: Set Sub-Total
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Orders # 37207015479281235
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 38712128304254502
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT TO_CHAR(SUM(n005), 'FM9990.00' ) 
+        FROM apex_collections
+        WHERE collection_name = 'PURCHASE'
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_SUB
+
+    execution: 
+      sequence: 10
+      event: Set Sub-Total # 38712018438254501
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 38712264099254503
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P35_SUB
+
+    execution: 
+      sequence: 20
+      event: Set Sub-Total # 38712018438254501
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Key ==========================
+  id: 44271996135177703
+  identification: 
+    name: Enable Key
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Closing-Balance # 43697024407573546
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44272053357177704
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP35Keys();
+
+    execution: 
+      sequence: 10
+      event: Enable Key # 44271996135177703
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P35_INVOICE_DATE =======================
+  id: 35548047946882711
+  identification: 
+    item-name: P35_INVOICE_DATE
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: SELECT SYSDATE FROM DUAL
+
+- # ====== Computation: P35_ORDER_WRITER =======================
+  id: 40390947660268814
+  identification: 
+    item-name: P35_ORDER_WRITER
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: 'SELECT :APP_USER FROM DUAL'
+
+- # ====== Computation: P35_QOH ================================
+  id: 42944943128705437
+  identification: 
+    item-name: P35_QOH
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return multiple values)
+    sql-query: |
+      SELECT 
+          'LOC' + nim027.warehouse_location
+      FROM 
+          NIM027 nim027,
+          NIT004 nit004,
+          NIT002 nit002
+      WHERE
+          NIM027.warehouse_id = NIT004.warehouse_id
+       AND
+          NIT002.uom_id = NIT004.uom_id
+       AND 
+          NIT002.item_id = NIT004.item_id
+       AND 
+          NIT002.upc = :P35_BARCODE
+      ORDER BY 
+          nit004.qty DESC
+      FETCH FIRST 3 ROWS ONLY;
+      
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Computation: P35_QTY ================================
+  id: 42945073841705438
+  identification: 
+    item-name: P35_QTY
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return multiple values)
+    sql-query: |
+      SELECT 
+          'LOC' + nim027.warehouse_location
+      FROM 
+          NIM027 nim027,
+          NIT004 nit004,
+          NIT002 nit002
+      WHERE
+          NIM027.warehouse_id = NIT004.warehouse_id
+       AND
+          NIT002.uom_id = NIT004.uom_id
+       AND 
+          NIT002.item_id = NIT004.item_id
+       AND 
+          NIT002.upc = :P35_BARCODE
+      ORDER BY 
+          nit004.qty DESC
+      FETCH FIRST 3 ROWS ONLY;
+      
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+processes: 
+- # ====== Process: Create Purchase Collection =================
+  id: 11448055231525308
+  identification: 
+    name: Create Purchase Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(
+              p_collection_name => 'PURCHASE');
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Create Orders Collection ===================
+  id: 25490792808440413
+  identification: 
+    name: Create Orders Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(
+              p_collection_name => 'ORDERS');
+
+  execution: 
+    sequence: 20
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Create Payment Collection ==================
+  id: 25492303482440429
+  identification: 
+    name: Create Payment Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(
+              p_collection_name => 'PAYMENT');
+
+  execution: 
+    sequence: 30
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Create Search Collection ===================
+  id: 27427380071078123
+  identification: 
+    name: Create Search Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(
+              p_collection_name => 'SEARCH');
+
+  execution: 
+    sequence: 40
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Orders - Save Interactive Grid Data ========
+  id: 44271767147177701
+  identification: 
+    name: Orders - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Orders # 37207015479281235
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

@@ -1,0 +1,1060 @@
+---
+# ====== Page: Update Inventory Balance - Update Quantity Reas
+id: 154
+identification: 
+  name: Update Inventory Balance - Update Quantity Reason Utilities
+  alias: UPDATE-INVENTORY-BALANCE-UPDATE-QUANTITY-REASON-UTILITIES
+  title: Update Inventory Balance - Update Quantity Reason Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  execute-when-page-loads: setTitle('Update Inventory Balance - Update Quantity Reason Utilities');
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #update-quantity .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #update-quantity .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #update-quantity .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #update-quantity .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+     
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #update-quantity table,
+    #update-quantity tr,
+    #update-quantity td{
+        font-size: 1.125rem;
+        border: 0.0625rem solid black;
+    }
+    
+    #update-quantity th{
+            font-size: 1rem;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: black;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .btns{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    .ui-dialog-title{
+        font-size : 1.25rem;
+    }
+    .text-white{
+        color:white;
+    }
+    .text-black{
+        color: black;
+    }
+    .t-Form-labelContainer.col.col-1{
+            text-align: start;
+    }
+    .t-Form-label{
+        font-size:1.125rem;
+        color:white;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Update Quantity Reason Utilities ============
+  id: 77845639656795740
+  identification: 
+    name: Update Quantity Reason Utilities
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      select QTY_REASON_ID,
+             REASON_NAME,
+             CREATE_USER,
+             CREATE_DATE,
+             UPDATE_USER,
+             UPDATE_DATE
+        from NIM028
+        WHERE ( :P154_SEARCH_NAME IS NOT NULL AND UPPER(REASON_NAME) LIKE UPPER('%'||:P154_SEARCH_NAME||'%')
+                  OR :P154_SEARCH_NAME IS NULL)
+    page-items-to-submit: 
+    - P154_SEARCH_NAME
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: update-quantity
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 77845760512795741
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 83835004388717900
+      identification: 
+        name: Primary Report
+        alias: 412276
+
+  columns: 
+  - # ====== Column: QTY_REASON_ID ===============================
+    id: 41226551937388947
+    identification: 
+      column-name: QTY_REASON_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: QTY_REASON_ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: REASON_NAME =================================
+    id: 41226684533388948
+    identification: 
+      column-name: REASON_NAME
+      type: Text Field
+
+    heading: 
+      heading: Reason Name
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 50
+
+    source: 
+      type: Database Column
+      database-column: REASON_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CREATE_USER =================================
+    id: 41226732591388949
+    identification: 
+      column-name: CREATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Create User
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: CREATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CREATE_DATE =================================
+    id: 41226859854388950
+    identification: 
+      column-name: CREATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Create Date
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CREATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UPDATE_USER =================================
+    id: 42619671683340701
+    identification: 
+      column-name: UPDATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Update User
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UPDATE_DATE =================================
+    id: 42619777873340702
+    identification: 
+      column-name: UPDATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Update Date
+      alignment: start
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Page Controls ===============================
+  id: 83829895539712199
+  identification: 
+    name: Page Controls
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P154_SEARCH_NAME =========================
+  id: 42622618502340731
+  identification: 
+    name: P154_SEARCH_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P154_REASON_ID ===========================
+  id: 83838453455712313
+  identification: 
+    name: P154_REASON_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P154_PREPARED_URL ========================
+  id: 83838782570712316
+  identification: 
+    name: P154_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD =========================================
+  id: 42611968043323360
+  identification: 
+    button-name: ADD
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Page Controls # 83829895539712199
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:155:&SESSION.::&DEBUG.:155::'
+      page: 155 # Update Quantity Reason add/update
+      clear-cache: 155
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: UPDATE ======================================
+  id: 42612346145323364
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Page Controls # 83829895539712199
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: PRINT =======================================
+  id: 42612778914323364
+  identification: 
+    button-name: PRINT
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 30
+    region: Page Controls # 83829895539712199
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: EXPORT ======================================
+  id: 42613191955323364
+  identification: 
+    button-name: EXPORT
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 40
+    region: Page Controls # 83829895539712199
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: h
+
+- # ====== Button: SEARCH ======================================
+  id: 42613538969323365
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 50
+    region: Page Controls # 83829895539712199
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:156:&SESSION.::&DEBUG.:156::'
+      page: 156 # Update Quantity Reason Search
+      clear-cache: 156
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+dynamic-actions: 
+- # ====== Dynamic Action: New =================================
+  id: 42614604840323393
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 42615170909323396
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Update Quantity Reason Utilities # 77845639656795740
+
+    execution: 
+      sequence: 10
+      event: New # 42614604840323393
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Update Modal ==================
+  id: 42615500956323396
+  identification: 
+    name: Go to Update Modal
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UPDATE # 42612346145323364
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 42616044731323398
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        :P154_PREPARED_URL := apex_page.get_url(
+            p_clear_cache => 155,
+            p_page => 155,
+            p_items => 'P155_REASON_ID',
+            p_values => :P154_REASON_ID
+        );
+      items-to-submit: 
+      - P154_REASON_ID
+      items-to-return: 
+      - P154_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Go to Update Modal # 42615500956323396
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42616540593323398
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.navigation.redirect($v('P154_PREPARED_URL'));
+
+    execution: 
+      sequence: 20
+      event: Go to Update Modal # 42615500956323396
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Table Item Selection =============
+  id: 42616902388323398
+  identification: 
+    name: On Table Item Selection
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Update Quantity Reason Utilities # 77845639656795740
+
+  actions: 
+  - # ====== Action: Change Collection ID ========================
+    id: 42617416085323400
+    identification: 
+      name: Change Collection ID
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: getSelectedIGRecord('update-quantity');
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P154_REASON_ID
+
+    execution: 
+      sequence: 10
+      event: On Table Item Selection # 42616902388323398
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On Search Dialog Close ==============
+  id: 42622436642340729
+  identification: 
+    name: On Search Dialog Close
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: SEARCH # 42613538969323365
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 42622754632340732
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P156_REASON_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P154_SEARCH_NAME
+
+    execution: 
+      sequence: 10
+      event: On Search Dialog Close # 42622436642340729
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+computations: 
+- # ====== Computation: P154_SEARCH_NAME =======================
+  id: 42623647759340741
+  identification: 
+    item-name: P154_SEARCH_NAME
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: NULL
+

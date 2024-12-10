@@ -1,0 +1,1741 @@
+---
+# ====== Page: Review Purchase Order PO Note Utilities =======
+id: 185
+identification: 
+  name: Review Purchase Order PO Note Utilities
+  alias: REVIEW-PURCHASE-ORDER-PO-NOTE-UTILITIES
+  title: Review Purchase Order PO Note Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p185KeyMap = {
+        a : (v) => {
+            $("#a").click();
+        },
+        p : (v) => {
+            $("#print").click();
+        },
+        escape : (v) => {
+            $("#to-main-menu").click();
+        },
+        o : (v) => {
+            $("#o").click();
+        },
+        s : (v) => {
+            $("#s").click();
+        },
+        u : (v) => {
+            $("#u").click();
+        },
+        h : (v) => {
+            $("#export").click();
+        },
+        home: (v) => {
+            $("#to-top").trigger("click");
+        },
+        end: (v) => {
+            $("#to-bottom").trigger("click");
+        }
+    
+    
+    }
+    
+    
+    function mapP185Keys() {
+        $(document).off('keydown.p185keyevents');
+        $(document).on('keydown.p185keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p185KeyMap[key]) {
+                ev.preventDefault();
+                p185KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP185Keys();
+    }
+  execute-when-page-loads: |
+    mapP185Keys();
+    //$("#s").trigger("click");
+    setTitle("Review Purchase Order - PO Note Utilities")
+    
+     $( document ).ready(function() {
+      $(".a-GV-cell").first().trigger("click");
+     });
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/items_masterfile_css#MIN#.css'
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #note_list table, #note_list tr, #note_list td, #note_list th {
+         font-size: 1.125rem;
+    }
+    
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+        border: none;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+        padding-bottom: 0.2rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    #note_list .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #note_list .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #note_list .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #note_list .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: NOTE_LIST ===================================
+  id: 41783404288876105
+  identification: 
+    name: NOTE_LIST
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT NOTE_ID,
+             NOTE,
+             CREATE_USER,
+             CREATE_DATE,
+             UPDATE_USER,
+             UPDATE_DATE
+      FROM NIM030
+      WHERE 
+          (UPPER(NIM030.NOTE) LIKE UPPER('%' || :P185_NOTE || '%') )
+          OR
+          ( :P185_NOTE IS NULL);
+      
+    page-items-to-submit: 
+    - P185_NOTE
+
+  layout: 
+    sequence: 140
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: note_list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 41783511400876106
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 41983239445753348
+      identification: 
+        name: Primary Report
+        alias: 419833
+
+  columns: 
+  - # ====== Column: NOTE_ID =====================================
+    id: 41783624937876107
+    identification: 
+      column-name: NOTE_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: NOTE_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: NOTE ========================================
+    id: 41783792014876108
+    identification: 
+      column-name: NOTE
+      type: Textarea
+
+    heading: 
+      heading: Note
+      alignment: center
+
+    settings: 
+      resizable: true
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: NOTE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CREATE_USER =================================
+    id: 41783815683876109
+    identification: 
+      column-name: CREATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Created User
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: CREATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CREATE_DATE =================================
+    id: 41783981228876110
+    identification: 
+      column-name: CREATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Date Created
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 40
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CREATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATE_USER =================================
+    id: 41784099984876111
+    identification: 
+      column-name: UPDATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Last Updated By
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATE_DATE =================================
+    id: 41784119557876112
+    identification: 
+      column-name: UPDATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Date Updated
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 60
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Buttons =====================================
+  id: 159344311095226374
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 150
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: button-region
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P185_NOTE_ID =============================
+  id: 161548946506362509
+  identification: 
+    name: P185_NOTE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P185_NOTE ================================
+  id: 161549134147362511
+  identification: 
+    name: P185_NOTE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P185_SELECTED_NOTE_ID ====================
+  id: 161551025275362530
+  identification: 
+    name: P185_SELECTED_NOTE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P185_PREPARED_URL ========================
+  id: 162478821793290707
+  identification: 
+    name: P185_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Add =========================================
+  id: 41821402845169146
+  identification: 
+    button-name: Add
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 159344311095226374
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:186:&SESSION.::&DEBUG.:::'
+      page: 186 # PO Note Utility Add/Update
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 1) = 'Y'"
+
+- # ====== Button: Update ======================================
+  id: 41821827557169148
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 30
+    region: Buttons # 159344311095226374
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 4
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 3) = 'Y'"
+
+- # ====== Button: Print =======================================
+  id: 41822209065169148
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 40
+    region: Buttons # 159344311095226374
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 6
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: print
+
+- # ====== Button: Top =========================================
+  id: 41822631678169148
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 70
+    region: Buttons # 159344311095226374
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-top
+
+- # ====== Button: Bottom ======================================
+  id: 41823047292169150
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 80
+    region: Buttons # 159344311095226374
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-bottom
+
+- # ====== Button: To_Exit =====================================
+  id: 41823401400169150
+  identification: 
+    button-name: To_Exit
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 100
+    region: Buttons # 159344311095226374
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:160:&SESSION.::&DEBUG.:::'
+      page: 160 # Utilities
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: to-main-menu
+
+- # ====== Button: Search ======================================
+  id: 41823861662169150
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 60
+    region: Buttons # 159344311095226374
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:187:&SESSION.::&DEBUG.:185::'
+      page: 187 # PO Notes Utility Search
+      clear-cache: 185
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Export ======================================
+  id: 41824259441169151
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 50
+    region: Buttons # 159344311095226374
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: export
+
+dynamic-actions: 
+- # ====== Dynamic Action: Selection Change ====================
+  id: 41784261447876113
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 250
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: NOTE_LIST # 41783404288876105
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41841483974169182
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let selectedRecords = this.data.selectedRecords;
+        
+        
+        if (selectedRecords.length > 0) {
+        
+            let noteIDSelected = selectedRecords[0][0];
+        
+        
+            $("#P185_SELECTED_NOTE_ID").val(noteIDSelected);
+        
+        } 
+        
+        
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 41784261447876113
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Add or Update =================
+  id: 41828001287169164
+  identification: 
+    name: Close Add or Update
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 41785223140876123
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: NOTE_LIST # 41783404288876105
+
+    execution: 
+      sequence: 30
+      event: Close Add or Update # 41828001287169164
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41828524695169167
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".t-Button--closeAlert").trigger("click");
+                        }, 3000);
+        
+                    }
+                }
+            });
+        
+        
+        
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        }, "300");
+        
+
+    execution: 
+      sequence: 20
+      event: Close Add or Update # 41828001287169164
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: End click ===========================
+  id: 41829412159169168
+  identification: 
+    name: End click
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 41823047292169150
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41829911904169168
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: ' $(".a-GV-table tr:last .a-GV-cell:first").trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: End click # 41829412159169168
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Dialog Closed or Canceled ===========
+  id: 41830391536169170
+  identification: 
+    name: Dialog Closed or Canceled
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 41823861662169150
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41830806388169170
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP185Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed or Canceled # 41830391536169170
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Home click ==========================
+  id: 41831204667169170
+  identification: 
+    name: Home click
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 41822631678169148
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41831707966169171
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: ' $(".a-GV-cell").first().trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: Home click # 41831204667169170
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Update Clicked ======================
+  id: 41832117935169171
+  identification: 
+    name: Update Clicked
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 41821827557169148
+
+  client-side-condition: 
+    type: Item is not null
+    item: P185_SELECTED_NOTE_ID
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 41832664287169173
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P185_PREPARED_URL := apex_page.get_url(
+               p_page   => 186,
+               p_items  => 'P186_NOTE_ID',
+               p_values => :P185_SELECTED_NOTE_ID, 
+               p_clear_cache => '186'
+             );
+        END;
+      items-to-submit: 
+      - P185_SELECTED_NOTE_ID
+      items-to-return: 
+      - P185_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Update Clicked # 41832117935169171
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41833154513169173
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P185_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Update Clicked # 41832117935169171
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P185_PREPARED_URL
+
+- # ====== Dynamic Action: Search_Modal ========================
+  id: 41833573737169173
+  identification: 
+    name: Search_Modal
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 41823861662169150
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 41785118682876122
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: NOTE_LIST # 41783404288876105
+
+    execution: 
+      sequence: 40
+      event: Search_Modal # 41833573737169173
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41834526217169175
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "300");
+
+    execution: 
+      sequence: 50
+      event: Search_Modal # 41833573737169173
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 41835058235169175
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P187_TEXT
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P185_NOTE
+
+    execution: 
+      sequence: 30
+      event: Search_Modal # 41833573737169173
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Click ===============================
+  id: 41835963211169176
+  identification: 
+    name: Click
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 41823861662169150
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 41836435150169178
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        NULL
+        
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P185_SELECTED_NOTE_ID
+
+    execution: 
+      sequence: 10
+      event: Click # 41835963211169176
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Reset Keys ==================================
+    id: 41836916983169178
+    identification: 
+      name: Reset Keys
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p185keyevents');
+
+    execution: 
+      sequence: 20
+      event: Click # 41835963211169176
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Closed or Canceled ==================
+  id: 41837336610169178
+  identification: 
+    name: Closed or Canceled
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Add # 41821402845169146
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41837887608169179
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP185Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Closed or Canceled # 41837336610169178
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Clicked =========================
+  id: 41838220767169179
+  identification: 
+    name: Add Clicked
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Add # 41821402845169146
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41838773018169179
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p185keyevents');
+
+    execution: 
+      sequence: 10
+      event: Add Clicked # 41838220767169179
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Print =========================
+  id: 41839179711169181
+  identification: 
+    name: Click Print
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 41822209065169148
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41839641079169181
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        generateReport("PRICING_TYPE_UTIL_PDF_COURIER_NEW", "pdf", { 
+            fileName: `ItemMasterfilePricingTypeUtilities_${formattedDate}.pdf`,
+            mode : "print",
+            parameters : {
+                P_PRICING_TYPE_CODE : $v("P185_PRICING_TYPE_CODE"),
+                P_PRICING_TYPE_DESCRIPTION : $v("P185_PRICING_TYPE_DESCRIPTION"),
+                P_PRICING_TYPE_ID : $v("P185_PRICING_TYPE_ID")
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Click Print # 41839179711169181
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Export ========================
+  id: 41840017533169181
+  identification: 
+    name: Click Export
+
+  execution: 
+    sequence: 230
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 41824259441169151
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41840513984169181
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        generateReport("PRICING_TYPE_UTIL_XLSX", "xlsx", { 
+            fileName: `ItemMasterfilePricingTypeUtilities_${formattedDate}.xlsx`,
+            mode : "print",
+            parameters : {
+                P_PRICING_TYPE_CODE : $v("P185_PRICING_TYPE_CODE"),
+                P_PRICING_TYPE_DESCRIPTION : $v("P185_PRICING_TYPE_DESCRIPTION"),
+                P_PRICING_TYPE_ID : $v("P185_PRICING_TYPE_ID")
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Click Export # 41840017533169181
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Clear Session ==============================
+  id: 41826904624169160
+  identification: 
+    name: Clear Session
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear Items
+    item(s): 
+    - P185_NOTE_ID
+    - P185_NOTE
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CLEAR_SUCCESS_MSG ==========================
+  id: 41827394870169162
+  identification: 
+    name: CLEAR_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+      	apex_util.set_session_state('SUCCESS_MSG', null);
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_SUCCESS_MSG ============================
+  id: 41827707678169162
+  identification: 
+    name: GET_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+         l_msg VARCHAR2(200);
+      BEGIN
+         -- Get the value of the SUCCESS_MSG application item
+         l_msg := apex_util.get_session_state('SUCCESS_MSG');
+         
+         -- Return it as a JSON object
+         apex_json.open_object;
+         apex_json.write('success_msg', l_msg);
+         apex_json.close_object;
+      
+         -- Clear the SUCCESS_MSG after displaying it
+         apex_util.set_session_state('SUCCESS_MSG', NULL);
+      END;
+      
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

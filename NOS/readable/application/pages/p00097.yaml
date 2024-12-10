@@ -1,0 +1,300 @@
+---
+# ====== Page: Refund Reason =================================
+id: 97
+identification: 
+  name: Refund Reason
+  alias: REFUND-REASON
+  title: Refund Reason
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p97KeyMap = {
+    
+        enter : (v) => {
+            $.event.trigger("submit");
+        }
+    
+    }
+    
+    function mapP97Keys() {
+        $(document).off('keydown.p97keyevents');
+        $(document).on('keydown.p97keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p97KeyMap[key]) {
+                ev.preventDefault();
+                p97KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    setTitle("Refund");
+    mapP97Keys();
+    
+
+css: 
+  inline: |
+    .format-size{
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .format-size-black{
+        font-size: 1.125rem;
+    }
+    
+    .t-Dialog{
+        background-color: #056AC8!important; 
+    }
+    
+    .t-Dialog-body{
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P97_REFUND_REASON ========================
+  id: 41682999780832123
+  identification: 
+    name: P97_REFUND_REASON
+    type: Textarea
+
+  label: 
+    label: Refund Reason
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+    maximum-length: 100
+
+  advanced: 
+    css-classes: 
+    - format-size-black
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P97_CHAR_COUNT ===========================
+  id: 41683019902832124
+  identification: 
+    name: P97_CHAR_COUNT
+    type: Display Only
+
+  label: 
+    label: Char Count
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 11
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0/100
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Submit reason =======================
+  id: 18425904742367831
+  identification: 
+    name: Submit reason
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: submit
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 41684042592832134
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P97_REFUND_REASON
+
+    execution: 
+      sequence: 10
+      event: Submit reason # 18425904742367831
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: count char ==========================
+  id: 41683151397832125
+  identification: 
+    name: count char
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Input
+    selection-type: Item(s)
+    item(s): 
+    - P97_REFUND_REASON
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41683220037832126
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.item("P97_CHAR_COUNT").setValue(this.browserEvent.target.textLength + '/100');
+
+    execution: 
+      sequence: 10
+      event: count char # 41683151397832125
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus ===============================
+  id: 41683872710832132
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 41683991955832133
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P97_REFUND_REASON
+
+    execution: 
+      sequence: 10
+      event: Focus # 41683872710832132
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+

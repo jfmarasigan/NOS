@@ -1,0 +1,301 @@
+---
+# ====== Page: Transfer Search ===============================
+id: 54
+identification: 
+  name: Transfer Search
+  alias: TRANSFER-SEARCH
+  title: Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p54KeyMap = {
+        enter : (v) => {
+            $.event.trigger("Search");
+        },
+    
+        esc : (v) => {
+            $("#c").trigger("click");
+        }
+    }
+    
+    function mapP54Keys() {
+        $(document).off('keydown.p54keyevents');
+        $(document).on('keydown.p54keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p54KeyMap[key]) {
+                ev.preventDefault();
+                p54KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP54Keys();
+
+css: 
+  inline: |
+    .format-size{
+        font-size: 1.01rem;
+        font-family: Arial;
+    }
+    
+    .t-Form-labelContainer{
+        text-align: left;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search ======================================
+  id: 20512585409240116
+  identification: 
+    name: Search
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P54_START_WITH ===========================
+  id: 20514060618240144
+  identification: 
+    name: P54_START_WITH
+    type: Text Field
+
+  label: 
+    label: '<p class="format-size">Start with Transfer ID:</p>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Search # 20512585409240116
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P54_PREPARED_URL =========================
+  id: 21215304931437951
+  identification: 
+    name: P54_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Search ==============================
+  id: 15249212988369629
+  identification: 
+    name: Search
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: Search
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 18920383591729221
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P54_START_WITH
+
+    execution: 
+      sequence: 40
+      event: Search # 15249212988369629
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18921229762729230
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var field = $v("P54_START_WITH");
+        
+        if (!field) {
+            apex.message.showErrors({
+                type: "error",
+                location: "inline",
+                pageItem: "P54_START_WITH",
+                message: "Please fill out the field."
+            });
+            // Highlight fields that are empty
+            if (!field) {
+                $("#P54_START_WITH").addClass("error-highlight");
+            }
+        
+            return false; // Prevent modal from closing
+        }
+
+    execution: 
+      sequence: 30
+      event: Search # 15249212988369629
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New =================================
+  id: 15249604694369633
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 15249779621369634
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P54_START_WITH
+
+    execution: 
+      sequence: 10
+      event: New # 15249604694369633
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+

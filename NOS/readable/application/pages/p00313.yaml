@@ -1,0 +1,812 @@
+---
+# ====== Page: Print Gift Certificate ========================
+id: 313
+identification: 
+  name: Print Gift Certificate
+  alias: PRINT-GIFT-CERTIFICATE
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 300
+  height: 135
+  maximum-width: 300
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p6KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP6Keys() {
+        $(document).off('keydown.p6keyevents');
+        $(document).on('keydown.p6keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p6KeyMap[key]) {
+                ev.preventDefault();
+                p6KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP6Keys();
+    }
+  execute-when-page-loads: |
+    mapP6Keys();
+    
+    
+    setInputFilter($("#P313_COPIES"), function(value) {
+        return /^\d*$/.test(value); // numbers only
+    }, "Invalid input. Values should be numbers only.");
+    
+
+css: 
+  inline: |
+    .t-Dialog-header {
+        background-color: #056AC8;
+        padding: .5rem 0rem 0rem 1rem;
+    }
+    
+    .t-Dialog-body {
+        padding-block-start: 0;
+        padding-block-end: 0;
+    }
+    
+    .t-Dialog-bodyWrapperIn {
+        overflow: hidden;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .t-Region {
+        margin-block-end: .1rem;
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .t-Form-label {
+        color: white;
+        font-size: 1.125rem;
+        padding-block-start: 0;
+    }
+    
+    .t-Form-labelContainer:has(#P313_COPIES_LABEL) {
+        padding-block-end: var(--ut-field-padding-y, .5rem);
+        padding-block-start: 0;
+        text-align: center;
+    }
+    
+    .t-Form-itemWrapper:has(#P313_COPIES) {
+        margin: auto;
+        width: 40%;
+    }
+    
+    #P313_COPIES{
+        text-align: center !important;
+        font-size: 1.125rem;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .error-msg {
+        color: #FFD700;
+        font-size: 0.8rem;
+        padding-left: 1.5rem;
+        padding-top: 0.1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Title =======================================
+  id: 18630411166263550
+  identification: 
+    name: Title
+    type: Static Content
+
+  source: 
+    html-code: Gift Certificate
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--accent1
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error display ===============================
+  id: 34716990731647729
+  identification: 
+    name: Error display
+    type: Static Content
+
+  source: 
+    html-code: <span id="errorArea" class="hide error-msg">Please input number of copies.</span>
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Input_field =================================
+  id: 37006933418700406
+  identification: 
+    name: Input_field
+    type: Static Content
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P313_COPIES ==============================
+  id: 19465442672761256
+  identification: 
+    name: P313_COPIES
+    type: Text Field
+
+  label: 
+    label: 'No of copies will be printed:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Input_field # 37006933418700406
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 7
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 5
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P313_SELECTED_GC_NO ======================
+  id: 34716505129647725
+  identification: 
+    name: P313_SELECTED_GC_NO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P313_IS_DONATION =========================
+  id: 34717564872647735
+  identification: 
+    name: P313_IS_DONATION
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P313_PRINT_ID ============================
+  id: 34717913782647739
+  identification: 
+    name: P313_PRINT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P313_STATUS_ID ===========================
+  id: 34718266151647742
+  identification: 
+    name: P313_STATUS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P313_PREPARED_URL ========================
+  id: 38242380254771104
+  identification: 
+    name: P313_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Print =======================================
+  id: 19468368883761264
+  identification: 
+    button-name: Print
+    label: Print
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Enter ===============================
+  id: 34716685323647726
+  identification: 
+    name: Enter
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 19468368883761264
+
+  actions: 
+  - # ====== Action: Validate number of copies ===================
+    id: 34716759435647727
+    identification: 
+      name: Validate number of copies
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var errorArea = document.getElementById("errorArea")
+        
+        if ($('#P313_COPIES').val() && $('#P313_COPIES').val() > 0) {
+            errorArea.style.display = "none"
+            return true;
+        } else {
+            errorArea.style.display = "block"
+            document.getElementById("P313_COPIES").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 20
+      event: Enter # 34716685323647726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34717429673647734
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ($v("P313_IS_DONATION") === "Y") {
+            generateReport("GC_DONATION", "pdf", { 
+                fileName: "Gift_Certificate_Print_Id_" + $v("P313_PRINT_ID") + ".pdf",
+                mode : "print",
+                parameters : {
+                    P_SELECTED_PRINT_ID : $v("P313_PRINT_ID")
+                },
+                printCallback : function () {
+                    $("#apex_wait_popup").remove();
+                    $("#apex_wait_overlay").remove();
+                    $(".u-Processing").remove();
+                    apex.navigation.dialog.close(true);
+                },
+                spinnerEnabled : false
+            });
+        } else {
+            generateReport("GC_NORMAL", "pdf", { 
+                fileName: "Gift_Certificate_Print_Id_" + $v("P313_PRINT_ID") + ".pdf",
+                mode : "print",
+                parameters : {
+                    P_SELECTED_PRINT_ID : $v("P313_PRINT_ID")
+                },
+                printCallback : function () {
+                    $("#apex_wait_popup").remove();
+                    $("#apex_wait_overlay").remove();
+                    $(".u-Processing").remove();
+                    apex.navigation.dialog.close(true);
+                },
+                spinnerEnabled : false
+            });
+        }
+
+    execution: 
+      sequence: 110
+      event: Enter # 34716685323647726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P313_STATUS_ID").val() !== 4 && $("#P313_STATUS_ID").val() !== 5
+
+  - # ====== Action: Set donation type ===========================
+    id: 34717695761647736
+    identification: 
+      name: Set donation type
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  VARCHAR(1) := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P313_SELECTED_GC_NO) > 0 THEN
+            
+                SELECT DONATION INTO l_return_value
+                FROM NPM013 npm013
+                WHERE (SELECT npt020.GC_TYPE_ID
+                       FROM NPT020 npt020
+                       WHERE npt020.GIFT_CERTIFICATE_ID = :P313_SELECTED_GC_NO) = npm013.GC_TYPE_ID;
+        
+            END IF;
+        
+            RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P313_SELECTED_GC_NO
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P313_IS_DONATION
+
+    execution: 
+      sequence: 70
+      event: Enter # 34716685323647726
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Insert new rows =============================
+    id: 34717842701647738
+    identification: 
+      name: Insert new rows
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            l_copies NUMBER;
+            counter NUMBER := 1;
+        BEGIN
+            l_copies := TO_NUMBER(:P313_COPIES);
+            LOOP
+                IF counter < l_copies THEN
+                    INSERT INTO NPT020 (
+                        GIFT_CERTIFICATE_ID,
+                        GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, 
+                        DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, 
+                        BALANCE, GC_STATUS_ID, USER_CREATED, DATE_CREATED, PRINT_ID
+                    )
+        
+                    SELECT (SELECT NVL(MAX(GIFT_CERTIFICATE_ID), 0) + 1 FROM NPT020),
+                        GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, 
+                        DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, 
+                        BALANCE, 1, :app_user, SYSDATE, :P313_PRINT_ID
+                    FROM NPT020
+                    WHERE GIFT_CERTIFICATE_ID = :P313_SELECTED_GC_NO;
+                
+                ELSE
+                    EXIT;
+                END IF;
+                counter := counter + 1;
+            END LOOP;
+        
+        END;
+      items-to-submit: 
+      - P313_SELECTED_GC_NO
+      - P313_COPIES
+
+    execution: 
+      sequence: 100
+      event: Enter # 34716685323647726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Update selected GC ==========================
+    id: 34718019275647740
+    identification: 
+      name: Update selected GC
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+        BEGIN
+            UPDATE NPT020
+                SET PRINT_ID = :P313_PRINT_ID,
+                    GC_STATUS_ID = 1,
+                    USER_UPDATE = :app_user, 
+                    DATE_UPDATED = SYSDATE,
+                    PRINT_DATE = SYSDATE
+                WHERE GIFT_CERTIFICATE_ID = :P313_SELECTED_GC_NO;
+        END;
+      items-to-submit: 
+      - P313_SELECTED_GC_NO
+
+    execution: 
+      sequence: 90
+      event: Enter # 34716685323647726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set new PRINT_ID ============================
+    id: 34718127491647741
+    identification: 
+      name: Set new PRINT_ID
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  NUMBER := NULL;
+        
+        BEGIN
+        
+            SELECT (NVL(MAX(npt020.PRINT_ID), 0) + 1) INTO l_return_value
+            FROM NPT020 npt020;
+        
+            :P313_PRINT_ID := l_return_value;
+        
+            RETURN l_return_value;
+        
+        END;
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P313_PRINT_ID
+
+    execution: 
+      sequence: 80
+      event: Enter # 34716685323647726
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Trigger spinner =============================
+    id: 37011162656700448
+    identification: 
+      name: Trigger spinner
+      action: Execute JavaScript Code
+
+    settings: 
+      code: apex.widget.waitPopup();
+
+    execution: 
+      sequence: 60
+      event: Enter # 34716685323647726
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P313_COPIES ============================
+  id: 37007284968700409
+  identification: 
+    item-name: P313_COPIES
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+processes: 
+- # ====== Process: Close Dialog ===============================
+  id: 19469904593761268
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

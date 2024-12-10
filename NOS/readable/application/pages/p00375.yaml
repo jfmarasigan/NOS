@@ -1,0 +1,1202 @@
+---
+# ====== Page: Reservation Customer Details ==================
+id: 375
+identification: 
+  name: Reservation Customer Details
+  alias: RESERVATION-CUSTOMER-DETAILS
+  title: Reservation Customer Details
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 420px
+  maximum-width: 420px
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p7KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP7Keys() {
+        $(document).off('keydown.p7keyevents');
+        $(document).on('keydown.p7keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p7KeyMap[key]) {
+                ev.preventDefault();
+                p7KeyMap[key]();
+            }
+        });
+    }
+    
+    
+    function addDashTelNo() {
+        $('#P375_TELEPHONE_NUMBER').on( "keyup", function() {
+            var newTel = '';
+            if ($('#P375_TELEPHONE_NUMBER').val().length === 3 || $('#P375_TELEPHONE_NUMBER').val().length === 7) {
+                newTel = $('#P375_TELEPHONE_NUMBER').val() + '-';
+                document.getElementById('P375_TELEPHONE_NUMBER').value = newTel;
+            }
+        });
+    }
+    
+    function addDashFaxNo() {
+        $('#P375_FAX_NUMBER').on( "keyup", function() {
+            var newTel = '';
+            if ($('#P375_FAX_NUMBER').val().length === 3 || $('#P375_FAX_NUMBER').val().length === 7) {
+                newTel = $('#P375_FAX_NUMBER').val() + '-';
+                document.getElementById('P375_FAX_NUMBER').value = newTel;
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP7Keys();
+    addDashTelNo();
+    addDashFaxNo();
+    
+    // Telephone number validation
+    setInputFilter($("#P375_TELEPHONE_NUMBER"), function(value) {
+        return /^(\d{0,3}|\d{3}-|\d{3}-\d{0,3}|\d{3}-\d{0,3}-|\d{3}-\d{3}-\d{0,4})$/.test(value);
+    }, "Invalid input.");
+    
+    // Fax number validation
+    setInputFilter($("#P375_FAX_NUMBER"), function(value) {
+        return /^(\d{0,3}|\d{3}-|\d{3}-\d{0,3}|\d{3}-\d{0,3}-|\d{3}-\d{3}-\d{0,4})$/.test(value);
+    }, "Invalid input.");
+
+css: 
+  inline: |
+    .t-Dialog-header {
+        background-color: #056AC8;
+        padding: .5rem 0rem 0rem 1rem;
+    }
+    
+    .t-Dialog-body {
+        padding-block-start: var(--ut-dialog-padding-y, .5rem);
+        padding-inline-start: var(--ut-dialog-padding-x, .5rem);
+    }
+    
+    .t-Dialog-bodyWrapperIn {
+        overflow: hidden;
+        background-color: white;
+    }
+    
+    .t-Region {
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: .4rem;
+    }
+    
+    .t-Form-itemWrapper {
+        width: 50%;
+        position: absolute;
+        left: 45%;
+        bottom: 10%;
+    }
+    
+    .t-Form-itemWrapper > input {
+        height: 2rem;
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, .4rem);
+    }
+    
+    .t-Form-labelContainer {
+        padding-block-start: var(--ut-field-padding-y, .5rem);
+    }
+    
+    .t-Form-label {
+        font-size: 1.125rem;
+        font-weight: 600;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .error-msg {
+        color: red;
+        font-size: 0.75rem;
+        padding-left: 0.7rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    #P375_CUSTOMER_DBA,
+    #P375_CONTACT_PERSON,
+    #P375_TELEPHONE_NUMBER,
+    #P375_FAX_NUMBER,
+    #P375_EMAIL {
+        font-size: 1.125rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Title =======================================
+  id: 100581766490220588
+  identification: 
+    name: Title
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span>
+          <text style="display: block; height: 1.6rem;">Customer Details</text>
+      </span>
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error Display ===============================
+  id: 100581843898220589
+  identification: 
+    name: Error Display
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span id="errorArea" class="hide error-msg">Please fill in the required search field.</span>
+      <span id="errorArea1" class="hide error-msg">Please input customer dba.</span>
+      <span id="errorArea2" class="hide error-msg">Please input telephone number.</span>
+      <span id="errorArea3" class="hide error-msg">Invalid telephone number.</span>
+      <span id="errorArea4" class="hide error-msg">Invalid fax number.</span>
+
+  layout: 
+    sequence: 10
+    parent-region: Reservation Search # 100701111378048069
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Reservation Search ==========================
+  id: 100701111378048069
+  identification: 
+    name: Reservation Search
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPT009
+    include-rowid-column: false
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+page-items: 
+- # ====== Page Item: P375_FAX_NUMBER ==========================
+  id: 40130935879188932
+  identification: 
+    name: P375_FAX_NUMBER
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:4rem">Fax Number:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Reservation Search # 100701111378048069
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Reservation Search # 100701111378048069
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P375_EMAIL ===============================
+  id: 40131014500188933
+  identification: 
+    name: P375_EMAIL
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:7.5rem">Email:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Reservation Search # 100701111378048069
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 30
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Reservation Search # 100701111378048069
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P375_POINT_PERSON ========================
+  id: 81459809477115644
+  identification: 
+    name: P375_POINT_PERSON
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:3.8rem">Point Person:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Reservation Search # 100701111378048069
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Reservation Search # 100701111378048069
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P375_CUSTOMER_DBA ========================
+  id: 100704703279048116
+  identification: 
+    name: P375_CUSTOMER_DBA
+    type: Popup LOV
+
+  label: 
+    label: '<span style="padding-left:2.35rem">Customer DBA<span style="color:red;">*</span>:</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 20
+    region: Reservation Search # 100701111378048069
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 40
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT DBA
+      FROM NPT009
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P375_TELEPHONE_NUMBER ====================
+  id: 100707009707048141
+  identification: 
+    name: P375_TELEPHONE_NUMBER
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:0rem">Telephone Number<span style="color:red;">*</span>:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Reservation Search # 100701111378048069
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CLOSE_BTN ===================================
+  id: 41328706015926717
+  identification: 
+    button-name: CLOSE_BTN
+    label: Close Btn
+
+  layout: 
+    sequence: 100
+    region: Reservation Search # 100701111378048069
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: SEARCH_BTN ==================================
+  id: 41329151978926718
+  identification: 
+    button-name: SEARCH_BTN
+    label: Search
+
+  layout: 
+    sequence: 90
+    region: Reservation Search # 100701111378048069
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Search Table ========================
+  id: 41333150127926745
+  identification: 
+    name: Search Table
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH_BTN # 41329151978926718
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40131383215188936
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var telNo = $v("P375_TELEPHONE_NUMBER");
+        
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        var errorArea2 = document.getElementById("errorArea2")
+        var errorArea3 = document.getElementById("errorArea3")
+        var errorArea4 = document.getElementById("errorArea4")
+        
+        if (!telNo) {
+            errorArea.style.display = "none";
+            errorArea1.style.display = "none"
+            errorArea2.style.display = "block"
+            errorArea3.style.display = "none"
+            errorArea4.style.display = "none"
+            document.getElementById("P375_TELEPHONE_NUMBER").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 40
+      event: Search Table # 41333150127926745
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41333636685926746
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var customerDBA = $v("P375_CUSTOMER_DBA");
+        var telNo = $v("P375_TELEPHONE_NUMBER");
+        
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        var errorArea2 = document.getElementById("errorArea2")
+        var errorArea3 = document.getElementById("errorArea3")
+        var errorArea4 = document.getElementById("errorArea4")
+        
+        if(!customerDBA && !telNo) {
+            errorArea.style.display = "block";
+            errorArea1.style.display = "none"
+            errorArea2.style.display = "none"
+            errorArea3.style.display = "none"
+            errorArea4.style.display = "none"
+            document.getElementById("P375_CUSTOMER_DBA").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 10
+      event: Search Table # 41333150127926745
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 41334040545926746
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P375_CUSTOMER_DBA
+      - P375_POINT_PERSON
+      - P375_TELEPHONE_NUMBER
+      - P375_FAX_NUMBER
+      - P375_EMAIL
+
+    execution: 
+      sequence: 70
+      event: Search Table # 41333150127926745
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41335005996926748
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var customerDBA = $v("P375_CUSTOMER_DBA");
+        
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        var errorArea2 = document.getElementById("errorArea2")
+        var errorArea3 = document.getElementById("errorArea3")
+        var errorArea4 = document.getElementById("errorArea4")
+        
+        if (!customerDBA) {
+            errorArea.style.display = "none";
+            errorArea1.style.display = "block"
+            errorArea2.style.display = "none"
+            errorArea3.style.display = "none"
+            errorArea4.style.display = "none"
+            document.getElementById("P375_CUSTOMER_DBA").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 20
+      event: Search Table # 41333150127926745
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42997045526872713
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var telNo = $v("P375_TELEPHONE_NUMBER");
+        
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        var errorArea2 = document.getElementById("errorArea2")
+        var errorArea3 = document.getElementById("errorArea3")
+        var errorArea4 = document.getElementById("errorArea4")
+        
+        var regex = /^(\d{0,3}|\d{3}-|\d{3}-\d{0,3}|\d{3}-\d{0,3}-|\d{3}-\d{3}-\d{0,4})$/;
+        
+        if (!regex.test(telNo)) {
+            errorArea.style.display = "none";
+            errorArea1.style.display = "none"
+            errorArea2.style.display = "none"
+            errorArea3.style.display = "block"
+            errorArea4.style.display = "none"
+            document.getElementById("P375_TELEPHONE_NUMBER").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 50
+      event: Search Table # 41333150127926745
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42997469654872717
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var faxNo = $v("P375_FAX_NUMBER");
+        
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        var errorArea2 = document.getElementById("errorArea2")
+        var errorArea3 = document.getElementById("errorArea3")
+        var errorArea4 = document.getElementById("errorArea4")
+        
+        var regex = /^(\d{0,3}|\d{3}-|\d{3}-\d{0,3}|\d{3}-\d{0,3}-|\d{3}-\d{3}-\d{0,4})$/;
+        
+        if (faxNo.length > 0 && !regex.test(faxNo)) {
+            errorArea.style.display = "none";
+            errorArea1.style.display = "none"
+            errorArea2.style.display = "none"
+            errorArea3.style.display = "none"
+            errorArea4.style.display = "block"
+            document.getElementById("P375_FAX_NUMBER").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 60
+      event: Search Table # 41333150127926745
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 41335416976926748
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE_BTN # 41328706015926717
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 41335909165926750
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 41335416976926748
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Values ==========================
+  id: 42996420895872707
+  identification: 
+    name: Set Values
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P375_CUSTOMER_DBA
+
+  actions: 
+  - # ====== Action: Set Point Person ============================
+    id: 42996551425872708
+    identification: 
+      name: Set Point Person
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        no_data_in_file EXCEPTION;
+        l_return_value  VARCHAR(40) := NULL;
+        
+        BEGIN
+            BEGIN
+        
+                IF LENGTH(:P375_CUSTOMER_DBA) > 0 THEN
+        
+                    SELECT NVL(npt009.CONTACT_PERSON, '') INTO l_return_value
+                    FROM NPT009 npt009
+                    WHERE npt009.DBA = :P375_CUSTOMER_DBA;
+        
+                END IF;
+        
+                EXCEPTION
+                    WHEN no_data_in_file THEN
+                        l_return_value := '';
+                    WHEN OTHERS THEN 
+                        l_return_value := l_return_value;
+        
+            END;
+        
+            RETURN l_return_value;
+        END;
+      items-to-submit: 
+      - P375_CUSTOMER_DBA
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P375_POINT_PERSON
+
+    execution: 
+      sequence: 10
+      event: Set Values # 42996420895872707
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P375_CUSTOMER_DBA
+
+  - # ====== Action: Set Tel No ==================================
+    id: 42996793906872710
+    identification: 
+      name: Set Tel No
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        no_data_in_file EXCEPTION;
+        l_return_value  VARCHAR(40) := NULL;
+        
+        BEGIN
+            BEGIN
+        
+                IF LENGTH(:P375_CUSTOMER_DBA) > 0 THEN
+        
+                    SELECT NVL(npt009.BILLING_CONTACTA, '') INTO l_return_value
+                    FROM NPT009 npt009
+                    WHERE npt009.DBA = :P375_CUSTOMER_DBA;
+        
+                END IF;
+        
+                EXCEPTION
+                    WHEN no_data_in_file THEN
+                        l_return_value := '';
+                    WHEN OTHERS THEN 
+                        l_return_value := l_return_value;
+        
+            END;
+        
+            RETURN l_return_value;
+        END;
+      items-to-submit: 
+      - P375_CUSTOMER_DBA
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P375_TELEPHONE_NUMBER
+
+    execution: 
+      sequence: 20
+      event: Set Values # 42996420895872707
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P375_CUSTOMER_DBA
+
+  - # ====== Action: Set Fax No ==================================
+    id: 42996836936872711
+    identification: 
+      name: Set Fax No
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        no_data_in_file EXCEPTION;
+        l_return_value  VARCHAR(40) := NULL;
+        
+        BEGIN
+            BEGIN
+        
+                IF LENGTH(:P375_CUSTOMER_DBA) > 0 THEN
+        
+                    SELECT NVL(npt009.BILLING_FAX, '') INTO l_return_value
+                    FROM NPT009 npt009
+                    WHERE npt009.DBA = :P375_CUSTOMER_DBA;
+        
+                END IF;
+        
+                EXCEPTION
+                    WHEN no_data_in_file THEN
+                        l_return_value := '';
+                    WHEN OTHERS THEN 
+                        l_return_value := l_return_value;
+        
+            END;
+        
+            RETURN l_return_value;
+        END;
+      items-to-submit: 
+      - P375_CUSTOMER_DBA
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P375_FAX_NUMBER
+
+    execution: 
+      sequence: 30
+      event: Set Values # 42996420895872707
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P375_CUSTOMER_DBA
+
+  - # ====== Action: Set Email ===================================
+    id: 42996999015872712
+    identification: 
+      name: Set Email
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        no_data_in_file EXCEPTION;
+        l_return_value  VARCHAR(40) := NULL;
+        
+        BEGIN
+            BEGIN
+        
+                IF LENGTH(:P375_CUSTOMER_DBA) > 0 THEN
+        
+                    SELECT NVL(npt009.BILLING_EMAIL, '') INTO l_return_value
+                    FROM NPT009 npt009
+                    WHERE npt009.DBA = :P375_CUSTOMER_DBA;
+        
+                END IF;
+        
+                EXCEPTION
+                    WHEN no_data_in_file THEN
+                        l_return_value := '';
+                    WHEN OTHERS THEN 
+                        l_return_value := l_return_value;
+        
+            END;
+        
+            RETURN l_return_value;
+        END;
+      items-to-submit: 
+      - P375_CUSTOMER_DBA
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P375_EMAIL
+
+    execution: 
+      sequence: 40
+      event: Set Values # 42996420895872707
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P375_CUSTOMER_DBA
+
+processes: 
+- # ====== Process: Process form Gift Certificate Search =======
+  id: 41331832438926726
+  identification: 
+    name: Process form Gift Certificate Search
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Reservation Search # 100701111378048069
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 41332701976926743
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

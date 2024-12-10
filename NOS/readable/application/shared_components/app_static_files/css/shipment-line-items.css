@@ -1,0 +1,126 @@
+.t-Header .t-Header-branding {
+    background-color: white !important;
+    color: rgb(30, 58, 138) !important;
+}
+
+body {
+    background-color: rgb(30, 58, 138);
+}
+
+.shipment-value-col .t-Form-inputContainer {
+    padding-inline-start: 1.5rem;
+}
+
+#shipment-info label, #shipment-info span {
+    margin-block-start: 1rem;
+    font-size: 1.125rem;
+    color: white;
+}
+
+#shipment-line-items .a-GV-hdr .a-GV-table,
+#item-po-list .a-GV-hdr .a-GV-table {
+    width: 100% !important;
+}
+
+#shipment-line-items .a-GV-header a,
+#shipment-line-items th.a-GV-header{
+    background-color: #046BC8;
+    color: white;
+}
+
+#item-po-list .a-GV-header a, 
+#item-po-list th.a-GV-header,
+#serial-nos-ig .a-GV-header a, 
+#serial-nos-ig th.a-GV-header {
+    color: black;
+}
+
+#shipment-line-items table,
+#shipment-line-items tr,
+#shipment-line-items td,
+#shipment-line-items th,
+#item-po-list table,
+#item-po-list tr,
+#item-po-list td,
+#item-po-list th,
+#serial-nos-ig table,
+#serial-nos-ig tr,
+#serial-nos-ig td,
+#serial-nos-ig th  {
+    font-size: 1.125rem;
+}
+
+.line-item-btns {
+    color: white;
+    font-size: 1.125rem;
+    font-weight: normal;
+    text-align: start;
+}
+
+.a-IconList-item, .a-PopupLOV-search {
+    font-size: 1.125rem !important;
+}
+
+/* item modal */
+div:has(#item-po-dialog) .ui-dialog-titlebar {
+    display: none;
+}
+
+div:has(#item-po-dialog) .t-DialogRegion {
+    border-start-start-radius: 10px;
+    border-start-end-radius: 10px;
+    border-end-start-radius: 10px;
+    border-end-end-radius: 10px;
+}
+
+.item-po-header-text {
+    font-size: 1.125rem;
+    font-weight: normal;
+    color: white;
+}
+
+.item-modal-btns {
+    font-size: 1.125rem;
+    font-weight: normal;
+    background-color: #056AC8;
+    outline: none;
+    border: none;
+    box-shadow: none;
+    color: white;
+}
+
+div.ui-dialog:has(#item-po-dialog) {
+    left: 53% !important;
+}
+
+#item-po-dialog,
+#item-po-dialog .t-DialogRegion-body {
+    background-color: #056AC8;
+    overflow: hidden;
+}
+
+/* sn modal */
+div:has(#serial-nums) .ui-dialog-titlebar {
+    display: none;
+}
+
+div.ui-dialog:has(#serial-nums) {
+    left: 53% !important;
+    top: 10% !important;
+}
+
+#serial-nums .t-DialogRegion-body {
+    padding-block-end: 0;
+}
+
+#serial-nums {
+    background-color: rgb(30, 58, 138);
+    overflow: hidden;
+}
+
+/* reset ui dialog for popup lov and error popup for IG validation */
+div.ui-dialog:has(.a-PopupLOV-dialog),
+div.ui-dialog.ui-dialog--notification {
+    border: none;
+    border-radius: 0;
+}

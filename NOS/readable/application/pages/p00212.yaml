@@ -1,0 +1,577 @@
+---
+# ====== Page: Customer Organization Type Utilities Update ===
+id: 212
+identification: 
+  name: Customer Organization Type Utilities Update
+  alias: CUSTOMER-ORGANIZATION-TYPE-UTILITIES-UPDATE
+  title: Customer Organization Type Utilities Update
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  attributes: 
+  - "close: function() { customEvent('customDialogClose'"
+  - " {modalPageId: 'MODAL_CLOSE_FIXED'});} "
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p212KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+           $("#enter").trigger("click");
+        }
+    
+    }
+    
+    function mapP212Keys() {
+        $(document).off('keydown.p212keyevents');
+        $(document).on('keydown.p212keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p212KeyMap[key]) {
+                ev.preventDefault();
+                p212KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP212Keys();
+    $x('P212_ORGANIZATION_TYPE_NAME').focus();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+    }
+    
+    .t-Dialog-body label, .t-Dialog-body input, .t-Dialog-body .apex-item-display-only {
+        font-size: 1.125rem;
+    }
+    
+    .t-Dialog-body label {
+        color: white;
+    }
+    
+    .t-Region-body{
+        background-color: #056AC8;
+        padding-bottom: 0;
+    }
+    
+    .t-Form-error {
+        color: #FFD700;
+    }
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; /* Remove the asterisk before the label */
+    }
+    
+    
+    .white-text {
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Form ========================================
+  id: 43089513660119030
+  identification: 
+    name: Form
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM010
+    include-rowid-column: false
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P212_ORGANIZATION_TYPE_ID ================
+  id: 43089787288119032
+  identification: 
+    name: P212_ORGANIZATION_TYPE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form # 43089513660119030
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43089513660119030
+    column: ORGANIZATION_TYPE_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P212_ORGANIZATION_TYPE_NAME ==============
+  id: 43089840821119033
+  identification: 
+    name: P212_ORGANIZATION_TYPE_NAME
+    type: Text Field
+
+  label: 
+    label: 'Name <span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Form # 43089513660119030
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43089513660119030
+    column: ORGANIZATION_TYPE_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P212_DESCRIPTION =========================
+  id: 43089925798119034
+  identification: 
+    name: P212_DESCRIPTION
+    type: Text Field
+
+  label: 
+    label: Description
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Form # 43089513660119030
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 200
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43089513660119030
+    column: DESCRIPTION
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P212_USER_CREATED ========================
+  id: 43090080469119035
+  identification: 
+    name: P212_USER_CREATED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Form # 43089513660119030
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43089513660119030
+    column: USER_CREATED
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P212_DATE_CREATED ========================
+  id: 43090176169119036
+  identification: 
+    name: P212_DATE_CREATED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Form # 43089513660119030
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43089513660119030
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P212_USER_UPDATE =========================
+  id: 43090265077119037
+  identification: 
+    name: P212_USER_UPDATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Form # 43089513660119030
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43089513660119030
+    column: USER_UPDATE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P212_DATE_UPDATED ========================
+  id: 43090395528119038
+  identification: 
+    name: P212_DATE_UPDATED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Form # 43089513660119030
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 43089513660119030
+    column: DATE_UPDATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 43090486792119039
+  identification: 
+    button-name: Enter
+    label: Enter
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: enter
+
+validations: 
+- # ====== Validation: Unique Name =============================
+  id: 43090796403119042
+  identification: 
+    name: Unique Name
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      SELECT 1 
+      FROM NPM010
+      WHERE UPPER(ORGANIZATION_TYPE_NAME) = UPPER(:P212_ORGANIZATION_TYPE_NAME) AND ORGANIZATION_TYPE_ID != :P212_ORGANIZATION_TYPE_ID
+    always-execute: true
+
+  error: 
+    error-message: Name already exists.
+    display-location: Inline with Field
+    associated-item: P212_ORGANIZATION_TYPE_NAME # 43089840821119033
+
+- # ====== Validation: Empty Name ==============================
+  id: 43090811645119043
+  identification: 
+    name: Empty Name
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Item is NOT NULL
+    item: P212_ORGANIZATION_TYPE_NAME
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P212_ORGANIZATION_TYPE_NAME # 43089840821119033
+
+processes: 
+- # ====== Process: Initialize form Customer Organization Type U
+  id: 43089687437119031
+  identification: 
+    name: Initialize form Customer Organization Type Utilities Update
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Form # 43089513660119030
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Update Organization Type ===================
+  id: 43090938267119044
+  identification: 
+    name: Update Organization Type
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE NPM010
+      SET
+          ORGANIZATION_TYPE_NAME = :P212_ORGANIZATION_TYPE_NAME, 
+          USER_UPDATE = v('APP_USER'), 
+          DATE_UPDATED = SYSTIMESTAMP
+      WHERE ORGANIZATION_TYPE_ID = :P212_ORGANIZATION_TYPE_ID;
+      
+      apex_util.set_session_state('SUCCESS_MSG', 'Organization Type updated successfully');
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 43091065523119045
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

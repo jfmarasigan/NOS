@@ -1,0 +1,788 @@
+---
+# ====== Page: Print Options =================================
+id: 10000
+identification: 
+  name: Print Options
+  alias: PRINT-OPTIONS
+  title: Print Options
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const printOptionKeys = {
+        a : (ev) => {
+            print(1);
+        },
+        b : (ev) => {
+            print(2);
+        }
+    }
+    
+    function mapPrintOptionKeys() {
+        $(document).on('keydown.p10000keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (printOptionKeys[key]) {
+                ev.preventDefault();
+                printOptionKeys[key](ev);
+            }
+        });
+    }
+    
+    function print(printerOption) {
+        let reportName = `${$v("P10000_REPORT_NAME")}${printerOption === 1 ? "_COURIER_NEW" : "_ARIAL"}`;
+        let format = $v("P10000_FORMAT");
+        let fileName = $("P10000_FILENAME");
+        let spinnerEnabled = $v("P10000_SPINNER_ENABLE") === "Y"; 
+        let parameters = {
+            [$v("P10000_PARAM1_NAME")] : $v("P10000_PARAM1_VALUE"),
+            [$v("P10000_PARAM2_NAME")] : $v("P10000_PARAM2_VALUE"),
+            [$v("P10000_PARAM3_NAME")] : $v("P10000_PARAM3_VALUE"),
+            [$v("P10000_PARAM4_NAME")] : $v("P10000_PARAM4_VALUE"),
+            [$v("P10000_PARAM5_NAME")] : $v("P10000_PARAM5_VALUE"),
+            [$v("P10000_PARAM6_NAME")] : $v("P10000_PARAM6_VALUE"),
+            [$v("P10000_PARAM7_NAME")] : $v("P10000_PARAM7_VALUE"),
+            [$v("P10000_PARAM8_NAME")] : $v("P10000_PARAM8_VALUE"),
+            P_PRINTER_OPTION : printerOption
+        };
+    
+        generateReport(reportName, format, {
+            fileName: fileName,
+            mode : "print",
+            parameters : parameters,
+            spinnerEnabled : spinnerEnabled
+        });
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Printer Options =============================
+  id: 39669906069745227
+  identification: 
+    name: Printer Options
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="print-option-boxes">
+          <div class="print-option" data-value="1">A - Dot Matrix Printer</div>
+          <div class="print-option" data-value="2">B - Graphics Printer</div>
+      </div>
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P10000_REPORT_NAME =======================
+  id: 39670022941745228
+  identification: 
+    name: P10000_REPORT_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_FORMAT ============================
+  id: 39670114536745229
+  identification: 
+    name: P10000_FORMAT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_FILENAME ==========================
+  id: 39670261228745230
+  identification: 
+    name: P10000_FILENAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_SPINNER_ENABLE ====================
+  id: 39670317886745231
+  identification: 
+    name: P10000_SPINNER_ENABLE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM1_NAME =======================
+  id: 39670450220745232
+  identification: 
+    name: P10000_PARAM1_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM2_NAME =======================
+  id: 39670504666745233
+  identification: 
+    name: P10000_PARAM2_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM3_NAME =======================
+  id: 39670632608745234
+  identification: 
+    name: P10000_PARAM3_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM4_NAME =======================
+  id: 39670784593745235
+  identification: 
+    name: P10000_PARAM4_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM5_NAME =======================
+  id: 39670894959745236
+  identification: 
+    name: P10000_PARAM5_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM6_NAME =======================
+  id: 39670930156745237
+  identification: 
+    name: P10000_PARAM6_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 110
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM7_NAME =======================
+  id: 39671087450745238
+  identification: 
+    name: P10000_PARAM7_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 120
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM8_NAME =======================
+  id: 39671195321745239
+  identification: 
+    name: P10000_PARAM8_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 130
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM1_VALUE ======================
+  id: 39671288526745240
+  identification: 
+    name: P10000_PARAM1_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 140
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM7_VALUE ======================
+  id: 39671317150745241
+  identification: 
+    name: P10000_PARAM7_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 200
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM8_VALUE ======================
+  id: 39671453886745242
+  identification: 
+    name: P10000_PARAM8_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 210
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM6_VALUE ======================
+  id: 39671524999745243
+  identification: 
+    name: P10000_PARAM6_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 190
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM5_VALUE ======================
+  id: 39671606906745244
+  identification: 
+    name: P10000_PARAM5_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 180
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM4_VALUE ======================
+  id: 39671795055745245
+  identification: 
+    name: P10000_PARAM4_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 170
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM3_VALUE ======================
+  id: 39671862507745246
+  identification: 
+    name: P10000_PARAM3_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 160
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P10000_PARAM2_VALUE ======================
+  id: 39671963140745247
+  identification: 
+    name: P10000_PARAM2_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 150
+    region: Printer Options # 39669906069745227
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: PRINT ===============================
+  id: 39672052372745248
+  identification: 
+    name: PRINT
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: PRINT_REPORT
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39672126839745249
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let reportName = $v("P10000_REPORT_NAME");
+        let format = $v("P10000_FORMAT");
+        let fileName = $("P10000_FILENAME");
+        let spinnerEnabled = $v("P10000_SPINNER_ENABLE") === "Y"; 
+        let parameters = {
+            [$v("P10000_PARAM1_NAME")] : $v("P10000_PARAM1_VALUE"),
+            [$v("P10000_PARAM2_NAME")] : $v("P10000_PARAM2_VALUE"),
+            [$v("P10000_PARAM3_NAME")] : $v("P10000_PARAM3_VALUE"),
+            [$v("P10000_PARAM4_NAME")] : $v("P10000_PARAM4_VALUE"),
+            [$v("P10000_PARAM5_NAME")] : $v("P10000_PARAM5_VALUE"),
+            [$v("P10000_PARAM6_NAME")] : $v("P10000_PARAM6_VALUE"),
+            [$v("P10000_PARAM7_NAME")] : $v("P10000_PARAM7_VALUE"),
+            [$v("P10000_PARAM8_NAME")] : $v("P10000_PARAM8_VALUE")
+        };
+        
+        generateReport(reportName, format, {
+            fileName: fileName,
+            mode : "print",
+            parameters : parameters,
+            spinnerEnabled : spinnerEnabled
+        });
+
+    execution: 
+      sequence: 10
+      event: PRINT # 39672052372745248
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

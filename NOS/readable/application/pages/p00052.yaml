@@ -1,0 +1,1840 @@
+---
+# ====== Page: Update Transfer ===============================
+id: 52
+identification: 
+  name: Update Transfer
+  alias: UPDATE-TRANSFER
+  title: Update Transfer
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p52KeyMap = {
+        enter : (v) => {
+            $.event.trigger('ToTransferLine');      
+        },
+    
+        tab : (v) => {
+            jQuery($v("P52_NEXT_ITEM")).trigger("focus").select();
+        },
+    
+        escape : (v) => {
+            $.event.trigger("exit");
+        }
+    }
+    
+    function mapP52Keys() {
+        $(document).off('keydown.p52keyevents');
+        $(document).on('keydown.p52keyevents', (ev) => {
+            console.log(`KeyboardEvent: key='${ev.key}' | code='${ev.code}'`);
+            var key = ev.key?.toLowerCase();
+            if (p52KeyMap[key]) {
+                ev.preventDefault();
+                p52KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP52Keys();
+    setTitle("Update Transfer");
+
+css: 
+  inline: |
+    .err-message{
+        color:red;
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    #content label, #content input, #content .apex-item-display-only{
+        font-size: 1.125rem;
+    }
+    
+    .format-size{
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .input-size{
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        /* color: #056BC9; */
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+    
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Update Transfer =============================
+  id: 25052609936354452
+  identification: 
+    name: Update Transfer
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: content
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P52_PREPARED_URL =========================
+  id: 12895105310147737
+  identification: 
+    name: P52_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_HAS_NULL =============================
+  id: 15247645922369613
+  identification: 
+    name: P52_HAS_NULL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_FIRST_EMPTY_ITEM =====================
+  id: 15247732930369614
+  identification: 
+    name: P52_FIRST_EMPTY_ITEM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_ERR_MESSAGE ==========================
+  id: 15247891109369615
+  identification: 
+    name: P52_ERR_MESSAGE
+    type: Display Only
+
+  label: 
+    label: New
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: <p class="err-message">Please fill out all the fields.</p>
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_DATE =================================
+  id: 25052691312354496
+  identification: 
+    name: P52_DATE
+    type: Date Picker
+
+  label: 
+    label: New
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 60
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      SELECT
+          TRANSFER_DATE
+      FROM
+          NIT010
+      WHERE
+          :P52_TRANSFER_ID = TRANSFER_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_FROMWAREHOUSE ========================
+  id: 25052725991354497
+  identification: 
+    name: P52_FROMWAREHOUSE
+    type: Popup LOV
+
+  label: 
+    label: From
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 80
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT
+          WAREHOUSE_LOCATION AS display,
+          WAREHOUSE_ID AS return
+      FROM
+          NIM027
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      SELECT
+          FROMWAREHOUSE_ID
+      FROM
+          NIT010
+      WHERE
+          :P52_TRANSFER_ID = TRANSFER_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_TOWAREHOUSE ==========================
+  id: 25052860454354498
+  identification: 
+    name: P52_TOWAREHOUSE
+    type: Popup LOV
+
+  label: 
+    label: To
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 110
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT
+          WAREHOUSE_LOCATION AS display,
+          WAREHOUSE_ID AS return
+      FROM
+          NIM027
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      SELECT
+          TOWAREHOUSE_ID
+      FROM
+          NIT010
+      WHERE
+          :P52_TRANSFER_ID = TRANSFER_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_DELIVERY =============================
+  id: 25052919772354499
+  identification: 
+    name: P52_DELIVERY
+    type: Text Field
+
+  label: 
+    label: Delivery Man
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 140
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 30
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      SELECT
+          DELIVERY_NAME
+      FROM
+          NIT010
+      WHERE
+          :P52_TRANSFER_ID = TRANSFER_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_RECEIVER =============================
+  id: 25053015846354500
+  identification: 
+    name: P52_RECEIVER
+    type: Text Field
+
+  label: 
+    label: Receiver
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 160
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 30
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      SELECT
+          RECEIVER
+      FROM
+          NIT010
+      WHERE
+          :P52_TRANSFER_ID = TRANSFER_ID
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_FROMDESC =============================
+  id: 25053397508354503
+  identification: 
+    name: P52_FROMDESC
+    type: Display Only
+
+  label: 
+    label: Location Desc
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 90
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          LOCATION_DESC
+      FROM
+          NIM027
+      WHERE
+          WAREHOUSE_ID = :P52_FROMWAREHOUSE
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: LOCATION DESC
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_TODESC ===============================
+  id: 25053483051354504
+  identification: 
+    name: P52_TODESC
+    type: Display Only
+
+  label: 
+    label: Location Desc
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 120
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          LOCATION_DESC
+      FROM
+          NIM027
+      WHERE
+          WAREHOUSE_ID = :P52_TOWAREHOUSE
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: LOCATION DESC
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_TRANSFER_ID ==========================
+  id: 25053767235354507
+  identification: 
+    name: P52_TRANSFER_ID
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Item
+    item: P52_TRANSFER_ID
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_TRANSFER_ID_LABEL ====================
+  id: 25053837868354508
+  identification: 
+    name: P52_TRANSFER_ID_LABEL
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 'Transfer ID:'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_DATE_LABEL ===========================
+  id: 25054185013354511
+  identification: 
+    name: P52_DATE_LABEL
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 'Date:'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_FROMWAREHOUSE_LABEL ==================
+  id: 25054399175354513
+  identification: 
+    name: P52_FROMWAREHOUSE_LABEL
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 'Transfer from:'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_TOWAREHOUSE_LABEL ====================
+  id: 25054513184354514
+  identification: 
+    name: P52_TOWAREHOUSE_LABEL
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 100
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 'Transfer to:'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_DELIVERY_LABEL =======================
+  id: 25054559482354515
+  identification: 
+    name: P52_DELIVERY_LABEL
+    type: Display Only
+
+  label: 
+    label: Delivery Label
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 130
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 'Delivery Man:'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_RECEIVER_LABEL =======================
+  id: 25054630120354516
+  identification: 
+    name: P52_RECEIVER_LABEL
+    type: Display Only
+
+  label: 
+    label: Delivery Label
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 150
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 'Receiver:'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P52_NEXT_ITEM ============================
+  id: 25817661319095776
+  identification: 
+    name: P52_NEXT_ITEM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Update Transfer # 25052609936354452
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: To Transfer Line ====================
+  id: 12894909294147735
+  identification: 
+    name: To Transfer Line
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: ToTransferLine
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 12895082297147736
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            isValid NUMBER;
+        BEGIN
+            :P52_HAS_NULL := 0;
+            :P52_ERR_MESSAGE := '<p class="err-message">Please fill out all the fields.</p>';
+        
+            IF :P52_DATE IS NULL THEN
+                :P52_FIRST_EMPTY_ITEM := 'P52_DATE';
+                :P52_HAS_NULL := 1;       
+            ELSIF :P52_FROMWAREHOUSE IS NULL THEN
+                :P52_FIRST_EMPTY_ITEM := 'P52_FROMWAREHOUSE';
+                :P52_HAS_NULL := 1;
+            ELSIF :P52_TOWAREHOUSE IS NULL THEN
+                :P52_FIRST_EMPTY_ITEM := 'P52_TOWAREHOUSE';
+                :P52_HAS_NULL := 1;
+            ELSIF :P52_DELIVERY IS NULL THEN
+                :P52_FIRST_EMPTY_ITEM := 'P52_DELIVERY';
+                :P52_HAS_NULL := 1;
+            ELSIF :P52_RECEIVER IS NULL THEN
+                :P52_FIRST_EMPTY_ITEM := 'P52_receiver';
+                :P52_HAS_NULL := 1;
+            END IF;
+        
+            SELECT DATE_VALID(:P52_DATE) INTO isValid FROM DUAL;
+            IF isValid = 0 THEN
+                :P52_FIRST_EMPTY_ITEM := 'P52_DATE';
+                :P52_HAS_NULL := 1; 
+                :P52_ERR_MESSAGE := '<p class="err-message">Please enter a valid date.</p>';
+            END IF;
+        
+            IF :P52_HAS_NULL = 0 THEN
+                UPDATE NIT010
+                SET TRANSFER_DATE = :P52_DATE, 
+                    FROMWAREHOUSE_ID = :P52_FROMWAREHOUSE, 
+                    TOWAREHOUSE_ID = :P52_TOWAREHOUSE, 
+                    DELIVERY_NAME = :P52_DELIVERY, 
+                    RECEIVER = :P52_RECEIVER, 
+                    UPDATE_USER = :APP_USER, 
+                    UPDATE_DATE = SYSDATE()
+                WHERE TRANSFER_ID = :P52_TRANSFER_ID;
+        
+                :P52_PREPARED_URL := apex_page.get_url(
+                   p_page   => 56,
+                   p_items  => 'P56_TRANSFER_ID,P56_DATE,P56_FROMWAREHOUSE,P56_TOWAREHOUSE,P56_DELIVERYMAN,P56_RECEIVER',
+                   p_values => :P52_TRANSFER_ID || ',' || :P52_DATE || ',' || :P52_FROMWAREHOUSE || ',' || :P52_TOWAREHOUSE || ',' || :P52_DELIVERY || ',' || :P52_RECEIVER
+                );
+            END IF;
+        END;
+      items-to-submit: 
+      - P52_TRANSFER_ID
+      - P52_DATE
+      - P52_FROMWAREHOUSE
+      - P52_TOWAREHOUSE
+      - P52_DELIVERY
+      - P52_RECEIVER
+      - P52_HAS_NULL
+      - P52_FIRST_EMPTY_ITEM
+      items-to-return: 
+      - P52_PREPARED_URL
+      - P52_FIRST_EMPTY_ITEM
+      - P52_HAS_NULL
+      - P52_ERR_MESSAGE
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: To Transfer Line # 12894909294147735
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12895231435147738
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if($v("P52_HAS_NULL") == 0){
+            let url = $v("P52_PREPARED_URL");
+            apex.navigation.redirect(url);
+        } else {
+            apex.item($v("P52_FIRST_EMPTY_ITEM")).setFocus();
+            apex.item("P52_ERR_MESSAGE").show();
+        }
+
+    execution: 
+      sequence: 30
+      event: To Transfer Line # 12894909294147735
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Select To ===========================
+  id: 12930033178948117
+  identification: 
+    name: Select To
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P52_TOWAREHOUSE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 12930474075948118
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            LOCATION_DESC
+        FROM
+            NIM027
+        WHERE
+            :P52_TOWAREHOUSE = WAREHOUSE_ID
+      items-to-submit: 
+      - P52_TOWAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_TODESC
+
+    execution: 
+      sequence: 10
+      event: Select To # 12930033178948117
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 21415311682662227
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP52Keys();
+
+    execution: 
+      sequence: 20
+      event: Select To # 12930033178948117
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Onload ==============================
+  id: 12930809817948118
+  identification: 
+    name: Onload
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 12931340734948118
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P52_FROMWAREHOUSE'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_NEXT_ITEM
+
+    execution: 
+      sequence: 30
+      event: Onload # 12930809817948118
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Focus ===================================
+    id: 12931856326948120
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_DATE
+
+    execution: 
+      sequence: 10
+      event: Onload # 12930809817948118
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 15247962057369616
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_ERR_MESSAGE
+
+    execution: 
+      sequence: 20
+      event: Onload # 12930809817948118
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Focus 1 =============================
+  id: 12932257628948120
+  identification: 
+    name: Focus 1
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P52_DATE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 12932710295948120
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P52_FROMWAREHOUSE'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: Focus 1 # 12932257628948120
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Focus 2 =============================
+  id: 12933169430948120
+  identification: 
+    name: Focus 2
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P52_FROMWAREHOUSE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 12933660539948121
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P52_TOWAREHOUSE'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_NEXT_ITEM
+
+    execution: 
+      sequence: 30
+      event: Focus 2 # 12933169430948120
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 21415136129662225
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p52keyevents');
+
+    execution: 
+      sequence: 10
+      event: Focus 2 # 12933169430948120
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Select From =========================
+  id: 12934065288948121
+  identification: 
+    name: Select From
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P52_FROMWAREHOUSE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 12934508047948121
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            LOCATION_DESC
+        FROM
+            NIM027
+        WHERE
+            :P52_FROMWAREHOUSE = WAREHOUSE_ID
+      items-to-submit: 
+      - P52_FROMWAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_FROMDESC
+
+    execution: 
+      sequence: 20
+      event: Select From # 12934065288948121
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 21415055437662224
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP52Keys();
+
+    execution: 
+      sequence: 30
+      event: Select From # 12934065288948121
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus 5 =============================
+  id: 12934928068948121
+  identification: 
+    name: Focus 5
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P52_RECEIVER
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 12935430059948123
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: NEXT
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: Focus 5 # 12934928068948121
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Focus 3 =============================
+  id: 12935868240948123
+  identification: 
+    name: Focus 3
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P52_TOWAREHOUSE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 12936377497948123
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P52_DELIVERY'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_NEXT_ITEM
+
+    execution: 
+      sequence: 20
+      event: Focus 3 # 12935868240948123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 21415264851662226
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p52keyevents');
+
+    execution: 
+      sequence: 10
+      event: Focus 3 # 12935868240948123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus 4 =============================
+  id: 12936795798948123
+  identification: 
+    name: Focus 4
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P52_DELIVERY
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 12937216909948125
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P52_RECEIVER'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P52_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: Focus 4 # 12936795798948123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: New =================================
+  id: 16031422791346142
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: exit
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16031520818346143
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P52_PREPARED_URL := apex_page.get_url(
+               p_page   => 50,
+               p_items  => 'P50_PREVIOUS',
+               p_values => 52
+            );
+        END;
+      items-to-return: 
+      - P52_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: New # 16031422791346142
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16031647514346144
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P52_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: New # 16031422791346142
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+branches: 
+- # ====== Branch: Go To Page 50 ===============================
+  id: 12937743878948125
+  identification: 
+    name: Go To Page 50
+
+  execution: 
+    sequence: 1
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:50:&APP_SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+      page: 50 # Transfer Records
+

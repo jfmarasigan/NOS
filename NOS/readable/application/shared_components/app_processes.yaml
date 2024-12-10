@@ -1,0 +1,38 @@
+---
+- # ====== Application Process: GET_HASH =======================
+  id: 17171071008592089
+  identification: 
+    name: GET_HASH
+    type: NATIVE_PLSQL
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_rep_name      VARCHAR2(100) := apex_application.g_x01;
+          v_format        VARCHAR2(50)  := apex_application.g_x02;
+          v_filename      VARCHAR2(300) := apex_application.g_x03;
+      
+          v_hash          VARCHAR2(300);
+          v_usign         VARCHAR2(300);
+      begin
+          v_hash := sys.dbms_crypto.hash(utl_raw.cast_to_raw(v('APP_SIGN') || v_rep_name || v_format || v_filename || :APP_USER), sys.dbms_crypto.hash_sh256);
+          v_usign := :APP_USER;
+      
+          apex_json.open_object;
+          apex_json.write('h', v_hash);
+          apex_json.write('u', v_usign);
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 1
+    point: Ajax Callback
+
+  security: 
+    authorization-scheme: MODEL.LOV.MUST_NOT_BE_PUBLIC_USER
+
+  subscription: 
+    version-number: 90046149
+

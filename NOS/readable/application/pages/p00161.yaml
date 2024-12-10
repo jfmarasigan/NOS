@@ -1,0 +1,1896 @@
+---
+# ====== Page: Item Masterfile Department Utilities ==========
+id: 161
+identification: 
+  name: Item Masterfile Department Utilities
+  alias: ITEM-MASTERFILE-DEPARTMENT-UTILITIES1
+  title: Item Masterfile Department Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p161KeyMap = {
+        a : (v) => {
+            $("#a").click();
+        },
+        p : (v) => {
+            $("#print").click();
+        },
+        escape : (v) => {
+            $("#to-main-menu").click();
+        },
+        s : (v) => {
+            $("#s").click();
+        },
+        u : (v) => {
+            $("#u").click();
+        },
+        h : (v) => {
+            $("#export").click();
+        },
+        home: (v) => {
+            $("#to-top").trigger("click");
+        },
+        end: (v) => {
+            $("#to-bottom").trigger("click");
+        }
+    
+    
+    }
+    
+    
+    function mapP161Keys() {
+        $(document).off('keydown.p161keyevents');
+        $(document).on('keydown.p161keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p161KeyMap[key]) {
+                ev.preventDefault();
+                p161KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP161Keys();
+    }
+  execute-when-page-loads: |
+    mapP161Keys();
+    //$("#s").trigger("click");
+    setTitle("Item Masterfile Department Utilities")
+    
+     $( document ).ready(function() {
+      $(".a-GV-cell").first().trigger("click");
+     });
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/items_masterfile_css#MIN#.css'
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #dept_list table, #dept_list tr, #dept_list td, #dept_list th {
+         font-size: 1.125rem;
+    }
+    
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+        border: none;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+        padding-bottom: 0.2rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    #dept_list .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #dept_list .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #dept_list .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #dept_list .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: DEPT_LIST ===================================
+  id: 40508069972354085
+  identification: 
+    name: DEPT_LIST
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT DEPT_ID,
+             DEPT_CODE,
+             DEPT_NAME,
+             CREATE_USER,
+             CREATE_DATE,
+             UPDATE_USER,
+             UPDATE_DATE
+      FROM NIM024
+      WHERE 
+          ( :P161_DEPT_CODE IS NOT NULL AND UPPER(NIM024.DEPT_CODE) LIKE UPPER('%' || :P161_DEPT_CODE || '%') )
+          OR
+          ( :P161_DEPT_CODE IS NULL AND :P161_DEPT_NAME IS NOT NULL AND UPPER(NIM024.DEPT_NAME) LIKE UPPER('%' || :P161_DEPT_NAME || '%') )
+          OR
+          ( :P161_DEPT_CODE IS NULL AND :P161_DEPT_NAME IS NULL );
+      
+    page-items-to-submit: 
+    - P161_DEPT_CODE
+    - P161_DEPT_NAME
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: dept_list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 40511385451354118
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 40709155371522807
+      identification: 
+        name: Primary Report
+        alias: 62143
+
+  columns: 
+  - # ====== Column: DEPT_CODE ===================================
+    id: 34532512877955301
+    identification: 
+      column-name: DEPT_CODE
+      type: Text Field
+
+    heading: 
+      heading: Department Code
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 1
+
+    source: 
+      type: Database Column
+      database-column: DEPT_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: DEPT_NAME ===================================
+    id: 34532620938955302
+    identification: 
+      column-name: DEPT_NAME
+      type: Text Field
+
+    heading: 
+      heading: Department Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 50
+
+    source: 
+      type: Database Column
+      database-column: DEPT_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CREATE_USER =================================
+    id: 34532810819955304
+    identification: 
+      column-name: CREATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Created User
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: CREATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CREATE_DATE =================================
+    id: 34532917388955305
+    identification: 
+      column-name: CREATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Date Created
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 60
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CREATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATE_USER =================================
+    id: 34533089208955306
+    identification: 
+      column-name: UPDATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Last Updated By
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATE_DATE =================================
+    id: 34533154175955307
+    identification: 
+      column-name: UPDATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Date Updated
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 80
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: DEPT_ID =====================================
+    id: 34533249956955308
+    identification: 
+      column-name: DEPT_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: DEPT_ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+- # ====== Region: Buttons =====================================
+  id: 40509898391354103
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: button-region
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P161_DEPT_ID =============================
+  id: 42690460413490072
+  identification: 
+    name: P161_DEPT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P161_DEPT_CODE ===========================
+  id: 42690501062490073
+  identification: 
+    name: P161_DEPT_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P161_DEPT_NAME ===========================
+  id: 42690648054490074
+  identification: 
+    name: P161_DEPT_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P161_SELECTED_DEPT_ID ====================
+  id: 42692539182490093
+  identification: 
+    name: P161_SELECTED_DEPT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P161_SELECTED_DEPT_CODE ==================
+  id: 43619944139418266
+  identification: 
+    name: P161_SELECTED_DEPT_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P161_PREPARED_URL ========================
+  id: 43620335700418270
+  identification: 
+    name: P161_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P161_SELECTED_DEPT_NAME ==================
+  id: 48379511131517799
+  identification: 
+    name: P161_SELECTED_DEPT_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Add =========================================
+  id: 34498990490814134
+  identification: 
+    button-name: Add
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 40509898391354103
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:163:&SESSION.::&DEBUG.:::'
+      page: 163 # Department Utility Add
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 1) = 'Y'"
+
+- # ====== Button: Update ======================================
+  id: 34499345804814135
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 30
+    region: Buttons # 40509898391354103
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 4
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 3) = 'Y'"
+
+- # ====== Button: Print =======================================
+  id: 34499797764814137
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 40
+    region: Buttons # 40509898391354103
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 6
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: print
+
+- # ====== Button: Top =========================================
+  id: 34500928652814139
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 120
+    region: Buttons # 40509898391354103
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-top
+
+- # ====== Button: Bottom ======================================
+  id: 34501351002814139
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 130
+    region: Buttons # 40509898391354103
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-bottom
+
+- # ====== Button: To_Exit =====================================
+  id: 34501767506814139
+  identification: 
+    button-name: To_Exit
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 140
+    region: Buttons # 40509898391354103
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:160:&SESSION.::&DEBUG.:::'
+      page: 160 # Utilities
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: to-main-menu
+
+- # ====== Button: Search ======================================
+  id: 34502187487814139
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 90
+    region: Buttons # 40509898391354103
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:162:&SESSION.::&DEBUG.:161::'
+      page: 162 # Utility Search
+      clear-cache: 161
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Export ======================================
+  id: 34536050570955336
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 50
+    region: Buttons # 40509898391354103
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: export
+
+dynamic-actions: 
+- # ====== Dynamic Action: Selection Change ====================
+  id: 34506315526814168
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: DEPT_LIST # 40508069972354085
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34506800149814170
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let selectedRecords = this.data.selectedRecords;
+        
+        
+        if (selectedRecords.length > 0) {
+        
+            let deptIDSelected = selectedRecords[0][0];
+            let deptCodeSelected = selectedRecords[0][1];
+            let deptNameSelected = selectedRecords[0][2];
+        
+            $("#P161_SELECTED_DEPT_ID").val(deptIDSelected);
+            $("#P161_SELECTED_DEPT_CODE").val(deptCodeSelected);
+            $("#P161_SELECTED_DEPT_NAME").val(deptNameSelected);
+        
+        } 
+        
+        
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 34506315526814168
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: End click ===========================
+  id: 34508650894814173
+  identification: 
+    name: End click
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 34501351002814139
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34509173726814173
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: '$(".a-GV-table tr:last .a-GV-cell:first").trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: End click # 34508650894814173
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Dialog Closed or Canceled ===========
+  id: 34509566592814175
+  identification: 
+    name: Dialog Closed or Canceled
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 34502187487814139
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34510035156814175
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP161Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed or Canceled # 34509566592814175
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Home click ==========================
+  id: 34510403606814175
+  identification: 
+    name: Home click
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 34500928652814139
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34510911097814176
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: ' $(".a-GV-cell").first().trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: Home click # 34510403606814175
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Update Clicked ======================
+  id: 34511305150814176
+  identification: 
+    name: Update Clicked
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 34499345804814135
+
+  client-side-condition: 
+    type: Item is not null
+    item: P161_SELECTED_DEPT_ID
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 34511898770814178
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P161_PREPARED_URL := apex_page.get_url(
+               p_page   => 164,
+               p_items  => 'P164_DEPT_ID,P164_DEPT_CODE,P164_DEPT_NAME',
+               p_values => :P161_SELECTED_DEPT_ID ||','|| :P161_SELECTED_DEPT_CODE ||','|| :P161_SELECTED_DEPT_NAME, 
+               p_clear_cache => '164'
+             );
+        END;
+      items-to-submit: 
+      - P161_SELECTED_DEPT_CODE
+      - P161_SELECTED_DEPT_ID
+      items-to-return: 
+      - P161_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Update Clicked # 34511305150814176
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34512389951814178
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P161_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Update Clicked # 34511305150814176
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P161_PREPARED_URL
+
+- # ====== Dynamic Action: Search_Modal ========================
+  id: 34512745890814178
+  identification: 
+    name: Search_Modal
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 34502187487814139
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 34513261663814179
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P162_CODE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P161_DEPT_CODE
+
+    execution: 
+      sequence: 20
+      event: Search_Modal # 34512745890814178
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 34513725990814181
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: DEPT_LIST # 40508069972354085
+
+    execution: 
+      sequence: 50
+      event: Search_Modal # 34512745890814178
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 34514213093814181
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P162_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P161_DEPT_NAME
+
+    execution: 
+      sequence: 30
+      event: Search_Modal # 34512745890814178
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34515225475814182
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "300");
+
+    affected-elements: 
+      selection-type: Region
+      region: DEPT_LIST # 40508069972354085
+
+    execution: 
+      sequence: 60
+      event: Search_Modal # 34512745890814178
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click ===============================
+  id: 34522577616814190
+  identification: 
+    name: Click
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 34502187487814139
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 34522932866814192
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        NULL
+        
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P161_SELECTED_DEPT_ID
+      - P161_SELECTED_DEPT_CODE
+      - P161_SELECTED_DEPT_NAME
+
+    execution: 
+      sequence: 10
+      event: Click # 34522577616814190
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Reset Keys ==================================
+    id: 34523490345814192
+    identification: 
+      name: Reset Keys
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p161keyevents');
+
+    execution: 
+      sequence: 20
+      event: Click # 34522577616814190
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Closed or Canceled ==================
+  id: 34535288630955328
+  identification: 
+    name: Closed or Canceled
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Add # 34498990490814134
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34535306619955329
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP161Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Closed or Canceled # 34535288630955328
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Clicked =========================
+  id: 34535491317955330
+  identification: 
+    name: Add Clicked
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Add # 34498990490814134
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34535517909955331
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p161keyevents');
+
+    execution: 
+      sequence: 10
+      event: Add Clicked # 34535491317955330
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Add or Update =================
+  id: 34536191197955337
+  identification: 
+    name: Close Add or Update
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34522138779814190
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".t-Button--closeAlert").trigger("click");
+                        }, 3000);
+        
+                    }
+                }
+            });
+        
+        
+        
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        }, "300");
+        
+
+    execution: 
+      sequence: 20
+      event: Close Add or Update # 34536191197955337
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 34536277991955338
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: DEPT_LIST # 40508069972354085
+
+    execution: 
+      sequence: 10
+      event: Close Add or Update # 34536191197955337
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Print =========================
+  id: 35716559506706527
+  identification: 
+    name: Click Print
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 34499797764814137
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35716686611706528
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        generateReport("DEPT_UTIL_PDF_COURIER_NEW", "pdf", { 
+            fileName: `ItemMasterfileDepartmentUtilities_${formattedDate}.pdf`,
+            mode : "print",
+            parameters : {
+                P_DEPT_CODE : $v("P161_DEPT_CODE"),
+                P_DEPT_NAME : $v("P161_DEPT_NAME"),
+                P_DEPT_ID : $v("P161_DEPT_ID")
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Click Print # 35716559506706527
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Export ========================
+  id: 37730873351533444
+  identification: 
+    name: Click Export
+
+  execution: 
+    sequence: 230
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 34536050570955336
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37730959905533445
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        generateReport("DEPT_UTIL_XLSX", "xlsx", { 
+            fileName: `ItemMasterfileDepartmentUtilities_${formattedDate}.xlsx`,
+            mode : "print",
+            parameters : {
+                P_DEPT_CODE : $v("P161_DEPT_CODE"),
+                P_DEPT_NAME : $v("P161_DEPT_NAME"),
+                P_DEPT_ID : $v("P161_DEPT_ID")
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Click Export # 37730873351533444
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Clear Session ==============================
+  id: 34505192627814165
+  identification: 
+    name: Clear Session
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear Items
+    item(s): 
+    - P161_DEPT_ID
+    - P161_DEPT_CODE
+    - P161_DEPT_NAME
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_SUCCESS_MSG ============================
+  id: 34505947827814167
+  identification: 
+    name: GET_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+         l_msg VARCHAR2(200);
+      BEGIN
+      
+         l_msg := apex_util.get_session_state('SUCCESS_MSG');
+      
+         apex_json.open_object;
+         apex_json.write('success_msg', l_msg);
+         apex_json.close_object;
+      
+         apex_util.set_session_state('SUCCESS_MSG', NULL);
+      END;
+      
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

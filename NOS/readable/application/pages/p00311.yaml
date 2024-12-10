@@ -1,0 +1,610 @@
+---
+# ====== Page: Gift Certificate Search =======================
+id: 311
+identification: 
+  name: Gift Certificate Search
+  alias: GIFT-CERTIFICATE-SEARCH
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 500px
+  maximum-width: 500px
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p7KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP7Keys() {
+        $(document).off('keydown.p7keyevents');
+        $(document).on('keydown.p7keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p7KeyMap[key]) {
+                ev.preventDefault();
+                p7KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP7Keys();
+    
+    
+    // GC NO validation
+    setInputFilter($("#P311_SEARCH_BY_ISSUE_YR"), function(value) {
+        return /^\d*$/.test(value);
+    }, "Input should be numbers only.");
+    
+    // GC NO validation
+    setInputFilter($("#P311_GC_NO"), function(value) {
+        return /^\d*$/.test(value);
+    }, "Input should be numbers only.");
+
+css: 
+  inline: |
+    .t-Dialog-header {
+        /* background-color: #056BC9; */
+        background-color: #056AC8;
+        padding: .5rem 0rem 0rem 1rem;
+    }
+    
+    .t-Dialog-bodyWrapperIn {
+        overflow: hidden;
+        background-color: white;
+    }
+    
+    .t-Region {
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: .7rem;
+    }
+    
+    .t-Form-itemWrapper {
+        width: 62%;
+        position: absolute;
+        left: 36%;
+        bottom: 10%;
+    }
+    
+    .t-Form-itemWrapper > input {
+        background-color: #ece7e7;
+        height: 2rem;
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, .4rem);
+    }
+    
+    .t-Form-labelContainer {
+        padding-block-start: var(--ut-field-padding-y, .5rem);
+    }
+    
+    .t-Form-label {
+        font-size: 1.125rem;
+        font-weight: 600;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .error-msg {
+        color: red;
+        font-size: 0.75rem;
+        padding-left: 0.7rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    #P311_SEARCH_BY_ISSUE_YR,
+    #P311_GC_NO {
+        font-size: 1.125rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Title =======================================
+  id: 18628586808263531
+  identification: 
+    name: Title
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span>
+          <text style="">Search:</text>
+      </span>
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error Display ===============================
+  id: 18628664216263532
+  identification: 
+    name: Error Display
+    type: Static Content
+
+  source: 
+    html-code: <span id="errorArea" class="hide error-msg">Please fill in at least one search field</span>
+
+  layout: 
+    sequence: 10
+    parent-region: Gift Certificate Search # 18747931696091012
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Gift Certificate Search =====================
+  id: 18747931696091012
+  identification: 
+    name: Gift Certificate Search
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPT020
+    include-rowid-column: false
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+page-items: 
+- # ====== Page Item: P311_SEARCH_BY_ISSUE_YR ==================
+  id: 18748376594091020
+  identification: 
+    name: P311_SEARCH_BY_ISSUE_YR
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:0rem">Search by Issue Yr :</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Gift Certificate Search # 18747931696091012
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 4
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Gift Certificate Search # 18747931696091012
+    column: GIFT_CERTIFICATE_BATCH_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P311_GC_NO ===============================
+  id: 18750683022091045
+  identification: 
+    name: P311_GC_NO
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:5.8rem">GC No :</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Gift Certificate Search # 18747931696091012
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Gift Certificate Search # 18747931696091012
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CLOSE_BTN ===================================
+  id: 18760593070091079
+  identification: 
+    button-name: CLOSE_BTN
+    label: Close Btn
+
+  layout: 
+    sequence: 70
+    region: Gift Certificate Search # 18747931696091012
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: SEARCH_BTN ==================================
+  id: 18762348238091084
+  identification: 
+    button-name: SEARCH_BTN
+    label: Search
+
+  layout: 
+    sequence: 60
+    region: Gift Certificate Search # 18747931696091012
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Search Table ========================
+  id: 18628796630263533
+  identification: 
+    name: Search Table
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH_BTN # 18762348238091084
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18628863410263534
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var gcNo = $v("P311_GC_NO");
+        var issueYear = $v("P311_SEARCH_BY_ISSUE_YR");
+        var errorArea = document.getElementById("errorArea")
+        
+        if(!gcNo && !issueYear) {
+            errorArea.style.display = "block"
+            document.getElementById("P311_SEARCH_BY_ISSUE_YR").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 10
+      event: Search Table # 18628796630263533
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 18628901394263535
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P311_SEARCH_BY_ISSUE_YR
+      - P311_GC_NO
+
+    execution: 
+      sequence: 20
+      event: Search Table # 18628796630263533
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 18760619256091079
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE_BTN # 18760593070091079
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 18761453960091082
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 18760619256091079
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Initialize form Gift Certificate Search ====
+  id: 18763195980091087
+  identification: 
+    name: Initialize form Gift Certificate Search
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Gift Certificate Search # 18747931696091012
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Gift Certificate Search =======
+  id: 18763503739091087
+  identification: 
+    name: Process form Gift Certificate Search
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Gift Certificate Search # 18747931696091012
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 18763903466091087
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

@@ -1,0 +1,621 @@
+---
+# ====== Page: POS Cashiering Screen Scan Price ==============
+id: 30
+identification: 
+  name: POS Cashiering Screen Scan Price
+  alias: POS-CASHIERING-SCREEN-SCAN-PRICE
+  title: Price Scanner
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 640
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#onscan.min.js'
+  - '#APP_FILES#onscan#MIN#.js'
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    
+    const p30KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        }
+    
+    }
+    
+    
+    function mapP30Keys() {
+        $(document).off('keydown.p30keyevents');
+        $(document).on('keydown.p30keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p30KeyMap[key]) {
+                ev.preventDefault();
+                p30KeyMap[key]();
+            }
+        });
+    }
+    
+    
+  execute-when-page-loads: |
+    mapP30Keys();
+    
+    onScan.attachTo(document, {onScan: function(sScancode, iQuantity){
+        apex.item("P30_BARCODE").setValue(JSON.parse(sScancode));
+    }});
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #226597;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .t-Dialog-body label,
+    .t-Dialog-body input{
+        font-size: 1.125rem;
+    }
+    
+    .t-Region-body{
+        padding: 0.4;
+    }
+    
+    .t-Form-label{
+        white-space: nowrap;
+    }
+    
+    #scan-price{
+        background-color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Scan Price ==================================
+  id: 10618346057246339
+  identification: 
+    name: Scan Price
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: scan-price
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 28113608261138889
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    css-classes: 
+    - hiddenbtn
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P30_ITEM_PRICE ===========================
+  id: 10286042272970939
+  identification: 
+    name: P30_ITEM_PRICE
+    type: Display Only
+
+  label: 
+    label: 'Item Price:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Scan Price # 10618346057246339
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 7
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    - t-Form-fieldContainer--postTextBlock
+    - margin-right-sm
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P30_ITEM_DESC ============================
+  id: 17274072690462601
+  identification: 
+    name: P30_ITEM_DESC
+    type: Display Only
+
+  label: 
+    label: 'Item Desc:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Scan Price # 10618346057246339
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 7
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    - margin-right-sm
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P30_BARCODE ==============================
+  id: 27427684397078126
+  identification: 
+    name: P30_BARCODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Scan Price # 10618346057246339
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Search ======================================
+  id: 17282040616498901
+  identification: 
+    button-name: Search
+    label: Enter - Search
+
+  layout: 
+    sequence: 10
+    region: Buttons # 28113608261138889
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: search-price
+
+- # ====== Button: Close =======================================
+  id: 17282443141498904
+  identification: 
+    button-name: Close
+    label: Esc - Close
+
+  layout: 
+    sequence: 20
+    region: Buttons # 28113608261138889
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close
+
+dynamic-actions: 
+- # ====== Dynamic Action: Search Enter ========================
+  id: 17274128616462602
+  identification: 
+    name: Search Enter
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 17282040616498901
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17274280480462603
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var field1 = $v("P30_ITEM_DESC");
+        
+        if (!field1) {
+            apex.message.showErrors({
+                type: "error",
+                location: "inline",
+                pageItem: "P30_ITEM_DESC",
+                message: "Please fill in at least one field."
+            });
+            // Highlight fields that are empty
+            if (!field1) {
+                $("#P30_ITEM_DESC").addClass("error-highlight");
+            }
+        
+            return false; // Prevent modal from closing
+        }
+
+    execution: 
+      sequence: 10
+      event: Search Enter # 17274128616462602
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel ==============================
+  id: 17274381129462604
+  identification: 
+    name: Cancel
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 17282443141498904
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 17274418328462605
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel # 17274381129462604
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Collection ======================
+  id: 17274502401462606
+  identification: 
+    name: Add Collection
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P30_BARCODE
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 27427590255078125
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_price number;
+            v_desc varchar(30);
+        
+        BEGIN
+            SELECT a.item_desc, b.price INTO v_desc, v_price
+              FROM NIT001 a, NIT002 b
+             WHERE a.item_id = b.item_id
+               AND b.upc = :P30_BARCODE;
+        
+               apex_collection.add_member(
+                    p_collection_name => 'SEARCH',
+                    p_c001 => NVL(v_desc, 'NO DATA FOUND'),
+                    p_n001 => NVL(v_price, 0)
+                    );
+        END;
+      items-to-submit: 
+      - P30_BARCODE
+
+    execution: 
+      sequence: 10
+      event: Add Collection # 17274502401462606
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 27428157687078131
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P30_ITEM_DESC
+      - P30_ITEM_PRICE
+
+    execution: 
+      sequence: 40
+      event: Add Collection # 17274502401462606
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 27428226192078132
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT NVL(c001, 'NO DATA FOUND' ) 
+          FROM apex_collections
+         WHERE collection_name = 'SEARCH'
+           AND seq_id = (SELECT MAX(seq_id) 
+                           FROM apex_collections 
+                          WHERE collection_name = 'SEARCH');
+        
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P30_ITEM_DESC
+
+    execution: 
+      sequence: 20
+      event: Add Collection # 17274502401462606
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 27428308893078133
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT TO_CHAR( NVL(n001, 0),'L999G999G990D99' ) 
+        FROM apex_collections
+        WHERE collection_name = 'SEARCH'
+          AND seq_id = (SELECT MAX(seq_id) FROM apex_collections WHERE collection_name = 'SEARCH');
+        
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P30_ITEM_PRICE
+
+    execution: 
+      sequence: 30
+      event: Add Collection # 17274502401462606
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+processes: 
+- # ====== Process: Close Dialog ===============================
+  id: 10635230843246410
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

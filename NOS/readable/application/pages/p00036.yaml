@@ -1,0 +1,750 @@
+---
+# ====== Page: POS Cashiering - Cash Payment =================
+id: 36
+identification: 
+  name: POS Cashiering - Cash Payment
+  alias: POS-CASHIERING-CASH-PAYMENT
+  title: Cash
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Wizard Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p36KeyMap = {
+        enter: (v) => {
+            console.log("to-top");
+            $("#enter-cash").trigger("click");
+        }
+    
+    }
+    
+    function mapP36Keys() {
+        $(document).off('keydown.p36keyevents');
+        $(document).on('keydown.p36keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p36KeyMap[key]) {
+                ev.preventDefault();
+                p36KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP36Keys();
+    
+    setInputFilter($("#P36_PAID"), function(value) {  
+        // Allow empty input
+        if (value === "") return true; 
+    
+        // Regex to match the format (digits with optional decimal)
+        return /^\d*\.?\d{0,2}$/.test(value);
+    }, "Please enter in currency format");
+    
+    $("#P36_PAID").on("input", function() {
+        let value = $(this).val();
+    
+        // Remove non-digit characters except for the decimal point
+        value = value.replace(/[^0-9.]/g, "");
+    
+        // Ensure only one decimal point is allowed
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+    
+        // Limit to two decimal places
+        if (parts.length > 1) {
+            value = parts[0] + '.' + parts[1].slice(0, 2);
+        }
+    
+        // Set the formatted value back to the input
+        $(this).val(value);
+    });
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        label, input {
+            font-size: 1.125rem;
+        }
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .t-Button-label{
+        font-size: 1rem;
+        font-family: Arial;
+        text-align: left;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P36_PAID =================================
+  id: 23635739242246318
+  identification: 
+    name: P36_PAID
+    type: Number Field
+
+  label: 
+    label: '<b> Paid Amount: </b>'
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999G999G999G999G990D00
+    width: 11
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P36_UNPAID ===============================
+  id: 23635846206246319
+  identification: 
+    name: P36_UNPAID
+    type: Display Only
+
+  label: 
+    label: '<b> Unpaid Amount: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P36_CHANGE ===============================
+  id: 23636088866246321
+  identification: 
+    name: P36_CHANGE
+    type: Display Only
+
+  label: 
+    label: '<b> Change: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P36_PREPARED_URL =========================
+  id: 38715890204254539
+  identification: 
+    name: P36_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Submit ======================================
+  id: 23636300121246324
+  identification: 
+    button-name: Submit
+    label: Submit
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter-cash
+
+- # ====== Button: Cancel ======================================
+  id: 40392519611268830
+  identification: 
+    button-name: Cancel
+    label: Cancel
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: cancel
+
+dynamic-actions: 
+- # ====== Dynamic Action: Focus ===============================
+  id: 18709147362804204
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 23636764825246328
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P36_PAID
+
+    execution: 
+      sequence: 10
+      event: Focus # 18709147362804204
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Clear ===============================
+  id: 21024061834805125
+  identification: 
+    name: Clear
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Clear =======================================
+    id: 21024124713805126
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P36_PAID
+
+    execution: 
+      sequence: 10
+      event: Clear # 21024061834805125
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Compute Change ======================
+  id: 23636183575246322
+  identification: 
+    name: Compute Change
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P36_PAID
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 23636209881246323
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        TO_CHAR(TO_NUMBER(REPLACE(REPLACE(:P36_PAID, '$', ''), ',', '')) - TO_NUMBER(REPLACE(REPLACE(:P36_UNPAID, '$', ''), ',', '')), 'FM9990.00')
+        
+      items-to-submit: 
+      - P36_PAID
+      - P36_UNPAID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P36_CHANGE
+
+    execution: 
+      sequence: 10
+      event: Compute Change # 23636183575246322
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Cancel ==============================
+  id: 40392631851268831
+  identification: 
+    name: Cancel
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Cancel # 40392519611268830
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 40392715989268832
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel # 40392631851268831
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Redirect to Summary =================
+  id: 42942323639705411
+  identification: 
+    name: Redirect to Summary
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Submit # 23636300121246324
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 42942418511705412
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_paid NUMBER;
+            v_unpaid NUMBER;
+        BEGIN
+            v_paid := TO_NUMBER(REPLACE(REPLACE(:P36_PAID, '$', ''), ',', ''));
+            v_unpaid := TO_NUMBER(REPLACE(REPLACE(:P36_UNPAID, '$', ''), ',', ''));
+        
+            IF v_paid >= v_unpaid THEN
+               apex_collection.add_member(
+                        p_collection_name => 'PAYMENT',
+                        p_c001 => 'Cash',
+                        p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P36_PAID, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n002 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P36_UNPAID, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n003 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P36_CHANGE, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n004 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')), 2), 'FM999999999.00')
+                ); 
+        
+                :P36_PREPARED_URL := apex_page.get_url(
+                    p_page        => 43,
+                    p_clear_cache => '43'
+                );
+         
+            END IF;
+        
+        END;
+      items-to-submit: 
+      - P36_PAID
+      - P36_UNPAID
+      - P36_CHANGE
+      - P41_TOTAL
+      items-to-return: 
+      - P36_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Redirect to Summary # 42942323639705411
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Redirect URL ================================
+    id: 42942580433705413
+    identification: 
+      name: Redirect URL
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P36_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Redirect to Summary # 42942323639705411
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 42942682789705414
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 50
+      event: Redirect to Summary # 42942323639705411
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Validate ====================================
+    id: 43696926440573545
+    identification: 
+      name: Validate
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var field1 = parseFloat($v('P36_PAID')) || 0; // Convert to number and default to 0 if empty
+        var field2 = parseFloat($v('P36_UNPAID')) || 0; // Convert to number and default to 0 if empty
+        
+        if (field1 < field2) {
+            apex.message.clearErrors(); 
+            apex.message.showErrors([{
+                type: 'error',
+                location: 'inline', // Correct location type
+                pageItem: 'P36_PAID', // Reference the correct page item
+                message: 'Paid Amount is not enough.'
+            }]);
+        
+            return false; // Prevent further action if validation fails
+        } else {
+            apex.message.clearErrors(); // Clear errors if the validation passes
+            return true; // Allow further action
+        }
+        
+
+    execution: 
+      sequence: 20
+      event: Redirect to Summary # 42942323639705411
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Validate ================================
+  id: 27425302352078103
+  identification: 
+    name: Validate
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: PL/SQL Error
+    pl/sql-code-raising-error: |
+      DECLARE
+          v_paid NUMBER;
+          v_unpaid NUMBER;
+      BEGIN
+          v_paid := TO_CHAR(:P36_PAID, 'FM9990.00' );
+          v_unpaid := TO_CHAR(:P36_UNPAID, 'FM9990.00' );
+      
+          IF v_paid < v_unpaid THEN
+              RAISE_APPLICATION_ERROR(-20001, 'Paid Amount must be greater than or equal to Unpaid Amount.');
+          ELSIF v_paid IS NULL THEN
+              RAISE_APPLICATION_ERROR(-20001, 'Paid Amount must be greater than or equal to Unpaid Amount.');
+          END IF;
+      
+      END;
+    always-execute: true
+
+  error: 
+    error-message: Paid Amount must be greater than or equal to Unpaid Amount.
+    display-location: Inline with Field
+    associated-item: P36_PAID # 23635739242246318
+
+  server-side-condition: 
+    when-button-pressed: Submit # 23636300121246324
+
+processes: 
+- # ====== Process: Validate ===================================
+  id: 25494294994440448
+  identification: 
+    name: Validate
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          v_paid NUMBER;
+          v_unpaid NUMBER;
+      BEGIN
+          v_paid := TO_NUMBER(REPLACE(REPLACE(:P36_PAID, '$', ''), ',', ''));
+          v_unpaid := TO_NUMBER(REPLACE(REPLACE(:P36_UNPAID, '$', ''), ',', ''));
+      
+          IF v_paid < v_unpaid THEN
+              RAISE_APPLICATION_ERROR(-20001, 'Paid Amount must be greater than or equal to Unpaid Amount.');
+          END IF;
+      
+      END;
+      
+
+  execution: 
+    sequence: 10
+    point: After Regions
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Add Collection =============================
+  id: 27425430489078104
+  identification: 
+    name: Add Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          apex_collection.add_member(
+                      p_collection_name => 'PAYMENT',
+                      p_c001 => 'Cash',
+                      p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P36_PAID, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                      p_n002 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P36_UNPAID, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                      p_n003 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P36_CHANGE, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                      p_n004 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')), 2), 'FM999999999.00')
+                      );
+      END;
+      
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+branches: 
+- # ====== Branch: Rediret to Payment Summary ==================
+  id: 27425299897078102
+  identification: 
+    name: Rediret to Payment Summary
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:CR,36,41,43::&success_msg=#SUCCESS_MSG#'
+      page: 43 # POS Cashiering - Payment Summary
+      clear-cache: CR,36,41,43
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+

@@ -1,0 +1,117 @@
+:root {
+    --tg-height : 80vh;
+    --def-font-size: 1.125rem;
+}
+
+/* View height dependent table and buttons - START */
+.buttons-row {
+    position: absolute;
+    width: 98vw;
+    bottom: 1.75rem;
+}
+
+#inv-hist-item-ig .a-IG {
+    height: calc(var(--tg-height) + 2px) !important;
+} 
+
+#inv-hist-item-ig .a-IG-contentContainer {
+    height: var(--tg-height) !important;
+}
+
+#inv-hist-item-ig .a-IG-gridView.a-GV {
+    height: var(--tg-height) !important;
+}
+
+#inv-hist-item-ig .a-GV-bdy {
+    height: calc(var(--tg-height) - 2.5625rem) !important;
+}
+
+/* View height dependent table and buttons - END */
+
+.t-Header .t-Header-branding {
+    background-color: white !important;
+    color: rgb(30, 58, 138) !important;
+}
+
+body {
+    background-color: rgb(30, 58, 138);
+}
+
+.ui-widget-overlay {
+    background: none;
+}
+
+.menu-buttons button {
+    font-size: var(--def-font-size);
+    color: white;
+}
+
+.menu-buttons button:hover {
+    color: white;
+}
+
+.a-GV-header {
+    cursor: none;
+}
+
+#inv-hist-item-ig table,
+#inv-hist-item-ig tr,
+#inv-hist-item-ig td,
+#inv-hist-item-ig th {
+    font-size: 1rem;
+}
+
+.a-GV-hdr .a-GV-table {
+    width: 100% !important;
+}
+
+
+#inv-hist-item-ig .a-GV-header a, 
+#inv-hist-item-ig th.a-GV-header {
+    background-color: #046BC8;
+    color: white;
+}
+
+#inv-hist-item-ig .a-GV-table .a-GV-cell, 
+#inv-hist-item-ig th.a-GV-header {
+    border-color: rgba(0, 0, 0, 0.8);
+}
+
+.s-button {
+    font-size: var(--def-font-size);
+    text-align: left;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    background-color: #046BC8;
+    color: white;
+}
+
+.ui-dialog-titlebar-close {
+    display: none;
+}
+
+div.ui-dialog .ui-dialog-titlebar h1 {
+    font-size: var(--def-font-size);
+}
+
+div.ui-dialog:has(#search-bar) .t-Form-labelContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: end;
+}
+
+div.ui-dialog:has(#search-bar) #search-field label, 
+div.ui-dialog:has(#search-bar) #search-field input {
+    font-size: var(--def-font-size);
+}
+
+/* font sizes for pop up LOV */
+.a-IconList-item, .a-PopupLOV-search {
+    font-size: 1.125rem !important;
+}
+
+.a-GV-loadMore {
+    display: none;
+}

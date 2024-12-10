@@ -1,0 +1,2341 @@
+---
+# ====== Page: Summary of Invoices ===========================
+id: 78
+identification: 
+  name: Summary of Invoices
+  alias: SUMMARY-OF-INVOICES
+  title: Summary of Invoices
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p78KeyMapMenu = {
+        escape : (v) => {
+            $("#esc").trigger("click");
+        },
+        c : (v) => {
+            $("#c").trigger("click");
+        },
+        d : (v) => {
+            $("#d").trigger("click");
+        },
+        n : (v) => {
+            $("#n").trigger("click");
+        },
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        h : (v) => {
+            $("#h").trigger("click");
+        },
+        home : (v) => {
+            $("#home").trigger("click");
+        },
+        end : (v) => {
+            $("#end").trigger("click");
+        }
+    }
+    function mapP78KeysMenu() {
+        $(document).off('keydown.p78keyevents');
+        $(document).on('keydown.p78keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p78KeyMapMenu[key]) {
+                ev.preventDefault();
+                p78KeyMapMenu[key]();
+            }
+        });
+    }
+    
+    const p78KeyMapDBA = {
+        escape : (v) => {
+            $("#esc").trigger("click");
+        }
+    }
+    function mapP78KeysDBA() {
+        $(document).off('keydown.p78keyevents');
+        $(document).on('keydown.p78keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p78KeyMapDBA[key]) {
+                ev.preventDefault();
+                p78KeyMapDBA[key]();
+            }
+        });
+    }
+    
+    const p78KeyMapPrint = {
+        a : (v) => {
+            $("#dot").click();
+        },
+        b : (v) => {
+            $("#graphic").click();
+        },
+        escape : (v) => {
+            mapP78KeysMenu();
+        }
+    }
+    
+    function mapP78KeysPrint() {
+        $(document).off('keydown.p78keyevents');
+        $(document).on('keydown.p78keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p78KeyMapPrint[key]) {
+                ev.preventDefault();
+                p78KeyMapPrint[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    setTitle("Summary of Invoices");
+    $x('P78_DBA').focus();
+    // mapP78KeysMenu();
+
+css: 
+  inline: |
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #dba-and-date label {
+        font-size: 1.125rem;
+        color: white;
+    }
+    #dba-and-date input {
+        font-size: 1.125rem;
+    }
+    
+    .t-Form-labelContainer:has(> #P78_DBA_LABEL),
+    .t-Form-labelContainer:has(> #P78_DATE_FROM_LABEL) {
+        text-align: start;
+    }
+    .t-Form-labelContainer:has(> #P78_DATE_TO_LABEL) {
+        text-align: center;
+    }
+    
+    
+    #invoices .a-IG,
+    #credit-memos .a-IG {
+        height: calc(60vh + 2px) !important;
+    } 
+    
+    #invoices .a-IG-contentContainer,
+    #credit-memos .a-IG-contentContainer {
+        height: 60vh !important;
+    }
+    
+    #invoices .a-IG-gridView.a-GV, 
+    #credit-memos .a-IG-gridView.a-GV {
+        height: 60vh !important;
+    }
+    
+    #invoices .a-GV-bdy,
+    #credit-memos .a-GV-bdy {
+        height: calc(60vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #esc {
+        display: none;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    #invoices table,
+    #invoices tr,
+    #invoices td,
+    #invoices th,
+    #credit-memos table,
+    #credit-memos tr,
+    #credit-memos td,
+    #credit-memos th {
+        font-size: 1.125rem;
+    }
+    
+    #invoices_ig, 
+    #credit-memos_ig {
+        border: 0.0625rem solid black;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header {
+        border-color: black;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* .ui-dialog-title{
+        font-size: 1.5rem;
+    }
+    
+    .ui-dialog-titlebar-close {
+        display:none;
+    } */
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    html::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    } 
+    
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    .a-GV-w-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .a-GV-w-scroll {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    
+    #printing-options .t-DialogRegion-body{
+        background-color: #056AC8;
+    }
+    
+    .ui-resizable-s{
+        background-color: #056AC8;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Buttons =====================================
+  id: 25314193024942606
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: DBA & Date ==================================
+  id: 25314297244942607
+  identification: 
+    name: DBA & Date
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: dba-and-date
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Invoices ====================================
+  id: 25314830452942613
+  identification: 
+    name: Invoices
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT  TO_CHAR(a.INVOICE_ID, '000000') AS INVOICE_NUMBER, 
+              a.DATE_CREATED AS INVOICE_DATE,
+              TO_CHAR(a.TOTAL_AMOUNT, '999G999G990D99') AS AMOUNT
+      FROM NPT001 a, NPT009 b
+      WHERE   
+          :P78_DBA IS NOT NULL AND
+          :P78_DATE_FROM IS NOT NULL AND
+          :P78_DATE_TO IS NOT NULL AND
+          a.CUSTOMER_ID = b.CUSTOMER_ID AND
+          UPPER(b.DBA) = UPPER(:P78_DBA) AND
+          a.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, 'MM/DD/YYYY') AND
+          a.DATE_CREATED <= TO_DATE(:P78_DATE_TO, 'MM/DD/YYYY')
+      -- UNION
+      -- SELECT  TO_CHAR(c.CASH_INVOICE_ID, '000000') AS INVOICE_NUMBER, 
+      --         c.DATE_CREATED AS INVOICE_DATE,
+      --         TO_CHAR(c.TOTAL_AMOUNT, '999G999G990D99') AS AMOUNT
+      -- FROM NPT033 c, NPT009 d
+      -- WHERE 
+      --     :P78_DBA IS NOT NULL AND
+      --     :P78_DATE_FROM IS NOT NULL AND
+      --     :P78_DATE_TO IS NOT NULL AND
+      --     c.CUSTOMER_ID = d.CUSTOMER_ID AND
+      --     UPPER(d.DBA) = UPPER(:P78_DBA) AND
+      --     c.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, 'MM/DD/YYYY') AND
+      --     c.DATE_CREATED <= TO_DATE(:P78_DATE_TO, 'MM/DD/YYYY')
+      
+      -- SELECT TO_CHAR(1, '000000') AS INVOICE_NUMBER,
+      --        '09/21/2024' AS INVOICE_DATE,
+      --        TO_CHAR(13.90, '999G999G990D99') AS AMOUNT
+      -- FROM DUAL
+    page-items-to-submit: 
+    - P78_DBA
+    - P78_DATE_FROM
+    - P78_DATE_TO
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 2
+    new-column: true
+    column-span: 4
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: invoices
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 25314936660942614
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 400
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 30061489325508387
+      identification: 
+        name: Primary Report
+        alias: 300615
+
+  columns: 
+  - # ====== Column: INVOICE_NUMBER ==============================
+    id: 25315058027942615
+    identification: 
+      column-name: INVOICE_NUMBER
+      type: Text Field
+
+    heading: 
+      heading: Invoice Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 7
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_NUMBER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: INVOICE_DATE ================================
+    id: 25315112732942616
+    identification: 
+      column-name: INVOICE_DATE
+      type: Text Field
+
+    heading: 
+      heading: Invoice Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: AMOUNT ======================================
+    id: 25315293347942617
+    identification: 
+      column-name: AMOUNT
+      type: Text Field
+
+    heading: 
+      heading: Amount
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 25
+
+    source: 
+      type: Database Column
+      database-column: AMOUNT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Credit Memos ================================
+  id: 25315388491942618
+  identification: 
+    name: Credit Memos
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      -- SELECT 1 FROM DUAL
+      
+      SELECT 
+          TO_CHAR(a.CREDIT_MEMO_ID, '000000') AS CM_NUMBER, 
+          a.DATE_CREATED AS CM_DATE,
+          TO_CHAR(a.TOTAL_AMOUNT, '999G999G990D99') AS AMOUNT
+      FROM NPT015 a, NPT009 b
+      WHERE 
+          :P78_DBA IS NOT NULL AND
+          :P78_DATE_FROM IS NOT NULL AND
+          :P78_DATE_TO IS NOT NULL AND
+          a.CUSTOMER_ID = b.CUSTOMER_ID AND
+          UPPER(b.DBA) = UPPER(:P78_DBA) AND
+          a.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, 'MM/DD/YYYY') AND
+          a.DATE_CREATED <= TO_DATE(:P78_DATE_TO, 'MM/DD/YYYY')
+      
+      -- SELECT 
+      --         TO_CHAR(e.CREDIT_MEMO_ID, '000000') AS CM_NUMBER, 
+      --         e.DATE_CREATED AS CM_DATE,
+      --         TO_CHAR(e.TOTAL_AMOUNT, '999G999G990D99') AS AMOUNT
+      -- FROM NPT001 a, NPT009 b, NPT002 c, NPT016 d, NPT015 e
+      -- WHERE
+      --     :P78_DBA IS NOT NULL AND
+      --     :P78_DATE_FROM IS NOT NULL AND
+      --     :P78_DATE_TO IS NOT NULL AND
+      --     a.CUSTOMER_ID = b.CUSTOMER_ID AND
+      --     UPPER(b.DBA) = UPPER(:P78_DBA) AND
+      --     a.INVOICE_ID = c.INVOICE_ID AND
+      --     c.ITEM_INVOICE_ID = d.ITEM_INVOICE_ID AND
+      --     d.REFUND_ID = e.REFUND_ID AND
+      --     e.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, 'MM/DD/YYYY') AND
+      --     e.DATE_CREATED <= TO_DATE(:P78_DATE_TO, 'MM/DD/YYYY')
+      
+      -- SELECT TO_CHAR(1, '000000') AS CM_NUMBER,
+      --        '09/02/2024' AS CM_DATE,
+      --        TO_CHAR(50, '999G999G990D99') AS AMOUNT
+      -- FROM DUAL
+    page-items-to-submit: 
+    - P78_DBA
+    - P78_DATE_FROM
+    - P78_DATE_TO
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 7
+    new-column: true
+    column-span: 4
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: credit-memos
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 25315479599942619
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 400
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 30067180083530060
+      identification: 
+        name: Primary Report
+        alias: 300672
+
+  columns: 
+  - # ====== Column: CM_NUMBER ===================================
+    id: 43478748909172825
+    identification: 
+      column-name: CM_NUMBER
+      type: Text Field
+
+    heading: 
+      heading: CM Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 7
+
+    source: 
+      type: Database Column
+      database-column: CM_NUMBER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CM_DATE =====================================
+    id: 43478800824172826
+    identification: 
+      column-name: CM_DATE
+      type: Date Picker
+
+    heading: 
+      heading: CM Date
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CM_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: AMOUNT ======================================
+    id: 43478986891172827
+    identification: 
+      column-name: AMOUNT
+      type: Text Field
+
+    heading: 
+      heading: Amount
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 15
+
+    source: 
+      type: Database Column
+      database-column: AMOUNT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Invoices Header =============================
+  id: 25316061359942625
+  identification: 
+    name: Invoices Header
+    type: Static Content
+
+  source: 
+    html-code: '<h3 style="color:white;font-size:1.125rem;margin:0">Invoices</h3>'
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 4
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Credit Memos Header =========================
+  id: 25316256414942627
+  identification: 
+    name: Credit Memos Header
+    type: Static Content
+
+  source: 
+    html-code: '<h3 style="color:white;font-size:1.125rem;margin:0">Credit Memos</h3>'
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 7
+    new-column: true
+    column-span: 4
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Printing Options ============================
+  id: 88418735576896537
+  identification: 
+    name: Printing Options
+    title: Printing Options
+    type: Static Content
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: printing-options
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P78_DBA ==================================
+  id: 25314415578942609
+  identification: 
+    name: P78_DBA
+    type: Text Field
+
+  label: 
+    label: 'DBA:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: DBA & Date # 25314297244942607
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P78_DATE_FROM ============================
+  id: 25314504179942610
+  identification: 
+    name: P78_DATE_FROM
+    type: Date Picker
+
+  label: 
+    label: 'Date: '
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 10
+    region: DBA & Date # 25314297244942607
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P78_DATE_TO ==============================
+  id: 25314662493942611
+  identification: 
+    name: P78_DATE_TO
+    type: Date Picker
+
+  label: 
+    label: To
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: Item
+    minimum-item: P78_DATE_FROM
+    maximum-date: Item
+    maximum-item: P78_DATE_TODAY
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 10
+    region: DBA & Date # 25314297244942607
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P78_DATE_TODAY ===========================
+  id: 36261903978538813
+  identification: 
+    name: P78_DATE_TODAY
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P78_CUSTOMER_CODE ========================
+  id: 39840608551908902
+  identification: 
+    name: P78_CUSTOMER_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Change_Customer_DBA =========================
+  id: 25316703645942632
+  identification: 
+    button-name: Change_Customer_DBA
+    label: <u>C</u> - Change Customer DBA
+
+  layout: 
+    sequence: 10
+    region: Buttons # 25314193024942606
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: c
+
+- # ====== Button: Change_Date =================================
+  id: 25316825364942633
+  identification: 
+    button-name: Change_Date
+    label: <u>D</u> - Change Date
+
+  layout: 
+    sequence: 20
+    region: Buttons # 25314193024942606
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: d
+
+- # ====== Button: Print =======================================
+  id: 25316920158942634
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 30
+    region: Buttons # 25314193024942606
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: p
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 9, 34) = 'Y'"
+
+- # ====== Button: Export ======================================
+  id: 25317096200942635
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 40
+    region: Buttons # 25314193024942606
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: h
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 9, 35) = 'Y'"
+
+- # ====== Button: Navigate ====================================
+  id: 25317103721942636
+  identification: 
+    button-name: Navigate
+    label: <u>N</u> - Navigate to another table
+
+  layout: 
+    sequence: 50
+    region: Buttons # 25314193024942606
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: n
+
+- # ====== Button: Top =========================================
+  id: 25317224874942637
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 60
+    region: Buttons # 25314193024942606
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: home
+
+- # ====== Button: Bottom ======================================
+  id: 25317358033942638
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 70
+    region: Buttons # 25314193024942606
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: end
+
+- # ====== Button: Escape ======================================
+  id: 25317416638942639
+  identification: 
+    button-name: Escape
+    label: '-'
+
+  layout: 
+    sequence: 80
+    region: Buttons # 25314193024942606
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:305:&SESSION.::&DEBUG.:::'
+      page: 305 # Order Entry and Invoicing
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+- # ====== Button: Graphic =====================================
+  id: 44939970091723709
+  identification: 
+    button-name: Graphic
+    label: B - Graphic Printer
+
+  layout: 
+    sequence: 40
+    region: Printing Options # 88418735576896537
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: graphic
+
+- # ====== Button: Dotmatrix ===================================
+  id: 44940328871723710
+  identification: 
+    button-name: Dotmatrix
+    label: A - Dotmatrix
+
+  layout: 
+    sequence: 30
+    region: Printing Options # 88418735576896537
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: dot
+
+dynamic-actions: 
+- # ====== Dynamic Action: Navigate to Other Table =============
+  id: 25317569217942640
+  identification: 
+    name: Navigate to Other Table
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Navigate # 25317103721942636
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 25317639473942641
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var isInvoicesSelected = $("#invoices_ig_grid_vc .a-GV-bdy").find(".is-focused").length;
+        console.log(isInvoicesSelected)
+        if(isInvoicesSelected >= 1) {
+            $("#credit-memos_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");
+        } else {
+            $("#invoices_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");
+        }
+
+    execution: 
+      sequence: 10
+      event: Navigate to Other Table # 25317569217942640
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Refresh Tables ======================
+  id: 25318034685942645
+  identification: 
+    name: Refresh Tables
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P78_DATE_TO
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 25318110482942646
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Invoices # 25314830452942613
+
+    execution: 
+      sequence: 10
+      event: Refresh Tables # 25318034685942645
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 25318212064942647
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Credit Memos # 25315388491942618
+
+    execution: 
+      sequence: 20
+      event: Refresh Tables # 25318034685942645
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Get Focus ===========================
+  id: 25318361726942648
+  identification: 
+    name: Get Focus
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P78_DBA
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 25318494881942649
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP78KeysDBA();
+
+    execution: 
+      sequence: 10
+      event: Get Focus # 25318361726942648
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Lose Focus ==========================
+  id: 30857269991955701
+  identification: 
+    name: Lose Focus
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Lose Focus
+    selection-type: Item(s)
+    item(s): 
+    - P78_DBA
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30857355580955702
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP78KeysMenu();
+
+    execution: 
+      sequence: 10
+      event: Lose Focus # 30857269991955701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 30857827732955707
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Invoices # 25314830452942613
+
+    execution: 
+      sequence: 20
+      event: Lose Focus # 30857269991955701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 30857971514955708
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Credit Memos # 25315388491942618
+
+    execution: 
+      sequence: 30
+      event: Lose Focus # 30857269991955701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus on DBA ========================
+  id: 30857470298955703
+  identification: 
+    name: Focus on DBA
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Change_Customer_DBA # 25316703645942632
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 30857520270955704
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P78_DBA
+
+    execution: 
+      sequence: 10
+      event: Focus on DBA # 30857470298955703
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus on Date =======================
+  id: 30857631998955705
+  identification: 
+    name: Focus on Date
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Change_Date # 25316825364942633
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 30857793655955706
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P78_DATE_FROM
+
+    execution: 
+      sequence: 10
+      event: Focus on Date # 30857631998955705
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: To Top Cell =========================
+  id: 30858079270955709
+  identification: 
+    name: To Top Cell
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 25317224874942637
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30858126320955710
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var isInvoicesSelected = $("#invoices_ig_grid_vc .a-GV-bdy").find(".is-focused").length;
+        console.log(isInvoicesSelected)
+        if(isInvoicesSelected >= 1) {
+            focusOnIGFirstRecordFirstCell("invoices", "INVOICE_NUMBER");
+            // $("#credit-memos_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");
+        } else {
+            focusOnIGFirstRecordFirstCell("credit-memos", "CM_NUMBER");
+            // $("#invoices_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");
+        }
+
+    execution: 
+      sequence: 10
+      event: To Top Cell # 30858079270955709
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: To Bottom Cell ======================
+  id: 30858220118955711
+  identification: 
+    name: To Bottom Cell
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 25317358033942638
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30858339092955712
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var isInvoicesSelected = $("#invoices_ig_grid_vc .a-GV-bdy").find(".is-focused").length;
+        console.log(isInvoicesSelected)
+        if(isInvoicesSelected >= 1) {
+            focusOnIGLastRecordFirstCell("invoices");
+            // $("#credit-memos_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");
+        } else {
+            focusOnIGLastRecordFirstCell("credit-memos");
+            // $("#invoices_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");
+        }
+
+    execution: 
+      sequence: 10
+      event: To Bottom Cell # 30858220118955711
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print ===============================
+  id: 30858540374955714
+  identification: 
+    name: Print
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 25316920158942634
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: ($v('P78_DBA').length > 0 && $v('P78_DATE_FROM').length > 0 && $v('P78_DATE_TO').length > 0);
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30858652486955715
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var c_code = $('#P78_CUSTOMER_CODE').val();
+        console.log($('#P78_CUSTOMER_CODE').val())
+        var d = new Date();
+        var fileDate = d.getFullYear() + 
+            ( (d.getMonth() + 1) >= 10 ? ( d.getMonth() + 1) + "" : "0" + (d.getMonth() + 1)) + 
+            (d.getDate >= 10 ? (d.getDate() + "") : "0" + d.getDate() );
+        
+        generateReport("SUMMARY_OF_INVOICES_COURIER_NEW_PDF", "pdf", { 
+            fileName: c_code+"_Inv_List_"+fileDate+".pdf",
+            mode : "print",
+            parameters : {
+                P_SEARCH_DBA : $v("P78_DBA"),
+                P_DATE_FROM : $v("P78_DATE_FROM"),
+                P_DATE_TO : $v("P78_DATE_TO")
+            }
+        });
+
+    execution: 
+      sequence: 30
+      event: Print # 30858540374955714
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export ==============================
+  id: 30858798002955716
+  identification: 
+    name: Export
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 25317096200942635
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: ($v('P78_DBA').length > 0 && $v('P78_DATE_FROM').length > 0 && $v('P78_DATE_TO').length > 0);
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30858835159955717
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var c_code = $('#P78_CUSTOMER_CODE').val();
+        var d = new Date();
+        var fileDate = d.getFullYear() + 
+            ( (d.getMonth() + 1) >= 10 ? ( d.getMonth() + 1) + "" : "0" + (d.getMonth() + 1)) + 
+            (d.getDate >= 10 ? (d.getDate() + "") : "0" + d.getDate() );
+        
+        generateReport("SUMMARY_OF_INVOICES_XLSX", "xlsx", { 
+            fileName: c_code+"_Inv_List_"+fileDate+".xlsx",
+            mode : "export",
+            parameters : {
+                P_SEARCH_DBA : $v("P78_DBA"),
+                P_DATE_FROM : $v("P78_DATE_FROM"),
+                P_DATE_TO : $v("P78_DATE_TO")
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Export # 30858798002955716
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 39840830486908904
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT CUSTOMER_CODE
+        FROM NPT009
+        WHERE UPPER(DBA) = UPPER(:P78_DBA)
+      items-to-submit: 
+      - P78_DBA
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P78_CUSTOMER_CODE
+
+    execution: 
+      sequence: 10
+      event: Export # 30858798002955716
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Open Print Options ==================
+  id: 44876055656477222
+  identification: 
+    name: Open Print Options
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 25316920158942634
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 39840728575908903
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT CUSTOMER_CODE
+        FROM NPT009
+        WHERE UPPER(DBA) = UPPER(:P78_DBA)
+      items-to-submit: 
+      - P78_DBA
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P78_CUSTOMER_CODE
+
+    execution: 
+      sequence: 10
+      event: Open Print Options # 44876055656477222
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Open Region =================================
+    id: 44876148088477223
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 88418735576896537
+
+    execution: 
+      sequence: 30
+      event: Open Print Options # 44876055656477222
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44876269948477224
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP78KeysPrint();
+
+    execution: 
+      sequence: 40
+      event: Open Print Options # 44876055656477222
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Courier New =========================
+  id: 44876386518477225
+  identification: 
+    name: Courier New
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Dotmatrix # 44940328871723710
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44876488019477226
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var c_code = $('#P78_CUSTOMER_CODE').val();
+        console.log($('#P78_CUSTOMER_CODE').val())
+        var d = new Date();
+        var fileDate = d.getFullYear() + 
+            ( (d.getMonth() + 1) >= 10 ? ( d.getMonth() + 1) + "" : "0" + (d.getMonth() + 1)) + 
+            (d.getDate >= 10 ? (d.getDate() + "") : "0" + d.getDate() );
+        
+        generateReport("SUMMARY_OF_INVOICES_COURIER_NEW_PDF", "pdf", { 
+            fileName: c_code+"_Inv_List_"+fileDate+".pdf",
+            mode : "print",
+            parameters : {
+                P_SEARCH_DBA : $v("P78_DBA"),
+                P_DATE_FROM : $v("P78_DATE_FROM"),
+                P_DATE_TO : $v("P78_DATE_TO")
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Courier New # 44876386518477225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 44876515003477227
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 88418735576896537
+
+    execution: 
+      sequence: 20
+      event: Courier New # 44876386518477225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44876627610477228
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP78KeysMenu();
+
+    execution: 
+      sequence: 30
+      event: Courier New # 44876386518477225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Arial ===============================
+  id: 44876763090477229
+  identification: 
+    name: Arial
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Graphic # 44939970091723709
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44876814238477230
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var c_code = $('#P78_CUSTOMER_CODE').val();
+        console.log($('#P78_CUSTOMER_CODE').val())
+        var d = new Date();
+        var fileDate = d.getFullYear() + 
+            ( (d.getMonth() + 1) >= 10 ? ( d.getMonth() + 1) + "" : "0" + (d.getMonth() + 1)) + 
+            (d.getDate >= 10 ? (d.getDate() + "") : "0" + d.getDate() );
+        
+        generateReport("SUMMARY_OF_INVOICES_ARIAL_PDF", "pdf", { 
+            fileName: c_code+"_Inv_List_"+fileDate+".pdf",
+            mode : "print",
+            parameters : {
+                P_SEARCH_DBA : $v("P78_DBA"),
+                P_DATE_FROM : $v("P78_DATE_FROM"),
+                P_DATE_TO : $v("P78_DATE_TO")
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Arial # 44876763090477229
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 44876937309477231
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 88418735576896537
+
+    execution: 
+      sequence: 20
+      event: Arial # 44876763090477229
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44877024021477232
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP78KeysMenu();
+
+    execution: 
+      sequence: 30
+      event: Arial # 44876763090477229
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P78_DATE_TODAY =========================
+  id: 36262001698538814
+  identification: 
+    item-name: P78_DATE_TODAY
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: SELECT SYSDATE FROM DUAL
+

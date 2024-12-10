@@ -1,0 +1,482 @@
+---
+# ====== Page: POS Cashiering - Enter Customer ===============
+id: 31
+identification: 
+  name: POS Cashiering - Enter Customer
+  alias: POS-CASHIERING-ENTER-CUSTOMER
+  title: Customer Name
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p31KeyMap = {
+        escape : (v) => {
+            $("#close-customer").click();
+        },
+        enter: (v) => {
+            $("#enter-customer").trigger("click");
+        }
+    }
+    
+    function mapP31Keys() {
+        $(document).off('keydown.p31keyevents');
+        $(document).on('keydown.p31keyevents', (ev) => {
+            console.log(`KeyboardEvent: key='${ev.key}' | code='${ev.code}'`);
+            var key = ev.key?.toLowerCase();
+            if (p31KeyMap[key]) {
+                ev.preventDefault();
+                p31KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP31Keys();
+
+css: 
+  inline: |
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.125rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .t-Dialog-body label, 
+    .t-Dialog-body input{
+        font-size: 1.125rem;
+        font-family: Arial;
+        padding-top: 0;
+        padding-bottom 0;
+    }
+    
+    .t-Dialog-body{
+        background-color: #056AC8;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Enter Customer ==============================
+  id: 17274722616462608
+  identification: 
+    name: Enter Customer
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - i-h320
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P31_CUSTOMER =============================
+  id: 17274811939462609
+  identification: 
+    name: P31_CUSTOMER
+    type: Select One
+
+  label: 
+    label: 'DBA:'
+    alignment: Left
+
+  settings: 
+    fetch-on-search: false
+
+  search: 
+    match-type: Contains
+    case-sensitive: false
+    minimum-characters: 0
+
+  layout: 
+    sequence: 10
+    region: Enter Customer # 17274722616462608
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT LEGAL_NAME, LEGAL_NAME A 
+        FROM NPT009
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P31_CUSTOMER
+    items-to-submit: 
+    - P31_CUSTOMER
+    parent-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P31_URL ==================================
+  id: 18258312494008511
+  identification: 
+    name: P31_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Enter Customer # 17274722616462608
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 17276035383462621
+  identification: 
+    button-name: Enter
+    label: Enter
+
+  layout: 
+    sequence: 30
+    region: Enter Customer # 17274722616462608
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter-customer
+
+- # ====== Button: Close =======================================
+  id: 17276405572462625
+  identification: 
+    button-name: Close
+    label: Close
+
+  layout: 
+    sequence: 40
+    region: Enter Customer # 17274722616462608
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close-customer
+
+dynamic-actions: 
+- # ====== Dynamic Action: Enter Customer ======================
+  id: 17276183668462622
+  identification: 
+    name: Enter Customer
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Enter # 17276035383462621
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17276299763462623
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var field1 = $v("P31_CUSTOMER");
+        
+        if (!field1) {
+            apex.message.showErrors({
+                type: "error",
+                location: "inline",
+                pageItem: "P31_CUSTOMER",
+                message: "Please fill in at least one field."
+            });
+        
+            if (!field1) {
+                $("#P31_CUSTOMER").addClass("error-highlight");
+            }
+        
+            return false; 
+        }
+
+    execution: 
+      sequence: 20
+      event: Enter Customer # 17276183668462622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Close Dialog ================================
+    id: 17276335068462624
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P31_CUSTOMER
+
+    execution: 
+      sequence: 40
+      event: Enter Customer # 17276183668462622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 25492759320440433
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            apex_collection.add_member(
+                        p_collection_name => 'ORDERS',
+                        p_c001 => NVL(:P31_CUSTOMER, 'Cash Customer')
+                        );
+        END;
+        
+      items-to-submit: 
+      - P31_CUSTOMER
+
+    execution: 
+      sequence: 30
+      event: Enter Customer # 17276183668462622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 17276531555462626
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 17276405572462625
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 17276622524462627
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 17276531555462626
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus ===============================
+  id: 18259903040008527
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 18260016742008528
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P31_CUSTOMER
+
+    execution: 
+      sequence: 10
+      event: Focus # 18259903040008527
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Clear Field =========================
+  id: 18260235155008530
+  identification: 
+    name: Clear Field
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Clear =======================================
+    id: 18260327394008531
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P31_CUSTOMER
+
+    execution: 
+      sequence: 10
+      event: Clear Field # 18260235155008530
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

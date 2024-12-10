@@ -1,0 +1,2332 @@
+---
+# ====== Page: Customer Item Purchase History ================
+id: 83
+identification: 
+  name: Customer Item Purchase History
+  alias: CUSTOMER-ITEM-PURCHASE-HISTORY
+  title: Customer Item Purchase History
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p83KeyMap = {
+        s: (v) => {
+            $("#s").trigger("click");
+        },
+        c: (v) => {
+            $("#c").trigger("click");
+        },
+        d: (v) => {
+            $("#d").trigger("click");
+        },
+        o: (v) => {
+            $("#sort-by").trigger("click");
+        },
+        escape: (v) => {
+            if($("#search").is(":visible")) {
+                $("#close").trigger("click");
+            } else {
+                $("#exit").trigger("click");
+            }
+        }
+    }
+    
+    function mapP83Keys() {
+        $(document).off('keydown.p83keyevents');
+        $(document).on('keydown.p83keyevents', (ev) => {
+    
+            const focusedElement = document.activeElement;
+            if (focusedElement.tagName === "INPUT" || focusedElement.tagName === "TEXTAREA") {
+                return;
+            }
+            
+            var key = ev.key?.toLowerCase();
+            if (p83KeyMap[key]) {
+                ev.preventDefault();
+                p83KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP83Keys();
+    setTitle("Customer Item Purchase History");
+    $(document).ready(function() { 
+        $("#P83_DBA, #P83_DATE_FROM, #P83_DATE_TO").on("keydown", function(event) {
+            if (event.key === "Enter" || event.keyCode === 13) {
+                $.event.trigger('customValidations');
+                event.preventDefault();
+            }
+    
+            if(event.key === "Escape" || event.keyCode === 27) {
+                    $("#exit").trigger("click");
+                    event.preventDefault();
+            }
+        });
+    
+        $("#P83_SEARCH_VALUE").on("keydown", function(event) {
+            if (event.key === "Enter" || event.keyCode === 13) {
+                $("#goto").trigger("click");
+                event.preventDefault();
+            }
+        });
+    });
+
+css: 
+  inline: |
+    #search.t-DialogRegion {
+        background-color: white;
+        border-radius: 12px;
+    }
+    
+    .ui-dialog {
+        background-color: #056AC8;
+    }
+    
+    .formLabel::after {
+        content: " *" !important;
+        color: red;
+    }
+    
+    .t-Form-error {
+        color: #FFD700 !important;
+    }
+    
+    #sort-filter span.t-Form-itemText,
+    #sort-filter span.display_only {
+        font-size: 1.125rem !important;
+        color: white !important;
+    }
+    
+    #sort-filter span div#P83_DATE_FROM_error {
+        margin-left: 4rem;
+    }
+    #sort-filter span div#P83_DATE_TO_error {
+        margin-left: 2.10rem;
+    }
+    #sort-filter span div#P83_DBA_error {
+        margin-left: 3.85rem;
+    }
+    
+    #sort-by {
+        text-align: left;
+    }
+    
+    .apex-page-item-error.inline {
+        display: block;
+        margin-left: 1rem;
+    }
+    
+    .t-Region#sort-filter {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Region#search-header {
+        background-color: #056AC8;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    #search .t-Region-body {
+        border-radius: 12px;
+    }
+    
+    #search.t-DialogRegion {
+        min-height: 140px !important;
+        height: 140px;
+    }
+    
+    #table .a-IG {
+        height: calc(65vh + 2px) !important;
+    } 
+    
+    #table .a-IG-contentContainer {
+        height: 65vh !important;
+    }
+    
+    #table .a-IG-gridView.a-GV {
+        height: 65vh !important;
+    }
+    
+    #table .a-GV-bdy {
+        height: calc(65vh - 2.5625rem) !important;
+    }
+    
+    .sort-btns {
+        text-align: left !important;
+        font-size: 1.125rem;
+        padding: 1rem .5rem 1rem .5rem;
+    }
+    
+    .text-white {
+        color: white;
+    }
+    
+    .t-Header .t-Header-branding,
+    .sort-btns {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #table table,
+    #table tr,
+    #table th {
+        font-size: 1rem;
+    }
+    
+    #table td {
+        font-size: 1.125rem;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .text-red {
+        color: red;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    #table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(1),
+    #table .a-GV-table colgroup col:nth-child(2),
+    #table .a-GV-table colgroup col:nth-child(3),
+    #table .a-GV-table colgroup col:nth-child(7),
+    #table .a-GV-table colgroup col:nth-child(11) {
+        width: 8rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(4),
+    #table .a-GV-table colgroup col:nth-child(6),
+    #table .a-GV-table colgroup col:nth-child(8),
+    #table .a-GV-table colgroup col:nth-child(10) {
+        width: 5rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(5) {
+        width: 20rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(9) {
+        width: 5rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Sort & Filter ===============================
+  id: 29988284033862734
+  identification: 
+    name: Sort & Filter
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-bottom-none
+    - margin-left-md
+    - margin-right-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: sort-filter
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 29988735390862739
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Search ======================================
+  id: 29989208121862744
+  identification: 
+    name: Search
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - t-DialogRegion--noPadding
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Customer Item Purchase History ==============
+  id: 31324245411885426
+  identification: 
+    name: Customer Item Purchase History
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      WITH my_select AS (
+          SELECT
+          TO_CHAR(npt001.INVOICE_ID, '000000') AS "INVOICE_NO",
+          npt001.DATE_CREATED AS "INVOICE_DATE",
+          SUBSTR(npt002.ITEM_NUM, 1, 10) AS "ITEM_NO",
+          npt002.BRAND_CODE AS "CO",
+          npt002.ITEM_DESC AS "ITEM_DESC",
+          npt002.QUANTITY AS "QTY",
+          npt002.ITEM_PRICE AS "REG_PRICE",
+          npt002.UOM_CODE AS "UOM",
+          NVL(npt002.DISCOUNT_VALUE, 0) AS "DISCOUNT",
+          npt002.DS AS "DT",
+          CASE
+              WHEN npt002.DISCOUNTED_PRICE IS NOT NULL THEN npt002.DISCOUNTED_PRICE
+              ELSE npt002.ITEM_PRICE
+          END AS "NET_PRICE"
+          FROM
+              NPT001 npt001
+          JOIN
+              NPT002 npt002 ON npt001.invoice_id = npt002.invoice_id
+          JOIN
+              NPT009 npt009 ON npt001.customer_id = npt009.customer_id
+          WHERE
+              UPPER(npt009.dba) LIKE '%' || UPPER(:P83_DBA) || '%'
+              AND TO_DATE(npt001.date_created, 'MM/DD/YYYY') BETWEEN TO_DATE(:P83_DATE_FROM, 'MM/DD/YYYY') 
+              AND TO_DATE(:P83_DATE_TO, 'MM/DD/YYYY')
+              AND (
+                  (:P83_SEARCH_VALUE IS NULL OR :P83_SEARCH_VALUE = '') OR
+                  (
+                      (:P83_SORTED_BY = 'Item No' AND UPPER(npt002.ITEM_NUM) = UPPER(:P83_SEARCH_VALUE)) OR
+                      (:P83_SORTED_BY = 'Item Description'AND UPPER(npt002.ITEM_DESC) = UPPER(:P83_SEARCH_VALUE))
+                  )
+              )
+          ORDER BY 
+              CASE 
+                  WHEN :P83_SORTED_BY = 'Item No' THEN UPPER(npt002.item_num)
+                  WHEN :P83_SORTED_BY = 'Item Description' THEN UPPER(npt002.item_desc)
+              END
+      )
+      
+      SELECT * FROM my_select;
+      
+    page-items-to-submit: 
+    - P83_DBA
+    - P83_DATE_FROM
+    - P83_DATE_TO
+    - P83_SEARCH_VALUE
+    - P83_SORTED_BY
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 31324751112885431
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 100
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 31325188384885435
+      identification: 
+        name: Primary Report
+        alias: 313252
+
+  columns: 
+  - # ====== Column: INVOICE_NO ==================================
+    id: 29989341693862745
+    identification: 
+      column-name: INVOICE_NO
+      type: Number Field
+
+    heading: 
+      heading: Invoice No
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 10
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: INVOICE_DATE ================================
+    id: 29989488411862746
+    identification: 
+      column-name: INVOICE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Invoice Date
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_NO =====================================
+    id: 29989522370862747
+    identification: 
+      column-name: ITEM_NO
+      type: Text Field
+
+    heading: 
+      heading: Item No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: ITEM_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CO ==========================================
+    id: 29989603150862748
+    identification: 
+      column-name: CO
+      type: Text Field
+
+    heading: 
+      heading: Co
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 12
+
+    source: 
+      type: Database Column
+      database-column: CO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_DESC ===================================
+    id: 29989720502862749
+    identification: 
+      column-name: ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: QTY =========================================
+    id: 29989822554862750
+    identification: 
+      column-name: QTY
+      type: Number Field
+
+    heading: 
+      heading: Qty
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: QTY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: REG_PRICE ===================================
+    id: 31371996198216301
+    identification: 
+      column-name: REG_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Reg Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999G999G999G999G990D00
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: REG_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UOM =========================================
+    id: 31372039462216302
+    identification: 
+      column-name: UOM
+      type: Text Field
+
+    heading: 
+      heading: UOM
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 16
+
+    source: 
+      type: Database Column
+      database-column: UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: DISCOUNT ====================================
+    id: 31372177099216303
+    identification: 
+      column-name: DISCOUNT
+      type: Number Field
+
+    heading: 
+      heading: Disc %
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 90
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: DISCOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: DT ==========================================
+    id: 31372278478216304
+    identification: 
+      column-name: DT
+      type: Text Field
+
+    heading: 
+      heading: DT
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 100
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 1
+
+    source: 
+      type: Database Column
+      database-column: DT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: NET_PRICE ===================================
+    id: 31372354700216305
+    identification: 
+      column-name: NET_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Net Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 110
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999G999G999G999G990D00
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: NET_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Header ======================================
+  id: 31375176614216333
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="background-color: #056AC8; font-size: 1.5rem; color: white; padding: .50rem 0 .50rem 0; margin-left: 1rem;"
+           id="searchHeader">
+          
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: Search # 29989208121862744
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-header
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: errorArea ===================================
+  id: 32046464032460401
+  identification: 
+    name: errorArea
+    type: Static Content
+
+  source: 
+    html-code: '<span id="errorArea" class="hide text-red" style="margin-left: 3rem;">Please fill in the search field</span>'
+
+  layout: 
+    sequence: 20
+    parent-region: Search # 29989208121862744
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Search Value Wrapper ========================
+  id: 37836317583283637
+  identification: 
+    name: Search Value Wrapper
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: Search # 29989208121862744
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: svw
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P83_DBA ==================================
+  id: 29988383670862735
+  identification: 
+    name: P83_DBA
+    type: Text Field
+
+  label: 
+    label: 'DBA:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Sort & Filter # 29988284033862734
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div class="formLabel">DBA</div>&nbsp;:&nbsp;'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P83_DATE_FROM ============================
+  id: 29988480946862736
+  identification: 
+    name: P83_DATE_FROM
+    type: Text Field
+
+  label: 
+    label: 'Date:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Sort & Filter # 29988284033862734
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div class="formLabel">Date</div>&nbsp;:&nbsp;'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P83_DATE_TO ==============================
+  id: 29988559646862737
+  identification: 
+    name: P83_DATE_TO
+    type: Text Field
+
+  label: 
+    label: To
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Sort & Filter # 29988284033862734
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: To &nbsp;&nbsp;
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P83_SORTED_BY ============================
+  id: 29988661317862738
+  identification: 
+    name: P83_SORTED_BY
+    type: Display Only
+
+  label: 
+    label: Sorted By
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Sort & Filter # 29988284033862734
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 11
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: 'Sorted By: &nbsp;'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Item No
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P83_SEARCH_VALUE =========================
+  id: 31374891878216330
+  identification: 
+    name: P83_SEARCH_VALUE
+    type: Text Field
+
+  label: 
+    label: Search Value
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Search Value Wrapper # 37836317583283637
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SEARCH ======================================
+  id: 29988858285862740
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 10
+    region: Buttons # 29988735390862739
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: CHANGE_DBA ==================================
+  id: 29988935291862741
+  identification: 
+    button-name: CHANGE_DBA
+    label: <u>C</u> - Change Customer DBA
+
+  layout: 
+    sequence: 20
+    region: Buttons # 29988735390862739
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: c
+
+- # ====== Button: CHANGE_DATE =================================
+  id: 29989035292862742
+  identification: 
+    button-name: CHANGE_DATE
+    label: <u>D</u> - Change Date
+
+  layout: 
+    sequence: 30
+    region: Buttons # 29988735390862739
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: d
+
+- # ====== Button: SORT_BY =====================================
+  id: 29989113912862743
+  identification: 
+    button-name: SORT_BY
+    label: <u>O</u> - Sort By Item Description
+
+  layout: 
+    sequence: 40
+    region: Buttons # 29988735390862739
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: sort-by
+
+- # ====== Button: Exit ========================================
+  id: 31374235696216324
+  identification: 
+    button-name: Exit
+    label: Exit
+
+  layout: 
+    sequence: 50
+    region: Buttons # 29988735390862739
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:305:&SESSION.::&DEBUG.:::'
+      page: 305 # Order Entry and Invoicing
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+- # ====== Button: Close =======================================
+  id: 31374588838216327
+  identification: 
+    button-name: Close
+    label: Close
+
+  layout: 
+    sequence: 70
+    region: Search # 29989208121862744
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Search ======================================
+  id: 31376301914216345
+  identification: 
+    button-name: Search
+    label: Search
+
+  layout: 
+    sequence: 60
+    region: Search # 29989208121862744
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: goto
+
+dynamic-actions: 
+- # ====== Dynamic Action: Validations =========================
+  id: 31373063809216312
+  identification: 
+    name: Validations
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: customValidations
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 31373106142216313
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var dba = $v('P83_DBA');
+        var dateFrom = $v('P83_DATE_FROM');
+        var dateTo = $v('P83_DATE_TO');
+        var currentDate = new Date();
+        
+        apex.message.clearErrors();
+        
+        var hasErrors = false;
+        
+        function isDateValid(dateString) {
+            var datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+        
+            if (!dateString.match(datePattern)) {
+                return false;
+            }
+        
+            var parts = dateString.split("/");
+            var month = parseInt(parts[0], 10);
+            var day = parseInt(parts[1], 10);
+            var year = parseInt(parts[2], 10);
+        
+            var date = new Date(year, month - 1, day);
+            return (date.getFullYear() === year && date.getMonth() === (month - 1) && date.getDate() === day);
+        }
+        
+        function parseDate(dateString) {
+            var parts = dateString.split("/");
+            return new Date(parts[2], parts[0] - 1, parts[1]);
+        }
+        
+        if (dba == "") {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P83_DBA",
+                message: "DBA cannot be empty",
+                unsafe: false
+            }])
+            hasErrors = true;
+        } else if (dba.length > 100) {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P83_DBA",
+                message: "DBA cannot exceed 100 characters",
+                unsafe: false
+            }])
+            hasErrors = true;
+        }
+        
+        var dateFromParsed = parseDate(dateFrom);
+        var dateToParsed = parseDate(dateTo);
+        
+        if (dateFrom == "") {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P83_DATE_FROM",
+                message: "Date From is required",
+                unsafe: false
+            }])
+            hasErrors = true;
+        } else if (!isDateValid(dateFrom)) {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P83_DATE_FROM",
+                message: "Please Enter a valid date",
+                unsafe: false
+            }])
+            hasErrors = true;
+        } else if (dateFromParsed > dateToParsed) {
+            apex.message.showErrors([{
+                type: "error",
+                location: ["inline"],
+                pageItem: "P83_DATE_FROM",
+                message: "Date must be earlier than Date To",
+                unsafe: false
+            }]);
+            hasErrors = true;
+        }
+        
+        if (dateTo == "") {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P83_DATE_TO",
+                message: "Date To is required",
+                unsafe: false
+            }])
+            hasErrors = true;
+        } else if (!isDateValid(dateTo)) {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P83_DATE_TO",
+                message: "Please Enter a valid date",
+                unsafe: false
+            }])
+            hasErrors = true;
+        } else if (dateToParsed > currentDate) {
+            apex.message.showErrors([{
+                type: "error",
+                location: ["inline"],
+                pageItem: "P83_DATE_TO",
+                message: "Date cannot exceed today's date",
+                unsafe: false
+            }]);
+            hasErrors = true;
+        }
+        
+        if (hasErrors) {
+            return false;
+        } else {
+            $(document.activeElement).blur();
+            apex.item('P83_SEARCH_VALUE').setValue('');
+        }
+        
+        apex.message.clearErrors();
+        
+
+    execution: 
+      sequence: 10
+      event: Validations # 31373063809216312
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 31373273089216314
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Customer Item Purchase History # 31324245411885426
+
+    execution: 
+      sequence: 30
+      event: Validations # 31373063809216312
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 31376259912216344
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function() {
+            $(".a-GV-cell").first().trigger("click");
+        }, 500);
+
+    execution: 
+      sequence: 40
+      event: Validations # 31373063809216312
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change Sorting ======================
+  id: 31373341999216315
+  identification: 
+    name: Change Sorting
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SORT_BY # 29989113912862743
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 31373480434216316
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var currentValue = apex.item("P83_SORTED_BY").getValue();
+        var newValue = currentValue === "Item No" ? "Item Description" : "Item No";
+        apex.item("P83_SORTED_BY").setValue(newValue);
+        
+        $("#sort-by").html(newValue === "Item No" ? "<u>O</u> - Sort by Item Description" : "<u>O</u> - Sort by Item No");
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P83_SORTED_BY
+
+    execution: 
+      sequence: 10
+      event: Change Sorting # 31373341999216315
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 31373989722216321
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Customer Item Purchase History # 31324245411885426
+
+    execution: 
+      sequence: 20
+      event: Change Sorting # 31373341999216315
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus on DBA ========================
+  id: 31373592833216317
+  identification: 
+    name: Focus on DBA
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CHANGE_DBA # 29988935291862741
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 31373621971216318
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P83_DBA
+
+    execution: 
+      sequence: 10
+      event: Focus on DBA # 31373592833216317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus on Date =======================
+  id: 31373792561216319
+  identification: 
+    name: Focus on Date
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CHANGE_DATE # 29989035292862742
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 31373827149216320
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P83_DATE_FROM
+
+    execution: 
+      sequence: 10
+      event: Focus on Date # 31373792561216319
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Search =========================
+  id: 31374043136216322
+  identification: 
+    name: Open Search
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH # 29988858285862740
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 31374132074216323
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search # 29989208121862744
+
+    execution: 
+      sequence: 20
+      event: Open Search # 31374043136216322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 31374902841216331
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#search").dialog("option", "width", 450);
+        
+        if(apex.item("P83_SORTED_BY").getValue() === "Item No") {
+            $("#searchHeader").text("Go To Item No")
+        } else {
+            $("#searchHeader").text("Go To Item Description")
+        }
+
+    execution: 
+      sequence: 10
+      event: Open Search # 31374043136216322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close ===============================
+  id: 31374631323216328
+  identification: 
+    name: Close
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 31374588838216327
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 31374766356216329
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search # 29989208121862744
+
+    execution: 
+      sequence: 10
+      event: Close # 31374631323216328
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Search ==============================
+  id: 31376483791216346
+  identification: 
+    name: Search
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 31376301914216345
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 31376598403216347
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search # 29989208121862744
+
+    execution: 
+      sequence: 20
+      event: Search # 31376483791216346
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 31376684001216348
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Customer Item Purchase History # 31324245411885426
+
+    execution: 
+      sequence: 30
+      event: Search # 31376483791216346
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Clear =======================================
+    id: 31376747901216349
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P83_SEARCH_VALUE
+
+    execution: 
+      sequence: 40
+      event: Search # 31376483791216346
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32046780040460404
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var searchValue = $v("P83_SEARCH_VALUE");
+        var errorArea = document.getElementById("errorArea")
+        
+        if(!searchValue) {
+            errorArea.style.display = "block";
+            document.getElementById("P83_SEARCH_VALUE").focus();
+            return false;
+        } else {
+            errorArea.style.display = "none";
+            return true;
+        }
+
+    execution: 
+      sequence: 10
+      event: Search # 31376483791216346
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

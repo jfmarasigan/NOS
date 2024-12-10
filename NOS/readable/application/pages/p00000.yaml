@@ -1,0 +1,183 @@
+---
+# ====== Page: Global Page ===================================
+id: 0
+identification: 
+  name: Global Page
+
+regions: 
+- # ====== Region: GPopup ======================================
+  id: 35156960103966941
+  identification: 
+    name: GPopup
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="g-popup-div">
+          <div class="g-popup-icon"></div>
+          <div class="g-popup"></div>
+      </div>
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Popup
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size600x400
+    css-classes: 
+    - g-popup-box
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P_APP_ENV ================================
+  id: 27343807462391824
+  identification: 
+    name: P_APP_ENV
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: '&APP_ENV.'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Set Time and Date to Nav Bar ========
+  id: 5662226707316301
+  identification: 
+    name: Set Time and Date to Nav Bar
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 5662372503316302
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: setTimeToNavBar();
+
+    execution: 
+      sequence: 10
+      event: Set Time and Date to Nav Bar # 5662226707316301
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open g-popup ========================
+  id: 36009524736231043
+  identification: 
+    name: Open g-popup
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: OPEN_GPOPUP
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 36009927050231060
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: GPopup # 35156960103966941
+
+    execution: 
+      sequence: 10
+      event: Open g-popup # 36009524736231043
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close g-popup =======================
+  id: 36010338015232459
+  identification: 
+    name: Close g-popup
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: CLOSE_GPOPUP
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 36010728126232459
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: GPopup # 35156960103966941
+
+    execution: 
+      sequence: 10
+      event: Close g-popup # 36010338015232459
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

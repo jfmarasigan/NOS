@@ -1,0 +1,6226 @@
+---
+# ====== Page: Add/Update Customer ===========================
+id: 58
+identification: 
+  name: Add/Update Customer
+  alias: ADD-UPDATE-CUSTOMER
+  title: Add/Update Customer
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p58KeyMapAdd = {
+        escape : (v) => {
+            $("#esc").trigger("click");
+        },
+        enter : (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP58KeysAdd() {
+        $(document).off('keydown.p58keyevents');
+        $(document).on('keydown.p58keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p58KeyMapAdd[key]) {
+                ev.preventDefault();
+                p58KeyMapAdd[key]();
+            }
+        });
+    }
+    
+    const p58KeyMapUpdate = {
+        escape : (v) => {
+            $("#esc").trigger("click");
+        },
+        d : (v) => {
+            $("#d").trigger("click");
+        },
+        u : (v) => {
+            $("#u").trigger("click");
+        }
+    }
+    
+    function mapP58KeysUpdate() {
+        $(document).off('keydown.p58keyevents');
+        $(document).on('keydown.p58keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p58KeyMapUpdate[key]) {
+                ev.preventDefault();
+                p58KeyMapUpdate[key]();
+            }
+        });
+    }
+    
+    const p58KeyMapUpdateOn = {
+        f8 : (v) => {
+            $("#f8").trigger("click");
+        },
+        escape : (v) => {
+            $("#esc").trigger("click");
+        },
+        enter : (v) => {
+            $("#uc").trigger("click");
+        }
+    }
+    
+    function mapP58KeysUpdateOn() {
+        $(document).off('keydown.p58keyevents');
+        $(document).on('keydown.p58keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p58KeyMapUpdateOn[key]) {
+                ev.preventDefault();
+                p58KeyMapUpdateOn[key]();
+            }
+        });
+    }
+    
+    const p58KeyMapUpdateDiscounts = {
+        f8 : (v) => {
+            $("#f8").trigger("click");
+        },
+        escape : (v) => {
+            $("#esc").trigger("click");
+        },
+        enter : (v) => {
+            $("#f8").trigger("click");
+            setTimeout(() => {
+                $( document ).ready(function() {
+                    $("#uc").trigger("click");
+                });
+            }, 300);
+        }
+    }
+    
+    function mapP58KeysUpdateDiscounts() {
+        $(document).off('keydown.p58keyevents');
+        $(document).on('keydown.p58keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p58KeyMapUpdateDiscounts[key]) {
+                ev.preventDefault();
+                p58KeyMapUpdateDiscounts[key]();
+            }
+        });
+    }
+    
+    const p58KeyMapUpdateDiscountsFocused = {
+        f8 : (v) => {
+            $("#f8").trigger("click");
+        }
+    }
+    
+    function mapP58KeysUpdateDiscountsFocused() {
+        $(document).off('keydown.p58keyevents');
+        $(document).on('keydown.p58keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p58KeyMapUpdateDiscountsFocused[key]) {
+                ev.preventDefault();
+                p58KeyMapUpdateDiscountsFocused[key]();
+            }
+        });
+    }
+    
+    function splitAddress(address){
+        let arr = address.split("%");
+        console.log(arr);
+        return arr;
+        // if(arr.length >= 4){
+        //     for(let i = arr.length; i > 3; i--){
+        //         arr[0] = arr[0] + "," + arr[1];
+        //         arr.splice(1, 1);
+        //     }
+        //     return arr;
+        // }else return arr;
+    }
+    
+    $("#P58_BILLING_FAX, #P58_SHIPPING_FAX")
+        .keypress(function(e){
+            if(
+                e.key == "1" || e.key == "2" ||
+                e.key == "3" || e.key == "4" ||
+                e.key == "5" || e.key == "6" ||
+                e.key == "7" || e.key == "8" ||
+                e.key == "9" || e.key == "0"
+            ){
+                return true;
+            } else if(e.key == "." && $(this).val().indexOf('.') == -1){
+                return true;
+            } else {
+                return false;
+            }
+    });
+    
+    $('#P58_CREDIT_LIMIT').keydown(function (e) {
+        var val = $(this).val();
+        var position = e.target.selectionStart;
+        if(Number( [val.slice(0, position), e.key, val.slice(position)].join('') ) <= 9999999.99){
+            if(
+                e.key == "1" || e.key == "2" || e.key == "3" || e.key == "4" ||
+                e.key == "5" || e.key == "6" || e.key == "7" || e.key == "8" ||
+                e.key == "9" || e.key == "0"
+            ){
+                return true;
+            } else if(e.key == "." && val.indexOf('.') == -1){
+                return true;
+            } else {
+                return false;
+            }
+        } else if(e.key == "Backspace"){
+            if ( Number( [val.slice(0, (position - 1)), val.slice(position)].join('')) <= 9999999.99 ){
+                return true;
+            } else {
+                return false;
+            }
+        } else if ( e.key == "ArrowLeft" || e.key == "ArrowRight" || e.key == "Enter" || e.key == "F8" || e.key == "Tab" ){
+            return true;
+        } else {
+            return false;
+        }
+    });
+    
+    $('#P58_STANDARD_DISCOUNT').keydown(function (e) {
+        var val = $(this).val();
+        var position = e.target.selectionStart;
+        if(Number( [val.slice(0, position), e.key, val.slice(position)].join('') ) <= 99.99){
+            if(
+                e.key == "1" || e.key == "2" || e.key == "3" || e.key == "4" ||
+                e.key == "5" || e.key == "6" || e.key == "7" || e.key == "8" ||
+                e.key == "9" || e.key == "0"
+            ){
+                return true;
+            } else if(e.key == "." && val.indexOf('.') == -1){
+                return true;
+            } else {
+                return false;
+            }
+        } else if(e.key == "Backspace"){
+            if ( Number( [val.slice(0, (position - 1)), val.slice(position)].join('')) <= 99.99 ){
+                return true;
+            } else {
+                return false;
+            }
+        } else if ( e.key == "ArrowLeft" || e.key == "ArrowRight" || e.key == "Enter" || e.key == "F8" || e.key == "Tab" ){
+            return true;
+        } else {
+            return false;
+        }
+    });
+    
+    $("#P58_BILLING_CONTACTA, #P58_BILLING_CONTACTB, #P58_SHIPPING_CONTACTA, #P58_SHIPPING_CONTACTB")
+        .keypress(function(e){
+            if(
+                e.key == "1" || e.key == "2" ||
+                e.key == "3" || e.key == "4" ||
+                e.key == "5" || e.key == "6" ||
+                e.key == "7" || e.key == "8" ||
+                e.key == "9" || e.key == "0"
+            ){
+                if( $(this).val().length == 3 ){
+                    $(this).val( $(this).val() + "-" )
+                } else if( $(this).val().length == 7 ){
+                    $(this).val( $(this).val() + "-" )
+                }
+                return true;
+            } else {
+                return false;
+            }
+    });
+    
+    // function numberOnly(event){
+    //     event = (event) ? event : window.event;
+    //     var charCode = (event.which) ? event.which : event.keyCode;
+    //     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+    //        return false;
+    //     }
+    //     return true;
+    // }
+    
+    $("#P58_BILLING_BUILDING_AND_STREET, #P58_BILLING_CITY, #P58_BILLING_ZIPCODE, #P58_SHIPPING_BUILDING_AND_STREET, #P58_SHIPPING_CITY, #P58_SHIPPING_ZIPCODE")
+        .keypress(function(event){
+            return restrictAddress(event);
+    });
+    function restrictAddress(event){
+        var key = event.key?.toLowerCase();
+        if (key == '%') {
+           return false;
+        }
+        return true;
+    }
+    
+    function changeRequired(accountType){
+        $(".apex-item-text").removeClass("apex-page-item-error");
+        $(".apex-item-select").removeClass("apex-page-item-error");
+        $(".a-Form-error").addClass("u-hidden");
+        switch(accountType) {
+            case 1:
+                // If Acccount Type id R (Regular)
+                $("#P58_PAYMENT_TERMS_ID_LABEL > .required").removeClass("hide");
+                $("#P58_CREDIT_LIMIT_LABEL > .required").removeClass("hide");
+                $("#P58_BILLING_BUILDING_AND_STREET_LABEL > .required").removeClass("hide");
+                $("#P58_BILLING_CITY_LABEL > .required").removeClass("hide");
+                $("#P58_BILLING_CONTACTA_LABEL > .required").removeClass("hide");
+                $("#P58_SHIPPING_BUILDING_AND_STREET_LABEL > .required").removeClass("hide");
+                $("#P58_SHIPPING_CITY_LABEL > .required").removeClass("hide");
+                $("#P58_MAIN_ACCOUNT_CODE_LABEL > .required").addClass("hide");
+                $("#P58_MAIN_ACCOUNT_CODE").addClass("apex_disabled");
+                break;
+            case 2:
+                // When Main Company
+                $("#P58_PAYMENT_TERMS_ID_LABEL > .required").addClass("hide");
+                $("#P58_CREDIT_LIMIT_LABEL > .required").addClass("hide");
+                $("#P58_BILLING_BUILDING_AND_STREET_LABEL > .required").removeClass("hide");
+                $("#P58_BILLING_CITY_LABEL > .required").removeClass("hide");
+                $("#P58_BILLING_CONTACTA_LABEL > .required").removeClass("hide");
+                $("#P58_SHIPPING_BUILDING_AND_STREET_LABEL > .required").addClass("hide");
+                $("#P58_SHIPPING_CITY_LABEL > .required").addClass("hide");
+                $("#P58_MAIN_ACCOUNT_CODE_LABEL > .required").addClass("hide apex_disabled");
+                $("#P58_MAIN_ACCOUNT_CODE").addClass("apex_disabled");
+                console.log("Main");
+                break;
+            case 3:
+                // When Department
+                $("#P58_PAYMENT_TERMS_ID_LABEL > .required").removeClass("hide");
+                $("#P58_CREDIT_LIMIT_LABEL > .required").removeClass("hide");
+                $("#P58_BILLING_BUILDING_AND_STREET_LABEL > .required").removeClass("hide");
+                $("#P58_BILLING_CITY_LABEL > .required").removeClass("hide");
+                $("#P58_BILLING_CONTACTA_LABEL > .required").removeClass("hide");
+                $("#P58_SHIPPING_BUILDING_AND_STREET_LABEL > .required").removeClass("hide");
+                $("#P58_SHIPPING_CITY_LABEL > .required").removeClass("hide");
+                $("#P58_MAIN_ACCOUNT_CODE_LABEL > .required").removeClass("hide apex_disabled");
+                $("#P58_MAIN_ACCOUNT_CODE").removeClass("apex_disabled");
+                console.log("Dept");
+                break;
+            default:
+                // When null
+                $("#P58_PAYMENT_TERMS_ID_LABEL > .required").addClass("hide");
+                $("#P58_CREDIT_LIMIT_LABEL > .required").addClass("hide");
+                $("#P58_BILLING_BUILDING_AND_STREET_LABEL > .required").addClass("hide");
+                $("#P58_BILLING_CITY_LABEL > .required").addClass("hide");
+                $("#P58_BILLING_CONTACTA_LABEL > .required").addClass("hide");
+                $("#P58_SHIPPING_BUILDING_AND_STREET_LABEL > .required").addClass("hide");
+                $("#P58_SHIPPING_CITY_LABEL > .required").addClass("hide");
+                $("#P58_MAIN_ACCOUNT_CODE_LABEL > .required").addClass("hide apex_disabled");
+                $("#P58_MAIN_ACCOUNT_CODE").addClass("apex_disabled");
+        } 
+    }
+    
+    function checkValidations(accountType){
+        let isValid = true;
+        
+        // P58_CUSTOMER_CODE
+        if($v("P58_CUSTOMER_CODE").length <= 0){
+            $("#P58_CUSTOMER_CODE").addClass("apex-page-item-error");
+            $("#P58_CUSTOMER_CODE_error_placeholder").removeClass("u-hidden");
+            $("#P58_CUSTOMER_CODE_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else if(Number( $v("P58_IS_CUSTOMER_CODE_DUPLICATE") ) == 1 ){
+            $("#P58_CUSTOMER_CODE").addClass("apex-page-item-error");
+            $("#P58_CUSTOMER_CODE_error_placeholder").removeClass("u-hidden");
+            $("#P58_CUSTOMER_CODE_error_placeholder").html("Customer Code already exists.");
+            isValid = false;
+        } else{
+            $("#P58_CUSTOMER_CODE").removeClass("apex-page-item-error");
+            $("#P58_CUSTOMER_CODE_error_placeholder").addClass("u-hidden");
+        }
+        // P58_LEGAL_NAME
+        if($v("P58_LEGAL_NAME").length <= 0){
+            $("#P58_LEGAL_NAME").addClass("apex-page-item-error");
+            $("#P58_LEGAL_NAME_error_placeholder").removeClass("u-hidden");
+            $("#P58_LEGAL_NAME_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_LEGAL_NAME").removeClass("apex-page-item-error");
+            $("#P58_LEGAL_NAME_error_placeholder").addClass("u-hidden");
+        }
+        // P58_DBA
+        if($v("P58_DBA").length <= 0){
+            $("#P58_DBA").addClass("apex-page-item-error");
+            $("#P58_DBA_error_placeholder").removeClass("u-hidden");
+            $("#P58_DBA_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_DBA").removeClass("apex-page-item-error");
+            $("#P58_DBA_error_placeholder").addClass("u-hidden");
+        }
+        // P58_ACCOUNT_TYPE_ID
+        if($v("P58_ACCOUNT_TYPE_ID").length <= 0){
+            $("#P58_ACCOUNT_TYPE_ID").addClass("apex-page-item-error");
+            $("#P58_ACCOUNT_TYPE_ID_error_placeholder").removeClass("u-hidden");
+            $("#P58_ACCOUNT_TYPE_ID_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_ACCOUNT_TYPE_ID").removeClass("apex-page-item-error");
+            $("#P58_ACCOUNT_TYPE_ID_error_placeholder").addClass("u-hidden");
+        }
+        // P58_CONTACT_PERSON
+        if($v("P58_CONTACT_PERSON").length <= 0){
+            $("#P58_CONTACT_PERSON").addClass("apex-page-item-error");
+            $("#P58_CONTACT_PERSON_error_placeholder").removeClass("u-hidden");
+            $("#P58_CONTACT_PERSON_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_CONTACT_PERSON").removeClass("apex-page-item-error");
+            $("#P58_CONTACT_PERSON_error_placeholder").addClass("u-hidden");
+        }
+        // P58_ORGANIZATION_TYPE_ID
+        if($v("P58_ORGANIZATION_TYPE_ID").length <= 0){
+            $("#P58_ORGANIZATION_TYPE_ID").addClass("apex-page-item-error");
+            $("#P58_ORGANIZATION_TYPE_ID_error_placeholder").removeClass("u-hidden");
+            $("#P58_ORGANIZATION_TYPE_ID_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_ORGANIZATION_TYPE_ID").removeClass("apex-page-item-error");
+            $("#P58_ORGANIZATION_TYPE_ID_error_placeholder").addClass("u-hidden");
+        }
+        // P58_PAYMENT_INSTRUCTIONS
+        if($v("P58_PAYMENT_INSTRUCTIONS").length <= 0){
+            $("#P58_PAYMENT_INSTRUCTIONS").addClass("apex-page-item-error");
+            $("#P58_PAYMENT_INSTRUCTIONS_error_placeholder").removeClass("u-hidden");
+            $("#P58_PAYMENT_INSTRUCTIONS_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_PAYMENT_INSTRUCTIONS").removeClass("apex-page-item-error");
+            $("#P58_PAYMENT_INSTRUCTIONS_error_placeholder").addClass("u-hidden");
+        }
+        // P58_BILLING_BUILDING_AND_STREET
+        if($v("P58_BILLING_BUILDING_AND_STREET").length <= 0){
+            $("#P58_BILLING_BUILDING_AND_STREET").addClass("apex-page-item-error");
+            $("#P58_BILLING_BUILDING_AND_STREET_error_placeholder").removeClass("u-hidden");
+            $("#P58_BILLING_BUILDING_AND_STREET_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_BILLING_BUILDING_AND_STREET").removeClass("apex-page-item-error");
+            $("#P58_BILLING_BUILDING_AND_STREET_error_placeholder").addClass("u-hidden");
+        }
+        // P58_BILLING_CITY
+        if($v("P58_BILLING_CITY").length <= 0){
+            $("#P58_BILLING_CITY").addClass("apex-page-item-error");
+            $("#P58_BILLING_CITY_error_placeholder").removeClass("u-hidden");
+            $("#P58_BILLING_CITY_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_BILLING_CITY").removeClass("apex-page-item-error");
+            $("#P58_BILLING_CITY_error_placeholder").addClass("u-hidden");
+        }
+        // P58_BILLING_CONTACTA
+        if($v("P58_BILLING_CONTACTA").length <= 0){
+            $("#P58_BILLING_CONTACTA").addClass("apex-page-item-error");
+            $("#P58_BILLING_CONTACTA_error_placeholder").removeClass("u-hidden");
+            $("#P58_BILLING_CONTACTA_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P58_BILLING_CONTACTA").removeClass("apex-page-item-error");
+            $("#P58_BILLING_CONTACTA_error_placeholder").addClass("u-hidden");
+        }
+        // Emails
+        if( ($v("P58_BILLING_EMAIL").length >= 1) && !(/^[a-zA-Z0-9_.±]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test($v("P58_BILLING_EMAIL"))) ){
+            $("#P58_BILLING_EMAIL").addClass("apex-page-item-error");
+            $("#P58_BILLING_EMAIL_error_placeholder").removeClass("u-hidden");
+            $("#P58_BILLING_EMAIL_error_placeholder").html("Email must be Valid Ex. Example@email.com");
+            isValid = false;
+        } else{
+            $("#P58_BILLING_EMAIL").removeClass("apex-page-item-error");
+            $("#P58_BILLING_EMAIL_error_placeholder").addClass("u-hidden");
+        }
+        if( ($v("P58_SHIPPING_EMAIL").length >= 1) && !(/^[a-zA-Z0-9_.±]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test($v("P58_SHIPPING_EMAIL"))) ){
+            $("#P58_SHIPPING_EMAIL").addClass("apex-page-item-error");
+            $("#P58_SHIPPING_EMAIL_error_placeholder").removeClass("u-hidden");
+            $("#P58_SHIPPING_EMAIL_error_placeholder").html("Email must be Valid Ex. Example@email.com");
+            isValid = false;
+        } else{
+            $("#P58_SHIPPING_EMAIL").removeClass("apex-page-item-error");
+            $("#P58_SHIPPING_EMAIL_error_placeholder").addClass("u-hidden");
+        }
+    
+        switch(accountType){
+            // When Regular
+            case 1:
+                // P58_PAYMENT_TERMS_ID
+                if($v("P58_PAYMENT_TERMS_ID").length <= 0){
+                    $("#P58_PAYMENT_TERMS_ID").addClass("apex-page-item-error");
+                    $("#P58_PAYMENT_TERMS_ID_error_placeholder").removeClass("u-hidden");
+                    $("#P58_PAYMENT_TERMS_ID_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else{
+                    $("#P58_PAYMENT_TERMS_ID").removeClass("apex-page-item-error");
+                    $("#P58_PAYMENT_TERMS_ID_error_placeholder").addClass("u-hidden");
+                }
+                // P58_CREDIT_LIMIT
+                if($v("P58_CREDIT_LIMIT").length <= 0){
+                    $("#P58_CREDIT_LIMIT").addClass("apex-page-item-error");
+                    $("#P58_CREDIT_LIMIT_error_placeholder").removeClass("u-hidden");
+                    $("#P58_CREDIT_LIMIT_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else{
+                    $("#P58_CREDIT_LIMIT").removeClass("apex-page-item-error");
+                    $("#P58_CREDIT_LIMIT_error_placeholder").addClass("u-hidden");
+                }
+                // P58_SHIPPING_BUILDING_AND_STREET
+                if($v("P58_SHIPPING_BUILDING_AND_STREET").length <= 0){
+                    $("#P58_SHIPPING_BUILDING_AND_STREET").addClass("apex-page-item-error");
+                    $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").removeClass("u-hidden");
+                    $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else{
+                    $("#P58_SHIPPING_BUILDING_AND_STREET").removeClass("apex-page-item-error");
+                    $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").addClass("u-hidden");
+                }
+                // P58_SHIPPING_CITY
+                if($v("P58_SHIPPING_CITY").length <= 0){
+                    $("#P58_SHIPPING_CITY").addClass("apex-page-item-error");
+                    $("#P58_SHIPPING_CITY_error_placeholder").removeClass("u-hidden");
+                    $("#P58_SHIPPING_CITY_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else{
+                    $("#P58_SHIPPING_CITY").removeClass("apex-page-item-error");
+                    $("#P58_SHIPPING_CITY_error_placeholder").addClass("u-hidden");
+                }
+                // P58_SHIPPING_ZIPCODE
+                // if($v("P58_SHIPPING_ZIPCODE").length <= 0){
+                //     $("#P58_SHIPPING_ZIPCODE").addClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_ZIPCODE_error_placeholder").removeClass("u-hidden");
+                //     $("#P58_SHIPPING_ZIPCODE_error_placeholder").html("Must have some value.");
+                //     isValid = false;
+                // } else{
+                //     $("#P58_SHIPPING_ZIPCODE").removeClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_ZIPCODE_error_placeholder").addClass("u-hidden");
+                // }
+                // // P58_SHIPPING_CONTACTA
+                // if($v("P58_SHIPPING_CONTACTA").length <= 0){
+                //     $("#P58_SHIPPING_CONTACTA").addClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_CONTACTA_error_placeholder").removeClass("u-hidden");
+                //     $("#P58_SHIPPING_CONTACTA_error_placeholder").html("Must have some value.");isValid = false;
+                // } else{
+                //     $("#P58_SHIPPING_CONTACTA").removeClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_CONTACTA_error_placeholder").addClass("u-hidden");
+                // }
+                break;
+            //WHEN MAIN
+            case 2:
+                // if($v("P58_SHIPPING_ZIPCODE")){
+                //     // P58_SHIPPING_BUILDING_AND_STREET
+                //     if($v("P58_SHIPPING_BUILDING_AND_STREET").length <= 0){
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET").addClass("apex-page-item-error");
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").removeClass("u-hidden");
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").html("Must have some value.");
+                //         isValid = false;
+                //     } else{
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET").removeClass("apex-page-item-error");
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").addClass("u-hidden");
+                //     }
+                //     // P58_SHIPPING_CITY
+                //     if($v("P58_SHIPPING_CITY").length <= 0){
+                //         $("#P58_SHIPPING_CITY").addClass("apex-page-item-error");
+                //         $("#P58_SHIPPING_CITY_error_placeholder").removeClass("u-hidden");
+                //         $("#P58_SHIPPING_CITY_error_placeholder").html("Must have some value.");
+                //         isValid = false;
+                //     } else{
+                //         $("#P58_SHIPPING_CITY").removeClass("apex-page-item-error");
+                //         $("#P58_SHIPPING_CITY_error_placeholder").addClass("u-hidden");
+                //     }
+                // } else if($v("P58_SHIPPING_CITY")){
+                //     // P58_SHIPPING_BUILDING_AND_STREET
+                //     if($v("P58_SHIPPING_BUILDING_AND_STREET").length <= 0){
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET").addClass("apex-page-item-error");
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").removeClass("u-hidden");
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").html("Must have some value.");
+                //         isValid = false;
+                //     } else{
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET").removeClass("apex-page-item-error");
+                //         $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").addClass("u-hidden");
+                //     }
+                // } else if($v("P58_SHIPPING_CITY") && !$v("P58_SHIPPING_ZIPCODE")){
+                //     $("#P58_SHIPPING_CITY").removeClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_CITY_error_placeholder").addClass("u-hidden");
+                // } else {
+                //     $("#P58_SHIPPING_BUILDING_AND_STREET, #P58_SHIPPING_CITY").removeClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder, #P58_SHIPPING_CITY_error_placeholder").addClass("u-hidden");
+                // }
+                break;
+            // When Department
+            case 3:
+                // P58_MAIN_ACCOUNT_CODE
+                if($v("P58_MAIN_ACCOUNT_CODE").length <= 0){
+                    $("#P58_MAIN_ACCOUNT_CODE_input").addClass("apex-page-item-error");
+                    $("#P58_MAIN_ACCOUNT_CODE_error_placeholder").removeClass("u-hidden");
+                    $("#P58_MAIN_ACCOUNT_CODE_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else if(Number( $v("P58_IS_MAIN_ACCOUNT_CODE_EXIST") ) == 1 ){
+                    $("#P58_MAIN_ACCOUNT_CODE_input").removeClass("apex-page-item-error");
+                    $("#P58_MAIN_ACCOUNT_CODE_error_placeholder").addClass("u-hidden");
+                } else{
+                    $("#P58_MAIN_ACCOUNT_CODE_input").addClass("apex-page-item-error");
+                    $("#P58_MAIN_ACCOUNT_CODE_error_placeholder").removeClass("u-hidden");
+                    $("#P58_MAIN_ACCOUNT_CODE_error_placeholder").html("Customer Code does not exists.");
+                    isValid = false;
+                }
+                // P58_PAYMENT_TERMS_ID
+                if($v("P58_PAYMENT_TERMS_ID").length <= 0){
+                    $("#P58_PAYMENT_TERMS_ID").addClass("apex-page-item-error");
+                    $("#P58_PAYMENT_TERMS_ID_error_placeholder").removeClass("u-hidden");
+                    $("#P58_PAYMENT_TERMS_ID_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else{
+                    $("#P58_PAYMENT_TERMS_ID").removeClass("apex-page-item-error");
+                    $("#P58_PAYMENT_TERMS_ID_error_placeholder").addClass("u-hidden");
+                }
+                // P58_CREDIT_LIMIT
+                if($v("P58_CREDIT_LIMIT").length <= 0){
+                    $("#P58_CREDIT_LIMIT").addClass("apex-page-item-error");
+                    $("#P58_CREDIT_LIMIT_error_placeholder").removeClass("u-hidden");
+                    $("#P58_CREDIT_LIMIT_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else{
+                    $("#P58_CREDIT_LIMIT").removeClass("apex-page-item-error");
+                    $("#P58_CREDIT_LIMIT_error_placeholder").addClass("u-hidden");
+                }
+                // P58_SHIPPING_BUILDING_AND_STREET
+                if($v("P58_SHIPPING_BUILDING_AND_STREET").length <= 0){
+                    $("#P58_SHIPPING_BUILDING_AND_STREET").addClass("apex-page-item-error");
+                    $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").removeClass("u-hidden");
+                    $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else{
+                    $("#P58_SHIPPING_BUILDING_AND_STREET").removeClass("apex-page-item-error");
+                    $("#P58_SHIPPING_BUILDING_AND_STREET_error_placeholder").addClass("u-hidden");
+                }
+                // P58_SHIPPING_CITY
+                if($v("P58_SHIPPING_CITY").length <= 0){
+                    $("#P58_SHIPPING_CITY").addClass("apex-page-item-error");
+                    $("#P58_SHIPPING_CITY_error_placeholder").removeClass("u-hidden");
+                    $("#P58_SHIPPING_CITY_error_placeholder").html("Must have some value.");
+                    isValid = false;
+                } else{
+                    $("#P58_SHIPPING_CITY").removeClass("apex-page-item-error");
+                    $("#P58_SHIPPING_CITY_error_placeholder").addClass("u-hidden");
+                }
+                // P58_SHIPPING_ZIPCODE
+                // if($v("P58_SHIPPING_ZIPCODE").length <= 0){
+                //     $("#P58_SHIPPING_ZIPCODE").addClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_ZIPCODE_error_placeholder").removeClass("u-hidden");
+                //     $("#P58_SHIPPING_ZIPCODE_error_placeholder").html("Must have some value.");
+                //     isValid = false;
+                // } else{
+                //     $("#P58_SHIPPING_ZIPCODE").removeClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_ZIPCODE_error_placeholder").addClass("u-hidden");
+                // }
+                // // P58_SHIPPING_CONTACTA
+                // if($v("P58_SHIPPING_CONTACTA").length <= 0){
+                //     $("#P58_SHIPPING_CONTACTA").addClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_CONTACTA_error_placeholder").removeClass("u-hidden");
+                //     $("#P58_SHIPPING_CONTACTA_error_placeholder").html("Must have some value.");
+                //     isValid = false;
+                // } else{
+                //     $("#P58_SHIPPING_CONTACTA").removeClass("apex-page-item-error");
+                //     $("#P58_SHIPPING_CONTACTA_error_placeholder").addClass("u-hidden");
+                // }
+                break;
+            default:
+                console.log("default");
+        }
+        return isValid;
+    }
+  execute-when-page-loads: |
+    apex.actions.shortcutSupport("off");
+    setTimeout(() => {
+        $( document ).ready(function() {
+            $(".t-Button--closeAlert").trigger("click");
+        });
+    }, "5000");
+    
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .title-header{
+        margin: 0;
+        color: white;
+    }
+    
+    #esc, #enter, #uc{
+        display: none;
+    }
+    
+    .form-fields{
+        background-color: white;
+        margin-bottom: 0;
+    }
+    .form-fields .t-Region-body{
+        padding: 0rem 0.8rem 0rem 0.8rem;
+    }
+    
+    #P58_MAIN_ACCOUNT_CODE_input {
+        text-transform:uppercase;
+    }
+    
+    #customer-form label, 
+    #customer-form input, 
+    #customer-form select {
+        font-size: 1.125rem;
+    }
+    #customer-form select {
+        padding-top: 0.438rem;
+        padding-bottom: 0.438rem;
+    }
+    
+    #customer-form, #addresses-form, #collumn-2{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    /* #P58_OUTSTANDING_BALANCE_VIEW, #P58_OUTSTANDING_BALANCE_VIEW_LABEL, 
+    #P58_CREDIT_MEMO_BALANCE_VIEW, #P58_CREDIT_MEMO_BALANCE_VIEW_LABEL{
+        color: white;
+    } */
+    
+    .required {
+        color: red;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    #discountGrid table,
+    #discountGrid tr,
+    #discountGrid td,
+    #discountGrid th {
+        font-size: 1.125rem;
+    }
+    
+    #discountGrid_ig{
+        border: 0.0625rem solid rgb(30, 58, 138);
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header {
+        border-color: rgb(30, 58, 138);
+    }
+    
+    /* .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    } */
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #P58_OUTSTANDING_BALANCE_VIEW_LABEL, 
+    #P58_OUTSTANDING_BALANCE_VIEW, 
+    #P58_CREDIT_MEMO_BALANCE_VIEW_LABEL, 
+    #P58_CREDIT_MEMO_BALANCE_VIEW {
+        font-size: 1.25rem;
+    }
+    
+    .t-Form-labelContainer:has(> #P58_OUTSTANDING_BALANCE_VIEW_LABEL),
+    .t-Form-labelContainer:has(> #P58_CREDIT_MEMO_BALANCE_VIEW_LABEL),
+    .t-Form-labelContainer:has(> #P58_STANDARD_DISCOUNT_LABEL) {
+        text-align: start;    
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Buttons =====================================
+  id: 13859340946632510
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Billing =====================================
+  id: 13860122394632518
+  identification: 
+    name: Billing
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: Addresses # 17194269734817146
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    css-classes: 
+    - form-fields
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: billing
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Shipping ====================================
+  id: 13860278621632519
+  identification: 
+    name: Shipping
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: Addresses # 17194269734817146
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - margin-bottom-none
+    css-classes: 
+    - form-fields
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: shipping
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Billing Header ==============================
+  id: 13861471392632531
+  identification: 
+    name: Billing Header
+    type: Static Content
+
+  source: 
+    html-code: <h3 class="title-header">Billing Address</h3>
+
+  layout: 
+    sequence: 30
+    parent-region: Add/Update Customer # 13912731848873017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Shipping Header =============================
+  id: 13861586160632532
+  identification: 
+    name: Shipping Header
+    type: Static Content
+
+  source: 
+    html-code: '<h3 style="margin:0;color:white">Shipping Address</h3>'
+
+  layout: 
+    sequence: 40
+    parent-region: Addresses # 17194269734817146
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Add/Update Customer =========================
+  id: 13912731848873017
+  identification: 
+    name: Add/Update Customer
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPT009
+    include-rowid-column: false
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: customer-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+- # ====== Region: Customer Discounts ==========================
+  id: 15146524195750643
+  identification: 
+    name: Customer Discounts
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          seq_id,
+          n001,
+          c001,
+          c002
+      FROM APEX_COLLECTIONS
+      WHERE COLLECTION_NAME = 'DISCOUNTS'
+    page-items-to-submit: 
+    - P58_CUSTOMER_ID
+
+  layout: 
+    sequence: 20
+    parent-region: Discounts # 39842997303908925
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: discountGrid
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 15146655034750644
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 150
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 15404005397303879
+      identification: 
+        name: Primary Report
+        alias: 154041
+
+  columns: 
+  - # ====== Column: SEQ_ID ======================================
+    id: 41302789312763408
+    identification: 
+      column-name: SEQ_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SEQ_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: N001 ========================================
+    id: 41302859281763409
+    identification: 
+      column-name: N001
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 20
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: N001
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: C001 ========================================
+    id: 41302989437763410
+    identification: 
+      column-name: C001
+      type: Popup LOV
+
+    heading: 
+      heading: Discount Code
+      alignment: start
+
+    settings: 
+      display-as: Inline Popup
+      initial-fetch: Automatic
+      manual-entry: false
+      search-as-you-type: false
+
+    multiple-values: 
+      type: No
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    list-of-values: 
+      type: SQL Query
+      sql-query: SELECT DISCOUNT_CODE FROM NPT008 WHERE DISCOUNT_CODE != 'TEST'
+      display-extra-values: true
+      display-null-value: true
+      null-display-value: SELECT
+
+    source: 
+      type: Database Column
+      database-column: C001
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: C002 ========================================
+    id: 41303057100763411
+    identification: 
+      column-name: C002
+      type: Text Field
+
+    heading: 
+      heading: End Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: C002
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Collumn 2 ===================================
+  id: 17192766322817131
+  identification: 
+    name: Collumn 2
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: Add/Update Customer # 13912731848873017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: collumn-2
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P58_CUSTOMER_ID
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Balances ====================================
+  id: 17192802938817132
+  identification: 
+    name: Balances
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: Collumn 2 # 17192766322817131
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: balances
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P58_CUSTOMER_ID
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Addresses ===================================
+  id: 17194269734817146
+  identification: 
+    name: Addresses
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: Add/Update Customer # 13912731848873017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: addresses-form
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Customer Information ========================
+  id: 17194385927817147
+  identification: 
+    name: Customer Information
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: Add/Update Customer # 13912731848873017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    css-classes: 
+    - form-fields
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: customer-information
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Billing Header ==============================
+  id: 18080433231113209
+  identification: 
+    name: Billing Header
+    type: Static Content
+
+  source: 
+    html-code: <h3 class="title-header">Customer Information</h3>
+
+  layout: 
+    sequence: 10
+    parent-region: Add/Update Customer # 13912731848873017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Discounts ===================================
+  id: 39842997303908925
+  identification: 
+    name: Discounts
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Collumn 2 # 17192766322817131
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Discount Header =============================
+  id: 39843040546908926
+  identification: 
+    name: Discount Header
+    type: Static Content
+
+  source: 
+    html-code: <h3 class="title-header">Discount</h3>
+
+  layout: 
+    sequence: 40
+    parent-region: Add/Update Customer # 13912731848873017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P58_CUSTOMER_ID
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Discount Header =============================
+  id: 39843446930908930
+  identification: 
+    name: Discount Header
+    type: Static Content
+
+  source: 
+    html-code: '<h3 class="title-header" style="color:black">Special/Seasonal Discount</h3>'
+
+  layout: 
+    sequence: 40
+    parent-region: Discounts # 39842997303908925
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P58_ACCOUNT_OPENED =======================
+  id: 13859985619632516
+  identification: 
+    name: P58_ACCOUNT_OPENED
+    type: Text Field
+
+  label: 
+    label: Account Opened
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 140
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_PAYMENT_TERMS_ID =====================
+  id: 13860084553632517
+  identification: 
+    name: P58_PAYMENT_TERMS_ID
+    type: Select List
+
+  label: 
+    label: Payment Terms <span class="hide required">*</span>
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 150
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: NPM006.PAYMENT_NAME # 14494800127206898
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: PAYMENT_TERMS_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_BILLING_BUILDING_AND_STREET ==========
+  id: 13860358287632520
+  identification: 
+    name: P58_BILLING_BUILDING_AND_STREET
+    type: Text Field
+
+  label: 
+    label: Building And Street <span class="hide required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Billing # 13860122394632518
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 68
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_BILLING_CITY =========================
+  id: 13860416638632521
+  identification: 
+    name: P58_BILLING_CITY
+    type: Text Field
+
+  label: 
+    label: City <span class="hide required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Billing # 13860122394632518
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 25
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_BILLING_ZIPCODE ======================
+  id: 13860501771632522
+  identification: 
+    name: P58_BILLING_ZIPCODE
+    type: Text Field
+
+  label: 
+    label: Zipcode
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Billing # 13860122394632518
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 5
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_ADDRESS =====================
+  id: 13860608680632523
+  identification: 
+    name: P58_SHIPPING_ADDRESS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Shipping # 13860278621632519
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: SHIPPING_ADDRESS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_BUILDING_AND_STREET =========
+  id: 13860799671632524
+  identification: 
+    name: P58_SHIPPING_BUILDING_AND_STREET
+    type: Text Field
+
+  label: 
+    label: Building And Street <span class="hide required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Shipping # 13860278621632519
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 68
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_CITY ========================
+  id: 13860817848632525
+  identification: 
+    name: P58_SHIPPING_CITY
+    type: Text Field
+
+  label: 
+    label: City <span class="hide required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Shipping # 13860278621632519
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 25
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_ZIPCODE =====================
+  id: 13860903884632526
+  identification: 
+    name: P58_SHIPPING_ZIPCODE
+    type: Text Field
+
+  label: 
+    label: Zipcode <span class="hide required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Shipping # 13860278621632519
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 5
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_BILLING_CONTACTA =====================
+  id: 13861065245632527
+  identification: 
+    name: P58_BILLING_CONTACTA
+    type: Text Field
+
+  label: 
+    label: 'Contact # <span class="hide required">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Billing # 13860122394632518
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: BILLING_CONTACTA
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_BILLING_CONTACTB =====================
+  id: 13861179787632528
+  identification: 
+    name: P58_BILLING_CONTACTB
+    type: Text Field
+
+  label: 
+    label: 'Second Contact #'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Billing # 13860122394632518
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: BILLING_CONTACTB
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_BILLING_FAX ==========================
+  id: 13861213176632529
+  identification: 
+    name: P58_BILLING_FAX
+    type: Text Field
+
+  label: 
+    label: 'Fax #'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Billing # 13860122394632518
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: BILLING_FAX
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_BILLING_EMAIL ========================
+  id: 13861304293632530
+  identification: 
+    name: P58_BILLING_EMAIL
+    type: Text Field
+
+  label: 
+    label: Email Address
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 100
+    region: Billing # 13860122394632518
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: BILLING_EMAIL
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_CUSTOMER_CODE_INITIAL ================
+  id: 13861810856632535
+  identification: 
+    name: P58_CUSTOMER_CODE_INITIAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Customer Information # 17194385927817147
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: CUSTOMER_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_CUSTOMER_ID ==========================
+  id: 13913170684873023
+  identification: 
+    name: P58_CUSTOMER_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Customer Information # 17194385927817147
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: CUSTOMER_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_LEGAL_NAME ===========================
+  id: 13913582580873029
+  identification: 
+    name: P58_LEGAL_NAME
+    type: Text Field
+
+  label: 
+    label: Legal Name <span class="required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 100
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: LEGAL_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_PAYMENT_INSTRUCTIONS =================
+  id: 13915564920873039
+  identification: 
+    name: P58_PAYMENT_INSTRUCTIONS
+    type: Text Field
+
+  label: 
+    label: Payment Terms Instructions <span class="required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 170
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 200
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: PAYMENT_INSTRUCTIONS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_BILLING_ADDRESS ======================
+  id: 13915998206873040
+  identification: 
+    name: P58_BILLING_ADDRESS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Billing # 13860122394632518
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: BILLING_ADDRESS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_CONTACTA ====================
+  id: 13916308434873040
+  identification: 
+    name: P58_SHIPPING_CONTACTA
+    type: Text Field
+
+  label: 
+    label: 'Contact # <span class="hide required">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Shipping # 13860278621632519
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: SHIPPING_CONTACTA
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_CONTACTB ====================
+  id: 13916782954873040
+  identification: 
+    name: P58_SHIPPING_CONTACTB
+    type: Text Field
+
+  label: 
+    label: 'Second Contact #'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Shipping # 13860278621632519
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: SHIPPING_CONTACTB
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_FAX =========================
+  id: 13917109421873042
+  identification: 
+    name: P58_SHIPPING_FAX
+    type: Number Field
+
+  label: 
+    label: 'Fax #'
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 90
+    region: Shipping # 13860278621632519
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: SHIPPING_FAX
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_EMAIL =======================
+  id: 13917564015873042
+  identification: 
+    name: P58_SHIPPING_EMAIL
+    type: Text Field
+
+  label: 
+    label: Email Address
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 100
+    region: Shipping # 13860278621632519
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: SHIPPING_EMAIL
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_SHIPPING_INSTRUCTIONS ================
+  id: 13917986095873042
+  identification: 
+    name: P58_SHIPPING_INSTRUCTIONS
+    type: Text Field
+
+  label: 
+    label: Special Instructions
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 110
+    region: Shipping # 13860278621632519
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 200
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: SHIPPING_INSTRUCTIONS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_OUTSTANDING_BALANCE ==================
+  id: 13918352531873043
+  identification: 
+    name: P58_OUTSTANDING_BALANCE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Add/Update Customer # 13912731848873017
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: OUTSTANDING_BALANCE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_MAIN_ACCOUNT_CODE ====================
+  id: 13918795568873043
+  identification: 
+    name: P58_MAIN_ACCOUNT_CODE
+    type: Text Field with autocomplete
+
+  label: 
+    label: Main Account Code <span class="hide required">*</span>
+    alignment: Left
+
+  settings: 
+    fetch-on-type: true
+    use-cache: true
+    maximum-values-in-list: 7
+
+  search: 
+    match-type: Contains & Ignore Case
+    minimum-characters: 1
+
+  layout: 
+    sequence: 110
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 10
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT CUSTOMER_CODE
+      FROM NPT009
+      WHERE ACCOUNT_TYPE_ID = 2
+    display-extra-values: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: MAIN_ACCOUNT_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_CUSTOMER_CODE ========================
+  id: 13919127659873045
+  identification: 
+    name: P58_CUSTOMER_CODE
+    type: Text Field
+
+  label: 
+    label: Customer Code <span class="required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: Upper
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 10
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: CUSTOMER_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_DBA ==================================
+  id: 13919530156873045
+  identification: 
+    name: P58_DBA
+    type: Text Field
+
+  label: 
+    label: DBA <span class="required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 100
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: DBA
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_CONTACT_PERSON =======================
+  id: 13919923046873045
+  identification: 
+    name: P58_CONTACT_PERSON
+    type: Text Field
+
+  label: 
+    label: Contact Person <span class="required">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 120
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 80
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: CONTACT_PERSON
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_ORGANIZATION_TYPE_ID =================
+  id: 13920308447873048
+  identification: 
+    name: P58_ORGANIZATION_TYPE_ID
+    type: Select List
+
+  label: 
+    label: Organization Type <span class="required">*</span>
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 130
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: NPM010.ORGANIZATION_TYPE_NAME # 13920414206873050
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: ORGANIZATION_TYPE_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_CREDIT_LIMIT =========================
+  id: 13921099541873081
+  identification: 
+    name: P58_CREDIT_LIMIT
+    type: Number Field
+
+  label: 
+    label: Credit Limit <span class="hide required">*</span>
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 160
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 255
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: CREDIT_LIMIT
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_ACCOUNT_TYPE_ID ======================
+  id: 13921457981873081
+  identification: 
+    name: P58_ACCOUNT_TYPE_ID
+    type: Select List
+
+  label: 
+    label: Type <span class="required">*</span>
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 90
+    region: Customer Information # 17194385927817147
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Shared Component
+    list-of-values: NPM003.ACCOUNT_TYPE_CODE # 14283087534817489
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: ACCOUNT_TYPE_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_IS_CUSTOMER_CODE_DUPLICATE ===========
+  id: 14304212607089713
+  identification: 
+    name: P58_IS_CUSTOMER_CODE_DUPLICATE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: Customer Information # 17194385927817147
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_INQUIRE_TOGGLE =======================
+  id: 17192662989817130
+  identification: 
+    name: P58_INQUIRE_TOGGLE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: Customer Information # 17194385927817147
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_OUTSTANDING_BALANCE_VIEW =============
+  id: 17192989212817133
+  identification: 
+    name: P58_OUTSTANDING_BALANCE_VIEW
+    type: Display Only
+
+  label: 
+    label: 'Outstanding Balance: '
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 10
+    region: Balances # 17192802938817132
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 5
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_CREDIT_MEMO_BALANCE_VIEW =============
+  id: 17193095866817134
+  identification: 
+    name: P58_CREDIT_MEMO_BALANCE_VIEW
+    type: Display Only
+
+  label: 
+    label: 'Credit Memo Balance: '
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 20
+    region: Balances # 17192802938817132
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 5
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: $0.00
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_IS_MAIN_ACCOUNT_CODE_EXIST ===========
+  id: 18082729835113232
+  identification: 
+    name: P58_IS_MAIN_ACCOUNT_CODE_EXIST
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 100
+    region: Customer Information # 17194385927817147
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_STANDARD_DISCOUNT ====================
+  id: 39843320388908929
+  identification: 
+    name: P58_STANDARD_DISCOUNT
+    type: Text Field
+
+  label: 
+    label: 'Standard Discount:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Discounts # 39842997303908925
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_DISCOUNT_ID_TEMP =====================
+  id: 39845327945908949
+  identification: 
+    name: P58_DISCOUNT_ID_TEMP
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: Discounts # 39842997303908925
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_DISCOUNT_DATE_TO_TEMP ================
+  id: 39845421118908950
+  identification: 
+    name: P58_DISCOUNT_DATE_TO_TEMP
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: Discounts # 39842997303908925
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_EDIT_MODE ============================
+  id: 41023595716027315
+  identification: 
+    name: P58_EDIT_MODE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Details
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P58_STANDARD_DISCOUNT_VALUE ==============
+  id: 41302274416763403
+  identification: 
+    name: P58_STANDARD_DISCOUNT_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 180
+    region: Customer Information # 17194385927817147
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Customer # 13912731848873017
+    column: STANDARD_DISCOUNT_VALUE
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Add_Customer ================================
+  id: 13859426056632511
+  identification: 
+    button-name: Add_Customer
+    label: <u>Enter</u> - Add Customer
+
+  layout: 
+    sequence: 40
+    region: Buttons # 13859340946632510
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+  server-side-condition: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1 FROM DUAL 
+      WHERE :P58_CUSTOMER_ID IS NULL AND :P58_INQUIRE_TOGGLE IS NULL
+
+- # ====== Button: To_Exit =====================================
+  id: 13859577106632512
+  identification: 
+    button-name: To_Exit
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 60
+    region: Buttons # 13859340946632510
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:57:&SESSION.::&DEBUG.:::'
+      page: 57 # Customer Masterfile
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+- # ====== Button: Discount_Inquiry ============================
+  id: 15143408290750612
+  identification: 
+    button-name: Discount_Inquiry
+    label: <u>D</u> - Discount Inquiry
+
+  layout: 
+    sequence: 10
+    region: Buttons # 13859340946632510
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:82:&SESSION.::&DEBUG.::P82_CUSTOMER_ID,P82_INQUIRE_TOGGLE:&P58_CUSTOMER_ID.,&P58_INQUIRE_TOGGLE.'
+      page: 82 # Customer Discount Inquiry
+      values: 
+        p82_customer_id: '&P58_CUSTOMER_ID.'
+        p82_inquire_toggle: '&P58_INQUIRE_TOGGLE.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: d
+
+  server-side-condition: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1 FROM DUAL 
+      WHERE :P58_CUSTOMER_ID IS NOT NULL
+
+- # ====== Button: Update_Customer_Toggle ======================
+  id: 15143743496750615
+  identification: 
+    button-name: Update_Customer_Toggle
+    label: <u>U</u> - Update Customer
+
+  layout: 
+    sequence: 20
+    region: Buttons # 13859340946632510
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1 FROM DUAL 
+      WHERE :P58_CUSTOMER_ID IS NOT NULL AND :P58_INQUIRE_TOGGLE IS NULL
+
+- # ====== Button: Update_Customer =============================
+  id: 15143889441750616
+  identification: 
+    button-name: Update_Customer
+    label: <u>ENTER</u> - Update Customer
+
+  layout: 
+    sequence: 30
+    region: Buttons # 13859340946632510
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: uc
+
+  server-side-condition: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1 FROM DUAL 
+      WHERE :P58_CUSTOMER_ID IS NOT NULL AND :P58_INQUIRE_TOGGLE IS NULL
+
+- # ====== Button: Update_Add_Discount =========================
+  id: 39843781606908933
+  identification: 
+    button-name: Update_Add_Discount
+    label: <u>f8</u> - Update/Add Discount
+
+  layout: 
+    sequence: 50
+    region: Buttons # 13859340946632510
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: f8
+
+dynamic-actions: 
+- # ====== Dynamic Action: Check Dynamic Validations ===========
+  id: 13863209495632549
+  identification: 
+    name: Check Dynamic Validations
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Add_Customer # 13859426056632511
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 13863305000632550
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        console.log("Checking Validations");
+        let isValid = checkValidations( Number( $v("P58_ACCOUNT_TYPE_ID") ) );
+        if(isValid){
+            apex.page.submit( "SUBMIT" );
+        } else {
+            $(".apex-page-item-error").first().focus();
+        }
+        // apex.page.submit( "SUBMIT" );
+
+    execution: 
+      sequence: 40
+      event: Check Dynamic Validations # 13863209495632549
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 14304110265089712
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            l_customer_code_existing NUMBER;
+        BEGIN
+            IF :P58_CUSTOMER_ID IS NULL THEN
+                SELECT DISTINCT COUNT(1)
+                INTO l_customer_code_existing
+                FROM NPT009
+                WHERE CUSTOMER_CODE = :P58_CUSTOMER_CODE;
+            ELSIF :P58_CUSTOMER_CODE_INITIAL = :P58_CUSTOMER_CODE THEN
+                    l_customer_code_existing := 0;
+                ELSE
+                SELECT DISTINCT COUNT(1)
+                    INTO l_customer_code_existing
+                    FROM NPT009
+                    WHERE CUSTOMER_CODE = :P58_CUSTOMER_CODE AND CUSTOMER_CODE != :P58_CUSTOMER_CODE_INITIAL;
+            END IF;
+            :P58_IS_CUSTOMER_CODE_DUPLICATE := l_customer_code_existing;
+        END;
+      items-to-submit: 
+      - P58_CUSTOMER_CODE_INITIAL
+      - P58_CUSTOMER_CODE
+      - P58_CUSTOMER_ID
+      items-to-return: 
+      - P58_IS_CUSTOMER_CODE_DUPLICATE
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: Check Dynamic Validations # 13863209495632549
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Check if Main Account Code Exist ============
+    id: 18082868797113233
+    identification: 
+      name: Check if Main Account Code Exist
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            l_customer_code_existing NUMBER;
+        BEGIN
+            SELECT DISTINCT COUNT(1)
+                INTO l_customer_code_existing
+                FROM NPT009
+                WHERE CUSTOMER_CODE = :P58_MAIN_ACCOUNT_CODE;
+        
+            :P58_IS_MAIN_ACCOUNT_CODE_EXIST := l_customer_code_existing;
+        END;
+      items-to-submit: 
+      - P58_MAIN_ACCOUNT_CODE
+      items-to-return: 
+      - P58_IS_MAIN_ACCOUNT_CODE_EXIST
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Check Dynamic Validations # 13863209495632549
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item = Value
+      item: P58_ACCOUNT_TYPE_ID
+      value: 3
+
+- # ====== Dynamic Action: Change Required Fields ==============
+  id: 14303065400089701
+  identification: 
+    name: Change Required Fields
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P58_ACCOUNT_TYPE_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14303104637089702
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        console.log( "Account Type: " + Number( $v("P58_ACCOUNT_TYPE_ID") ) );
+        console.log(typeof Number( $v("P58_ACCOUNT_TYPE_ID") ));
+        changeRequired( Number( $v("P58_ACCOUNT_TYPE_ID") ) );
+
+    execution: 
+      sequence: 10
+      event: Change Required Fields # 14303065400089701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Clear =======================================
+    id: 17193205236817136
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 20
+      event: Change Required Fields # 14303065400089701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Main Account Code ============
+  id: 14303544697089706
+  identification: 
+    name: Enable Main Account Code
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P58_ACCOUNT_TYPE_ID
+
+  client-side-condition: 
+    type: Item = Value
+    item: P58_ACCOUNT_TYPE_ID
+    value: 3
+
+  actions: 
+  - # ====== Action: Enable ======================================
+    id: 14303621639089707
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 10
+      event: Enable Main Account Code # 14303544697089706
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Disable Main Account Code ===========
+  id: 14303706017089708
+  identification: 
+    name: Disable Main Account Code
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P58_ACCOUNT_TYPE_ID
+
+  actions: 
+  - # ====== Action: Disable =====================================
+    id: 14303874012089709
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 10
+      event: Disable Main Account Code # 14303706017089708
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item != Value
+      item: P58_ACCOUNT_TYPE_ID
+      value: 3
+
+- # ====== Dynamic Action: Require All Address Field ===========
+  id: 15142805765750606
+  identification: 
+    name: Require All Address Field
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P58_SHIPPING_ZIPCODE
+
+  client-side-condition: 
+    type: Item = Value
+    item: P58_ACCOUNT_TYPE_ID
+    value: 3
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15142924189750607
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        console.log("change street and city");
+        console.log($v("P58_SHIPPING_ZIPCODE") == null || $v("P58_SHIPPING_ZIPCODE") == "");
+        
+        if ($v("P58_SHIPPING_ZIPCODE")){
+            $("#P58_SHIPPING_BUILDING_AND_STREET_LABEL > .required").removeClass("hide");
+            $("#P58_SHIPPING_CITY_LABEL > .required").removeClass("hide");
+        } else {
+            $("#P58_SHIPPING_BUILDING_AND_STREET_LABEL > .required").addClass("hide");
+            $("#P58_SHIPPING_CITY_LABEL > .required").addClass("hide");
+        }
+
+    execution: 
+      sequence: 10
+      event: Require All Address Field # 15142805765750606
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Require Building And Street =========
+  id: 15143079100750608
+  identification: 
+    name: Require Building And Street
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P58_SHIPPING_CITY
+
+  client-side-condition: 
+    type: Item = Value
+    item: P58_ACCOUNT_TYPE_ID
+    value: 3
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15143185898750609
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        console.log($v("P58_SHIPPING_CITY") == null || $v("P58_SHIPPING_CITY") == "");
+        if ($v("P58_SHIPPING_CITY")){
+            $("#P58_SHIPPING_BUILDING_AND_STREET_LABEL > .required").removeClass("hide");
+        } else {
+            $("#P58_SHIPPING_BUILDING_AND_STREET_LABEL > .required").addClass("hide");
+        }
+
+    execution: 
+      sequence: 10
+      event: Require Building And Street # 15143079100750608
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is null
+      item: P58_SHIPPING_ZIPCODE
+
+- # ====== Dynamic Action: Populate Addresses ==================
+  id: 15143260684750610
+  identification: 
+    name: Populate Addresses
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P58_CUSTOMER_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15143311583750611
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let billingAddress = splitAddress($v("P58_BILLING_ADDRESS"));
+        // let billingAddress = splitAddress("Bldg. AB, 22nd Street,,");
+        
+        apex.item("P58_BILLING_BUILDING_AND_STREET").setValue(billingAddress[0]);
+        apex.item("P58_BILLING_CITY").setValue(billingAddress[1]);
+        
+        if(billingAddress[2] != "undefined") {
+            apex.item("P58_BILLING_ZIPCODE").setValue(billingAddress[2]);
+        }
+
+    execution: 
+      sequence: 10
+      event: Populate Addresses # 15143260684750610
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15144800389750626
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let shippingAddress = splitAddress($v("P58_SHIPPING_ADDRESS"));
+        
+        if(shippingAddress[0] != "undefined"){
+            apex.item("P58_SHIPPING_BUILDING_AND_STREET").setValue(shippingAddress[0]);
+        }
+        
+        if(shippingAddress[1] != "undefined") {
+            apex.item("P58_SHIPPING_CITY").setValue(shippingAddress[1]);
+        }
+        
+        if(shippingAddress[2] != "undefined") {
+            apex.item("P58_SHIPPING_ZIPCODE").setValue(shippingAddress[2]);
+        }
+
+    execution: 
+      sequence: 20
+      event: Populate Addresses # 15143260684750610
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On load Update ======================
+  id: 15143919499750617
+  identification: 
+    name: On load Update
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P58_CUSTOMER_ID
+
+  actions: 
+  - # ====== Action: Disable =====================================
+    id: 15144001096750618
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_CUSTOMER_CODE
+      - P58_LEGAL_NAME
+      - P58_DBA
+      - P58_ACCOUNT_TYPE_ID
+      - P58_CONTACT_PERSON
+      - P58_ORGANIZATION_TYPE_ID
+      - P58_PAYMENT_TERMS_ID
+      - P58_CREDIT_LIMIT
+      - P58_PAYMENT_INSTRUCTIONS
+      - P58_BILLING_BUILDING_AND_STREET
+      - P58_BILLING_CITY
+      - P58_BILLING_ZIPCODE
+      - P58_BILLING_CONTACTA
+      - P58_BILLING_CONTACTB
+      - P58_BILLING_FAX
+      - P58_BILLING_EMAIL
+      - P58_SHIPPING_BUILDING_AND_STREET
+      - P58_SHIPPING_CITY
+      - P58_SHIPPING_ZIPCODE
+      - P58_SHIPPING_CONTACTA
+      - P58_SHIPPING_CONTACTB
+      - P58_SHIPPING_FAX
+      - P58_SHIPPING_EMAIL
+      - P58_SHIPPING_INSTRUCTIONS
+
+    execution: 
+      sequence: 10
+      event: On load Update # 15143919499750617
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Unselectable Text Fields ====================
+    id: 15144936205750627
+    identification: 
+      name: Unselectable Text Fields
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(".apex-item-text, .apex-item-select").attr({
+            readonly:"",
+            tabindex:"-1"
+        })
+        $(".required").addClass("hide");
+
+    execution: 
+      sequence: 20
+      event: On load Update # 15143919499750617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Hide ========================================
+    id: 15145170858750629
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Customer # 15143889441750616
+
+    execution: 
+      sequence: 30
+      event: On load Update # 15143919499750617
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Disable Update Customer Button ==============
+    id: 15145880848750636
+    identification: 
+      name: Disable Update Customer Button
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Customer # 15143889441750616
+
+    execution: 
+      sequence: 40
+      event: On load Update # 15143919499750617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable Main Account Code ===================
+    id: 15146361516750641
+    identification: 
+      name: Disable Main Account Code
+      action: Disable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 60
+      event: On load Update # 15143919499750617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Hide ========================================
+    id: 39844222629908938
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Add_Discount # 39843781606908933
+
+    execution: 
+      sequence: 70
+      event: On load Update # 15143919499750617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable Standard Discount On Load ===========
+    id: 41022591059027305
+    identification: 
+      name: Disable Standard Discount On Load
+      action: Disable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_STANDARD_DISCOUNT
+
+    execution: 
+      sequence: 80
+      event: On load Update # 15143919499750617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable Seasonal Discount On load ===========
+    id: 41023277628027312
+    identification: 
+      name: Disable Seasonal Discount On load
+      action: Disable
+
+    affected-elements: 
+      selection-type: jQuery Selector
+      jquery-selector: '#discountGrid'
+
+    execution: 
+      sequence: 90
+      event: On load Update # 15143919499750617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Fields =======================
+  id: 15144186439750619
+  identification: 
+    name: Enable Fields
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update_Customer_Toggle # 15143743496750615
+
+  actions: 
+  - # ====== Action: Enable ======================================
+    id: 15144265630750620
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_CUSTOMER_CODE
+      - P58_LEGAL_NAME
+      - P58_DBA
+      - P58_ACCOUNT_TYPE_ID
+      - P58_CONTACT_PERSON
+      - P58_ORGANIZATION_TYPE_ID
+      - P58_PAYMENT_TERMS_ID
+      - P58_CREDIT_LIMIT
+      - P58_PAYMENT_INSTRUCTIONS
+      - P58_BILLING_BUILDING_AND_STREET
+      - P58_BILLING_CITY
+      - P58_BILLING_ZIPCODE
+      - P58_BILLING_CONTACTA
+      - P58_BILLING_CONTACTB
+      - P58_BILLING_FAX
+      - P58_BILLING_EMAIL
+      - P58_SHIPPING_BUILDING_AND_STREET
+      - P58_SHIPPING_CITY
+      - P58_SHIPPING_ZIPCODE
+      - P58_SHIPPING_CONTACTA
+      - P58_SHIPPING_CONTACTB
+      - P58_SHIPPING_FAX
+      - P58_SHIPPING_EMAIL
+      - P58_SHIPPING_INSTRUCTIONS
+
+    execution: 
+      sequence: 10
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Enable ======================================
+    id: 15144333920750621
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 30
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Item = Value
+      item: P58_ACCOUNT_TYPE_ID
+      value: 3
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15145023729750628
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(".apex-item-text, .apex-item-select").removeAttr("readonly tabindex");
+        $x('P58_CUSTOMER_CODE').focus();
+        mapP58KeysUpdateOn();
+        
+        $("#P58_CUSTOMER_CODE_LABEL > .required").removeClass("hide");
+        $("#P58_LEGAL_NAME_LABEL > .required").removeClass("hide");
+        $("#P58_DBA_LABEL > .required").removeClass("hide");
+        $("#P58_ACCOUNT_TYPE_ID_LABEL > .required").removeClass("hide");
+        $("#P58_CONTACT_PERSON_LABEL > .required").removeClass("hide");
+        $("#P58_ORGANIZATION_TYPE_ID_LABEL > .required").removeClass("hide");
+        $("#P58_PAYMENT_INSTRUCTIONS_LABEL > .required").removeClass("hide");
+        changeRequired( Number( $v("P58_ACCOUNT_TYPE_ID") ) );
+
+    execution: 
+      sequence: 20
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Show ========================================
+    id: 15145286432750630
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Customer # 15143889441750616
+
+    execution: 
+      sequence: 40
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Hide ========================================
+    id: 15145377335750631
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Customer_Toggle # 15143743496750615
+
+    execution: 
+      sequence: 60
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Hide ========================================
+    id: 15145496914750632
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: Discount_Inquiry # 15143408290750612
+
+    execution: 
+      sequence: 80
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Enable ======================================
+    id: 15145532453750633
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Customer # 15143889441750616
+
+    execution: 
+      sequence: 50
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable =====================================
+    id: 15145640432750634
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Customer_Toggle # 15143743496750615
+
+    execution: 
+      sequence: 70
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable =====================================
+    id: 15145703370750635
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: Discount_Inquiry # 15143408290750612
+
+    execution: 
+      sequence: 90
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Show ========================================
+    id: 39844374220908939
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Add_Discount # 39843781606908933
+
+    execution: 
+      sequence: 100
+      event: Enable Fields # 15144186439750619
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On load Add =========================
+  id: 15144489385750622
+  identification: 
+    name: On load Add
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P58_CUSTOMER_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15144584708750623
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP58KeysAdd();
+        $x('P58_CUSTOMER_CODE').focus();
+
+    execution: 
+      sequence: 10
+      event: On load Add # 15144489385750622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable =====================================
+    id: 15146423929750642
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 20
+      event: On load Add # 15144489385750622
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 39844184610908937
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: Update_Add_Discount # 39843781606908933
+
+    execution: 
+      sequence: 30
+      event: On load Add # 15144489385750622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Map Update keys =====================
+  id: 15144606307750624
+  identification: 
+    name: Map Update keys
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P58_CUSTOMER_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15144721257750625
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP58KeysUpdate();
+
+    execution: 
+      sequence: 10
+      event: Map Update keys # 15144606307750624
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Check Dynamic Actions ===============
+  id: 15146004974750638
+  identification: 
+    name: Check Dynamic Actions
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update_Customer # 15143889441750616
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 15146157181750639
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            l_customer_code_existing NUMBER;
+        BEGIN
+            IF :P58_CUSTOMER_ID IS NULL THEN
+                SELECT DISTINCT COUNT(1)
+                INTO l_customer_code_existing
+                FROM NPT009
+                WHERE CUSTOMER_CODE = :P58_CUSTOMER_CODE;
+            ELSIF :P58_CUSTOMER_CODE_INITIAL = :P58_CUSTOMER_CODE THEN
+                    l_customer_code_existing := 0;
+                ELSE
+                SELECT DISTINCT COUNT(1)
+                    INTO l_customer_code_existing
+                    FROM NPT009
+                    WHERE CUSTOMER_CODE = :P58_CUSTOMER_CODE AND CUSTOMER_CODE != :P58_CUSTOMER_CODE_INITIAL;
+            END IF;
+            :P58_IS_CUSTOMER_CODE_DUPLICATE := l_customer_code_existing;
+        END;
+      items-to-submit: 
+      - P58_CUSTOMER_CODE_INITIAL
+      - P58_CUSTOMER_CODE
+      - P58_CUSTOMER_ID
+      items-to-return: 
+      - P58_IS_CUSTOMER_CODE_DUPLICATE
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Check Dynamic Actions # 15146004974750638
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15146236265750640
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        console.log("Checking Validations");
+        let isValid = checkValidations( Number( $v("P58_ACCOUNT_TYPE_ID") ) );
+        if(isValid){
+            var region = apex.region('discountGrid');
+            var views = region.widget().interactiveGrid('getViews');
+            views.grid.model.clearChanges(); // Clears unsaved changes to avoid warnings
+            apex.page.submit( "SUBMIT" );
+        }
+
+    execution: 
+      sequence: 30
+      event: Check Dynamic Actions # 15146004974750638
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Check if Main Account Code Exist ============
+    id: 18083482275113239
+    identification: 
+      name: Check if Main Account Code Exist
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            l_customer_code_existing NUMBER;
+        BEGIN
+            SELECT DISTINCT COUNT(1)
+                INTO l_customer_code_existing
+                FROM NPT009
+                WHERE CUSTOMER_CODE = :P58_MAIN_ACCOUNT_CODE;
+        
+            :P58_IS_MAIN_ACCOUNT_CODE_EXIST := l_customer_code_existing;
+        END;
+      items-to-submit: 
+      - P58_MAIN_ACCOUNT_CODE
+      items-to-return: 
+      - P58_IS_MAIN_ACCOUNT_CODE_EXIST
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Check Dynamic Actions # 15146004974750638
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item = Value
+      item: P58_ACCOUNT_TYPE_ID
+      value: 3
+
+- # ====== Dynamic Action: Set Title ===========================
+  id: 18082082632113225
+  identification: 
+    name: Set Title
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18082160779113226
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: setTitle("Add Customer");
+
+    execution: 
+      sequence: 10
+      event: Set Title # 18082082632113225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Item is NULL
+      item: P58_CUSTOMER_ID
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18082363490113228
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: setTitle("Update Customer");
+
+    execution: 
+      sequence: 20
+      event: Set Title # 18082082632113225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Item is NOT NULL
+      item: P58_CUSTOMER_ID
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30858445651955713
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: setTitle("Inquire Customer");
+
+    execution: 
+      sequence: 30
+      event: Set Title # 18082082632113225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Item is NOT NULL
+      item: P58_INQUIRE_TOGGLE
+
+- # ====== Dynamic Action: Create Collection ===================
+  id: 39842386515908919
+  identification: 
+    name: Create Collection
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39842463800908920
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_collection_name varchar2(20) := 'DISCOUNTS';
+            cnt NUMBER;
+        BEGIN
+            APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(v_collection_name);
+        
+            FOR d IN (
+                SELECT a.DISCOUNT_ID ID, b.DISCOUNT_CODE CODE, b.DATE_TO END_DATE
+                    FROM NPT032 a, NPT008 b
+                WHERE a.CUSTOMER_ID = :P58_CUSTOMER_ID AND a.ACTIVE = 'y' AND a.DISCOUNT_ID = b.DISCOUNT_ID
+                ORDER BY b.DATE_TO
+            ) LOOP
+                apex_collection.add_member (p_collection_name => v_collection_name,
+                    p_n001 => d.ID,
+                    p_c001 => d.CODE,
+                    p_c002 => d.END_DATE
+                ); 
+            END LOOP;
+        
+            SELECT COUNT(1)
+            INTO cnt
+            FROM NPT032
+            WHERE CUSTOMER_ID = :P58_CUSTOMER_ID AND ACTIVE = 'y';
+        
+            IF (cnt IS NULL) THEN
+                FOR i IN 1..3 LOOP
+                    apex_collection.add_member (p_collection_name => v_collection_name,
+                        p_n001 => '',
+                        p_c001 => ''
+                    ); 
+                END LOOP;
+            ELSIF (cnt = 1) THEN 
+                FOR i IN 1..2 LOOP
+                    apex_collection.add_member (p_collection_name => v_collection_name,
+                        p_n001 => '',
+                        p_c001 => ''
+                    ); 
+                END LOOP;
+            ELSIF (cnt = 2) THEN 
+                apex_collection.add_member (p_collection_name => v_collection_name,
+                    p_n001 => '',
+                    p_c001 => ''
+                ); 
+            END IF;
+        
+            -- APEX_COLLECTION.RESEQUENCE_COLLECTION (v_collection_name);
+        
+            EXCEPTION WHEN others THEN
+                raise_application_error(-2000,DBMS_UTILITY.format_error_backtrace);
+        END;
+      items-to-submit: 
+      - P58_CUSTOMER_ID
+
+    execution: 
+      sequence: 10
+      event: Create Collection # 39842386515908919
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 39845046051908946
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Customer Discounts # 15146524195750643
+
+    execution: 
+      sequence: 20
+      event: Create Collection # 39842386515908919
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Value Change ========================
+  id: 39844701901908943
+  identification: 
+    name: Value Change
+
+  execution: 
+    sequence: 150
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Customer Discounts # 15146524195750643
+    column(s): 
+    - C001
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39844818207908944
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+        cnt NUMBER;
+        d_id NUMBER;
+        d_end_date DATE;
+        BEGIN
+            IF (:C001 IS NOT NULL) THEN
+                SELECT 
+                    COUNT(DISCOUNT_ID)
+                INTO
+                    cnt
+                FROM NPT008
+                WHERE DISCOUNT_CODE = :C001;
+        
+                IF (cnt != 0) THEN
+                    SELECT 
+                    DISCOUNT_ID, DATE_TO
+                    INTO
+                        d_id, d_end_date
+                    FROM NPT008
+                    WHERE DISCOUNT_CODE = :C001;
+                    APEX_COLLECTION.UPDATE_MEMBER (
+                        p_collection_name => 'DISCOUNTS',
+                        p_seq => :SEQ_ID,
+                        p_n001 => d_id,
+                        p_c002 => d_end_date
+                    );
+                    :P58_DISCOUNT_ID_TEMP := d_id;
+                    :P58_DISCOUNT_DATE_TO_TEMP := d_end_date;
+                ELSE
+                    APEX_COLLECTION.UPDATE_MEMBER (
+                        p_collection_name => 'DISCOUNTS',
+                        p_seq => :SEQ_ID,
+                        p_n001 => NULL,
+                        p_c002 => NULL
+                    );
+                    :P58_DISCOUNT_ID_TEMP := null;
+                    :P58_DISCOUNT_DATE_TO_TEMP := null;
+                END IF;
+            ELSE
+                APEX_COLLECTION.UPDATE_MEMBER (
+                    p_collection_name => 'DISCOUNTS',
+                    p_seq => :SEQ_ID,
+                    p_n001 => NULL,
+                    p_c002 => NULL
+                );
+                :P58_DISCOUNT_ID_TEMP := null;
+                :P58_DISCOUNT_DATE_TO_TEMP := null;
+            END IF;
+            APEX_COLLECTION.RESEQUENCE_COLLECTION ('DISCOUNTS');
+        END;
+      items-to-submit: 
+      - SEQ_ID
+      - C001
+      items-to-return: 
+      - P58_DISCOUNT_ID_TEMP
+      - P58_DISCOUNT_DATE_TO_TEMP
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Value Change # 39844701901908943
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39845148646908947
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            var region = apex.region('discountGrid');
+            var views = region.widget().interactiveGrid('getViews');
+            // views.grid.model.clearChanges(); // Clears unsaved changes to avoid warnings
+            region.refresh(); // Refreshes the Interactive Grid
+            region.widget().interactiveGrid('getActions').set("edit", false);
+        }, "500");
+
+    execution: 
+      sequence: 40
+      event: Value Change # 39844701901908943
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Refresh =====================================
+    id: 39845286213908948
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Column(s)
+      column(s): 
+      - N001
+
+    execution: 
+      sequence: 50
+      event: Value Change # 39844701901908943
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41022350414027303
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var grid = apex.region('discountGrid').widget().interactiveGrid('getViews','grid');
+        var model = grid.model;
+        var record = grid.getSelectedRecords();
+        
+        record.forEach(function(object, index){
+            rec = record[index];
+            model.setValue(rec,'N001',apex.item( "P58_DISCOUNT_ID_TEMP" ).getValue());
+            model.setValue(rec,'C002',apex.item( "P58_DISCOUNT_DATE_TO_TEMP" ).getValue());
+        })
+        
+
+    execution: 
+      sequence: 30
+      event: Value Change # 39844701901908943
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Discount Edit =======================
+  id: 41023348799027313
+  identification: 
+    name: Discount Edit
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update_Add_Discount # 39843781606908933
+
+  client-side-condition: 
+    type: Item = Value
+    item: P58_EDIT_MODE
+    value: Details
+
+  actions: 
+  - # ====== Action: Enable Standard Discount ====================
+    id: 41023488787027314
+    identification: 
+      name: Enable Standard Discount
+      action: Enable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_STANDARD_DISCOUNT
+
+    execution: 
+      sequence: 20
+      event: Discount Edit # 41023348799027313
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Enable Seasonal Discount ====================
+    id: 41023674150027316
+    identification: 
+      name: Enable Seasonal Discount
+      action: Enable
+
+    affected-elements: 
+      selection-type: jQuery Selector
+      jquery-selector: '#discountGrid'
+
+    execution: 
+      sequence: 30
+      event: Discount Edit # 41023348799027313
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 41023909419027319
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: Discounts
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_EDIT_MODE
+
+    execution: 
+      sequence: 10
+      event: Discount Edit # 41023348799027313
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Disable Details =============================
+    id: 41024577784027325
+    identification: 
+      name: Disable Details
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $('#customer-information input, #customer-information select, #billing input, #shipping input')
+            .attr('disabled','disabled');
+
+    execution: 
+      sequence: 40
+      event: Discount Edit # 41023348799027313
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable Main Account Code ===================
+    id: 41024797142027327
+    identification: 
+      name: Disable Main Account Code
+      action: Disable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 50
+      event: Discount Edit # 41023348799027313
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Focus ===================================
+    id: 41025266625027332
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_STANDARD_DISCOUNT
+
+    execution: 
+      sequence: 60
+      event: Discount Edit # 41023348799027313
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Reset Key Mapping ===========================
+    id: 41026338843027343
+    identification: 
+      name: Reset Key Mapping
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP58KeysUpdateDiscounts();
+
+    execution: 
+      sequence: 70
+      event: Discount Edit # 41023348799027313
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+- # ====== Dynamic Action: Details Edit ========================
+  id: 41023765803027317
+  identification: 
+    name: Details Edit
+
+  execution: 
+    sequence: 170
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update_Add_Discount # 39843781606908933
+
+  client-side-condition: 
+    type: Item = Value
+    item: P58_EDIT_MODE
+    value: Discounts
+
+  actions: 
+  - # ====== Action: Disable Standard Discount ===================
+    id: 41023808854027318
+    identification: 
+      name: Disable Standard Discount
+      action: Disable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_STANDARD_DISCOUNT
+
+    execution: 
+      sequence: 20
+      event: Details Edit # 41023765803027317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable Standard Discount ===================
+    id: 41024075837027320
+    identification: 
+      name: Disable Standard Discount
+      action: Disable
+
+    affected-elements: 
+      selection-type: jQuery Selector
+      jquery-selector: '#discountGrid'
+
+    execution: 
+      sequence: 30
+      event: Details Edit # 41023765803027317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 41024101336027321
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: Details
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_EDIT_MODE
+
+    execution: 
+      sequence: 10
+      event: Details Edit # 41023765803027317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Enable Details ==============================
+    id: 41024609554027326
+    identification: 
+      name: Enable Details
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $('#customer-information input, #customer-information select, #billing input, #shipping input')
+            .removeAttr('disabled');
+
+    execution: 
+      sequence: 40
+      event: Details Edit # 41023765803027317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable Main Account Code ===================
+    id: 41024871582027328
+    identification: 
+      name: Disable Main Account Code
+      action: Disable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 50
+      event: Details Edit # 41023765803027317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item != Value
+      item: P58_ACCOUNT_TYPE_ID
+      value: 3
+
+  - # ====== Action: Enable Main Account Code ====================
+    id: 41024996590027329
+    identification: 
+      name: Enable Main Account Code
+      action: Enable
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_MAIN_ACCOUNT_CODE
+
+    execution: 
+      sequence: 60
+      event: Details Edit # 41023765803027317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P58_ACCOUNT_TYPE_ID
+      value: 3
+
+  - # ====== Action: Set Focus ===================================
+    id: 41025329029027333
+    identification: 
+      name: Set Focus
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $x('P58_CUSTOMER_CODE').focus();
+            });
+        }, 100);
+
+    execution: 
+      sequence: 70
+      event: Details Edit # 41023765803027317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Reset Key Mapping ===========================
+    id: 41026427469027344
+    identification: 
+      name: Reset Key Mapping
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP58KeysUpdateOn();
+
+    execution: 
+      sequence: 80
+      event: Details Edit # 41023765803027317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Mode ============================
+  id: 41024310423027323
+  identification: 
+    name: Set Mode
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update_Add_Discount # 39843781606908933
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41024425581027324
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ( $("#P58_EDIT_MODE").val() == "Details" ){
+            $("#P58_EDIT_MODE").val("Discounts");
+        } else {
+            $("#P58_EDIT_MODE").val("Details");
+        }
+
+    execution: 
+      sequence: 10
+      event: Set Mode # 41024310423027323
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Lose Focus ==========================
+  id: 41025497590027334
+  identification: 
+    name: Lose Focus
+
+  execution: 
+    sequence: 190
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Lose Focus
+    selection-type: Item(s)
+    item(s): 
+    - P58_STANDARD_DISCOUNT
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41025589139027335
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(".a-GV-cell").trigger("dblclick");
+        // $(".a-GV-cell").eq(1).trigger("click");
+
+    execution: 
+      sequence: 10
+      event: Lose Focus # 41025497590027334
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P58_EDIT_MODE
+      value: Discounts
+
+- # ====== Dynamic Action: C001 Get Focus ======================
+  id: 41026959646027349
+  identification: 
+    name: C001 Get Focus
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Column(s)
+    interactive-grid: Customer Discounts # 15146524195750643
+    column(s): 
+    - C001
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41027081631027350
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP58KeysUpdateDiscountsFocused();
+
+    execution: 
+      sequence: 10
+      event: C001 Get Focus # 41026959646027349
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change Standard Discount Value ======
+  id: 41302353504763404
+  identification: 
+    name: Change Standard Discount Value
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P58_STANDARD_DISCOUNT
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 41302482044763405
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT :P58_STANDARD_DISCOUNT / 100 FROM DUAL'
+      items-to-submit: 
+      - P58_STANDARD_DISCOUNT
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P58_STANDARD_DISCOUNT_VALUE
+
+    execution: 
+      sequence: 10
+      event: Change Standard Discount Value # 41302353504763404
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: C002 Get Focus ======================
+  id: 41303107952763412
+  identification: 
+    name: C002 Get Focus
+
+  execution: 
+    sequence: 230
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Column(s)
+    interactive-grid: Customer Discounts # 15146524195750643
+    column(s): 
+    - C002
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41303279854763413
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP58KeysUpdateDiscounts();
+
+    execution: 
+      sequence: 10
+      event: C002 Get Focus # 41303107952763412
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Get Focus ===========================
+  id: 41305103940763432
+  identification: 
+    name: Get Focus
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P58_STANDARD_DISCOUNT
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 41305267955763433
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP58KeysUpdateDiscounts();
+
+    execution: 
+      sequence: 10
+      event: Get Focus # 41305103940763432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Percent Only ============================
+  id: 39843553550908931
+  identification: 
+    name: Percent Only
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: '(:P58_STANDARD_DISCOUNT < 99.99)'
+    always-execute: true
+
+  error: 
+    error-message: Number cannot be over 99.
+    display-location: Inline with Field
+    associated-item: P58_STANDARD_DISCOUNT # 39843320388908929
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+computations: 
+- # ====== Computation: P58_ACCOUNT_OPENED =====================
+  id: 13862908938632546
+  identification: 
+    item-name: P58_ACCOUNT_OPENED
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: SELECT SYSDATE FROM DUAL
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P58_CUSTOMER_ID
+
+- # ====== Computation: P58_OUTSTANDING_BALANCE_VIEW ===========
+  id: 17193158634817135
+  identification: 
+    item-name: P58_OUTSTANDING_BALANCE_VIEW
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: "SELECT TO_CHAR( NVL(:P58_OUTSTANDING_BALANCE, 0),'999G999G990D99' ) FROM DUAL"
+
+  server-side-condition: 
+    type: Item != Value
+    item: P58_ACCOUNT_TYPE_ID
+    value: 2
+
+- # ====== Computation: P58_OUTSTANDING_BALANCE_VIEW ===========
+  id: 17193532457817139
+  identification: 
+    item-name: P58_OUTSTANDING_BALANCE_VIEW
+
+  execution: 
+    sequence: 50
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT TO_CHAR( NVL(SUM(a.OUTSTANDING_BALANCE), 0),'999G999G990D99' ) 
+      FROM NPT009 a 
+      WHERE a.ACCOUNT_TYPE_ID = 3 AND a.MAIN_ACCOUNT_CODE = :P58_CUSTOMER_CODE
+
+  server-side-condition: 
+    type: Item = Value
+    item: P58_ACCOUNT_TYPE_ID
+    value: 2
+
+- # ====== Computation: P58_CREDIT_LIMIT =======================
+  id: 18082419662113229
+  identification: 
+    item-name: P58_CREDIT_LIMIT
+
+  execution: 
+    sequence: 60
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: "SELECT TO_CHAR( NVL(:P58_CREDIT_LIMIT, 0),'999999990D99' ) FROM DUAL"
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P58_CUSTOMER_ID
+
+- # ====== Computation: P58_STANDARD_DISCOUNT ==================
+  id: 41302573683763406
+  identification: 
+    item-name: P58_STANDARD_DISCOUNT
+
+  execution: 
+    sequence: 70
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: 'SELECT :P58_STANDARD_DISCOUNT_VALUE*100 FROM DUAL'
+
+processes: 
+- # ====== Process: Initialize form Add/Update Customer ========
+  id: 13930604023873100
+  identification: 
+    name: Initialize form Add/Update Customer
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Add/Update Customer # 13912731848873017
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Update Customer ===============
+  id: 13931092546873101
+  identification: 
+    name: Process form Update Customer
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          l_billing_address NPT009.BILLING_ADDRESS%type;
+          l_shipping_address NPT009.SHIPPING_ADDRESS%type;
+          temp NUMBER;
+      BEGIN
+          IF :P58_BILLING_BUILDING_AND_STREET IS NOT NULL AND :P58_BILLING_CITY IS NOT NULL AND :P58_BILLING_ZIPCODE IS NOT NULL
+              THEN l_billing_address := :P58_BILLING_BUILDING_AND_STREET || '%' || :P58_BILLING_CITY || '%' || :P58_BILLING_ZIPCODE;
+              ELSIF :P58_BILLING_BUILDING_AND_STREET IS NOT NULL AND :P58_BILLING_CITY IS NOT NULL AND :P58_BILLING_ZIPCODE IS NULL
+              THEN l_billing_address := :P58_BILLING_BUILDING_AND_STREET || '%' || :P58_BILLING_CITY || '%';
+              ELSE l_billing_address := NULL;
+          END IF;
+          l_shipping_address := :P58_SHIPPING_BUILDING_AND_STREET || '%' || :P58_SHIPPING_CITY || '%' || :P58_SHIPPING_ZIPCODE;
+      
+          UPDATE NPT009
+          SET
+              CUSTOMER_CODE = :P58_CUSTOMER_CODE,
+              LEGAL_NAME = :P58_LEGAL_NAME,
+              DBA = :P58_DBA,
+              ACCOUNT_TYPE_ID = :P58_ACCOUNT_TYPE_ID,
+              MAIN_ACCOUNT_CODE = UPPER(:P58_MAIN_ACCOUNT_CODE),
+              CONTACT_PERSON = :P58_CONTACT_PERSON,
+              ORGANIZATION_TYPE_ID = :P58_ORGANIZATION_TYPE_ID,
+              PAYMENT_TERMS_ID = :P58_PAYMENT_TERMS_ID,
+              CREDIT_LIMIT = :P58_CREDIT_LIMIT,
+              PAYMENT_INSTRUCTIONS = :P58_PAYMENT_INSTRUCTIONS,
+              BILLING_ADDRESS = l_billing_address,
+              BILLING_CONTACTA = :P58_BILLING_CONTACTA,
+              BILLING_CONTACTB = :P58_BILLING_CONTACTB,
+              BILLING_FAX = :P58_BILLING_FAX,
+              BILLING_EMAIL = :P58_BILLING_EMAIL,
+              SHIPPING_ADDRESS = l_shipping_address,
+              SHIPPING_CONTACTA = :P58_SHIPPING_CONTACTA,
+              SHIPPING_CONTACTB =:P58_SHIPPING_CONTACTB,
+              SHIPPING_FAX = :P58_SHIPPING_FAX,
+              SHIPPING_EMAIL = :P58_BILLING_EMAIL,
+              SHIPPING_INSTRUCTIONS = :P58_SHIPPING_INSTRUCTIONS,
+              STANDARD_DISCOUNT_VALUE = :P58_STANDARD_DISCOUNT_VALUE,
+              USER_UPDATE = v('APP_USER'),
+              DATE_UPDATED = SYSDATE
+          WHERE CUSTOMER_ID = :P58_CUSTOMER_ID;
+      
+          -- Set active to 'y' when found in collection and 'n' when not found.
+          FOR d IN (
+              SELECT DISCOUNT_ID
+                  FROM NPT032
+              WHERE CUSTOMER_ID = :P58_CUSTOMER_ID AND ACTIVE = 'y'
+          ) LOOP
+              SELECT COUNT(1)
+              INTO temp
+              FROM APEX_COLLECTIONS
+              WHERE COLLECTION_NAME = 'DISCOUNTS' AND N001 = d.DISCOUNT_ID;
+              IF (temp <= 0) THEN
+                  UPDATE NPT032
+                  SET ACTIVE = 'n',
+                      USER_UPDATE = v('APP_USER'),
+                      DATE_UPDATED = SYSDATE
+                  WHERE DISCOUNT_ID = d.DISCOUNT_ID AND CUSTOMER_ID = :P58_CUSTOMER_ID;
+              END IF;
+          END LOOP;
+      
+          -- Set active to 'n' when not found in collection.
+          FOR d IN (
+              SELECT DISCOUNT_ID
+                  FROM NPT032
+              WHERE CUSTOMER_ID = :P58_CUSTOMER_ID AND ACTIVE = 'n'
+          ) LOOP
+              SELECT COUNT(1)
+              INTO temp
+              FROM APEX_COLLECTIONS
+              WHERE COLLECTION_NAME = 'DISCOUNTS' AND N001 = d.DISCOUNT_ID;
+              IF (temp >= 1) THEN
+                  UPDATE NPT032
+                  SET ACTIVE = 'y',
+                      USER_UPDATE = v('APP_USER'),
+                      DATE_UPDATED = SYSDATE
+                  WHERE DISCOUNT_ID = d.DISCOUNT_ID AND CUSTOMER_ID = :P58_CUSTOMER_ID;
+              END IF;
+          END LOOP;
+      
+          -- Insert into NPT032 when no record of it exists.
+          FOR d IN (
+              SELECT N001
+              FROM APEX_COLLECTIONS
+              WHERE COLLECTION_NAME = 'DISCOUNTS'
+          ) LOOP
+              SELECT COUNT(1)
+              INTO temp
+              FROM NPT032
+              WHERE CUSTOMER_ID = :P58_CUSTOMER_ID AND DISCOUNT_ID = d.N001;
+              IF (temp <= 0 AND d.N001 IS NOT NULL) THEN
+                  INSERT INTO NPT032 ( CUSTOMER_ID, DISCOUNT_ID, ACTIVE, USER_CREATED, DATE_CREATED )
+                  VALUES ( :P58_CUSTOMER_ID, d.N001, 'y', v('APP_USER'), SYSDATE );
+              END IF;
+          END LOOP;
+      END;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Customer Successfully Updated.
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P58_CUSTOMER_ID
+
+- # ====== Process: Process Form Add Customer ==================
+  id: 14304357720089714
+  identification: 
+    name: Process Form Add Customer
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          INSERT INTO NPT009(
+              CUSTOMER_CODE,
+              LEGAL_NAME,
+              DBA,
+              ACCOUNT_TYPE_ID,
+              MAIN_ACCOUNT_CODE,
+              CONTACT_PERSON,
+              ORGANIZATION_TYPE_ID,
+              PAYMENT_TERMS_ID,
+              CREDIT_LIMIT,
+              PAYMENT_INSTRUCTIONS,
+              BILLING_ADDRESS,
+              BILLING_CONTACTA,
+              BILLING_CONTACTB,
+              BILLING_FAX,
+              BILLING_EMAIL,
+              SHIPPING_ADDRESS,
+              SHIPPING_CONTACTA,
+              SHIPPING_CONTACTB,
+              SHIPPING_FAX,
+              SHIPPING_EMAIL,
+              SHIPPING_INSTRUCTIONS,
+              STANDARD_DISCOUNT_VALUE,
+              USER_CREATED,
+              DATE_CREATED
+          )
+          VALUES(
+              :P58_CUSTOMER_CODE,
+              :P58_LEGAL_NAME,
+              :P58_DBA,
+              :P58_ACCOUNT_TYPE_ID,
+              UPPER(:P58_MAIN_ACCOUNT_CODE),
+              :P58_CONTACT_PERSON,
+              :P58_ORGANIZATION_TYPE_ID,
+              :P58_PAYMENT_TERMS_ID,
+              :P58_CREDIT_LIMIT,
+              :P58_PAYMENT_INSTRUCTIONS,
+              CASE WHEN :P58_BILLING_BUILDING_AND_STREET IS NOT NULL AND :P58_BILLING_CITY IS NOT NULL AND :P58_BILLING_ZIPCODE IS NOT NULL
+                  THEN :P58_BILLING_BUILDING_AND_STREET || '%' || :P58_BILLING_CITY || '%' || :P58_BILLING_ZIPCODE
+                  WHEN :P58_BILLING_BUILDING_AND_STREET IS NOT NULL AND :P58_BILLING_CITY IS NOT NULL AND :P58_BILLING_ZIPCODE IS NULL
+                  THEN :P58_BILLING_BUILDING_AND_STREET || '%' || :P58_BILLING_CITY || '%'
+                  ELSE NULL
+              END,
+              :P58_BILLING_CONTACTA,
+              :P58_BILLING_CONTACTB,
+              :P58_BILLING_FAX,
+              :P58_BILLING_EMAIL,
+              :P58_SHIPPING_BUILDING_AND_STREET || '%' || :P58_SHIPPING_CITY || '%' || :P58_SHIPPING_ZIPCODE,
+              -- CASE WHEN :P58_SHIPPING_BUILDING_AND_STREET IS NOT NULL AND :P58_SHIPPING_CITY IS NOT NULL AND :P58_SHIPPING_ZIPCODE IS NOT NULL
+              --     THEN :P58_SHIPPING_BUILDING_AND_STREET || '%' || :P58_SHIPPING_CITY || '%' || :P58_SHIPPING_ZIPCODE
+              --     WHEN :P58_SHIPPING_BUILDING_AND_STREET IS NOT NULL AND :P58_SHIPPING_CITY IS NOT NULL AND :P58_SHIPPING_ZIPCODE IS NULL
+              --     THEN :P58_SHIPPING_BUILDING_AND_STREET || '%' || :P58_SHIPPING_CITY || '%'
+              --     WHEN :P58_SHIPPING_BUILDING_AND_STREET IS NOT NULL AND :P58_SHIPPING_CITY IS NULL AND :P58_SHIPPING_ZIPCODE IS NULL
+              --     THEN :P58_SHIPPING_BUILDING_AND_STREET || '%%'
+              --     ELSE NULL
+              -- END,
+              :P58_SHIPPING_CONTACTA,
+              :P58_SHIPPING_CONTACTB,
+              :P58_SHIPPING_FAX,
+              :P58_SHIPPING_EMAIL,
+              :P58_SHIPPING_INSTRUCTIONS,
+              :P58_STANDARD_DISCOUNT,
+              v('APP_USER'),
+              SYSDATE
+          );
+      END;
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Customer Successfully Added.
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P58_CUSTOMER_ID
+
+- # ====== Process: Customer Discounts - Save Interactive Grid D
+  id: 39844635789908942
+  identification: 
+    name: Customer Discounts - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Customer Discounts # 15146524195750643
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+branches: 
+- # ====== Branch: Go To Page 57 ===============================
+  id: 13930109972873098
+  identification: 
+    name: Go To Page 57
+
+  execution: 
+    sequence: 1
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:57:&APP_SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+      page: 57 # Customer Masterfile
+

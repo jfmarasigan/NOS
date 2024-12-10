@@ -1,0 +1,447 @@
+---
+# ====== Page: Customer Masterlist Search ====================
+id: 59
+identification: 
+  name: Customer Masterlist Search
+  alias: CUSTOMER-MASTERLIST-SEARCH
+  title: 'Search:'
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 650
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p59KeyMap = {
+        escape : (v) => {
+            $(document).off('keydown.p59keyevents');
+            $.event.trigger("cancelDialog");
+        },
+        enter : (v) => {
+            // $(document).off('keydown.p59keyevents');
+            apex.page.submit( "SUBMIT" );
+        }
+    }
+    
+    function mapP59Keys() {
+        $(document).off('keydown.p59keyevents');
+        $(document).on('keydown.p59keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p59KeyMap[key]) {
+                ev.preventDefault();
+                p59KeyMap[key]();
+            }
+        });
+    }
+    
+    $x('P59_SEARCH_CUSTOMER_CODE').focus();
+  execute-when-page-loads: mapP59Keys();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .t-Dialog-body label,
+    .t-Dialog-body input{
+        font-size: 1.125rem;
+    }
+    
+    .t-Region-body{
+        padding: 0.4;
+    }
+    
+    .t-Form-label{
+        white-space: nowrap;
+    }
+    
+    #search-form{
+        background-color: white;
+    }
+    
+    /* .t-Form-labelContainer:has(> #P59_SEARCH_CUSTOMER_CODE_LABEL),
+    .t-Form-labelContainer:has(> #P59_SEARCH_LEGAL_NAME_LABEL),
+    .t-Form-labelContainer:has(> #P59_SEARCH_DBA_LABEL)
+    {
+        text-align: start;    
+    } */
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search Field ================================
+  id: 14304719796089718
+  identification: 
+    name: Search Field
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P59_SEARCH_CUSTOMER_CODE =================
+  id: 14304850720089719
+  identification: 
+    name: P59_SEARCH_CUSTOMER_CODE
+    type: Text Field
+
+  label: 
+    label: 'Go To Customer Code: '
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Search Field # 14304719796089718
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P59_SEARCH_LEGAL_NAME ====================
+  id: 14304921399089720
+  identification: 
+    name: P59_SEARCH_LEGAL_NAME
+    type: Text Field
+
+  label: 
+    label: 'Legal Name: '
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Search Field # 14304719796089718
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P59_SEARCH_DBA ===========================
+  id: 14305091135089721
+  identification: 
+    name: P59_SEARCH_DBA
+    type: Text Field
+
+  label: 
+    label: 'DBA: '
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Search Field # 14304719796089718
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Cancel Search =======================
+  id: 14305788752089728
+  identification: 
+    name: Cancel Search
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: cancelDialog
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14305800081089729
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p59keyevents');
+
+    execution: 
+      sequence: 10
+      event: Cancel Search # 14305788752089728
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Cancel Dialog ===============================
+    id: 14305989065089730
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 20
+      event: Cancel Search # 14305788752089728
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Value must be present Code ==============
+  id: 14305180010089722
+  identification: 
+    name: Value must be present Code
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1
+      FROM DUAL
+      WHERE :P59_SEARCH_CUSTOMER_CODE IS NOT NULL OR :P59_SEARCH_LEGAL_NAME IS NOT NULL OR :P59_SEARCH_DBA IS NOT NULL
+    always-execute: true
+
+  error: 
+    error-message: Please type value in the fields.
+    display-location: Inline with Field
+    associated-item: P59_SEARCH_CUSTOMER_CODE # 14304850720089719
+
+- # ====== Validation: Value must be present Legal Name ========
+  id: 14305218322089723
+  identification: 
+    name: Value must be present Legal Name
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1
+      FROM DUAL
+      WHERE :P59_SEARCH_CUSTOMER_CODE IS NOT NULL OR :P59_SEARCH_LEGAL_NAME IS NOT NULL OR :P59_SEARCH_DBA IS NOT NULL
+    always-execute: true
+
+  error: 
+    error-message: Please type value in the fields.
+    display-location: Inline with Field
+    associated-item: P59_SEARCH_LEGAL_NAME # 14304921399089720
+
+- # ====== Validation: Value must be present DBA ===============
+  id: 14305397742089724
+  identification: 
+    name: Value must be present DBA
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1
+      FROM DUAL
+      WHERE :P59_SEARCH_CUSTOMER_CODE IS NOT NULL OR :P59_SEARCH_LEGAL_NAME IS NOT NULL OR :P59_SEARCH_DBA IS NOT NULL
+    always-execute: true
+
+  error: 
+    error-message: Please type value in the fields.
+    display-location: Inline with Field
+    associated-item: P59_SEARCH_DBA # 14305091135089721
+
+processes: 
+- # ====== Process: Go To Page 57 ==============================
+  id: 14305466220089725
+  identification: 
+    name: Go To Page 57
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    items-to-return-: 
+    - P59_SEARCH_CUSTOMER_CODE
+    - P59_SEARCH_LEGAL_NAME
+    - P59_SEARCH_DBA
+    show-success-messages: false
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

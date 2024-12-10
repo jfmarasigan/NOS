@@ -1,0 +1,2673 @@
+---
+# ====== Page: Add Vendor ====================================
+id: 6
+identification: 
+  name: Add Vendor
+  alias: ADD-VENDOR
+  title: Add/Update  Vendor
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p6KeyMap = {
+        escape : (v) => {
+            $("#to-page5").trigger("click");
+        }
+    }
+    
+    $x('P6_VENDOR_CODE').focus();
+    
+    function mapP6Keys() {
+        $(document).off('keydown.p5keyevents');
+        $(document).on('keydown.p5keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p6KeyMap[key]) {
+                ev.preventDefault();
+                p6KeyMap[key]();
+            }
+        });
+    }
+    
+    $("#P6_PHONE_NUMBER, #P6_FAX_NUMBER")
+        .keypress(function(e){
+            if(
+                e.key == "1" || e.key == "2" ||
+                e.key == "3" || e.key == "4" ||
+                e.key == "5" || e.key == "6" ||
+                e.key == "7" || e.key == "8" ||
+                e.key == "9" || e.key == "0"
+            ){
+                if( $(this).val().length == 3 ){
+                    $(this).val( $(this).val() + "-" )
+                } else if( $(this).val().length == 7 ){
+                    $(this).val( $(this).val() + "-" )
+                }
+                return true;
+            } else {
+                return false;
+            }
+    });
+  execute-when-page-loads: mapP6Keys();
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #vendor-form{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #main-details, #billing-address, #shipping-address {
+        background-color: white;
+    }
+    #main-details label, #billing-address label, #shipping-address label,
+    #main-details input, #billing-address input, #shipping-address input {
+        font-size: 1.125rem;
+    }
+    
+    input#P6_PHONE_NUMBER, input#P6_ZIPCODE, input#P6_ZIPCODE_1 {
+        text-align: right;
+    }
+    
+    .sub-header {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+    }
+    
+    #to-page5 {
+        display: none;
+    }
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Billing Address =============================
+  id: 6044470541733020
+  identification: 
+    name: Billing Address
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIT009
+    include-rowid-column: false
+
+  layout: 
+    sequence: 140
+    parent-region: Add New Vendor # 6094144472115764
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: billing-address
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Billing Header ==============================
+  id: 6045093175733026
+  identification: 
+    name: Billing Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <h3 class="sub-header">
+          Billing Address
+          <span style="color:red">*</span>
+      </h3>
+
+  layout: 
+    sequence: 10
+    parent-region: Billing Address # 6044470541733020
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Shipping Address ============================
+  id: 6047442005733050
+  identification: 
+    name: Shipping Address
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIT009
+    include-rowid-column: false
+
+  layout: 
+    sequence: 160
+    parent-region: Add New Vendor # 6094144472115764
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: shipping-address
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Add New Vendor ==============================
+  id: 6094144472115764
+  identification: 
+    name: Add New Vendor
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIT006
+    include-rowid-column: false
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: vendor-form
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+- # ====== Region: Shipping Header =============================
+  id: 6476221494850401
+  identification: 
+    name: Shipping Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <h3 class="sub-header">
+          Shipping Address
+          <span style="color:red">*</span>
+      </h3>
+
+  layout: 
+    sequence: 10
+    parent-region: Shipping Address # 6047442005733050
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Add Header ==================================
+  id: 6480193726850440
+  identification: 
+    name: Add Header
+    title: Add New Vendor
+    type: Static Content
+
+  source: 
+    html-code: '<h1 style="color:white;margin: 0">Add New Vendor</h1>'
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P6_VENDOR_ID
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Update Header ===============================
+  id: 6480275224850441
+  identification: 
+    name: Update Header
+    title: Add New Vendor
+    type: Static Content
+
+  source: 
+    html-code: '<h1 style="color:white;margin: 0">Update Vendor</h1>'
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P6_VENDOR_ID
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Button ======================================
+  id: 7711191504207204
+  identification: 
+    name: Button
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Main Details ================================
+  id: 18080797994113212
+  identification: 
+    name: Main Details
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Add New Vendor # 6094144472115764
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: main-details
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P6_STREET ================================
+  id: 6044553723733021
+  identification: 
+    name: P6_STREET
+    type: Text Field
+
+  label: 
+    label: 'Street <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Billing Address # 6044470541733020
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 30
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Billing Address # 6044470541733020
+    column: STREET
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_STATE =================================
+  id: 6044697073733022
+  identification: 
+    name: P6_STATE
+    type: Text Field
+
+  label: 
+    label: 'State <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Billing Address # 6044470541733020
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Billing Address # 6044470541733020
+    column: STATE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_ZIPCODE ===============================
+  id: 6044794484733023
+  identification: 
+    name: P6_ZIPCODE
+    type: Text Field
+
+  label: 
+    label: 'ZipCode <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Billing Address # 6044470541733020
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 5
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Billing Address # 6044470541733020
+    column: ZIPCODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_CITY ==================================
+  id: 6044898791733024
+  identification: 
+    name: P6_CITY
+    type: Text Field
+
+  label: 
+    label: 'City <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Billing Address # 6044470541733020
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Billing Address # 6044470541733020
+    column: CITY
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_COUNTRY ===============================
+  id: 6044969971733025
+  identification: 
+    name: P6_COUNTRY
+    type: Text Field
+
+  label: 
+    label: 'Country <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Billing Address # 6044470541733020
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Billing Address # 6044470541733020
+    column: COUNTRY
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_STREET_1 ==============================
+  id: 6045187305733027
+  identification: 
+    name: P6_STREET_1
+    type: Text Field
+
+  label: 
+    label: 'Street <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Shipping Address # 6047442005733050
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 30
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Shipping Address # 6047442005733050
+    column: STREET
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_STATE_1 ===============================
+  id: 6045227113733028
+  identification: 
+    name: P6_STATE_1
+    type: Text Field
+
+  label: 
+    label: 'State <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Shipping Address # 6047442005733050
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Shipping Address # 6047442005733050
+    column: STATE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_ZIPCODE_1 =============================
+  id: 6045350211733029
+  identification: 
+    name: P6_ZIPCODE_1
+    type: Text Field
+
+  label: 
+    label: 'ZipCode <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Shipping Address # 6047442005733050
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 5
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Shipping Address # 6047442005733050
+    column: ZIPCODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_CITY_1 ================================
+  id: 6045493416733030
+  identification: 
+    name: P6_CITY_1
+    type: Text Field
+
+  label: 
+    label: 'City <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Shipping Address # 6047442005733050
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Shipping Address # 6047442005733050
+    column: CITY
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_COUNTRY_1 =============================
+  id: 6045695477733032
+  identification: 
+    name: P6_COUNTRY_1
+    type: Text Field
+
+  label: 
+    label: 'Country <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: true
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Shipping Address # 6047442005733050
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Shipping Address # 6047442005733050
+    column: COUNTRY
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_VENDOR_CODE ===========================
+  id: 6094594440115767
+  identification: 
+    name: P6_VENDOR_CODE
+    type: Text Field
+
+  label: 
+    label: 'Vendor Code <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: Upper
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 3
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: VENDOR_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_VENDOR_NAME ===========================
+  id: 6094988156115773
+  identification: 
+    name: P6_VENDOR_NAME
+    type: Text Field
+
+  label: 
+    label: 'Vendor Name <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: VENDOR_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_CONTACT_PERSON ========================
+  id: 6095351815115776
+  identification: 
+    name: P6_CONTACT_PERSON
+    type: Text Field
+
+  label: 
+    label: 'Contact Person <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: CONTACT_PERSON
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_PHONE_NUMBER ==========================
+  id: 6095758071115778
+  identification: 
+    name: P6_PHONE_NUMBER
+    type: Text Field
+
+  label: 
+    label: 'Phone Number <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: PHONE_NUMBER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_PAYMENT_TERM ==========================
+  id: 6096132786115779
+  identification: 
+    name: P6_PAYMENT_TERM
+    type: Text Field
+
+  label: 
+    label: 'Payment Term <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 100
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 10
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: PAYMENT_TERM
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_EMAIL_ADDRESS1 ========================
+  id: 6098198495115782
+  identification: 
+    name: P6_EMAIL_ADDRESS1
+    type: Text Field
+
+  label: 
+    label: 'Email Address 1 <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: EMAIL_ADDRESS1
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_EMAIL_ADDRESS2 ========================
+  id: 6098558197115784
+  identification: 
+    name: P6_EMAIL_ADDRESS2
+    type: Text Field
+
+  label: 
+    label: Email Address 2
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 20
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: EMAIL_ADDRESS2
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_VENDOR_TYPE ===========================
+  id: 6098955051115784
+  identification: 
+    name: P6_VENDOR_TYPE
+    type: Text Field
+
+  label: 
+    label: 'Vendor Type <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: Upper
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 110
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 1
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: VENDOR_TYPE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_VENDOR_ID =============================
+  id: 6477545410850414
+  identification: 
+    name: P6_VENDOR_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Add New Vendor # 6094144472115764
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: VENDOR_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_VENDOR_CODE_INITIAL ===================
+  id: 6477628388850415
+  identification: 
+    name: P6_VENDOR_CODE_INITIAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Add New Vendor # 6094144472115764
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: VENDOR_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_VENDOR_ID_BILLING =====================
+  id: 6477876687850417
+  identification: 
+    name: P6_VENDOR_ID_BILLING
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Billing Address # 6044470541733020
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Billing Address # 6044470541733020
+    column: VENDOR_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_ADDRESS_TYPE_ID =======================
+  id: 6477932699850418
+  identification: 
+    name: P6_ADDRESS_TYPE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Billing Address # 6044470541733020
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Billing Address # 6044470541733020
+    column: ADDRESS_TYPE_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_VENDOR_ID_SHIPPING_1 ==================
+  id: 6479096713850429
+  identification: 
+    name: P6_VENDOR_ID_SHIPPING_1
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Shipping Address # 6047442005733050
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Shipping Address # 6047442005733050
+    column: VENDOR_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_ADDRESS_TYPE_ID_1 =====================
+  id: 6479127989850430
+  identification: 
+    name: P6_ADDRESS_TYPE_ID_1
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Shipping Address # 6047442005733050
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Shipping Address # 6047442005733050
+    column: ADDRESS_TYPE_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P6_FAX_NUMBER ============================
+  id: 39841975746908915
+  identification: 
+    name: P6_FAX_NUMBER
+    type: Text Field
+
+  label: 
+    label: Fax Number
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Main Details # 18080797994113212
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add New Vendor # 6094144472115764
+    column: FAX_NUMBER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: To_Exit =====================================
+  id: 7711236360207205
+  identification: 
+    button-name: To_Exit
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 10
+    region: Button # 7711191504207204
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 10
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:5:&SESSION.::&DEBUG.:::'
+      page: 5 # Vendor Masterfile
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: to-page5
+
+dynamic-actions: 
+- # ====== Dynamic Action: New =================================
+  id: 7713668938207229
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Before Page Submit
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 7713786524207230
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                setFocusOnFailedValidation();
+            });
+        }, 1000);
+        
+
+    execution: 
+      sequence: 10
+      event: New # 7713668938207229
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Title Add ===========================
+  id: 18081607619113221
+  identification: 
+    name: Title Add
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P6_VENDOR_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18081762381113222
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: setTitle("Add New Vendor");
+
+    execution: 
+      sequence: 10
+      event: Title Add # 18081607619113221
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Title Update ========================
+  id: 18081827582113223
+  identification: 
+    name: Title Update
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P6_VENDOR_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18081985264113224
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: setTitle("Update Vendor");
+
+    execution: 
+      sequence: 10
+      event: Title Update # 18081827582113223
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Valid Vendor Type =======================
+  id: 6476463414850403
+  identification: 
+    name: Valid Vendor Type
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1 
+      FROM DUAL
+      WHERE   :P6_VENDOR_TYPE = 'R' OR
+              :P6_VENDOR_TYPE = 'S' OR
+              :P6_VENDOR_TYPE = 'r' OR
+              :P6_VENDOR_TYPE = 's'
+    always-execute: true
+
+  error: 
+    error-message: Vendor type should either be 'R' or 'S'.
+    display-location: Inline with Field
+    associated-item: P6_VENDOR_TYPE # 6098955051115784
+
+- # ====== Validation: Valid Email Address1 ====================
+  id: 6476566252850404
+  identification: 
+    name: Valid Email Address1
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Item matches Regular Expression
+    item: P6_EMAIL_ADDRESS1
+    regular-expression: ^[a-zA-Z0-9_.±]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+    always-execute: true
+
+  error: 
+    error-message: Email must be Valid Ex. Example@email.com
+    display-location: Inline with Field
+    associated-item: P6_EMAIL_ADDRESS1 # 6098198495115782
+
+- # ====== Validation: Valid Email Address2 ====================
+  id: 6476737567850406
+  identification: 
+    name: Valid Email Address2
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: Item matches Regular Expression
+    item: P6_EMAIL_ADDRESS2
+    regular-expression: ^[a-zA-Z0-9_.±]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+    always-execute: true
+
+  error: 
+    error-message: Email must be Valid Ex. Example@email.com
+    display-location: Inline with Field
+    associated-item: P6_EMAIL_ADDRESS2 # 6098558197115784
+
+- # ====== Validation: Unique Vendor Code Add ==================
+  id: 6477465382850413
+  identification: 
+    name: Unique Vendor Code Add
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      SELECT 1
+      FROM NIT006
+      WHERE VENDOR_CODE = :P6_VENDOR_CODE
+    always-execute: true
+
+  error: 
+    error-message: Vendor Code already exists.
+    display-location: Inline with Field
+    associated-item: P6_VENDOR_CODE # 6094594440115767
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P6_VENDOR_ID
+
+- # ====== Validation: Unique Vendor Code Update ===============
+  id: 6480320931850442
+  identification: 
+    name: Unique Vendor Code Update
+
+  execution: 
+    sequence: 50
+
+  validation: 
+    type: Function Body (returning Boolean)
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_vendor_code_existing NUMBER;
+      BEGIN
+          IF :P6_VENDOR_CODE_INITIAL = :P6_VENDOR_CODE THEN
+              RETURN TRUE;
+          END IF;
+          SELECT DISTINCT COUNT(1)
+              INTO l_vendor_code_existing
+              FROM NIT006
+              WHERE VENDOR_CODE = :P6_VENDOR_CODE AND VENDOR_CODE != :P6_VENDOR_CODE_INITIAL;
+          IF l_vendor_code_existing <=0 THEN
+              RETURN TRUE;
+          ELSE
+              RETURN FALSE;
+          END IF;
+      END;
+    always-execute: true
+
+  error: 
+    error-message: Vendor Code already exists.
+    display-location: Inline with Field
+    associated-item: P6_VENDOR_CODE # 6094594440115767
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P6_VENDOR_ID
+
+- # ====== Validation: Empty Vendor ID =========================
+  id: 7713879645207231
+  identification: 
+    name: Empty Vendor ID
+
+  execution: 
+    sequence: 60
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_VENDOR_CODE
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_VENDOR_CODE # 6094594440115767
+
+- # ====== Validation: Empty Vendor Name =======================
+  id: 7714348865207236
+  identification: 
+    name: Empty Vendor Name
+
+  execution: 
+    sequence: 70
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_VENDOR_NAME
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_VENDOR_NAME # 6094988156115773
+
+- # ====== Validation: Empty Contact Person ====================
+  id: 7714507348207238
+  identification: 
+    name: Empty Contact Person
+
+  execution: 
+    sequence: 80
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_CONTACT_PERSON
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_CONTACT_PERSON # 6095351815115776
+
+- # ====== Validation: Empty Phone Number ======================
+  id: 7714665319207239
+  identification: 
+    name: Empty Phone Number
+
+  execution: 
+    sequence: 90
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_PHONE_NUMBER
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_PHONE_NUMBER # 6095758071115778
+
+- # ====== Validation: Empty Email Address 1 ===================
+  id: 7714720579207240
+  identification: 
+    name: Empty Email Address 1
+
+  execution: 
+    sequence: 100
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_EMAIL_ADDRESS1
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_EMAIL_ADDRESS1 # 6098198495115782
+
+- # ====== Validation: Empty Payment Term ======================
+  id: 7714831697207241
+  identification: 
+    name: Empty Payment Term
+
+  execution: 
+    sequence: 110
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_PAYMENT_TERM
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_PAYMENT_TERM # 6096132786115779
+
+- # ====== Validation: Empty Vendor Type =======================
+  id: 7714942347207242
+  identification: 
+    name: Empty Vendor Type
+
+  execution: 
+    sequence: 120
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_VENDOR_TYPE
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_VENDOR_TYPE # 6098955051115784
+
+- # ====== Validation: Empty Billing Street ====================
+  id: 7715007701207243
+  identification: 
+    name: Empty Billing Street
+
+  execution: 
+    sequence: 130
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_STREET
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_STREET # 6044553723733021
+
+- # ====== Validation: Empty Billing State =====================
+  id: 7715123365207244
+  identification: 
+    name: Empty Billing State
+
+  execution: 
+    sequence: 140
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_STATE
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_STATE # 6044697073733022
+
+- # ====== Validation: Empty Billing Zipcode ===================
+  id: 7715241162207245
+  identification: 
+    name: Empty Billing Zipcode
+
+  execution: 
+    sequence: 150
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_ZIPCODE
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_ZIPCODE # 6044794484733023
+
+- # ====== Validation: Empty Billing City ======================
+  id: 7715326264207246
+  identification: 
+    name: Empty Billing City
+
+  execution: 
+    sequence: 160
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_CITY
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_CITY # 6044898791733024
+
+- # ====== Validation: Empty Billing Country ===================
+  id: 7715428983207247
+  identification: 
+    name: Empty Billing Country
+
+  execution: 
+    sequence: 170
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_COUNTRY
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_COUNTRY # 6044969971733025
+
+- # ====== Validation: Empty Shipping Street ===================
+  id: 7715517292207248
+  identification: 
+    name: Empty Shipping Street
+
+  execution: 
+    sequence: 180
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_STREET_1
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_STREET_1 # 6045187305733027
+
+- # ====== Validation: Empty Shipping State ====================
+  id: 7715636514207249
+  identification: 
+    name: Empty Shipping State
+
+  execution: 
+    sequence: 190
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_STATE_1
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_STATE_1 # 6045227113733028
+
+- # ====== Validation: Empty Shipping Zipcode ==================
+  id: 7715758418207250
+  identification: 
+    name: Empty Shipping Zipcode
+
+  execution: 
+    sequence: 200
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_ZIPCODE_1
+    always-execute: false
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_ZIPCODE_1 # 6045350211733029
+
+- # ====== Validation: Empty Shipping City =====================
+  id: 8966771708281301
+  identification: 
+    name: Empty Shipping City
+
+  execution: 
+    sequence: 210
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_CITY_1
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_CITY_1 # 6045493416733030
+
+- # ====== Validation: Empty Shipping Country ==================
+  id: 8966808330281302
+  identification: 
+    name: Empty Shipping Country
+
+  execution: 
+    sequence: 220
+
+  validation: 
+    type: Item is NOT NULL
+    item: P6_COUNTRY_1
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P6_COUNTRY_1 # 6045695477733032
+
+- # ====== Validation: Field is not a number ===================
+  id: 8966911164281303
+  identification: 
+    name: Field is not a number
+
+  execution: 
+    sequence: 230
+
+  validation: 
+    type: Item is numeric
+    item: P6_PHONE_NUMBER
+    always-execute: true
+
+  error: 
+    error-message: Value must be number.
+    display-location: Inline with Field
+    associated-item: P6_PHONE_NUMBER # 6095758071115778
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: No Special Characters ===================
+  id: 25314024496942605
+  identification: 
+    name: No Special Characters
+
+  execution: 
+    sequence: 240
+
+  validation: 
+    type: Item is alphanumeric
+    item: P6_VENDOR_CODE
+    always-execute: false
+
+  error: 
+    error-message: Must not contain Special Characters.
+    display-location: Inline with Field
+    associated-item: P6_VENDOR_CODE # 6094594440115767
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+processes: 
+- # ====== Process: Initialize form Add Vendor =================
+  id: 6105179143115798
+  identification: 
+    name: Initialize form Add Vendor
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Add New Vendor # 6094144472115764
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Add Vendor ====================
+  id: 6105519823115798
+  identification: 
+    name: Process form Add Vendor
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          l_vendor_id NIT006.VENDOR_ID%type;
+      BEGIN
+          INSERT INTO NIT006(   
+                  VENDOR_CODE,
+                  VENDOR_NAME, 
+                  CONTACT_PERSON,
+                  FAX_NUMBER,
+                  PHONE_NUMBER, 
+                  EMAIL_ADDRESS1, 
+                  EMAIL_ADDRESS2, 
+                  PAYMENT_TERM, 
+                  VENDOR_TYPE, 
+                  CREATE_USER, 
+                  CREATE_DATE
+              )
+              VALUES (
+                  :P6_VENDOR_CODE, 
+                  :P6_VENDOR_NAME, 
+                  :P6_CONTACT_PERSON, 
+                  :P6_PHONE_NUMBER,
+                  :P6_FAX_NUMBER,
+                  :P6_EMAIL_ADDRESS1, 
+                  :P6_EMAIL_ADDRESS2, 
+                  :P6_PAYMENT_TERM, 
+                  :P6_VENDOR_TYPE, 
+                  v('APP_USER'),
+                  SYSDATE
+              )
+              RETURNING VENDOR_ID INTO l_vendor_id;
+          
+          INSERT INTO NIT009(
+                  VENDOR_ID,
+                  ADDRESS_TYPE_ID,
+                  STREET,
+                  CITY,
+                  STATE,
+                  ZIPCODE,
+                  COUNTRY,
+                  CREATE_USER,
+                  CREATE_DATE
+              )
+              VALUES(
+                  l_vendor_id,
+                  1,
+                  :P6_STREET,
+                  :P6_CITY,
+                  :P6_STATE,
+                  :P6_ZIPCODE,
+                  :P6_COUNTRY,
+                  v('APP_USER'),
+                  SYSDATE
+              );
+      
+          INSERT INTO NIT009(
+                  VENDOR_ID,
+                  ADDRESS_TYPE_ID,
+                  STREET,
+                  CITY,
+                  STATE,
+                  ZIPCODE,
+                  COUNTRY,
+                  CREATE_USER,
+                  CREATE_DATE
+              )
+              VALUES(
+                  l_vendor_id,
+                  2,
+                  :P6_STREET_1,
+                  :P6_CITY_1,
+                  :P6_STATE_1,
+                  :P6_ZIPCODE_1,
+                  :P6_COUNTRY_1,
+                  v('APP_USER'),
+                  SYSDATE
+              );
+      END;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Vendor Added Successfully.
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P6_VENDOR_ID
+
+- # ====== Process: Process form Update Vendor =================
+  id: 6476923429850408
+  identification: 
+    name: Process form Update Vendor
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+      BEGIN
+      UPDATE NIT006
+          SET VENDOR_CODE = :P6_VENDOR_CODE,
+              VENDOR_NAME = :P6_VENDOR_NAME,
+              CONTACT_PERSON = :P6_CONTACT_PERSON,
+              PHONE_NUMBER = :P6_PHONE_NUMBER,
+              FAX_NUMBER = :P6_FAX_NUMBER,
+              EMAIL_ADDRESS1 = :P6_EMAIL_ADDRESS1,
+              EMAIL_ADDRESS2 = :P6_EMAIL_ADDRESS2,
+              PAYMENT_TERM = :P6_PAYMENT_TERM,
+              VENDOR_TYPE = UPPER(:P6_VENDOR_TYPE),
+              UPDATE_USER = v('APP_USER'),
+              UPDATE_DATE = SYSDATE
+          WHERE VENDOR_ID = :P6_VENDOR_ID;
+      UPDATE NIT009
+          SET
+              STREET = :P6_STREET,
+              CITY = :P6_CITY,
+              STATE = :P6_STATE,
+              ZIPCODE = :P6_ZIPCODE,
+              COUNTRY = :P6_COUNTRY,
+              UPDATE_USER = v('APP_USER'),
+              UPDATE_DATE = SYSDATE
+          WHERE   VENDOR_ID = :P6_VENDOR_ID AND
+                  ADDRESS_TYPE_ID = 1;
+      UPDATE NIT009
+          SET
+              STREET = :P6_STREET_1,
+              CITY = :P6_CITY_1,
+              STATE = :P6_STATE_1,
+              ZIPCODE = :P6_ZIPCODE_1,
+              COUNTRY = :P6_COUNTRY_1,
+              UPDATE_USER = v('APP_USER'),
+              UPDATE_DATE = SYSDATE
+          WHERE   VENDOR_ID = :P6_VENDOR_ID AND
+                  ADDRESS_TYPE_ID = 2;
+      END;
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Vendor Updated Successfully
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P6_VENDOR_ID
+
+- # ====== Process: Initialize form Billing Address ============
+  id: 6477791633850416
+  identification: 
+    name: Initialize form Billing Address
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Billing Address # 6044470541733020
+
+  execution: 
+    sequence: 20
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Initialize form Shipping Address ===========
+  id: 6478907753850428
+  identification: 
+    name: Initialize form Shipping Address
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Shipping Address # 6047442005733050
+
+  execution: 
+    sequence: 30
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+branches: 
+- # ====== Branch: Go To Page 5 ================================
+  id: 6104632251115793
+  identification: 
+    name: Go To Page 5
+
+  execution: 
+    sequence: 1
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:5:&APP_SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+      page: 5 # Vendor Masterfile
+

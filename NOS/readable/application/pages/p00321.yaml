@@ -1,0 +1,684 @@
+---
+# ====== Page: Statement Of Account Search ===================
+id: 321
+identification: 
+  name: Statement Of Account Search
+  alias: STATEMENT-OF-ACCOUNT-SEARCH
+  title: Statement Of Account Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 560px
+  maximum-width: 560px
+  attributes: 
+  - 'closeOnEscape:false'
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p7KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        },
+        escape : (v) => {
+            $("#exit").trigger("click");
+        },
+    }
+    
+    function mapP7Keys() {
+        $(document).off('keydown.p7keyevents');
+        $(document).on('keydown.p7keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p7KeyMap[key]) {
+                ev.preventDefault();
+                p7KeyMap[key]();
+            }
+        });
+    }
+    
+    // $(document).keydown(function (event) {
+    //     if (event.keyCode === 27) {
+    //         event.preventDefault();
+    //         // event.stopImmediatePropagation();
+    //     }
+    // });
+  execute-when-page-loads: |
+    // var button = parent.$('.ui-dialog-titlebar'); //get the button
+    // button.hide(); //hide the button
+    mapP7Keys();
+
+css: 
+  inline: |
+    .t-Dialog-header {
+        background-color: #056BC9;
+        padding: .5rem 0rem 0rem 1rem;
+    }
+    
+    .t-Dialog-body {
+        /* grid-area: dialog-body;
+        min-width: 0;
+        padding-block-end: var(--ut-dialog-padding-y, 1rem);
+        padding-block-start: var(--ut-dialog-padding-y, 1rem); */
+        padding-inline-end: var(--ut-dialog-padding-x, .1rem);
+        padding-inline-start: var(--ut-dialog-padding-x, .5rem);
+    }
+    
+    .t-Dialog-bodyWrapperIn {
+        overflow: hidden;
+    }
+    
+    .t-Region {
+        color: white;
+        font-size: 1.3rem;
+        margin-bottom: .7rem;
+    }
+    
+    .t-Form-itemWrapper {
+        width: 58%;
+        position: absolute;
+        left: 39%;
+        bottom: 10%;
+    }
+    
+    .t-Form-itemWrapper > input {
+        background-color: #ece7e7;
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, .1rem);
+    }
+    
+    .t-Form-labelContainer {
+        padding-block-start: var(--ut-field-padding-y, .3rem);
+    }
+    
+    .t-Form-label {
+        font-size: 1.125rem;
+        font-weight: 600;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .error-msg {
+        color: red;
+        font-size: 0.75rem;
+        padding-left: 0.7rem;
+        padding-bottom: 0.5rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Title =======================================
+  id: 43887913008936790
+  identification: 
+    name: Title
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span>
+          <text style="">Search:</text>
+      </span>
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error Display ===============================
+  id: 43887990416936791
+  identification: 
+    name: Error Display
+    type: Static Content
+
+  source: 
+    html-code: <span id="errorArea" class="hide error-msg">Please fill in at least one search field</span>
+
+  layout: 
+    sequence: 10
+    parent-region: Statement of Account Search # 44007257896764271
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Statement of Account Search =================
+  id: 44007257896764271
+  identification: 
+    name: Statement of Account Search
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPT020
+    include-rowid-column: false
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: soa
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+page-items: 
+- # ====== Page Item: P321_SEARCH_BY_LEGAL_NAME ================
+  id: 44009115392764334
+  identification: 
+    name: P321_SEARCH_BY_LEGAL_NAME
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:0.7rem">Search by Legal Name:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Statement of Account Search # 44007257896764271
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Statement of Account Search # 44007257896764271
+    column: GIFT_CERTIFICATE_BATCH_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P321_DBA =================================
+  id: 44009788413764354
+  identification: 
+    name: P321_DBA
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:9.8rem">DBA:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Statement of Account Search # 44007257896764271
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 100
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Statement of Account Search # 44007257896764271
+    column: GIFT_CERTIFICATE_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P321_DATE_CREATED ========================
+  id: 44011421820764359
+  identification: 
+    name: P321_DATE_CREATED
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:4.7rem">Issue Yr :</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Statement of Account Search # 44007257896764271
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Statement of Account Search # 44007257896764271
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+buttons: 
+- # ====== Button: CLOSE_BTN ===================================
+  id: 25259969946673309
+  identification: 
+    button-name: CLOSE_BTN
+    label: Close Btn
+
+  layout: 
+    sequence: 70
+    region: Statement of Account Search # 44007257896764271
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: exit
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: SEARCH_BTN ==================================
+  id: 25260394886673312
+  identification: 
+    button-name: SEARCH_BTN
+    label: Search
+
+  layout: 
+    sequence: 60
+    region: Statement of Account Search # 44007257896764271
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Search Table ========================
+  id: 25264660221673364
+  identification: 
+    name: Search Table
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH_BTN # 25260394886673312
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 25265295618673367
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var legalName = $v("P321_SEARCH_BY_LEGAL_NAME");
+        var dba = $v("P321_DBA");
+        // var issueYear = $v("P321_DATE_CREATED");
+        var errorArea = document.getElementById("errorArea")
+        
+        if(!legalName && !dba) {
+            errorArea.style.display = "block"
+            document.getElementById("P321_SEARCH_BY_LEGAL_NAME").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 10
+      event: Search Table # 25264660221673364
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 25265705872673367
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P321_SEARCH_BY_LEGAL_NAME
+      - P321_DBA
+      - P321_DATE_CREATED
+
+    execution: 
+      sequence: 20
+      event: Search Table # 25264660221673364
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 25266100815673368
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE_BTN # 25259969946673309
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 25266658629673368
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 25266100815673368
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Initialize form Gift Certificate Search ====
+  id: 25262691453673335
+  identification: 
+    name: Initialize form Gift Certificate Search
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Statement of Account Search # 44007257896764271
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Gift Certificate Search =======
+  id: 25263045145673339
+  identification: 
+    name: Process form Gift Certificate Search
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Statement of Account Search # 44007257896764271
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 25264299788673362
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

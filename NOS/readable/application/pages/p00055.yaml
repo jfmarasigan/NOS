@@ -1,0 +1,1557 @@
+---
+# ====== Page: Wholesale Invoice =============================
+id: 55
+identification: 
+  name: Wholesale Invoice
+  alias: WHOLESALE-INVOICE
+  title: Charge/COD Invoicing
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p55KeyMap = {
+        s : (v) => {
+            $("#s").click();
+        },
+        c : (v) => {
+            $("#c").click();
+        },
+        i : (v) => {
+            $("#i").click();
+        },
+        p : (v) => {
+            $("#p").click();
+        },
+        home: (v) => {
+            $("#to-top").trigger("click");
+        },
+        end: (v) => {
+            $("#to-bottom").trigger("click");
+        },
+        escape : (v) => {
+            $("#esc").trigger("click");
+        }
+    
+    
+    }
+    
+    function mapP55Keys() {
+        $(document).off('keydown.p55keyevents');
+        $(document).on('keydown.p55keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p55KeyMap[key]) {
+                ev.preventDefault();
+                p55KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP55Keys();
+    }
+  execute-when-page-loads: |
+    mapP55Keys();
+    setTitle("Charge/COD Invoicing")
+    $("#s").trigger("click");
+
+css: 
+  file-urls: 
+  - '#APP_FILES#wholesale_invoice#MIN#.css'
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #wholesale-invoice table, #wholesale-invoice tr, #wholesale-invoice td, #wholesale-invoice th {
+         font-size: 1.125rem;
+    }
+    
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+        padding-bottom: 0.2rem;
+        padding-top: 0.2rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    
+    #wholesale-invoice .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Wholesale Table =============================
+  id: 29423027180978911
+  identification: 
+    name: Wholesale Table
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          ROWNUM AS "Primary Key",
+          nit001.item_num AS "Invoice Number",
+          nit002.upc AS "Quotation Number",
+          nim022.brand_name AS "Legal Name",
+          nit001.item_desc AS "DBA",
+          nit006.vendor_name AS "Total Amount"
+      FROM 
+          NIT001 nit001
+      JOIN 
+          NIT002 nit002 ON nit001.item_id = nit002.item_id
+      JOIN 
+          NIM022 nim022 ON nit001.brand_id = nim022.brand_id
+      JOIN
+          (SELECT * FROM (SELECT nit007.item_id, nit007.vendor_id, nit007.vendor_sequence, 
+                    ROW_NUMBER() OVER(PARTITION BY nit007.item_id ORDER BY nit007.vendor_sequence) as rank
+                  FROM NIT007 nit007
+              ) t1
+              WHERE rank = 1
+              ORDER BY t1.vendor_sequence
+          )
+          nit007 ON nit001.item_id = nit007.item_id
+      
+      JOIN 
+          NIT006 nit006 ON nit007.vendor_id = nit006.vendor_id
+      WHERE
+          NIT002."LEVEL" = 4 
+          
+          AND (
+      
+          (:P4_item_num IS NOT NULL AND UPPER(nit001.item_num) LIKE UPPER('%' || :P4_item_num || '%'))
+      
+          OR (:P4_item_num IS NULL AND :P4_upc IS NOT NULL AND UPPER(nit002.upc) LIKE UPPER('%' || :P4_UPC|| '%'))
+      
+          OR (:P4_item_num IS NULL AND :P4_upc IS NULL AND :P4_item_desc IS NOT NULL AND UPPER(nit001.item_desc) LIKE UPPER('%' || :P4_item_desc || '%'))
+              )
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: wholesale-invoice
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  attributes: 
+    id: 29423123816978912
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 29874410041843196
+      identification: 
+        name: Primary Report
+        alias: 298745
+
+  columns: 
+  - # ====== Column: Primary Key =================================
+    id: 29423259646978913
+    identification: 
+      column-name: Primary Key
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: Primary Key
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: Invoice Number ==============================
+    id: 29423829112978919
+    identification: 
+      column-name: Invoice Number
+      type: Text Field
+
+    heading: 
+      heading: Invoice Number
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: Invoice Number
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: Quotation Number ============================
+    id: 29423916429978920
+    identification: 
+      column-name: Quotation Number
+      type: Text Field
+
+    heading: 
+      heading: Quotation Number
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 56
+
+    source: 
+      type: Database Column
+      database-column: Quotation Number
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: Legal Name ==================================
+    id: 29424074960978921
+    identification: 
+      column-name: Legal Name
+      type: Text Field
+
+    heading: 
+      heading: Legal Name
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: Legal Name
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: DBA =========================================
+    id: 29424174701978922
+    identification: 
+      column-name: DBA
+      type: Text Field
+
+    heading: 
+      heading: Dba
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: DBA
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: Total Amount ================================
+    id: 29424246538978923
+    identification: 
+      column-name: Total Amount
+      type: Text Field
+
+    heading: 
+      heading: Total Amount
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: Total Amount
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Buttons =====================================
+  id: 30806128335808222
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: button-region
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Invoice Table ===============================
+  id: 35549856639882729
+  identification: 
+    name: Invoice Table
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |2
+          SELECT npt001.date_created AS "Invoice Date",
+                 npt001.invoice_id AS "Invoice Number",
+                 npt009.dba AS "DBA", 
+                 npt001.total_amount AS "Total Amount", 
+                 CASE 
+                  WHEN npt012.invoice_id IS NOT NULL THEN 'Y'
+                      ELSE 'N' 
+                 END AS "For Delivery",
+                 CASE 
+                  WHEN 1=1 THEN 'Printed'
+                  ELSE 'NOT PRINTED'
+                  END AS "Status"
+            FROM NPT001 npt001
+          JOIN 
+              NPT006 npt006 ON npt001.customer_id = npt006.customer_id
+          JOIN 
+              NPT006 npt006 ON npt001.tax_id = npt006.tax_id
+          JOIN
+              NPT006 npt006 ON npt001.quotation_id = npt006.quotation_id
+          JOIN
+              NPT009 npt009 ON npt006.customer_id = npt009.customer_id
+          JOIN
+              NPT012 npt012 ON npt001.invoice_id = npt012.invoice_id
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: wholesale-invoice
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 35549997613882730
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 36334350701010856
+      identification: 
+        name: Primary Report
+        alias: 363344
+
+  columns: 
+  - # ====== Column: Invoice Date ================================
+    id: 35550118543882732
+    identification: 
+      column-name: Invoice Date
+      type: Date Picker
+
+    heading: 
+      heading: Invoice Date
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: Invoice Date
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: Invoice Number ==============================
+    id: 35550290765882733
+    identification: 
+      column-name: Invoice Number
+      type: Number Field
+
+    heading: 
+      heading: Invoice Number
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: Invoice Number
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: DBA =========================================
+    id: 35550336859882734
+    identification: 
+      column-name: DBA
+      type: Textarea
+
+    heading: 
+      heading: DBA
+      alignment: center
+
+    settings: 
+      resizable: true
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 400
+
+    source: 
+      type: Database Column
+      database-column: DBA
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: Total Amount ================================
+    id: 35550471866882735
+    identification: 
+      column-name: Total Amount
+      type: Number Field
+
+    heading: 
+      heading: Total Amount
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: Total Amount
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: For Delivery ================================
+    id: 35550513726882736
+    identification: 
+      column-name: For Delivery
+      type: Text Field
+
+    heading: 
+      heading: For Delivery
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 1
+
+    source: 
+      type: Database Column
+      database-column: For Delivery
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: Status ======================================
+    id: 35550623879882737
+    identification: 
+      column-name: Status
+      type: Text Field
+
+    heading: 
+      heading: Status
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 7
+
+    source: 
+      type: Database Column
+      database-column: Status
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+buttons: 
+- # ====== Button: Search ======================================
+  id: 30806202772808223
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 10
+    region: Buttons # 30806128335808222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:44:&SESSION.::&DEBUG.:44::'
+      page: 44 # Charge/COD Invoicing Search
+      clear-cache: 44
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Create ======================================
+  id: 30806472570808225
+  identification: 
+    button-name: Create
+    label: <u>C</u> - Create Invoice
+
+  layout: 
+    sequence: 20
+    region: Buttons # 30806128335808222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 2
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:85:&SESSION.::&DEBUG.:::'
+      page: 85 # Create Invoice
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: c
+
+- # ====== Button: Inquire =====================================
+  id: 30806518503808226
+  identification: 
+    button-name: Inquire
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 40
+    region: Buttons # 30806128335808222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 6
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: Print =======================================
+  id: 30806624673808227
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print Invoice
+
+  layout: 
+    sequence: 60
+    region: Buttons # 30806128335808222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 11
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: Escape ======================================
+  id: 33261159880129925
+  identification: 
+    button-name: Escape
+    label: Escape
+
+  layout: 
+    sequence: 70
+    region: Buttons # 30806128335808222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:305:&SESSION.::&DEBUG.:::'
+      page: 305 # Order Entry and Invoicing
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+- # ====== Button: Update ======================================
+  id: 35551971828882750
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update Invoice
+
+  layout: 
+    sequence: 30
+    region: Buttons # 30806128335808222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 4
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:85:&SESSION.::&DEBUG.:::'
+      page: 85 # Create Invoice
+
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: Ticket ======================================
+  id: 37203662698281201
+  identification: 
+    button-name: Ticket
+    label: <u>T</u> - Print Pick Ticket
+
+  layout: 
+    sequence: 50
+    region: Buttons # 30806128335808222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: Disable Key =========================
+  id: 33263645409129950
+  identification: 
+    name: Disable Key
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Create # 30806472570808225
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34400660598626201
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p55keyevents');
+
+    execution: 
+      sequence: 20
+      event: Disable Key # 33263645409129950
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Key ==========================
+  id: 34400722630626202
+  identification: 
+    name: Enable Key
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Create # 30806472570808225
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34400886594626203
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP55Keys();
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        }, "500");
+
+    execution: 
+      sequence: 10
+      event: Enable Key # 34400722630626202
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Disable Key & Open Search ===========
+  id: 35548605003882717
+  identification: 
+    name: Disable Key & Open Search
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 30806202772808223
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35551400539882745
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p55keyevents');
+        
+
+    execution: 
+      sequence: 10
+      event: Disable Key & Open Search # 35548605003882717
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enable Key on Search ================
+  id: 35551581144882746
+  identification: 
+    name: Enable Key on Search
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 30806202772808223
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35551690816882747
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP55Keys();
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        }, "500");
+
+    execution: 
+      sequence: 10
+      event: Enable Key on Search # 35551581144882746
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

@@ -1,0 +1,877 @@
+---
+# ====== Page: GC Donation Search ============================
+id: 309
+identification: 
+  name: GC Donation Search
+  alias: GC-DONATION-SEARCH
+  title: GC Donation Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 500px
+  maximum-width: 500px
+  attributes: 
+  - 'closeOnEscape:false'
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p7KeyMap = {
+        escape : (v) => {
+            $("#exit").trigger("click");
+        },
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP7Keys() {
+        $(document).off('keydown.p7keyevents');
+        $(document).on('keydown.p7keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p7KeyMap[key]) {
+                ev.preventDefault();
+                p7KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP7Keys();
+    
+    
+    // accept numbers only for YYYY
+    setInputFilter($("#P309_SEARCH_BY_ISSUE_YR"), function(value) {
+        return /^\d{0,4}$/.test(value); // numbers only
+    }, "Invalid input. Values should be numbers only.");
+
+css: 
+  inline: |
+    .t-Dialog-header {
+        background-color: #056AC8;
+        padding: .5rem 0rem 0rem 1rem;
+    }
+    
+    .t-Dialog-bodyWrapperIn {
+        overflow: hidden;
+    }
+    
+    .t-Region {
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: .7rem;
+    }
+    
+    .t-Form-itemWrapper {
+        width: 62%;
+        position: absolute;
+        left: 36%;
+        bottom: 10%;
+    }
+    
+    .t-Form-itemWrapper > input {
+        background-color: #ece7e7;
+        height: 2rem;
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, .4rem);
+    }
+    
+    .t-Form-labelContainer {
+        padding-block-start: var(--ut-field-padding-y, .5rem);
+    }
+    
+    .t-Form-label {
+        font-size: 1.125rem;
+        font-weight: 600;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .error-msg {
+        color: red;
+        font-size: 1rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    #P309_SEARCH_BY_ISSUE_YR,
+    #P309_RECIPIENT,
+    #P309_EVENT {
+        font-size: 1.125rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Title =======================================
+  id: 46725897773361334
+  identification: 
+    name: Title
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span>
+          <text style="">Search:</text>
+      </span>
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error Display ===============================
+  id: 46725975181361335
+  identification: 
+    name: Error Display
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span id="errorArea" class="hide error-msg">Issue year is required.</span>
+      <span id="errorArea1" class="hide error-msg">Issue year should have 4 digits.</span>
+
+  layout: 
+    sequence: 10
+    parent-region: Gift Certificate Donation Search # 46845242661188815
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Gift Certificate Donation Search ============
+  id: 46845242661188815
+  identification: 
+    name: Gift Certificate Donation Search
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPT020
+    include-rowid-column: false
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+page-items: 
+- # ====== Page Item: P309_CHECK_FIRST_SEARCH ==================
+  id: 32480157607104109
+  identification: 
+    name: P309_CHECK_FIRST_SEARCH
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P309_PREPARED_URL ========================
+  id: 32481499124104122
+  identification: 
+    name: P309_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P309_SEARCH_BY_ISSUE_YR ==================
+  id: 46847151676188846
+  identification: 
+    name: P309_SEARCH_BY_ISSUE_YR
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:0rem">Search by Issue Yr<span style="color:red;">*</span>:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Gift Certificate Donation Search # 46845242661188815
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 4
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Gift Certificate Donation Search # 46845242661188815
+    column: GIFT_CERTIFICATE_BATCH_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P309_RECIPIENT ===========================
+  id: 46847824697188866
+  identification: 
+    name: P309_RECIPIENT
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:4.2rem">Recipient:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Gift Certificate Donation Search # 46845242661188815
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 100
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Gift Certificate Donation Search # 46845242661188815
+    column: GIFT_CERTIFICATE_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P309_EVENT ===============================
+  id: 46849458104188871
+  identification: 
+    name: P309_EVENT
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:6.1rem">Event:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Gift Certificate Donation Search # 46845242661188815
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Gift Certificate Donation Search # 46845242661188815
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SEARCH_BTN ==================================
+  id: 28098300643097825
+  identification: 
+    button-name: SEARCH_BTN
+    label: Search
+
+  layout: 
+    sequence: 60
+    region: Gift Certificate Donation Search # 46845242661188815
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+- # ====== Button: BACK_TO_GC_MENU =============================
+  id: 32481157923104119
+  identification: 
+    button-name: BACK_TO_GC_MENU
+    label: Close Btn
+
+  layout: 
+    sequence: 80
+    region: Gift Certificate Donation Search # 46845242661188815
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: exit
+
+dynamic-actions: 
+- # ====== Dynamic Action: Search Table ========================
+  id: 28102678755097878
+  identification: 
+    name: Search Table
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH_BTN # 28098300643097825
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 28103153635097881
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var issueYear = $v("P309_SEARCH_BY_ISSUE_YR");
+        
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        
+        var recipient = document.getElementById("P309_RECIPIENT")
+        var event = document.getElementById("P309_EVENT")
+        
+        if(!issueYear) {
+            errorArea.style.display = "block"
+            errorArea1.style.display = "none"
+            document.getElementById("P309_SEARCH_BY_ISSUE_YR").focus();
+            return false;
+        } else {
+            if(issueYear.length > 0 && issueYear.length < 4) {
+                errorArea.style.display = "none"
+                errorArea1.style.display = "block"
+                document.getElementById("P309_SEARCH_BY_ISSUE_YR").focus();
+                return false;
+            } else {
+                errorArea.style.display = "none"
+                errorArea1.style.display = "none"
+                document.getElementById("P309_SEARCH_BY_ISSUE_YR").focus();
+                return true;
+            }
+        }
+
+    execution: 
+      sequence: 10
+      event: Search Table # 28102678755097878
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 28103699627097884
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P309_RECIPIENT
+      - P309_SEARCH_BY_ISSUE_YR
+      - P309_EVENT
+
+    execution: 
+      sequence: 20
+      event: Search Table # 28102678755097878
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P309_CHECK_FIRST_SEARCH").val() === 'true'
+
+  - # ====== Action: Show ========================================
+    id: 32480448546104112
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P309_RECIPIENT
+      - P309_EVENT
+
+    execution: 
+      sequence: 30
+      event: Search Table # 28102678755097878
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32481031515104118
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: document.getElementById('P309_CHECK_FIRST_SEARCH').value='true';
+
+    execution: 
+      sequence: 50
+      event: Search Table # 28102678755097878
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Hide Recipient And Event ============
+  id: 32480265946104110
+  identification: 
+    name: Hide Recipient And Event
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Hide ========================================
+    id: 32480328341104111
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P309_RECIPIENT
+      - P309_EVENT
+
+    execution: 
+      sequence: 10
+      event: Hide Recipient And Event # 32480265946104110
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Back ================================
+  id: 32481245303104120
+  identification: 
+    name: Back
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: BACK_TO_GC_MENU # 32481157923104119
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 32481308568104121
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P309_PREPARED_URL := apex_page.get_url(
+               p_page   => 304
+             );
+        END;
+
+    execution: 
+      sequence: 20
+      event: Back # 32481245303104120
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32481596354104123
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P309_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Back # 32481245303104120
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Clear =======================================
+    id: 32481613506104124
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P309_SEARCH_BY_ISSUE_YR
+      - P309_RECIPIENT
+      - P309_EVENT
+
+    execution: 
+      sequence: 10
+      event: Back # 32481245303104120
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P309_CHECK_FIRST_SEARCH ================
+  id: 32480613512104114
+  identification: 
+    item-name: P309_CHECK_FIRST_SEARCH
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+processes: 
+- # ====== Process: Initialize form Gift Certificate Search ====
+  id: 28100649497097840
+  identification: 
+    name: Initialize form Gift Certificate Search
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Gift Certificate Donation Search # 46845242661188815
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Gift Certificate Search =======
+  id: 28101040109097846
+  identification: 
+    name: Process form Gift Certificate Search
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Gift Certificate Donation Search # 46845242661188815
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 28102350509097876
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

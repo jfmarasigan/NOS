@@ -1,0 +1,1888 @@
+---
+# ====== Page: Item Masterfile SIC Utilities =================
+id: 168
+identification: 
+  name: Item Masterfile SIC Utilities
+  alias: ITEM-MASTERFILE-SIC-UTILITIES
+  title: Item Masterfile SIC Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p168KeyMap = {
+        a : (v) => {
+            $("#a").click();
+        },
+        p : (v) => {
+            $("#print").click();
+        },
+        escape : (v) => {
+            $("#to-main-menu").click();
+        },
+        h : (v) => {
+            $("#export").click();
+        },
+        s : (v) => {
+            $("#s").click();
+        },
+        u : (v) => {
+            $("#u").click();
+        },
+        home: (v) => {
+            $("#to-top").trigger("click");
+        },
+        end: (v) => {
+            $("#to-bottom").trigger("click");
+        }
+    
+    
+    }
+    
+    
+    function mapP168Keys() {
+        $(document).off('keydown.p168keyevents');
+        $(document).on('keydown.p168keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p168KeyMap[key]) {
+                ev.preventDefault();
+                p168KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP168Keys();
+    }
+  execute-when-page-loads: |
+    mapP168Keys();
+    //$("#s").trigger("click");
+    setTitle("Item Masterfile SIC Utilities")
+    
+     $( document ).ready(function() {
+      $(".a-GV-cell").first().trigger("click");
+     });
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/items_masterfile_css#MIN#.css'
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #sic_list table, #sic_list tr, #sic_list td, #sic_list th {
+         font-size: 1.125rem;
+    }
+    
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+        border: none;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+        padding-bottom: 0.2rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    #sic_list .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #sic_list .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #sic_list .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #sic_list .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: SIC_LIST ====================================
+  id: 36403866873386205
+  identification: 
+    name: SIC_LIST
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT SIC_ID,
+             SIC_CODE,
+             SIC_NAME,
+             CREATE_USER,
+             CREATE_DATE,
+             UPDATE_USER,
+             UPDATE_DATE
+      FROM NIM023
+      WHERE 
+          ( :P168_SIC_CODE IS NOT NULL AND UPPER(NIM023.SIC_CODE) LIKE UPPER('%' || :P168_SIC_CODE || '%') )
+          OR
+          ( :P168_SIC_CODE IS NULL AND :P168_SIC_NAME IS NOT NULL AND UPPER(NIM023.SIC_NAME) LIKE UPPER('%' || :P168_SIC_NAME || '%') )
+          OR
+          ( :P168_SIC_CODE IS NULL AND :P168_SIC_NAME IS NULL );
+      
+    page-items-to-submit: 
+    - P168_SIC_CODE
+    - P168_SIC_NAME
+
+  layout: 
+    sequence: 130
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: sic_list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 36403933730386206
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 36483068372748106
+      identification: 
+        name: Primary Report
+        alias: 364831
+
+  columns: 
+  - # ====== Column: SIC_ID ======================================
+    id: 36404016579386207
+    identification: 
+      column-name: SIC_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SIC_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: SIC_CODE ====================================
+    id: 36404119526386208
+    identification: 
+      column-name: SIC_CODE
+      type: Text Field
+
+    heading: 
+      heading: SIC Code
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 12
+
+    source: 
+      type: Database Column
+      database-column: SIC_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: SIC_NAME ====================================
+    id: 36404285253386209
+    identification: 
+      column-name: SIC_NAME
+      type: Text Field
+
+    heading: 
+      heading: SIC Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: SIC_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CREATE_USER =================================
+    id: 36404337575386210
+    identification: 
+      column-name: CREATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Created User
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: CREATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CREATE_DATE =================================
+    id: 36404429199386211
+    identification: 
+      column-name: CREATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Date Created
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 50
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CREATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATE_USER =================================
+    id: 36404528902386212
+    identification: 
+      column-name: UPDATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Last Updated By
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATE_DATE =================================
+    id: 36404678337386213
+    identification: 
+      column-name: UPDATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Date Updated
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 70
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Buttons =====================================
+  id: 112610312763632886
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 140
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: button-region
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P168_SIC_ID ==============================
+  id: 114807216963769027
+  identification: 
+    name: P168_SIC_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P168_SIC_CODE ============================
+  id: 114807257612769028
+  identification: 
+    name: P168_SIC_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P168_SIC_NAME ============================
+  id: 114807404604769029
+  identification: 
+    name: P168_SIC_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P168_SELECTED_SIC_ID =====================
+  id: 114809295732769048
+  identification: 
+    name: P168_SELECTED_SIC_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P168_SELECTED_SIC_CODE ===================
+  id: 115736700689697221
+  identification: 
+    name: P168_SELECTED_SIC_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P168_PREPARED_URL ========================
+  id: 115737092250697225
+  identification: 
+    name: P168_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P168_SELECTED_SIC_NAME ===================
+  id: 120496267681796754
+  identification: 
+    name: P168_SELECTED_SIC_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Add =========================================
+  id: 36450312004723154
+  identification: 
+    button-name: Add
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 112610312763632886
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:169:&SESSION.::&DEBUG.:::'
+      page: 169 # SIC Utility Add
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 1) = 'Y'"
+
+- # ====== Button: Update ======================================
+  id: 36450726072723156
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 30
+    region: Buttons # 112610312763632886
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 4
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 3) = 'Y'"
+
+- # ====== Button: Print =======================================
+  id: 36451100404723156
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 40
+    region: Buttons # 112610312763632886
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 6
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: print
+
+- # ====== Button: Top =========================================
+  id: 36451510871723157
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 70
+    region: Buttons # 112610312763632886
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-top
+
+- # ====== Button: Bottom ======================================
+  id: 36451930973723157
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 80
+    region: Buttons # 112610312763632886
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-bottom
+
+- # ====== Button: To_Exit =====================================
+  id: 36452396625723157
+  identification: 
+    button-name: To_Exit
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 100
+    region: Buttons # 112610312763632886
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:160:&SESSION.::&DEBUG.:::'
+      page: 160 # Utilities
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: to-main-menu
+
+- # ====== Button: Search ======================================
+  id: 36452797310723157
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 60
+    region: Buttons # 112610312763632886
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:162:&SESSION.::&DEBUG.:168::'
+      page: 162 # Utility Search
+      clear-cache: 168
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Export ======================================
+  id: 36453170472723157
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 50
+    region: Buttons # 112610312763632886
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: export
+
+dynamic-actions: 
+- # ====== Dynamic Action: Selection Change ====================
+  id: 36404972604386216
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: SIC_LIST # 36403866873386205
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36458908560723190
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let selectedRecords = this.data.selectedRecords;
+        
+        
+        if (selectedRecords.length > 0) {
+        
+            let sicIDSelected = selectedRecords[0][0];
+            let sicCodeSelected = selectedRecords[0][1];
+            let sicNameSelected = selectedRecords[0][2];
+        
+            $("#P168_SELECTED_SIC_ID").val(sicIDSelected);
+            $("#P168_SELECTED_SIC_CODE").val(sicCodeSelected);
+            $("#P168_SELECTED_SIC_NAME").val(sicNameSelected);
+        
+        
+            console.log("Selected item: " + sicIDSelected + " & " + sicCodeSelected + " & " + sicNameSelected) 
+        } 
+        
+        
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 36404972604386216
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Add or Update =================
+  id: 36457031866723185
+  identification: 
+    name: Close Add or Update
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 36407220962386239
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: SIC_LIST # 36403866873386205
+
+    execution: 
+      sequence: 10
+      event: Close Add or Update # 36457031866723185
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36457599374723187
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".t-Button--closeAlert").trigger("click");
+                        }, 3000);
+        
+                    }
+                }
+            });
+        
+        
+        
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        }, "300");
+        
+
+    execution: 
+      sequence: 20
+      event: Close Add or Update # 36457031866723185
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: End click ===========================
+  id: 36459324840723190
+  identification: 
+    name: End click
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 36451930973723157
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36459895822723190
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: '$(".a-GV-table tr:last .a-GV-cell:first").trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: End click # 36459324840723190
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Dialog Closed or Canceled ===========
+  id: 36460285186723192
+  identification: 
+    name: Dialog Closed or Canceled
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 36452797310723157
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36460733433723192
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP168Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed or Canceled # 36460285186723192
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Home click ==========================
+  id: 36461141425723192
+  identification: 
+    name: Home click
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 36451510871723157
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36461608045723192
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: ' $(".a-GV-cell").first().trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: Home click # 36461141425723192
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Update Clicked ======================
+  id: 36462006764723193
+  identification: 
+    name: Update Clicked
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 36450726072723156
+
+  client-side-condition: 
+    type: Item is not null
+    item: P168_SELECTED_SIC_ID
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 36462561299723195
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P168_PREPARED_URL := apex_page.get_url(
+               p_page   => 170,
+               p_items  => 'P170_SIC_ID,P170_SIC_CODE,P170_SIC_NAME',
+               p_values => :P168_SELECTED_SIC_ID ||','|| :P168_SELECTED_SIC_CODE ||','|| :P168_SELECTED_SIC_NAME, 
+               p_clear_cache => '170'
+             );
+        END;
+      items-to-submit: 
+      - P168_SELECTED_SIC_CODE
+      - P168_SELECTED_SIC_ID
+      items-to-return: 
+      - P168_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Update Clicked # 36462006764723193
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36463065443723195
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P168_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Update Clicked # 36462006764723193
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P168_PREPARED_URL
+
+- # ====== Dynamic Action: Search_Modal ========================
+  id: 36463494207723195
+  identification: 
+    name: Search_Modal
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 36452797310723157
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 36463960269723196
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P162_CODE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P168_SIC_CODE
+
+    execution: 
+      sequence: 20
+      event: Search_Modal # 36463494207723195
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36464464134723196
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "300");
+
+    execution: 
+      sequence: 50
+      event: Search_Modal # 36463494207723195
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 36464998223723196
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P162_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P168_SIC_NAME
+
+    execution: 
+      sequence: 30
+      event: Search_Modal # 36463494207723195
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 38762313926655613
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: SIC_LIST # 36403866873386205
+
+    execution: 
+      sequence: 40
+      event: Search_Modal # 36463494207723195
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click ===============================
+  id: 36465887028723198
+  identification: 
+    name: Click
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 36452797310723157
+
+  actions: 
+  - # ====== Action: Reset Keys ==================================
+    id: 36466865553723201
+    identification: 
+      name: Reset Keys
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p168keyevents');
+
+    execution: 
+      sequence: 20
+      event: Click # 36465887028723198
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Closed or Canceled ==================
+  id: 36467291798723201
+  identification: 
+    name: Closed or Canceled
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Add # 36450312004723154
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36467743071723203
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP168Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Closed or Canceled # 36467291798723201
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Clicked =========================
+  id: 36468166351723203
+  identification: 
+    name: Add Clicked
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Add # 36450312004723154
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 36468681206723203
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p168keyevents');
+
+    execution: 
+      sequence: 10
+      event: Add Clicked # 36468166351723203
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Print =========================
+  id: 38763245454655622
+  identification: 
+    name: Click Print
+
+  execution: 
+    sequence: 230
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 36451100404723156
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 38763318680655623
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        generateReport("SIC_UTIL_PDF_COURIER_NEW", "pdf", { 
+            fileName: `ItemMasterfileSICUtilities_${formattedDate}.pdf`,
+            mode : "print",
+            parameters : {
+                P_SIC_CODE : $v("P168_SIC_CODE"),
+                P_SIC_NAME : $v("P168_SIC_NAME"),
+                P_SIC_ID : $v("P168_SIC_ID")
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Click Print # 38763245454655622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Export ========================
+  id: 38763450614655624
+  identification: 
+    name: Click Export
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 36453170472723157
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 38763528305655625
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        generateReport("SIC_UTIL_XLSX", "xlsx", { 
+            fileName: `ItemMasterfileSICUtilities_${formattedDate}.xlsx`,
+            mode : "print",
+            parameters : {
+                P_SIC_CODE : $v("P168_SIC_CODE"),
+                P_SIC_NAME : $v("P168_SIC_NAME"),
+                P_SIC_ID : $v("P168_SIC_ID")
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Click Export # 38763450614655624
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Clear Session ==============================
+  id: 36455846563723181
+  identification: 
+    name: Clear Session
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear Items
+    item(s): 
+    - P168_SIC_ID
+    - P168_SIC_CODE
+    - P168_SIC_NAME
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CLEAR_SUCCESS_MSG ==========================
+  id: 36456207664723182
+  identification: 
+    name: CLEAR_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+      	apex_util.set_session_state('SUCCESS_MSG', null);
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_SUCCESS_MSG ============================
+  id: 36456684105723184
+  identification: 
+    name: GET_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+         l_msg VARCHAR2(200);
+      BEGIN
+         -- Get the value of the SUCCESS_MSG application item
+         l_msg := apex_util.get_session_state('SUCCESS_MSG');
+         
+         -- Return it as a JSON object
+         apex_json.open_object;
+         apex_json.write('success_msg', l_msg);
+         apex_json.close_object;
+      
+         -- Clear the SUCCESS_MSG after displaying it
+         apex_util.set_session_state('SUCCESS_MSG', NULL);
+      END;
+      
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

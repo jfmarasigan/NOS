@@ -1,0 +1,603 @@
+---
+# ====== Page: PO Opening Email Utility Add/Update ===========
+id: 189
+identification: 
+  name: PO Opening Email Utility Add/Update
+  alias: PO-OPENING-EMAIL-UTILITY-ADD-UPDATE
+  title: PO Opening Email Utility Add/Update
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 40rem
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p189KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+           let activeElement = document.activeElement;
+    
+            if ($(activeElement).is('input')) {
+                var currentField = $(activeElement);
+                var allInputs = $('input:visible:enabled');
+                var currentIndex = allInputs.index(currentField); 
+                var nextField = allInputs.eq(currentIndex + 1);
+    
+                if (currentIndex === allInputs.length - 1) {
+                    $("#submit").trigger("click");
+                } else {
+                    nextField.focus();
+                }
+            } else {
+                $("#submit").trigger("click"); 
+            }
+        }
+    
+    }
+    
+    
+    function mapP189Keys() {
+        $(document).off('keydown.p189keyevents');
+        $(document).on('keydown.p189keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p189KeyMap[key]) {
+                ev.preventDefault();
+                p189KeyMap[key]();
+            }
+        });
+    }
+    
+    
+  execute-when-page-loads: |
+    mapP189Keys();
+    
+    $x('P189_OPENING_EMAIL').focus();
+    
+    if($v("P189_OPENING_EMAIL_ID") == ''){
+        parent.$('.ui-dialog-title').html('Add');
+    }
+    else{
+        parent.$('.ui-dialog-title').html('Update');
+    }
+    
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+    }
+    
+    .t-Dialog-body label, .t-Dialog-body input, .t-Dialog-body .apex-item-display-only, .t-Dialog-body .textarea {
+        font-size: 1.125rem;
+    }
+    
+    .t-Dialog-body label {
+        color: white;
+    }
+    
+    .t-Region-body{
+        background-color: #056AC8;
+        padding-bottom: 0;
+    }
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; /* Remove the asterisk before the label */
+    }
+    
+    
+    .white-text {
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    
+    .t-Form-error {
+        color: #FFD700;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Form / Table ================================
+  id: 164781179291155947
+  identification: 
+    name: Form / Table
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM033
+    include-rowid-column: false
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P189_OPENING_EMAIL_ID ====================
+  id: 41786983762876140
+  identification: 
+    name: P189_OPENING_EMAIL_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form / Table # 164781179291155947
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 164781179291155947
+    column: OPENING_EMAIL_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P189_OPENING_EMAIL =======================
+  id: 41787079400876141
+  identification: 
+    name: P189_OPENING_EMAIL
+    type: Textarea
+
+  label: 
+    label: 'Opening Email<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    resizable: true
+    auto-height: false
+    character-counter: false
+    trim-spaces: Leading and Trailing
+
+  layout: 
+    sequence: 20
+    region: Form / Table # 164781179291155947
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - margin-right-sm
+    width: 30
+    height: 5
+
+  validation: 
+    value-required: false
+    maximum-length: 4000
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 164781179291155947
+    column: OPENING_EMAIL
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P189_CREATE_USER =========================
+  id: 155036393221456046
+  identification: 
+    name: P189_CREATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Form / Table # 164781179291155947
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 164781179291155947
+    column: CREATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P189_CREATE_DATE =========================
+  id: 155036473502456047
+  identification: 
+    name: P189_CREATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Form / Table # 164781179291155947
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 164781179291155947
+    column: CREATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSTIMESTAMP
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P189_UPDATE_USER =========================
+  id: 155036605424456048
+  identification: 
+    name: P189_UPDATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Form / Table # 164781179291155947
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 164781179291155947
+    column: UPDATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P189_UPDATE_DATE =========================
+  id: 155036741493456049
+  identification: 
+    name: P189_UPDATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Form / Table # 164781179291155947
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 164781179291155947
+    column: UPDATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSTIMESTAMP
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 42336659500760310
+  identification: 
+    button-name: Enter
+    label: Press enter to add
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - white-text
+    - hiddenbtn
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL INSERT action
+
+  advanced: 
+    static-id: submit
+    custom-attributes: 
+    - tabindex="-1"
+
+validations: 
+- # ====== Validation: Empty ===================================
+  id: 42341667078760321
+  identification: 
+    name: Empty
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P189_OPENING_EMAIL
+    always-execute: false
+
+  error: 
+    error-message: Field cannot be empty.
+    display-location: Inline with Field
+    associated-item: P189_OPENING_EMAIL # 41787079400876141
+
+- # ====== Validation: Unique ==================================
+  id: 42342027604760321
+  identification: 
+    name: Unique
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      SELECT OPENING_EMAIL FROM NIM033
+      WHERE UPPER(OPENING_EMAIL) = UPPER(:P189_OPENING_EMAIL)
+      AND OPENING_EMAIL_ID != :P189_OPENING_EMAIL_ID
+    always-execute: false
+
+  error: 
+    error-message: Opening already exists.
+    display-location: Inline with Field
+    associated-item: P189_OPENING_EMAIL # 41787079400876141
+
+processes: 
+- # ====== Process: Initialize form PO Opening Email Utility Add
+  id: 42341008497760320
+  identification: 
+    name: Initialize form PO Opening Email Utility Add
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Form / Table # 164781179291155947
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Update =====================================
+  id: 42342389653760321
+  identification: 
+    name: Update
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE NIM033 
+      SET OPENING_EMAIL = :P189_OPENING_EMAIL, 
+          UPDATE_USER = :APP_USER, 
+          UPDATE_DATE = SYSTIMESTAMP
+      WHERE OPENING_EMAIL_ID = :P189_OPENING_EMAIL_ID;
+      
+      apex_util.set_session_state('SUCCESS_MSG', 'Opening Email updated successfully');
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P189_OPENING_EMAIL_ID
+
+- # ====== Process: Add ========================================
+  id: 42342777620760323
+  identification: 
+    name: Add
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      INSERT INTO NIM033 (OPENING_EMAIL, CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE)
+      VALUES (:P189_OPENING_EMAIL, :APP_USER, SYSTIMESTAMP, :APP_USER, SYSTIMESTAMP);
+      
+      apex_util.set_session_state('SUCCESS_MSG', 'Opening Email added successfully');
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P189_OPENING_EMAIL_ID
+
+- # ====== Process: Close Dialog ===============================
+  id: 42343133474760323
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: false
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

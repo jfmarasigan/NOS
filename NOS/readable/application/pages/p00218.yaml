@@ -1,0 +1,343 @@
+---
+# ====== Page: User Utilities Search =========================
+id: 218
+identification: 
+  name: User Utilities Search
+  alias: USER-UTILITIES-SEARCH
+  title: Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p218KeyMap = {
+        escape : (v) => {
+            $(document).off('keydown.p218keyevents');
+            $.event.trigger("cancelDialog")
+        },
+        enter : (v) => {
+            $(document).off('keydown.p218keyevents');
+            apex.page.submit( "SUBMIT" );
+        }
+    }
+    
+    function mapP218Keys() {
+        $(document).off('keydown.p218keyevents');
+        $(document).on('keydown.p218keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p218KeyMap[key]) {
+                ev.preventDefault();
+                p218KeyMap[key]();
+            }
+        });
+    }
+    
+    $x('P218_SEARCH_NAME').focus();
+  execute-when-page-loads: mapP218Keys();
+
+css: 
+  inline: |
+    /* .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+        padding-bottom: 0;
+    } */
+    .t-Dialog-body label,
+    .t-Dialog-body input {
+        font-size: 1.125rem;
+    }
+    
+    /* .t-Region-body{
+        padding: 0.4;
+    } */
+    
+    /* .t-Form-label{
+        white-space: nowrap;
+    } */
+    
+    /* #search-form{
+        background-color: white;
+    } */
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search ======================================
+  id: 45029015535682426
+  identification: 
+    name: Search
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P218_SEARCH_NAME =========================
+  id: 45029175580682427
+  identification: 
+    name: P218_SEARCH_NAME
+    type: Text Field
+
+  label: 
+    label: 'Search For Name:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Search # 45029015535682426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P218_SEARCH_USERNAME =====================
+  id: 45029286505682428
+  identification: 
+    name: P218_SEARCH_USERNAME
+    type: Text Field
+
+  label: 
+    label: 'Username:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Search # 45029015535682426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 45029362009682429
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: cancelDialog
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45029476178682430
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p218keyevents');
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 45029362009682429
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Cancel Dialog ===============================
+    id: 45029508649682431
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 20
+      event: Cancel Dialog # 45029362009682429
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Empty Value Name ========================
+  id: 45029748449682433
+  identification: 
+    name: Empty Value Name
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: '(:P218_SEARCH_NAME IS NOT NULL OR :P218_SEARCH_USERNAME IS NOT NULL)'
+    always-execute: true
+
+  error: 
+    error-message: Please type value in the fields.
+    display-location: Inline with Field
+    associated-item: P218_SEARCH_NAME # 45029175580682427
+
+- # ====== Validation: Empty Value Username ====================
+  id: 45029890651682434
+  identification: 
+    name: Empty Value Username
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: '(:P218_SEARCH_NAME IS NOT NULL OR :P218_SEARCH_USERNAME IS NOT NULL)'
+    always-execute: true
+
+  error: 
+    error-message: Please type value in the fields.
+    display-location: Inline with Field
+    associated-item: P218_SEARCH_USERNAME # 45029286505682428
+
+processes: 
+- # ====== Process: Go To Page 217 =============================
+  id: 45029699893682432
+  identification: 
+    name: Go To Page 217
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    items-to-return-: 
+    - P218_SEARCH_NAME
+    - P218_SEARCH_USERNAME
+    show-success-messages: false
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

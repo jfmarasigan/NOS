@@ -1,0 +1,811 @@
+---
+# ====== Page: Inquire Vendor Details ========================
+id: 7
+identification: 
+  name: Inquire Vendor Details
+  alias: INQUIRE-VENDOR-DETAILS
+  title: Vendor Details
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 700
+  attributes: 
+  - "close: function() { customEvent('customDialogClose'"
+  - " {modalPageId: 'MODAL_CLOSE_FIXED'});} "
+  css-classes: 
+  - no-bg
+  - font-1rem
+  - inv-qby-w
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    function mapP7Keys(){
+        $(document).on('keydown.p7keyevents', (ev) => {
+            apex.navigation.dialog.close(true);
+            $(document).off('keydown.p7keyevents');
+        });
+    }
+    
+  execute-when-page-loads: |
+    mapP7Keys();
+    $(".ui-dialog-titlebar-close").hide();
+
+css: 
+  inline: |
+    #vendor-detail {
+        background-color: white;
+    }
+    #vendor-detail label,
+    #vendor-detail .display_only {
+        font-size: 1.125rem;
+    }
+    .t-Form-fieldContainer{
+        display: flex;
+        flex-direction: row;
+        gap: 1.125rem;
+        align-items: baseline;
+    }
+    #vendor-detail.t-Form-labelContainer{
+        width: 10rem;
+    }
+    
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    #foot{
+        background-color: #056AC8;
+        border: 0;
+    }
+    
+    .t-Form-labelContainer:has(> label) {
+        text-align: start;    
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Vendor Details ==============================
+  id: 6689621790653714
+  identification: 
+    name: Vendor Details
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          V.VENDOR_ID,
+          V.VENDOR_CODE,
+          V.VENDOR_NAME,
+          V.VENDOR_TYPE,
+          V.CONTACT_PERSON,
+          V.PHONE_NUMBER,
+          V.FAX_NUMBER,
+          V.EMAIL_ADDRESS1,
+          V.PAYMENT_TERM,
+          B.STREET || ', ' || B.CITY || ', ' || B.STATE || ', ' || B.ZIPCODE || ', ' || B.COUNTRY AS BILLING_ADDRESS,
+          S.STREET || ', ' || S.CITY || ', ' || S.STATE || ', ' || S.ZIPCODE || ', ' || S.COUNTRY AS SHIPPING_ADDRESS
+      FROM NIT006 V, NIT009 B, NIT009 S
+      WHERE   V.VENDOR_ID = :P7_VENDOR_ID AND
+              V.VENDOR_ID = B.VENDOR_ID AND 
+              B.ADDRESS_TYPE_ID = 1 AND
+              S.ADDRESS_TYPE_ID = 2 AND
+              V.VENDOR_ID = S.VENDOR_ID
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Cards Container
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - details
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: vendor-detail
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Footer ======================================
+  id: 6693147861653749
+  identification: 
+    name: Footer
+    type: Static Content
+
+  source: 
+    html-code: '<h4 style="margin:0.4rem;text-align:center;color:white;font-size:1.125rem">Press any key to Exit</h3>'
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - margin-top-none
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: foot
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P7_VENDOR_CODE ===========================
+  id: 6689941564653717
+  identification: 
+    name: P7_VENDOR_CODE
+    type: Display Only
+
+  label: 
+    label: 'Vendor Code:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 20
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: VENDOR_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_VENDOR_NAME ===========================
+  id: 6690002838653718
+  identification: 
+    name: P7_VENDOR_NAME
+    type: Display Only
+
+  label: 
+    label: 'Vendor Name:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 30
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: VENDOR_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_VENDOR_TYPE ===========================
+  id: 6690121305653719
+  identification: 
+    name: P7_VENDOR_TYPE
+    type: Display Only
+
+  label: 
+    label: 'Vendor Type:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 40
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: VENDOR_TYPE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_CONTACT_PERSON ========================
+  id: 6690272671653720
+  identification: 
+    name: P7_CONTACT_PERSON
+    type: Display Only
+
+  label: 
+    label: 'Contact Person:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 50
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: CONTACT_PERSON
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_PHONE_NUMBER ==========================
+  id: 6690367887653721
+  identification: 
+    name: P7_PHONE_NUMBER
+    type: Display Only
+
+  label: 
+    label: 'Phone Number:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 60
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: PHONE_NUMBER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_EMAIL_ADDRESS1 ========================
+  id: 6690431457653722
+  identification: 
+    name: P7_EMAIL_ADDRESS1
+    type: Display Only
+
+  label: 
+    label: 'Email Address:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 80
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: EMAIL_ADDRESS1
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_PAYMENT_TERM ==========================
+  id: 6690537537653723
+  identification: 
+    name: P7_PAYMENT_TERM
+    type: Display Only
+
+  label: 
+    label: 'Payment Term:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 90
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: PAYMENT_TERM
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_BILLING_ADDRESS =======================
+  id: 6690622415653724
+  identification: 
+    name: P7_BILLING_ADDRESS
+    type: Display Only
+
+  label: 
+    label: 'Billing Address:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 100
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: BILLING_ADDRESS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_SHIPPING_ADDRESS ======================
+  id: 6690715166653725
+  identification: 
+    name: P7_SHIPPING_ADDRESS
+    type: Display Only
+
+  label: 
+    label: 'Shipping Address:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 110
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: SHIPPING_ADDRESS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_VENDOR_ID =============================
+  id: 6693090252653748
+  identification: 
+    name: P7_VENDOR_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: VENDOR_ID
+    data-type: NUMBER
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P7_FAX_NUMBER ============================
+  id: 39842126370908917
+  identification: 
+    name: P7_FAX_NUMBER
+    type: Display Only
+
+  label: 
+    label: 'Fax Number:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 70
+    region: Vendor Details # 6689621790653714
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+    css-classes: 
+    - inquire-text
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Vendor Details # 6689621790653714
+    column: FAX_NUMBER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+processes: 
+- # ====== Process: Initialize form Inquire Vendor Details =====
+  id: 6689807310653716
+  identification: 
+    name: Initialize form Inquire Vendor Details
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Vendor Details # 6689621790653714
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+

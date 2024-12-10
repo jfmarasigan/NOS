@@ -1,0 +1,49 @@
+---
+- # ====== Report Query: VENDOR_MASTERLIST_EXPORT ==============
+  id: 13475822217852560
+  identification: 
+    name: VENDOR_MASTERLIST_EXPORT
+
+  advanced: 
+    static-id: VENDOR_MASTERLIST_EXPORT
+
+  output: 
+    file-name: VENDOR_MASTERLIST_EXPORT
+    format: Excel
+    layout: Use Generic Report Layout
+    view-file-as: Inline
+
+  session-state: 
+
+  source-queries: 
+  - # ====== Source Query: VENDOR_MASTERLIST_EXPORT ==============
+    id: 13476176180852614
+    source: 
+      location: Local Database
+      type: SQL Query
+      sql-query: |
+        SELECT  
+            VENDOR_ID,
+            VENDOR_CODE,
+            VENDOR_NAME, 
+            CONTACT_PERSON, 
+            PHONE_NUMBER, 
+            EMAIL_ADDRESS1, 
+            PAYMENT_TERM, 
+            'DUMMY' AS OS_BALANCE, 
+            'DUMMY' AS OS_CREDIT_MEMO
+        FROM NIT006
+        WHERE   
+                (:P5_SEARCH_CODE IS NOT NULL AND :P5_SEARCH_NAME IS NULL 
+                    AND UPPER(VENDOR_CODE) LIKE '%' || UPPER(:P5_SEARCH_CODE) || '%') OR
+                (:P5_SEARCH_CODE IS NULL AND :P5_SEARCH_NAME IS NOT NULL 
+                    AND UPPER(VENDOR_NAME) LIKE '%' || UPPER(:P5_SEARCH_NAME) || '%') OR
+                (:P5_SEARCH_CODE IS NOT NULL AND :P5_SEARCH_NAME IS NOT NULL 
+                    AND UPPER(VENDOR_CODE) LIKE '%' || UPPER(:P5_SEARCH_CODE) || '%')
+
+    identification: 
+      name: VENDOR_MASTERLIST_EXPORT
+
+    layout: 
+      sequence: 1
+

@@ -1,0 +1,338 @@
+---
+# ====== Page: Add Refund ====================================
+id: 125
+identification: 
+  name: Add Refund
+  alias: CREDIT-MEMO-ADD-REFUND
+  title: Add Refund
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 500
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  execute-when-page-loads: |
+    
+    
+    
+
+css: 
+  inline: |
+    .format-size{
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P125_SEARCH_QUERY ========================
+  id: 46317751861497902
+  identification: 
+    name: P125_SEARCH_QUERY
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    pre-text: '<span class="format-size">Invoice Number:   </span>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P125_PREPARED_URL ========================
+  id: 46317818097497903
+  identification: 
+    name: P125_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P125_VALID ===============================
+  id: 46317925329497904
+  identification: 
+    name: P125_VALID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Set Focus ===========================
+  id: 33211101790998133
+  identification: 
+    name: Set Focus
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 46318613838497911
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P125_SEARCH_QUERY
+
+    execution: 
+      sequence: 10
+      event: Set Focus # 33211101790998133
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Change ==============================
+  id: 46318016383497905
+  identification: 
+    name: Change
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P125_SEARCH_QUERY
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 46318172547497906
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            l_invoice VARCHAR2(10);
+        BEGIN
+            SELECT
+                TO_CHAR(:P99_SEARCH_QUERY, '000000')
+            INTO
+                l_invoice
+            FROM
+                DUAL;
+        
+            :P125_PREPARED_URL := apex_page.get_url(
+               p_page   => 122,
+               p_items  => 'P122_INVOICE_NUMBER,P122_PAGE_MODE,P122_INVOICE_DATE',
+               p_values => l_invoice || ',add,' || SYSDATE
+            );
+        END;
+      items-to-submit: 
+      - P125_SEARCH_QUERY
+      items-to-return: 
+      - P125_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Change # 46318016383497905
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 46318285354497907
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            l_refundable NUMBER := 0;
+            l_check NUMBER;
+        BEGIN
+            SELECT
+                CASH_INVOICE_ID
+            INTO
+                l_check
+            FROM
+                NPT033
+            WHERE
+                CASH_INVOICE_ID = :P125_SEARCH_QUERY;
+        
+            :P125_VALID := 0;
+            IF l_check IS NOT NULL THEN
+                DELETE FROM NPT035 WHERE REFUND_ID IS NULL AND USER_CREATED = :APP_USER;
+                FOR i in (SELECT ITEM_INVOICE_ID, QUANTITY FROM NPT002 WHERE CASH_INVOICE_ID = :P125_SEARCH_QUERY) LOOP
+                    SELECT 
+                        SUM(REFUND_QUANTITY)
+                    INTO
+                        l_refundable
+                    FROM
+                        NPT035
+                    WHERE
+                        ITEM_INVOICE_ID = i.ITEM_INVOICE_ID;
+        
+                    IF l_refundable IS NULL THEN
+                        l_refundable := 0;
+                    END IF;
+        
+                    INSERT INTO NPT035 (ITEM_INVOICE_ID, REFUNDABLE_QUANTITY, USER_CREATED) 
+                    VALUES (i.ITEM_INVOICE_ID, i.QUANTITY - l_refundable, :APP_USER);
+                END LOOP;
+                :P125_VALID := 1;
+            END IF;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                :P125_VALID := 0;
+        END;
+      items-to-submit: 
+      - P125_SEARCH_QUERY
+      - P125_VALID
+      items-to-return: 
+      - P125_VALID
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Change # 46318016383497905
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46318378565497908
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P125_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Change # 46318016383497905
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

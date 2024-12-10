@@ -1,0 +1,2230 @@
+---
+# ====== Page: Item Masterfile ===============================
+id: 4
+identification: 
+  name: Item Masterfile
+  alias: ITEM-MASTERFILE
+  title: Item Masterfile
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '-- #APP_FILES#js/itemmasterfile#MIN#.js'
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p4KeyMap = {
+        a : (v) => {
+            $("#a").click();
+        },
+        i : (v) => {
+            $("#i").click();
+        },
+        escape : (v) => {
+            $("#to-main-menu").click();
+        },
+        o : (v) => {
+            $("#o").click();
+        },
+        s : (v) => {
+            $("#s").click();
+        },
+        u : (v) => {
+            $("#u").click();
+        },
+        d : (v) => {
+            $("#d").click();
+        },
+        home: (v) => {
+            $("#to-top").trigger("click");
+        },
+        end: (v) => {
+            $("#to-bottom").trigger("click");
+        }
+    
+    
+    }
+    
+    
+    function mapP4Keys() {
+        $(document).off('keydown.p4keyevents');
+        $(document).on('keydown.p4keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p4KeyMap[key]) {
+                ev.preventDefault();
+                p4KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP4Keys();
+    }
+  execute-when-page-loads: |
+    mapP4Keys();
+    $("#s").trigger("click");
+    setTitle("Item Masterfile")
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/items_masterfile_css#MIN#.css'
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #item_list table, #item_list tr, #item_list td, #item_list th {
+         font-size: 1.125rem;
+    }
+    
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #226597;
+        color: white;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    #item_list .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #item_list .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #item_list .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #item_list .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Item_list ===================================
+  id: 6013123700540001
+  identification: 
+    name: Item_list
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          ROWNUM AS "Primary Key",
+          nit001.item_num AS "Item Number",
+          nit002.upc AS "UPC",
+          nim022.brand_name AS "Brand Name",
+          nit001.item_desc AS "Item Description",
+          nit006.vendor_name AS "Supplier Name"
+      FROM 
+          -- (SELECT *
+          --  FROM (SELECT nit001.item_id, nit001.item_desc, nit001.item_num FROM NIT001 nit001 ORDER BY nit001.item_id)
+          --  WHERE rownum = 1)
+          NIT001 nit001
+      JOIN 
+          NIT002 nit002 ON nit001.item_id = nit002.item_id
+      JOIN 
+          NIM022 nim022 ON nit001.brand_id = nim022.brand_id
+      JOIN
+          (
+              -- SELECT nit007.item_id, min(nit007.vendor_id) AS vendor_id
+              -- FROM NIT007 nit007
+              -- GROUP BY nit007.item_id
+      
+              SELECT * FROM(
+                  SELECT 
+                    nit007.item_id, nit007.vendor_id, nit007.vendor_sequence, 
+                    ROW_NUMBER() OVER(PARTITION BY nit007.item_id ORDER BY nit007.vendor_sequence) as rank
+                  FROM NIT007 nit007
+              ) t1
+              WHERE rank = 1
+              ORDER BY t1.vendor_sequence
+      
+              -- SELECT nit007.item_id, min(nit007.create_date), nit007.vendor_id
+              -- FROM NIT007 nit007
+              -- GROUP BY nit007.item_id, nit007.vendor_id
+          )
+          nit007 ON nit001.item_id = nit007.item_id
+          -- NIT007 nit007 ON nit001.item_id = nit007.item_id
+      /*
+      JOIN 
+          (SELECT nit007.item_id, nit007.vendor_id
+           FROM NIT007 nit007
+           WHERE nit007.create_date = (SELECT MIN(nit007_inner.create_date)
+                                       FROM NIT007 nit007_inner
+                                       WHERE nit007_inner.item_id = nit007.item_id)
+          ) nit007_first ON nit001.item_id = nit007_first.item_id
+          */
+      JOIN 
+          -- (SELECT *
+          --  FROM (SELECT nit006.vendor_id, nit006.vendor_name FROM NIT006 nit006 ORDER BY nit006.vendor_id)
+          --  WHERE rownum = 1)
+          -- (SELECT * FROM NIT006 nit006 WHERE ROWNUM <= 2)   --returns 1 fin9090
+          -- (SELECT * FROM NIT006 nit006 FETCH FIRST 2 ROWS ONLY)   --returns 1 fin9090
+          -- (SELECT * FROM NIT006 nit006)  --returns 3 fin9090
+          --  nit006 ON nit007.vendor_id = nit006.vendor_id
+          NIT006 nit006 ON nit007.vendor_id = nit006.vendor_id
+      WHERE
+          NIT002."LEVEL" = 4 
+          
+          AND (
+      
+          (:P4_item_num IS NOT NULL AND UPPER(nit001.item_num) LIKE UPPER('%' || :P4_item_num || '%'))
+      
+          OR (:P4_item_num IS NULL AND :P4_upc IS NOT NULL AND UPPER(nit002.upc) LIKE UPPER('%' || :P4_UPC|| '%'))
+      
+          OR (:P4_item_num IS NULL AND :P4_upc IS NULL AND :P4_item_desc IS NOT NULL AND UPPER(nit001.item_desc) LIKE UPPER('%' || :P4_item_desc || '%'))
+      
+      --   OR (:P4_item_num IS NULL AND :P4_upc IS NULL AND :P4_item_desc IS NULL)
+          )
+      
+          -- AND NIT006."VENDOR_ID" = 2
+    page-items-to-submit: 
+    - P4_ITEM_NUM
+    - P4_UPC
+    - P4_ITEM_DESC
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: item_list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 6016439179540034
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 6214209099708723
+      identification: 
+        name: Primary Report
+        alias: 62143
+
+  columns: 
+  - # ====== Column: Item_Number =================================
+    id: 6016532156540035
+    identification: 
+      column-name: Item_Number
+      type: Text Field
+
+    heading: 
+      heading: Item No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: Item Number
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPC =========================================
+    id: 6016629343540036
+    identification: 
+      column-name: UPC
+      type: Text Field
+
+    heading: 
+      heading: UPC
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 56
+
+    source: 
+      type: Database Column
+      database-column: UPC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: Brand Name ==================================
+    id: 6016724013540037
+    identification: 
+      column-name: Brand Name
+      type: Text Field
+
+    heading: 
+      heading: Brand Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: Brand Name
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: Item Description ============================
+    id: 6016894276540038
+    identification: 
+      column-name: Item Description
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: Item Description
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: Supplier Name ===============================
+    id: 6016910616540039
+    identification: 
+      column-name: Supplier Name
+      type: Text Field
+
+    heading: 
+      heading: Supplier Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: Supplier Name
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: Primary Key =================================
+    id: 8189754106675936
+    identification: 
+      column-name: Primary Key
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: Primary Key
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+- # ====== Region: Buttons =====================================
+  id: 6014952119540019
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: button-region
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P4_ITEM_NUM ==============================
+  id: 8187775180675916
+  identification: 
+    name: P4_ITEM_NUM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P4_UPC ===================================
+  id: 8187815829675917
+  identification: 
+    name: P4_UPC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P4_ITEM_DESC =============================
+  id: 8187962821675918
+  identification: 
+    name: P4_ITEM_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P4_SELECTED_ITEM_NUM =====================
+  id: 8189853949675937
+  identification: 
+    name: P4_SELECTED_ITEM_NUM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P4_SELECTED_ITEM_ID ======================
+  id: 9117258906604110
+  identification: 
+    name: P4_SELECTED_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P4_PREPARED_URL ==========================
+  id: 9117650467604114
+  identification: 
+    name: P4_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P4_SUCCESS_MSG ===========================
+  id: 13873069293703605
+  identification: 
+    name: P4_SUCCESS_MSG
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P4_SELECTED_ITEM_DESC ====================
+  id: 13876825898703643
+  identification: 
+    name: P4_SELECTED_ITEM_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Add =========================================
+  id: 6015009487540020
+  identification: 
+    button-name: Add
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:10:&SESSION.::&DEBUG.:::'
+      page: 10 # Add Item
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 1) = 'Y'"
+
+- # ====== Button: Update ======================================
+  id: 6015183520540021
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update Item
+
+  layout: 
+    sequence: 30
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 3
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 3) = 'Y'"
+
+- # ====== Button: Inquire =====================================
+  id: 6015249095540022
+  identification: 
+    button-name: Inquire
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 40
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 5
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: Update_Price_Only ===========================
+  id: 6015371205540023
+  identification: 
+    button-name: Update_Price_Only
+    label: <u>O</u> - Update Price Only
+
+  layout: 
+    sequence: 50
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 7
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: o
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 4) = 'Y'"
+
+- # ====== Button: Item_Details_History ========================
+  id: 6015479855540024
+  identification: 
+    button-name: Item_Details_History
+    label: <u>D</u> - Item Details History
+
+  layout: 
+    sequence: 60
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: d
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 5) = 'Y'"
+
+- # ====== Button: Top =========================================
+  id: 6015563537540025
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 70
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-top
+
+- # ====== Button: Bottom ======================================
+  id: 6015691179540026
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 80
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 3
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-bottom
+
+- # ====== Button: To_Exit =====================================
+  id: 6015743341540027
+  identification: 
+    button-name: To_Exit
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 110
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 7
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:::'
+      page: 2 # Masterfile Maintenance Submenu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: to-main-menu
+
+- # ====== Button: Search ======================================
+  id: 6015853476540028
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 100
+    region: Buttons # 6014952119540019
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 5
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:11:&SESSION.::&DEBUG.:4::'
+      page: 11 # Item Masterfile Search
+      clear-cache: 4
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+dynamic-actions: 
+- # ====== Dynamic Action: Selection Change ====================
+  id: 8189175645675930
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Item_list # 6013123700540001
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8189217892675931
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let selectedRecords = this.data.selectedRecords;
+        
+        
+        if (selectedRecords.length > 0) {
+        
+            let itemDescSelected = selectedRecords[0][4];
+            let itemNumSelected = selectedRecords[0][1];
+        
+            $("#P4_SELECTED_ITEM_NUM").val(itemNumSelected);
+            $("#P4_SELECTED_ITEM_DESC").val(itemDescSelected);
+        
+            console.log("Selected item: " + itemNumSelected + " & " + itemDescSelected) 
+        } 
+        
+        
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 8189175645675930
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 13876096625703635
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT ITEM_ID FROM NIT001
+        WHERE ITEM_NUM = :P4_SELECTED_ITEM_NUM
+        AND ITEM_DESC = :P4_SELECTED_ITEM_DESC
+      items-to-submit: 
+      - P4_SELECTED_ITEM_NUM
+      - P4_SELECTED_ITEM_DESC
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P4_SELECTED_ITEM_ID
+
+    execution: 
+      sequence: 20
+      event: Selection Change # 8189175645675930
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Search_Modal ========================
+  id: 8871962967734949
+  identification: 
+    name: Search_Modal
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 6015853476540028
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8872056365734950
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P11_ITEM_NUM
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P4_ITEM_NUM
+
+    execution: 
+      sequence: 10
+      event: Search_Modal # 8871962967734949
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 9117025312604108
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P11_UPC
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P4_UPC
+
+    execution: 
+      sequence: 20
+      event: Search_Modal # 8871962967734949
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 9117177890604109
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P11_ITEM_DESC
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P4_ITEM_DESC
+
+    execution: 
+      sequence: 30
+      event: Search_Modal # 8871962967734949
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 9118131003604119
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Item_list # 6013123700540001
+
+    execution: 
+      sequence: 50
+      event: Search_Modal # 8871962967734949
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 10832163682640011
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "400");
+
+    affected-elements: 
+      selection-type: Region
+      region: Item_list # 6013123700540001
+
+    execution: 
+      sequence: 60
+      event: Search_Modal # 8871962967734949
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Update Item =========================
+  id: 9117481115604112
+  identification: 
+    name: Update Item
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 6015183520540021
+
+  client-side-condition: 
+    type: Item is not null
+    item: P4_SELECTED_ITEM_NUM
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 9117571142604113
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P4_PREPARED_URL := apex_page.get_url(
+               p_page   => 21,
+               p_items  => 'P21_ITEM_ID,P21_ITEM_NUM',
+               p_values => :P4_SELECTED_ITEM_ID ||','|| :P4_SELECTED_ITEM_NUM,
+               p_clear_cache => '21'
+             );
+        END;
+      items-to-submit: 
+      - P4_SELECTED_ITEM_ID
+      - P4_SELECTED_ITEM_NUM
+      items-to-return: 
+      - P4_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Update Item # 9117481115604112
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9117760242604115
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P4_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Update Item # 9117481115604112
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P4_PREPARED_URL
+
+- # ====== Dynamic Action: Item Details History ================
+  id: 9118519191604123
+  identification: 
+    name: Item Details History
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Item_Details_History # 6015479855540024
+
+  client-side-condition: 
+    type: Item is not null
+    item: P4_SELECTED_ITEM_NUM
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 9118670161604124
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P4_PREPARED_URL := apex_page.get_url(
+               p_page   => 12,
+               p_items  => 'P12_ITEM_ID,P12_ITEM_NUM',
+               p_values => :P4_SELECTED_ITEM_ID ||','|| :P4_SELECTED_ITEM_NUM
+             );
+        END;
+      items-to-submit: 
+      - P4_SELECTED_ITEM_NUM
+      - P4_SELECTED_ITEM_ID
+      items-to-return: 
+      - P4_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Item Details History # 9118519191604123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9118781409604125
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P4_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Item Details History # 9118519191604123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Update_Price ========================
+  id: 9119996910604137
+  identification: 
+    name: Update_Price
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update_Price_Only # 6015371205540023
+
+  client-side-condition: 
+    type: Item is not null
+    item: P4_SELECTED_ITEM_NUM
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 9120087310604138
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        
+            :P4_PREPARED_URL := apex_page.get_url(
+               p_page   => 22,
+               p_items  => 'P22_ITEM_ID,P22_ITEM_NUM',
+               p_values => :P4_SELECTED_ITEM_ID || ',' || :P4_SELECTED_ITEM_NUM
+             );
+        
+        --    :P4_PREPARED_URL := 'f?p=' || :APP_ID || ':22:' || :APP_SESSION || '::' || 'P22_ITEM_ID,P22_ITEM_NUM:' || :P4_SELECTED_ITEM_ID || ',' || :P4_SELECTED_ITEM_NUM;
+        
+        END;
+        
+        
+      items-to-submit: 
+      - P4_SELECTED_ITEM_ID
+      - P4_SELECTED_ITEM_NUM
+      items-to-return: 
+      - P4_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Update_Price # 9119996910604137
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9120131028604139
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P4_PREPARED_URL");
+        apex.navigation.redirect(url);
+        
+        
+        //apex.navigation.dialog(url, {});
+        
+
+    execution: 
+      sequence: 20
+      event: Update_Price # 9119996910604137
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P4_PREPARED_URL
+
+- # ====== Dynamic Action: Inquire Item ========================
+  id: 9908467854576914
+  identification: 
+    name: Inquire Item
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Inquire # 6015249095540022
+
+  client-side-condition: 
+    type: Item is not null
+    item: P4_SELECTED_ITEM_NUM
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 9908585295576915
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P4_PREPARED_URL := apex_page.get_url(
+               p_page   => 20,
+               p_items  => 'P20_ITEM_ID',
+               p_values => :P4_SELECTED_ITEM_ID
+             );
+        END;
+      items-to-submit: 
+      - P4_SELECTED_ITEM_ID
+      - P4_SELECTED_ITEM_NUM
+      items-to-return: 
+      - P4_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Inquire Item # 9908467854576914
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9908679876576916
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P4_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Inquire Item # 9908467854576914
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P4_PREPARED_URL
+
+- # ====== Dynamic Action: End click ===========================
+  id: 9910509301576935
+  identification: 
+    name: End click
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 6015691179540026
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9910677572576936
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGLastRecordFirstCell("item_list");
+
+    execution: 
+      sequence: 10
+      event: End click # 9910509301576935
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Home click ==========================
+  id: 9910717823576937
+  identification: 
+    name: Home click
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 6015563537540025
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9910888324576938
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGFirstRecordFirstCell("item_list", "Item_Number");
+
+    execution: 
+      sequence: 10
+      event: Home click # 9910717823576937
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Reset Keys Inquire ==================
+  id: 12914930754686803
+  identification: 
+    name: Reset Keys Inquire
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Inquire # 6015249095540022
+
+  client-side-condition: 
+    type: Item is not null
+    item: P4_SELECTED_ITEM_NUM
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12915012922686804
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p4keyevents');
+        
+        $(document).on('keydown.p4keyevents', (ev) => {
+            console.log(`KeyboardEvent: key='${ev.key}' | code='${ev.code}'`);
+        
+                const excludedKeys = [
+                    "PageUp", 
+                    "PageDown",  
+                    "ArrowUp", 
+                    "ArrowDown"
+                ];
+                if (!excludedKeys.includes(ev.key)) {
+                    apex.navigation.dialog.close(true);
+                }
+                
+        }); 
+        
+
+    execution: 
+      sequence: 10
+      event: Reset Keys Inquire # 12914930754686803
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Reset Keys Details ==================
+  id: 12915601695686810
+  identification: 
+    name: Reset Keys Details
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Item_Details_History # 6015479855540024
+
+  client-side-condition: 
+    type: Item is not null
+    item: P4_SELECTED_ITEM_NUM
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12915737492686811
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p4keyevents');
+        
+        $(document).on('keydown.p4keyevents', (ev) => {
+        /*
+                const excludedKeys = [
+                    "PageUp", 
+                    "PageDown",  
+                    "ArrowUp", 
+                    "ArrowDown"
+                ];
+                if (!excludedKeys.includes(ev.key)) {
+        */            
+                    apex.navigation.dialog.close(true);
+        //        }
+                
+        });
+         
+
+    execution: 
+      sequence: 10
+      event: Reset Keys Details # 12915601695686810
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: If Add Success ======================
+  id: 13872816962703603
+  identification: 
+    name: If Add Success
+
+  execution: 
+    sequence: 150
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 13872933464703604
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).ready(function() {
+        
+            apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".apex-page-success").fadeOut(400);
+                        }, 3000);
+        
+                    }
+                }
+            });
+        });
+        
+
+    execution: 
+      sequence: 10
+      event: If Add Success # 13872816962703603
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Dialog Closed or Canceled ===========
+  id: 13875734451703632
+  identification: 
+    name: Dialog Closed or Canceled
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 6015853476540028
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 13875814933703633
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP4Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed or Canceled # 13875734451703632
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click ===============================
+  id: 16704475003522926
+  identification: 
+    name: Click
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 6015853476540028
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 16704596126522927
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        NULL
+        
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P4_SELECTED_ITEM_NUM
+      - P4_SELECTED_ITEM_ID
+      - P4_SELECTED_ITEM_DESC
+
+    execution: 
+      sequence: 10
+      event: Click # 16704475003522926
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Reset Keys ==================================
+    id: 16704602594522928
+    identification: 
+      name: Reset Keys
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p4keyevents');
+
+    execution: 
+      sequence: 20
+      event: Click # 16704475003522926
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Update Price Only Close =============
+  id: 19846204192977026
+  identification: 
+    name: Update Price Only Close
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 19845255378977016
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".apex-page-success").fadeOut(400);
+                        }, 3000);
+        
+                    }
+                }
+            });
+
+    execution: 
+      sequence: 20
+      event: Update Price Only Close # 19846204192977026
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Clear Session ==============================
+  id: 8871264314734942
+  identification: 
+    name: Clear Session
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear Items
+    item(s): 
+    - P4_ITEM_NUM
+    - P4_UPC
+    - P4_ITEM_DESC
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CLEAR_SUCCESS_MSG ==========================
+  id: 13874429504703619
+  identification: 
+    name: CLEAR_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+      	apex_util.set_session_state('SUCCESS_MSG', null);
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_SUCCESS_MSG ============================
+  id: 13874690189703621
+  identification: 
+    name: GET_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+         l_msg VARCHAR2(200);
+      BEGIN
+         -- Get the value of the SUCCESS_MSG application item
+         l_msg := apex_util.get_session_state('SUCCESS_MSG');
+         
+         -- Return it as a JSON object
+         apex_json.open_object;
+         apex_json.write('success_msg', l_msg);
+         apex_json.close_object;
+      
+         -- Clear the SUCCESS_MSG after displaying it
+         apex_util.set_session_state('SUCCESS_MSG', NULL);
+      END;
+      
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

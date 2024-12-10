@@ -1,0 +1,851 @@
+---
+# ====== Page: Add/Update Ordertaker and Salesman ============
+id: 33
+identification: 
+  name: Add/Update Ordertaker and Salesman
+  alias: ADD-UPDATE-ORDERTAKER-AND-SALESMAN
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  attributes: 
+  - "close: function() { customEvent('customDialogClose'"
+  - " {modalPageId: 'MODAL_CLOSE_FIXED'});} "
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    function setModalTitle(){
+        if($v("P33_OTAS_ID") == ''){
+            parent.$('.ui-dialog-title').html('Add Ordertaker and Salesman');
+        }
+        else{
+            parent.$('.ui-dialog-title').html('Update Ordertaker and Salesman');
+        }
+    }
+  execute-when-page-loads: setModalTitle();
+
+css: 
+  inline: |
+    .t-Dialog{
+        background-color: #226597;
+    }
+    .white-text{
+        color:white;
+    }
+    .btns{
+        font-size: 1.125rem;
+    }
+    .text-general{
+        font-size: 1.125rem;
+    }
+    .t-Form-label{
+        font-size: 1.125rem;
+    }
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Add/Update Ordertaker and Salesman ==========
+  id: 6113003091173267
+  identification: 
+    name: Add/Update Ordertaker and Salesman
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM037
+    include-rowid-column: false
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+- # ====== Region: Form Body ===================================
+  id: 7113862110022045
+  identification: 
+    name: Form Body
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Add/Update Ordertaker and Salesman # 6113003091173267
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P33_OTAS_CODE ============================
+  id: 6113411245173268
+  identification: 
+    name: P33_OTAS_CODE
+    type: Text Field
+
+  label: 
+    label: 'Code:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Form Body # 7113862110022045
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 5
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Ordertaker and Salesman # 6113003091173267
+    column: OTAS_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_OTAS_NAME ============================
+  id: 6113845794173268
+  identification: 
+    name: P33_OTAS_NAME
+    type: Text Field
+
+  label: 
+    label: 'Name:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: true
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Form Body # 7113862110022045
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 32
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Ordertaker and Salesman # 6113003091173267
+    column: OTAS_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_CREATE_DATE ==========================
+  id: 6114263661173270
+  identification: 
+    name: P33_CREATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form Body # 7113862110022045
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Ordertaker and Salesman # 6113003091173267
+    column: CREATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_CREATE_USER ==========================
+  id: 6114682389173270
+  identification: 
+    name: P33_CREATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form Body # 7113862110022045
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Ordertaker and Salesman # 6113003091173267
+    column: CREATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_UPDATE_USER ==========================
+  id: 6115033824173270
+  identification: 
+    name: P33_UPDATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form Body # 7113862110022045
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Ordertaker and Salesman # 6113003091173267
+    column: UPDATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_UPDATE_DATE ==========================
+  id: 6115454898173271
+  identification: 
+    name: P33_UPDATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form Body # 7113862110022045
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Ordertaker and Salesman # 6113003091173267
+    column: UPDATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P33_OTAS_ID ==============================
+  id: 6147439801307931
+  identification: 
+    name: P33_OTAS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form Body # 7113862110022045
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Add/Update Ordertaker and Salesman # 6113003091173267
+    column: OTAS_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SAVE ========================================
+  id: 6146119051307918
+  identification: 
+    button-name: SAVE
+    label: Press Enter to update or exit
+
+  layout: 
+    sequence: 30
+    region: Add/Update Ordertaker and Salesman # 6113003091173267
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - white-text
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL UPDATE action
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P33_OTAS_ID
+
+- # ====== Button: CREATE ======================================
+  id: 6146206846307919
+  identification: 
+    button-name: CREATE
+    label: Press Enter to add
+
+  layout: 
+    sequence: 20
+    region: Add/Update Ordertaker and Salesman # 6113003091173267
+    slot: NEXT
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - white-text
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL INSERT action
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P33_OTAS_ID
+
+dynamic-actions: 
+- # ====== Dynamic Action: New =================================
+  id: 10498558250417932
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P33_OTAS_CODE
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter'
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 10498647585417933
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P33_OTAS_NAME
+
+    execution: 
+      sequence: 10
+      event: New # 10498558250417932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Disable Code Field ==================
+  id: 14280871680795936
+  identification: 
+    name: Disable Code Field
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P33_OTAS_CODE
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 14281010175795938
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P33_OTAS_NAME
+
+    execution: 
+      sequence: 30
+      event: Disable Code Field # 14280871680795936
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14281190096795939
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: "$('#P33_OTAS_CODE').attr({'readonly':true});"
+
+    execution: 
+      sequence: 20
+      event: Disable Code Field # 14280871680795936
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Adding Existing Code ====================
+  id: 6147003604307927
+  identification: 
+    name: Adding Existing Code
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: No Rows returned
+    sql-query: 'SELECT OTAS_CODE FROM NIM037 WHERE OTAS_CODE = UPPER(:P33_OTAS_CODE)'
+    always-execute: false
+
+  error: 
+    error-message: Code already exists
+    display-location: Inline with Field
+    associated-item: P33_OTAS_CODE # 6113411245173268
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P33_OTAS_ID
+
+- # ====== Validation: Using existing code on update ===========
+  id: 6147165599307928
+  identification: 
+    name: Using existing code on update
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: No Rows returned
+    sql-query: 'SELECT OTAS_CODE FROM NIM037 WHERE OTAS_CODE = UPPER(:P33_OTAS_CODE) AND OTAS_ID <> :P33_OTAS_ID'
+    always-execute: false
+
+  error: 
+    error-message: Code already exists
+    display-location: Inline with Field
+    associated-item: P33_OTAS_CODE # 6113411245173268
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P33_OTAS_ID
+
+- # ====== Validation: Field is empty ==========================
+  id: 7112390193022030
+  identification: 
+    name: Field is empty
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P33_OTAS_CODE
+    always-execute: false
+
+  error: 
+    error-message: Field must have some value
+    display-location: Inline with Field
+
+- # ====== Validation: Field is empty_1 ========================
+  id: 7112414886022031
+  identification: 
+    name: Field is empty_1
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Item is NOT NULL
+    item: P33_OTAS_NAME
+    always-execute: false
+
+  error: 
+    error-message: Field must have some value
+    display-location: Inline with Field
+
+computations: 
+- # ====== Computation: P33_CREATE_DATE ========================
+  id: 6146477398307921
+  identification: 
+    item-name: P33_CREATE_DATE
+
+  execution: 
+    sequence: 10
+    point: After Submit
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: SELECT SYSDATE FROM DUAL;
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P33_OTAS_ID
+
+- # ====== Computation: P33_CREATE_USER ========================
+  id: 6146500360307922
+  identification: 
+    item-name: P33_CREATE_USER
+
+  execution: 
+    sequence: 20
+    point: After Submit
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: v('APP_USER')
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P33_OTAS_ID
+
+- # ====== Computation: P33_UPDATE_DATE ========================
+  id: 6146686746307923
+  identification: 
+    item-name: P33_UPDATE_DATE
+
+  execution: 
+    sequence: 30
+    point: After Submit
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: SELECT SYSDATE FROM DUAL
+
+- # ====== Computation: P33_UPDATE_USER ========================
+  id: 6146781374307924
+  identification: 
+    item-name: P33_UPDATE_USER
+
+  execution: 
+    sequence: 40
+    point: After Submit
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: v('APP_USER')
+
+processes: 
+- # ====== Process: Initialize form Add/Update Ordertaker and Sa
+  id: 6120670409173279
+  identification: 
+    name: Initialize form Add/Update Ordertaker and Salesman
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Add/Update Ordertaker and Salesman # 6113003091173267
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Close Dialog ===============================
+  id: 6121449224173279
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 40
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Add New Data ===============================
+  id: 7111425862022021
+  identification: 
+    name: Add New Data
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      INSERT INTO NIM037(otas_code, otas_name, create_date, create_user, update_date, update_user)
+      VALUES(UPPER(:P33_OTAS_CODE), UPPER(:P33_OTAS_NAME), :P33_CREATE_DATE, :P33_CREATE_USER, :P33_UPDATE_DATE, :P33_UPDATE_USER);
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Item added successfully
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P33_OTAS_ID
+
+- # ====== Process: Update Data ================================
+  id: 7111546888022022
+  identification: 
+    name: Update Data
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE NIM037 SET otas_code = UPPER(:P33_OTAS_CODE), otas_name = UPPER(:P33_OTAS_NAME), 
+      create_date = :P33_CREATE_DATE, create_user = :P33_CREATE_USER, update_date = :P33_UPDATE_DATE, 
+      update_user = :P33_UPDATE_USER WHERE otas_id = UPPER(:P33_OTAS_ID);
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Item updated successfully
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P33_OTAS_ID
+

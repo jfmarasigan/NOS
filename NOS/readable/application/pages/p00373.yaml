@@ -1,0 +1,2873 @@
+---
+# ====== Page: Reservation Update ============================
+id: 373
+identification: 
+  name: Reservation Update
+  alias: RESERVATION-UPDATE
+  title: Reservation Update
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p6KeyMap = {
+        f2 : (v) => {
+            $("#f2").trigger("click");
+        },
+        f3 : (v) => {
+            $("#f3").trigger("click");
+        },
+        f4 : (v) => {
+            $("#f4").trigger("click");
+        },
+        f5 : (v) => {
+            $("#f5").trigger("click");
+        },
+        f8 : (v) => {
+            $("#f8").trigger("click");
+        },
+        escape : (v) => {
+            $("#exit").trigger("click");
+        },
+    }
+    
+    function mapP6Keys() {
+        $(document).off('keydown.p6keyevents');
+        $(document).on('keydown.p6keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p6KeyMap[key]) {
+                ev.preventDefault();
+                p6KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP6Keys();
+    }
+  execute-when-page-loads: |
+    mapP6Keys();
+    setTitle("Reservation Update")
+    // $("#s").trigger("click");
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .t-Form-labelContainer, .t-Form-inputContainer {
+        padding-block-end: 0;
+        padding-block-start: 0;
+    }
+    
+    /* add margin to interactive grid table start */
+    .t-Body-contentInner {
+        padding-inline-end: var(--ut-body-content-padding-x, 2.5rem);
+        padding-inline-start: var(--ut-body-content-padding-x, 2.5rem);
+    }
+    /* end */
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    /* style returned values */
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-weight: 400;
+        color: white;
+    }
+    
+    #table > table, tr, th {
+        font-size: 1.125rem;
+    }
+    
+    #table > td {
+        font-size: 1.125rem;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .margin-right {
+        margin-right: 3rem;
+    }
+    
+    .mt-3 {
+        margin-top: 3rem;
+    }
+    
+    .mt-2 {
+        margin-top: 2rem;
+    }
+    
+    .mt-1 {
+        margin-top: 1rem;
+    }
+    
+    .ms-1 {
+        margin-left: .5rem;
+    }
+    
+    .ml-05 {
+        margin-left: 0.5rem;
+    }
+    
+    .ml-2 {
+        margin-left: 2rem;
+    }
+    
+    .ml-3 {
+        margin-left: 3rem;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    /* css for modal 311 start */
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .ui-dialog.pr-li {
+       left: 80% !important;
+    }
+    
+    .ui-dialog.inv-bby-w {
+        left: 78% !important;
+    }
+    
+    .ui-dialog.ship-his {
+        left: 50% !important;
+    }
+    
+    .ui-dialog.pur-order,
+    .ui-dialog.inc-ship {
+        left: 45% !important;
+    }
+    
+    .ui-dialog.res {
+        left: 32% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    /* modal 311 end */
+    
+    /* modify position of inquire modal 314 sstart */
+    .inquire-dialog {
+        left: 53% !important;
+    }
+    /* modal 314 end */
+    
+    /* View height dependent table and buttons - START */
+    .buttons-row {
+        position: absolute;
+        width: 96vw;
+        bottom: 1rem;
+    }
+    
+    #table .a-IG {
+        height: calc(60vh + 2px) !important;
+    } 
+    
+    #table .a-IG-contentContainer {
+        height: 60vh !important;
+    }
+    
+    #table .a-IG-gridView.a-GV {
+        height: 60vh !important;
+    }
+    
+    #table .a-GV-bdy {
+        height: calc(60vh - 2.5625rem) !important;
+    }
+    
+    /* View height dependent table and buttons - END */
+    
+    
+    
+    #table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .t-Form-labelContainer:has(#P373_QOH_LABEL),
+    .t-Form-labelContainer:has(#P373_LOC_1_LABEL),
+    .t-Form-labelContainer:has(#P373_LOC_2_LABEL),
+    .t-Form-labelContainer:has(#P373_LOC_3_LABEL),
+    .t-Form-labelContainer:has(#P373_SUB_TOTAL_LABEL),
+    .t-Form-labelContainer:has(#P373_TOTAL_DISCOUNT_LABEL),
+    .t-Form-labelContainer:has(#P373_TOTAL_AMOUNT_LABEL) {
+        text-align: left;
+        padding-left: 1rem;
+    }
+    
+    .col-2:has(#P373_LOC_1_LABEL),
+    .col-2:has(#P373_LOC_2_LABEL),
+    .col-2:has(#P373_LOC_3_LABEL) {
+        max-width: 5.5rem;
+    }
+    
+    .t-Form-inputContainer:has(#P373_LOC_1),
+    .t-Form-inputContainer:has(#P373_LOC_2),
+    .t-Form-inputContainer:has(#P373_LOC_3) {
+        text-align: center;
+        margin: 0 auto;
+    }
+    
+    #P373_CUSTOMER_CONTAINER > .t-Form-labelContainer,
+    #P373_CONTACT_PERSON_CONTAINER > .t-Form-labelContainer {
+        max-width: 14%;
+    }
+    
+    #P373_EMAIL_CONTAINER > .t-Form-labelContainer {
+        max-width: 10%;
+    }
+    
+    #P373_TEL_NUMBER_CONTAINER > .t-Form-inputContainer,
+    #P373_FAX_NUMBER_CONTAINER > .t-Form-inputContainer {
+        padding-left: 2.4rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search Input ================================
+  id: 108306066235893894
+  identification: 
+    name: Search Input
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    - t-Form--leftLabels
+    - margin-top-sm
+    - margin-left-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Reservation Creation List ===================
+  id: 154642069119888709
+  identification: 
+    name: Reservation Creation List
+    title: Reservation Creation List
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          ROWNUM AS "Primary Key",
+          NULL AS "ITEM_NO",
+          NULL AS "CO",
+          NULL AS "ITEM_DESCRIPTION",
+          NULL AS "QTY",
+          NULL AS "REG_PRICE",
+          NULL AS "UOM",
+          NULL AS "DISC",
+          NULL AS "DT",
+          NULL AS "NET_PRICE",
+          NULL AS "EXTENDED_PRICE"
+      FROM
+          DUAL
+    page-items-to-submit: 
+    - P373_CUSTOMER
+    - P373_CONTACT_PERSON
+    - P373_TEL_NUMBER
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 12
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 154837705270735972
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 300
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 154901133635219056
+      identification: 
+        name: Primary Report
+        alias: 186900
+
+  columns: 
+  - # ====== Column: ITEM_NO =====================================
+    id: 78716580463423062
+    identification: 
+      column-name: ITEM_NO
+      type: Text Field
+
+    heading: 
+      heading: Item No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CO ==========================================
+    id: 78716609867423063
+    identification: 
+      column-name: CO
+      type: Text Field
+
+    heading: 
+      heading: Co
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: CO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: ITEM_DESCRIPTION ============================
+    id: 78716727843423064
+    identification: 
+      column-name: ITEM_DESCRIPTION
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESCRIPTION
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: QTY =========================================
+    id: 78716803330423065
+    identification: 
+      column-name: QTY
+      type: Text Field
+
+    heading: 
+      heading: Qty
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: QTY
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: REG_PRICE ===================================
+    id: 78716971625423066
+    identification: 
+      column-name: REG_PRICE
+      type: Text Field
+
+    heading: 
+      heading: Reg Price
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: REG_PRICE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UOM =========================================
+    id: 78716984416423067
+    identification: 
+      column-name: UOM
+      type: Text Field
+
+    heading: 
+      heading: Uom
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: DISC ========================================
+    id: 78717099492423068
+    identification: 
+      column-name: DISC
+      type: Text Field
+
+    heading: 
+      heading: Disc %
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: DISC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: DT ==========================================
+    id: 78717247161423069
+    identification: 
+      column-name: DT
+      type: Text Field
+
+    heading: 
+      heading: Dt
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: DT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: NET_PRICE ===================================
+    id: 78717345104423070
+    identification: 
+      column-name: NET_PRICE
+      type: Text Field
+
+    heading: 
+      heading: Net Price
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 100
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: NET_PRICE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: EXTENDED_PRICE ==============================
+    id: 78717429042423071
+    identification: 
+      column-name: EXTENDED_PRICE
+      type: Text Field
+
+    heading: 
+      heading: Extended Price
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: EXTENDED_PRICE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: Primary Key =================================
+    id: 112991144724278911
+    identification: 
+      column-name: Primary Key
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: Primary Key
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+- # ====== Region: Buttons =====================================
+  id: 154836757708735962
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P373_FAX_NUMBER ==========================
+  id: 78718039557423075
+  identification: 
+    name: P373_FAX_NUMBER
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Fax Number:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 110
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 4
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_EMAIL ===============================
+  id: 78718207469423077
+  identification: 
+    name: P373_EMAIL
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Email:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_RESERVE_NO ==========================
+  id: 78718483872423079
+  identification: 
+    name: P373_RESERVE_NO
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Reserve No:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_RESERVE_DATE ========================
+  id: 80599415764840831
+  identification: 
+    name: P373_RESERVE_DATE
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Reserve Date:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_EXPIRY_DATE =========================
+  id: 80599704987840833
+  identification: 
+    name: P373_EXPIRY_DATE
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Expiry Date:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 90
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_ORDER_WRITER ========================
+  id: 80599819375840835
+  identification: 
+    name: P373_ORDER_WRITER
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Order Writer:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 120
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_QOH =================================
+  id: 80605707630840846
+  identification: 
+    name: P373_QOH
+    type: Display Only
+
+  label: 
+    label: <span class="btns">QOH</span>
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Buttons # 154836757708735962
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+    column-css-classes: 
+    - mt-3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_SUB_TOTAL ===========================
+  id: 80605812801840847
+  identification: 
+    name: P373_SUB_TOTAL
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Sub-Total:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Buttons # 154836757708735962
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 4
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+    column-css-classes: 
+    - mt-3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_TOTAL_DISCOUNT ======================
+  id: 80606035137840849
+  identification: 
+    name: P373_TOTAL_DISCOUNT
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Total Discount:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Buttons # 154836757708735962
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+    column-css-classes: 
+    - mt-3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_TOTAL_AMOUNT ========================
+  id: 80606052943840850
+  identification: 
+    name: P373_TOTAL_AMOUNT
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Total Amount:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Buttons # 154836757708735962
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+    column-css-classes: 
+    - mt-3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_LOC_1 ===============================
+  id: 80606406341840853
+  identification: 
+    name: P373_LOC_1
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">LOC #1</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Buttons # 154836757708735962
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_LOC_2 ===============================
+  id: 80606457930840854
+  identification: 
+    name: P373_LOC_2
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">LOC #2</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Buttons # 154836757708735962
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_LOC_3 ===============================
+  id: 80606587644840855
+  identification: 
+    name: P373_LOC_3
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">LOC #3</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: Buttons # 154836757708735962
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_CUSTOMER ============================
+  id: 108307276713893931
+  identification: 
+    name: P373_CUSTOMER
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Customer (DBA):</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 9
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_TEL_NUMBER ==========================
+  id: 108307399847893932
+  identification: 
+    name: P373_TEL_NUMBER
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Tel. Number:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 4
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_CONTACT_PERSON ======================
+  id: 108307472577893933
+  identification: 
+    name: P373_CONTACT_PERSON
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Contact Person:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Search Input # 108306066235893894
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 1
+    new-column: true
+    column-span: 9
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_SELECTED_GC_NO ======================
+  id: 113012745960279021
+  identification: 
+    name: P373_SELECTED_GC_NO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_PREPARED_URL ========================
+  id: 113013690363279030
+  identification: 
+    name: P373_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P373_SELECTED_GC_STATUS ==================
+  id: 117538470852875307
+  identification: 
+    name: P373_SELECTED_GC_STATUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Reserve =====================================
+  id: 40474651681651934
+  identification: 
+    button-name: Reserve
+    label: <u>F8 </u> - Reserve
+
+  layout: 
+    sequence: 140
+    region: Buttons # 154836757708735962
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    column-css-classes: 
+    - mt-1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: f8
+
+- # ====== Button: Back ========================================
+  id: 40475095398651935
+  identification: 
+    button-name: Back
+    label: Back
+
+  layout: 
+    sequence: 150
+    region: Buttons # 154836757708735962
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+    - hide
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:304:&SESSION.::&DEBUG.:::'
+      page: 304 # Gift Certificate Submenu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+- # ====== Button: Change_Qty ==================================
+  id: 40475448590651935
+  identification: 
+    button-name: Change_Qty
+    label: <u>F3 </u> - Change Qty
+
+  layout: 
+    sequence: 130
+    region: Buttons # 154836757708735962
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: f3
+
+- # ====== Button: Customer_Details ============================
+  id: 40475848804651935
+  identification: 
+    button-name: Customer_Details
+    label: <u>F4 </u>- Customer Details
+
+  layout: 
+    sequence: 100
+    region: Buttons # 154836757708735962
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ml-2
+    - mt-1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:309:&SESSION.::&DEBUG.:::'
+      page: 309 # GC Donation Search
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: f4
+
+- # ====== Button: Change_Expiry ===============================
+  id: 40476254987651937
+  identification: 
+    button-name: Change_Expiry
+    label: <u>F5 </u>- Change Expiry
+
+  layout: 
+    sequence: 110
+    region: Buttons # 154836757708735962
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: f5
+
+- # ====== Button: Search_Item =================================
+  id: 40476654257651937
+  identification: 
+    button-name: Search_Item
+    label: <u>F2 </u>- Search Item
+
+  layout: 
+    sequence: 120
+    region: Buttons # 154836757708735962
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: f2
+
+dynamic-actions: 
+- # ====== Dynamic Action: Reset keys ==========================
+  id: 40492034427651957
+  identification: 
+    name: Reset keys
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search_Item # 40476654257651937
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40492558005651959
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p4keyevents');
+        
+        $(document).on('keydown.p4keyevents', (ev) => {
+            apex.navigation.dialog.close(true);
+        });
+
+    execution: 
+      sequence: 10
+      event: Reset keys # 40492034427651957
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open date range popup ===============
+  id: 40492934023651959
+  identification: 
+    name: Open date range popup
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search_Item # 40476654257651937
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 40493455371651959
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P373_PREPARED_URL := apex_page.get_url(
+               p_page   => 318
+            --    p_items  => 'P314_GET_SELECTED_GC_NO',
+            --    p_values => :P316_SELECTED_GC_NO
+             );
+        END;
+      items-to-return: 
+      - P373_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Open date range popup # 40492934023651959
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40493936900651960
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P373_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Open date range popup # 40492934023651959
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection Change ====================
+  id: 40494332512651960
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Reservation Creation List # 154642069119888709
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40494828148651960
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.selectedRecords.length > 0) {
+            let itemNoSelected = this.data.selectedRecords[0][1];
+            apex.item("P373_SELECTED_GC_NO").setValue(itemNoSelected);
+        }
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 40494332512651960
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open inquire popup ==================
+  id: 40495233135651960
+  identification: 
+    name: Open inquire popup
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Change_Expiry # 40476254987651937
+
+  client-side-condition: 
+    type: Item is not null
+    item: P373_SELECTED_GC_NO
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 40495794045651962
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P373_PREPARED_URL := apex_page.get_url(
+               p_page   => 314,
+               p_items  => 'P314_GET_SELECTED_GC_NO',
+               p_values => :P373_SELECTED_GC_NO
+             );
+        END;
+      items-to-submit: 
+      - P373_SELECTED_GC_NO
+      items-to-return: 
+      - P373_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Open inquire popup # 40495233135651960
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40496258444651962
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P373_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Open inquire popup # 40495233135651960
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open copies popup ===================
+  id: 40496656751651962
+  identification: 
+    name: Open copies popup
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Change_Qty # 40475448590651935
+
+  client-side-condition: 
+    type: Item is not null
+    item: P373_SELECTED_GC_NO
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 40497145491651962
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  VARCHAR(1) := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P373_SELECTED_GC_NO) > 0 THEN
+            
+                SELECT GC_STATUS_ID INTO l_return_value
+                FROM NPT020
+                WHERE GIFT_CERTIFICATE_ID = :P373_SELECTED_GC_NO;
+        
+            END IF;
+        
+            RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P373_SELECTED_GC_NO
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P373_SELECTED_GC_STATUS
+
+    execution: 
+      sequence: 10
+      event: Open copies popup # 40496656751651962
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40497663138651964
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P373_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Open copies popup # 40496656751651962
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P373_SELECTED_GC_STATUS").val() !== "4" && $("#P373_SELECTED_GC_STATUS").val() !== "5"
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 40498126204651964
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        -- redirect and pass value to url (which is the copies dialog modal)
+        BEGIN
+            :P373_PREPARED_URL := apex_page.get_url(
+               p_page   => 313,
+               p_items  => 'P313_SELECTED_GC_NO',
+               p_values => :P373_SELECTED_GC_NO
+             );
+        END;
+      items-to-submit: 
+      - P373_SELECTED_GC_NO
+      items-to-return: 
+      - P373_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Open copies popup # 40496656751651962
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P373_SELECTED_GC_STATUS").val() !== "4" && $("#P373_SELECTED_GC_STATUS").val() !== "5"
+
+- # ====== Dynamic Action: On Search Dialog Close ==============
+  id: 40498569750651964
+  identification: 
+    name: On Search Dialog Close
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Customer_Details # 40475848804651935
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: To select 1st cell of the table =============
+    id: 40499050711651965
+    identification: 
+      name: To select 1st cell of the table
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        }, "1000");
+
+    execution: 
+      sequence: 80
+      event: On Search Dialog Close # 40498569750651964
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 40499559069651965
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Reservation Creation List # 154642069119888709
+
+    execution: 
+      sequence: 70
+      event: On Search Dialog Close # 40498569750651964
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Issue Year ==============================
+    id: 40500011859651965
+    identification: 
+      name: Set Issue Year
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P309_SEARCH_BY_ISSUE_YR
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P373_CUSTOMER
+
+    execution: 
+      sequence: 10
+      event: On Search Dialog Close # 40498569750651964
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Recipient ===============================
+    id: 40500502663651967
+    identification: 
+      name: Set Recipient
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P309_RECIPIENT
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P373_CONTACT_PERSON
+
+    execution: 
+      sequence: 30
+      event: On Search Dialog Close # 40498569750651964
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Event ===================================
+    id: 40501048524651967
+    identification: 
+      name: Set Event
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P309_EVENT
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P373_TEL_NUMBER
+
+    execution: 
+      sequence: 40
+      event: On Search Dialog Close # 40498569750651964
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+computations: 
+- # ====== Computation: P373_LOC_2 =============================
+  id: 40130101926188924
+  identification: 
+    item-name: P373_LOC_2
+
+  execution: 
+    sequence: 170
+    point: Before Regions
+
+  computation: 
+    type: Static Value
+    static-value: 0
+
+- # ====== Computation: P373_LOC_3 =============================
+  id: 40130276338188925
+  identification: 
+    item-name: P373_LOC_3
+
+  execution: 
+    sequence: 180
+    point: Before Regions
+
+  computation: 
+    type: Static Value
+    static-value: 0
+
+- # ====== Computation: P373_FAX_NUMBER ========================
+  id: 40485722452651951
+  identification: 
+    item-name: P373_FAX_NUMBER
+
+  execution: 
+    sequence: 70
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_EMAIL =============================
+  id: 40486170788651951
+  identification: 
+    item-name: P373_EMAIL
+
+  execution: 
+    sequence: 80
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_SELECTED_GC_NO ====================
+  id: 40486588444651953
+  identification: 
+    item-name: P373_SELECTED_GC_NO
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_PREPARED_URL ======================
+  id: 40486965041651953
+  identification: 
+    item-name: P373_PREPARED_URL
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_CUSTOMER ==========================
+  id: 40487393689651953
+  identification: 
+    item-name: P373_CUSTOMER
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_CONTACT_PERSON ====================
+  id: 40487785875651954
+  identification: 
+    item-name: P373_CONTACT_PERSON
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_TEL_NUMBER ========================
+  id: 40488179013651954
+  identification: 
+    item-name: P373_TEL_NUMBER
+
+  execution: 
+    sequence: 50
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_SELECTED_GC_STATUS ================
+  id: 40488511966651954
+  identification: 
+    item-name: P373_SELECTED_GC_STATUS
+
+  execution: 
+    sequence: 60
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_RESERVE_NO ========================
+  id: 40488960537651956
+  identification: 
+    item-name: P373_RESERVE_NO
+
+  execution: 
+    sequence: 90
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_RESERVE_DATE ======================
+  id: 40489350887651956
+  identification: 
+    item-name: P373_RESERVE_DATE
+
+  execution: 
+    sequence: 100
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_EXPIRY_DATE =======================
+  id: 40489761862651956
+  identification: 
+    item-name: P373_EXPIRY_DATE
+
+  execution: 
+    sequence: 110
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_ORDER_WRITER ======================
+  id: 40490107688651956
+  identification: 
+    item-name: P373_ORDER_WRITER
+
+  execution: 
+    sequence: 120
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P373_SUB_TOTAL =========================
+  id: 40490578210651956
+  identification: 
+    item-name: P373_SUB_TOTAL
+
+  execution: 
+    sequence: 130
+    point: Before Regions
+
+  computation: 
+    type: Static Value
+    static-value: 0.00
+
+- # ====== Computation: P373_TOTAL_DISCOUNT ====================
+  id: 40490961783651957
+  identification: 
+    item-name: P373_TOTAL_DISCOUNT
+
+  execution: 
+    sequence: 140
+    point: Before Regions
+
+  computation: 
+    type: Static Value
+    static-value: 0.00
+
+- # ====== Computation: P373_TOTAL_AMOUNT ======================
+  id: 40491307606651957
+  identification: 
+    item-name: P373_TOTAL_AMOUNT
+
+  execution: 
+    sequence: 150
+    point: Before Regions
+
+  computation: 
+    type: Static Value
+    static-value: 0.00
+
+- # ====== Computation: P373_LOC_1 =============================
+  id: 40491781286651957
+  identification: 
+    item-name: P373_LOC_1
+
+  execution: 
+    sequence: 160
+    point: Before Regions
+
+  computation: 
+    type: Static Value
+    static-value: 0
+

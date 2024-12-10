@@ -1,0 +1,170 @@
+---
+# ====== Page: Collection and Outstanding Reports Popup ======
+id: 148
+identification: 
+  name: Collection and Outstanding Reports Popup
+  alias: COLLECTION-AND-OUTSTANDING-REPORTS-POPUP
+  title: Search Legal Name
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 300
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+css: 
+  inline: |
+    .format-size{
+        font-size: 1.125rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P148_LEGAL_NAME ==========================
+  id: 35461330681234045
+  identification: 
+    name: P148_LEGAL_NAME
+    type: Text Field
+
+  label: 
+    label: Legal Name
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Focus to Text =======================
+  id: 35461403557234046
+  identification: 
+    name: Focus to Text
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 35461502667234047
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P148_LEGAL_NAME
+
+    execution: 
+      sequence: 10
+      event: Focus to Text # 35461403557234046
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Validate Name =======================
+  id: 35461620720234048
+  identification: 
+    name: Validate Name
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P148_LEGAL_NAME
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 35461787720234049
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P148_LEGAL_NAME
+
+    execution: 
+      sequence: 30
+      event: Validate Name # 35461620720234048
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

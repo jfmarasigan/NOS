@@ -1,0 +1,355 @@
+---
+# ====== Page: Customer Payment Terms Utilities Search =======
+id: 214
+identification: 
+  name: Customer Payment Terms Utilities Search
+  alias: CUSTOMER-PAYMENT-TERMS-UTILITIES-SEARCH
+  title: Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 40rem
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p214KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+            $("#search").trigger("click");
+        }
+    }
+    
+    function mapP214Keys() {
+        $(document).off('keydown.p214keyevents');
+        $(document).on('keydown.p214keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p214KeyMap[key]) {
+                ev.preventDefault();
+                p214KeyMap[key]();
+            }
+        });
+    }
+    
+    $x('P214_NAME').focus();
+  execute-when-page-loads: mapP214Keys();
+
+css: 
+  inline: |
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+        background-color: #046BC8;
+    }
+    
+    .t-Dialog-body{
+        label, input {
+            font-size: 1.125rem;
+        }
+    //    background-color: #046BC8;
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .t-Region-body{
+       padding-bottom: 0;
+       padding-left: 0;
+    }
+    
+    #search-form{
+        background-color: white;
+        margin-bottom: 0;
+        margin-left: 0;
+    }
+    
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search ======================================
+  id: 43433663726832016
+  identification: 
+    name: Search
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 43433870202832018
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P214_NAME ================================
+  id: 43433742600832017
+  identification: 
+    name: P214_NAME
+    type: Text Field
+
+  label: 
+    label: 'Go To Name:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Search # 43433663726832016
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Search ======================================
+  id: 43433907098832019
+  identification: 
+    button-name: Search
+    label: Search
+
+  layout: 
+    sequence: 10
+    region: Buttons # 43433870202832018
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: search
+
+- # ====== Button: Close =======================================
+  id: 43434049416832020
+  identification: 
+    button-name: Close
+    label: Close
+
+  layout: 
+    sequence: 20
+    region: Buttons # 43433870202832018
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close
+
+dynamic-actions: 
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 43434139204832021
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 43434049416832020
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 43434287729832022
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 43434139204832021
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Dialog ========================
+  id: 43434390679832023
+  identification: 
+    name: Close Dialog
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 43433907098832019
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 43434485560832024
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P214_NAME
+
+    execution: 
+      sequence: 10
+      event: Close Dialog # 43434390679832023
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

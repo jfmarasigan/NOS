@@ -1,0 +1,974 @@
+---
+# ====== Page: ITM Search ====================================
+id: 40
+identification: 
+  name: ITM Search
+  alias: ITM-SEARCH
+  title: Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p40KeyMap = {
+        escape : (v) => {
+            $("#esc").trigger("click");
+        }
+    }
+    
+    function mapP40Keys() {
+        $(document).off('keydown.p40keyevents');
+        $(document).on('keydown.p40keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p40KeyMap[key]) {
+                ev.preventDefault();
+                p40KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP40Keys();
+
+css: 
+  inline: |
+    .bgblue{
+        background-color: #056BC9;
+    }
+    .white-text{
+        color:white;
+    }
+    .nop-right {
+        padding-right: 0;
+    }
+    
+    .nop-left {
+        padding-left: 0;
+    }
+    .search-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .text-general {
+        font-size: 1.125rem;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    .t-Form-labelContainer{
+        text-align: start;
+    }
+    .t-Form-label{
+        font-size: 1.125rem;
+    }
+    
+    
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P40_UPC ==================================
+  id: 12389551248815809
+  identification: 
+    name: P40_UPC
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_ITEM_DESC ============================
+  id: 12389671822815810
+  identification: 
+    name: P40_ITEM_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 110
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_UPC_SEARCH ===========================
+  id: 12389763648815811
+  identification: 
+    name: P40_UPC_SEARCH
+    type: Number Field
+
+  label: 
+    label: 'UPC:'
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    number-alignment: Start
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-top-sm
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_MONTH_FROM ===========================
+  id: 16110841251770136
+  identification: 
+    name: P40_MONTH_FROM
+    type: Date Picker
+
+  label: 
+    label: Month From
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-top-sm
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_MONTH_TO =============================
+  id: 16110996429770137
+  identification: 
+    name: P40_MONTH_TO
+    type: Date Picker
+
+  label: 
+    label: Month To
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-top-sm
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_CODE_SEARCH ==========================
+  id: 22129019642463272
+  identification: 
+    name: P40_CODE_SEARCH
+    type: Text Field
+
+  label: 
+    label: 'Item No: '
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+    column-css-classes: 
+    - nop-right
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-top-sm
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_DESC_SEARCH ==========================
+  id: 22129168745463273
+  identification: 
+    name: P40_DESC_SEARCH
+    type: Text Field
+
+  label: 
+    label: 'Item Desc:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-top-sm
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_ITEM_ID ==============================
+  id: 22130259687463284
+  identification: 
+    name: P40_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P40_ITEM_NUM =============================
+  id: 22131482501463296
+  identification: 
+    name: P40_ITEM_NUM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Code Search - On press Enter ========
+  id: 12364363624646284
+  identification: 
+    name: Code Search - On press Enter
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P40_CODE_SEARCH
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter'
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 14278917036795917
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NULL AND :P40_DESC_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_DESC := :P40_DESC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NOT NULL
+            THEN :P40_UPC := :P40_UPC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_NUM := :P40_CODE_SEARCH;
+        END IF;
+        END;
+      items-to-submit: 
+      - P40_CODE_SEARCH
+      - P40_DESC_SEARCH
+      - P40_UPC_SEARCH
+      items-to-return: 
+      - P40_ITEM_ID
+      - P40_ITEM_NUM
+      - P40_UPC
+      - P40_ITEM_DESC
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Code Search - On press Enter # 12364363624646284
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Submit Page =================================
+    id: 14279061148795918
+    identification: 
+      action: Submit Page
+
+    settings: 
+      show-processing: true
+
+    execution: 
+      sequence: 40
+      event: Code Search - On press Enter # 12364363624646284
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Name Search - On press Enter ========
+  id: 12365279478646285
+  identification: 
+    name: Name Search - On press Enter
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P40_DESC_SEARCH
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter'
+
+  actions: 
+  - # ====== Action: Submit Page =================================
+    id: 10499991792417946
+    identification: 
+      action: Submit Page
+
+    settings: 
+      show-processing: true
+
+    execution: 
+      sequence: 50
+      event: Name Search - On press Enter # 12365279478646285
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16107724525770105
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NULL AND :P40_DESC_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_DESC := :P40_DESC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NOT NULL
+            THEN :P40_UPC := :P40_UPC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_NUM := :P40_CODE_SEARCH;
+        END IF;
+        END;
+      items-to-submit: 
+      - P40_CODE_SEARCH
+      - P40_DESC_SEARCH
+      - P40_UPC_SEARCH
+      items-to-return: 
+      - P40_ITEM_ID
+      - P40_ITEM_NUM
+      - P40_UPC
+      - P40_ITEM_DESC
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: Name Search - On press Enter # 12365279478646285
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: UPC Search - On press Enter =========
+  id: 12389879488815812
+  identification: 
+    name: UPC Search - On press Enter
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P40_UPC_SEARCH
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  actions: 
+  - # ====== Action: Submit Page =================================
+    id: 14279218047795920
+    identification: 
+      action: Submit Page
+
+    settings: 
+      show-processing: true
+
+    execution: 
+      sequence: 40
+      event: UPC Search - On press Enter # 12389879488815812
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16107872043770106
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NULL AND :P40_DESC_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_DESC := :P40_DESC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NOT NULL
+            THEN :P40_UPC := :P40_UPC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_NUM := :P40_CODE_SEARCH;
+        END IF;
+        END;
+      items-to-submit: 
+      - P40_CODE_SEARCH
+      - P40_DESC_SEARCH
+      - P40_UPC_SEARCH
+      items-to-return: 
+      - P40_ITEM_ID
+      - P40_ITEM_NUM
+      - P40_UPC
+      - P40_ITEM_DESC
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: UPC Search - On press Enter # 12389879488815812
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Month From - On press Enter =========
+  id: 18998718298168309
+  identification: 
+    name: Month From - On press Enter
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P40_MONTH_FROM
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 18998860344168310
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NULL AND :P40_DESC_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_DESC := :P40_DESC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NOT NULL
+            THEN :P40_UPC := :P40_UPC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_NUM := :P40_CODE_SEARCH;
+        END IF;
+        END;
+      items-to-submit: 
+      - P40_CODE_SEARCH
+      - P40_UPC_SEARCH
+      - P40_DESC_SEARCH
+      items-to-return: 
+      - P40_ITEM_ID
+      - P40_ITEM_NUM
+      - P40_UPC
+      - P40_ITEM_DESC
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Month From - On press Enter # 18998718298168309
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Submit Page =================================
+    id: 18998905727168311
+    identification: 
+      action: Submit Page
+
+    settings: 
+      show-processing: true
+
+    execution: 
+      sequence: 20
+      event: Month From - On press Enter # 18998718298168309
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Month To - On Press Enter ===========
+  id: 18999218640168314
+  identification: 
+    name: Month To - On Press Enter
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P40_MONTH_TO
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 18999343660168315
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NULL AND :P40_DESC_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_DESC := :P40_DESC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NULL AND :P40_UPC_SEARCH IS NOT NULL
+            THEN :P40_UPC := :P40_UPC_SEARCH;
+        ELSIF :P40_CODE_SEARCH IS NOT NULL 
+            THEN :P40_ITEM_NUM := :P40_CODE_SEARCH;
+        END IF;
+        END;
+      items-to-submit: 
+      - P40_CODE_SEARCH
+      - P40_UPC_SEARCH
+      - P40_DESC_SEARCH
+      items-to-return: 
+      - P40_ITEM_ID
+      - P40_ITEM_NUM
+      - P40_UPC
+      - P40_ITEM_DESC
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Month To - On Press Enter # 18999218640168314
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Submit Page =================================
+    id: 18999486385168316
+    identification: 
+      action: Submit Page
+
+    settings: 
+      show-processing: true
+
+    execution: 
+      sequence: 20
+      event: Month To - On Press Enter # 18999218640168314
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: No blank fields =========================
+  id: 12361758017646276
+  identification: 
+    name: No blank fields
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':P40_CODE_SEARCH IS NOT NULL OR :P40_UPC_SEARCH IS NOT NULL OR :P40_DESC_SEARCH IS NOT NULL'
+    always-execute: false
+
+  error: 
+    error-message: Fill up at least one field
+    display-location: Inline with Field
+    associated-item: P40_CODE_SEARCH # 22129019642463272
+
+computations: 
+- # ====== Computation: P40_MONTH_FROM =========================
+  id: 18999015039168312
+  identification: 
+    item-name: P40_MONTH_FROM
+
+  execution: 
+    sequence: 10
+    point: After Submit
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: SELECT TRUNC(SYSDATE, 'MONTH') FROM DUAL;
+
+  server-side-condition: 
+    type: Item is NULL or zero
+    item: P40_MONTH_FROM
+
+- # ====== Computation: P40_MONTH_TO ===========================
+  id: 18999139115168313
+  identification: 
+    item-name: P40_MONTH_TO
+
+  execution: 
+    sequence: 20
+    point: After Submit
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: SELECT LAST_DAY(SYSDATE) FROM DUAL
+
+  server-side-condition: 
+    type: Item is NULL or zero
+    item: P40_MONTH_TO
+
+processes: 
+- # ====== Process: Close Dialog ===============================
+  id: 12362029494646278
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    items-to-return-: 
+    - P40_ITEM_ID
+    - P40_ITEM_NUM
+    - P40_UPC
+    - P40_ITEM_DESC
+    - P40_MONTH_FROM
+    - P40_MONTH_TO
+    show-success-messages: false
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

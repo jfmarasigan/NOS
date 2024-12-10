@@ -1,0 +1,63 @@
+---
+- # ====== Breadcrumb: Breadcrumb ==============================
+  id: 4207883508083912
+  identification: 
+    name: Breadcrumb
+
+  entries: 
+  - # ====== Entry: Main Menu ====================================
+    id: 4208015758083915
+    identification: 
+      name: Main Menu
+      page-number: 1
+
+    execution: 
+      sequence: 10
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:1:&APP_SESSION.::&DEBUG.:::'
+        page: 1 # Main Menu
+
+  - # ====== Entry: Ordertaker and Salesman Masterfile ===========
+    id: 6126526147173293
+    identification: 
+      name: Ordertaker and Salesman Masterfile
+      page-number: 32
+
+    execution: 
+      sequence: 10
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:32:&APP_SESSION.::&DEBUG.:::'
+        page: 32 # Ordertaker and Salesman Masterfile
+
+  - # ====== Entry: Update Inventory Balance =====================
+    id: 7172173947817532
+    identification: 
+      name: Update Inventory Balance
+      page-number: 25
+
+    execution: 
+      sequence: 10
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:25:&APP_SESSION.::&DEBUG.:::'
+        page: 25 # Update Inventory Balance
+
+  - # ====== Entry: Gift Certificate =============================
+    id: 18430624037416240
+    identification: 
+      name: Gift Certificate
+      page-number: 310
+
+    execution: 
+      sequence: 10
+
+    link: 
+      target: 
+        url: 'f?p=&APP_ID.:310:&APP_SESSION.::&DEBUG.:::'
+        page: 310 # Gift Certificate
+

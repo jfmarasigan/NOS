@@ -1,0 +1,2907 @@
+---
+# ====== Page: Update Gift Certificate =======================
+id: 317
+identification: 
+  name: Update Gift Certificate
+  alias: UPDATE-GIFT-CERTIFICATE
+  title: Update Gift Certificate
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/gift-certificate-validations#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p6KeyMap = {
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        escape : (v) => {
+            $("#exit").trigger("click");
+        },
+    }
+    
+    function mapP6Keys() {
+        $(document).off('keydown.p6keyevents');
+        $(document).on('keydown.p6keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            var activeElement = document.activeElement;
+            // check if key is P and check if focus is not in any fields for text
+            if (key === "p" || key === "P") {
+                if (p6KeyMap[key] && activeElement.tagName !== "INPUT"
+                    ) {
+                    ev.preventDefault();
+                    p6KeyMap[key]();
+                }
+            } else {
+                if (p6KeyMap[key]) {
+                    ev.preventDefault();
+                    p6KeyMap[key]();
+                }
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP6Keys();
+    }
+    
+    // array id, min length, max length
+    alphanumericValidation(['#P317_GC_TYPE'], 0, 3);
+    alphanumericValidation1(['#P317_DESCRIPTION_1'], 0, null);
+    
+    // array id, min whole num, max whole num, min decimal, max decimal
+    customNumberDecimalValidation(['#P317_AMOUNT'], 0, null, 1, 2);
+    
+    
+    var checkDateFormat = ['#P317_ISSUE_DATE', '#P317_EXPIRY_DATE']
+    
+    // check date format mm/dd/yyyy
+    dateValidation(checkDateFormat)
+  execute-when-page-loads: |
+    mapP6Keys();
+    setTitle("Gift Certificate Update");
+    $x('P317_AMOUNT').focus();
+    
+    
+    // Amount validation
+    setInputFilter($("#P317_AMOUNT"), function(value) {
+        return /^\d*(\.\d{0,2})?$/.test(value); // numbers with 2 decimals only
+    }, "Whole numbers and two decimal numbers only.");
+    
+    
+    // Type validation
+    setInputFilter($("#P317_GC_TYPE"), function(value) {
+        return /^[A-Za-z0-9]{0,3}$/.test(value);
+    }, "Numbers and Letters only.");
+    
+    
+    // Description 1 to event validation
+    setInputFilter($("#P317_DESCRIPTION_1"), function(value) {
+        return /^[A-Za-z0-9\s]{0,}$/.test(value);
+    }, "Numbers and Letters only.");
+    
+    setInputFilter($("#P317_DESCRIPTION_2"), function(value) {
+        return /^[A-Za-z0-9\s]{0,}$/.test(value);
+    }, "Numbers and Letters only.");
+    
+    setInputFilter($("#P317_THIS_ENTITLES"), function(value) {
+        return /^[A-Za-z0-9\s]{0,}$/.test(value);
+    }, "Numbers and Letters only.");
+    
+    setInputFilter($("#P317_REMARKS"), function(value) {
+        return /^[A-Za-z0-9\s]{0,}$/.test(value);
+    }, "Numbers and Letters only.");
+    
+    setInputFilter($("#P317_BEST_WISHES"), function(value) {
+        return /^[A-Za-z0-9\s]{0,}$/.test(value);
+    }, "Numbers and Letters only.");
+    
+    setInputFilter($("#P317_RECIPIENT"), function(value) {
+        return /^[A-Za-z0-9\s]{0,}$/.test(value);
+    }, "Numbers and Letters only.");
+    
+    setInputFilter($("#P317_EVENT"), function(value) {
+        return /^[A-Za-z0-9\s]{0,}$/.test(value);
+    }, "Numbers and Letters only.");
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Region {
+        border-radius: 0.2rem;
+    }
+    
+    .t-Region-body {
+        padding-block-end: 0;
+        padding-block-start: 0;
+    }
+    
+    .t-Form-label {
+        font-size: 1.125rem;
+    }
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; /* Remove the asterisk before the label */
+    }
+    
+    .t-Form-itemWrapper > input {
+        font-size: 1.125rem;
+        height: 2rem;
+    }
+    
+    #P317_GC_TYPE, #P317_ISSUE_DATE, #P317_EXPIRY_DATE, #P317_INVOICE_TYPE {
+        text-align: center;
+    }
+    
+    .text-white {
+        color: white;
+    }
+    
+    .label-font-size {
+        font-size: 1.125rem;
+    }
+    
+    .text-bold {
+        font-weight: 600;
+    }
+    
+    .col-5>.rel-col .col-2 {
+        flex-basis: 33.333333%;
+        max-width: 33.333333%;
+    }
+    
+    .col-12>.rel-col .col-2 {
+        flex-basis: 14%;
+        max-width: 14%;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .mt-3 {
+        margin-top: 3rem;
+    }
+    
+    .ms-1 {
+        margin-left: .5rem;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    /* View height dependent table and buttons - START */
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    /* END */
+    
+    /* css for modal 313 start */
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .ui-dialog.pr-li {
+       left: 80% !important;
+    }
+    
+    .ui-dialog.inv-bby-w {
+        left: 78% !important;
+    }
+    
+    .ui-dialog.ship-his {
+        left: 50% !important;
+    }
+    
+    .ui-dialog.pur-order,
+    .ui-dialog.inc-ship {
+        left: 45% !important;
+    }
+    
+    .ui-dialog.res {
+        left: 32% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    /* modal 313 end */
+    
+    .t-Form-labelContainer:has(#P317_INVOICE_TYPE_LABEL),
+    .t-Form-labelContainer:has(#P317_INVOICE_ID_LABEL) {
+        max-width: 40% !important;
+    }
+    
+    .show {
+        display: block !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: 2nd Section =================================
+  id: 46305477522256636
+  identification: 
+    name: 2nd Section
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: Update Gift Certificate # 46925993088720850
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    - t-Form--leftLabels
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: 3rd Section =================================
+  id: 46305573872256637
+  identification: 
+    name: 3rd Section
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: Update Gift Certificate # 46925993088720850
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    - t-Form--leftLabels
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 46305780776256639
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Update Gift Certificate # 46925993088720850
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Update Gift Certificate =====================
+  id: 46925993088720850
+  identification: 
+    name: Update Gift Certificate
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          NULL AS "GC_NO",
+          NULL AS "AMOUNT",
+          NULL AS "GC_TYPE",
+          NULL AS "DATE_ISSUED",
+          NULL AS "EXPIRY_DATE",
+          NULL AS "DESCRIPTION_1",
+          NULL AS "DESCRIPTION_2",
+          NULL AS "THIS_ENTITLES",
+          NULL AS "REMARKS",
+          NULL AS "BEST_WISHES",
+          NULL AS "RECIPIENT",
+          NULL AS "EVENT"
+      FROM 
+          DUAL
+      
+      
+      -- SELECT
+      --     GIFT_CERTIFICATE_ID AS "GC_NUM",
+      --     AMOUNT AS "AMOUNT",
+      --     GC_TYPE_ID AS "GC_TYPE",
+      --     ISSUE_DATE AS "DATE_ISSUED",
+      --     EXPIRY_DATE AS "EXPIRY_DATE",
+      --     DESCRIPTION_1 AS "DESCRIPTION_1",
+      --     DESCRIPTION_2 AS "DESCRIPTION_2",
+      --     THIS_ENTITLES AS "THIS_ENTITLES",
+      --     REMARKS AS "REMARKS",
+      --     BEST_WISHES AS "BEST_WISHES",
+      --     RECIPIENT AS "RECIPIENT",
+      --     EVENT AS "EVENT"
+      -- FROM 
+      --     NPT020
+      --     WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+page-items: 
+- # ====== Page Item: P317_GC_NO ===============================
+  id: 30148241866825013
+  identification: 
+    name: P317_GC_NO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_GC_NUM ==============================
+  id: 30475395759245208
+  identification: 
+    name: P317_GC_NUM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: 2nd Section # 46305477522256636
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: GC_NO
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_THIS_ENTITLES =======================
+  id: 30475859058245213
+  identification: 
+    name: P317_THIS_ENTITLES
+    type: Text Field
+
+  label: 
+    label: This Entitles
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: 3rd Section # 46305573872256637
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-left-md
+    css-classes: 
+    - text-bold
+    width: 95
+
+  validation: 
+    value-required: false
+    maximum-length: 100
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: REMARKS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_REQUIRED_CHECKER ====================
+  id: 30477301727245228
+  identification: 
+    name: P317_REQUIRED_CHECKER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_REDIRECT_TO_URL =====================
+  id: 30477793075245232
+  identification: 
+    name: P317_REDIRECT_TO_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_DATE_CHECKER ========================
+  id: 34716122844647721
+  identification: 
+    name: P317_DATE_CHECKER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_SELECTED_GC_STATUS ==================
+  id: 37008124878700418
+  identification: 
+    name: P317_SELECTED_GC_STATUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_INVOICE_TYPE ========================
+  id: 45466416632718732
+  identification: 
+    name: P317_INVOICE_TYPE
+    type: Popup LOV
+
+  label: 
+    label: 'Invoice Type<span id="invoice-type" style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 40
+    region: 2nd Section # 46305477522256636
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    css-classes: 
+    - text-bold
+    width: 30
+
+  validation: 
+    value-required: true
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC:Cash;Cash,Charge/COD;Charge/COD'
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: GC_TYPE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_INVOICE_ID ==========================
+  id: 45466527247718733
+  identification: 
+    name: P317_INVOICE_ID
+    type: Number Field
+
+  label: 
+    label: 'Invoice ID<span id="invoice-id" style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    number-alignment: Center
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 80
+    region: 2nd Section # 46305477522256636
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    css-classes: 
+    - text-bold
+    width: 100
+
+  validation: 
+    value-required: true
+    maximum-length: 9
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: AMOUNT
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_INVOICE_CHECKER =====================
+  id: 45468009954718748
+  identification: 
+    name: P317_INVOICE_CHECKER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_INVOICE_REQUIRED ====================
+  id: 45468150521718749
+  identification: 
+    name: P317_INVOICE_REQUIRED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_GC_TYPE =============================
+  id: 46309224180256687
+  identification: 
+    name: P317_GC_TYPE
+    type: Popup LOV
+
+  label: 
+    label: 'Type<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 60
+    region: 2nd Section # 46305477522256636
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    css-classes: 
+    - text-bold
+    width: 30
+
+  validation: 
+    value-required: true
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: SELECT GC_TYPE_CODE FROM NPM013
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: GC_TYPE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_ISSUE_DATE ==========================
+  id: 46309326831256688
+  identification: 
+    name: P317_ISSUE_DATE
+    type: Text Field
+
+  label: 
+    label: 'Issue Date<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: 2nd Section # 46305477522256636
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-left-sm
+    css-classes: 
+    - text-bold
+    width: 100
+
+  validation: 
+    value-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: DATE_ISSUED
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_BEST_WISHES =========================
+  id: 46312278431256698
+  identification: 
+    name: P317_BEST_WISHES
+    type: Text Field
+
+  label: 
+    label: Best Wishes
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: 3rd Section # 46305573872256637
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-left-md
+    css-classes: 
+    - text-bold
+    width: 95
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: BEST_WISHES
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_AMOUNT ==============================
+  id: 46932092113720928
+  identification: 
+    name: P317_AMOUNT
+    type: Number Field
+
+  label: 
+    label: 'Amount<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    number-alignment: Center
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 20
+    region: 2nd Section # 46305477522256636
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    css-classes: 
+    - text-bold
+    width: 100
+
+  validation: 
+    value-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: AMOUNT
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_EXPIRY_DATE =========================
+  id: 46933334193720930
+  identification: 
+    name: P317_EXPIRY_DATE
+    type: Text Field
+
+  label: 
+    label: 'Expiry Date<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: 2nd Section # 46305477522256636
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-left-sm
+    css-classes: 
+    - text-bold
+    width: 50
+
+  validation: 
+    value-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: EXPIRY_DATE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_DESCRIPTION_1 =======================
+  id: 46936555357720939
+  identification: 
+    name: P317_DESCRIPTION_1
+    type: Text Field
+
+  label: 
+    label: 'Description 1<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: 3rd Section # 46305573872256637
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-left-md
+    css-classes: 
+    - text-bold
+    width: 95
+
+  validation: 
+    value-required: true
+    maximum-length: 150
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: DESCRIPTION_1
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_DESCRIPTION_2 =======================
+  id: 46936964753720939
+  identification: 
+    name: P317_DESCRIPTION_2
+    type: Text Field
+
+  label: 
+    label: Description 2
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: 3rd Section # 46305573872256637
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-left-md
+    css-classes: 
+    - text-bold
+    width: 95
+
+  validation: 
+    value-required: false
+    maximum-length: 150
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: DESCRIPTION_2
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_REMARKS =============================
+  id: 46937733981720941
+  identification: 
+    name: P317_REMARKS
+    type: Text Field
+
+  label: 
+    label: Remarks
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: None
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: 3rd Section # 46305573872256637
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-left-md
+    css-classes: 
+    - text-bold
+    width: 95
+
+  validation: 
+    value-required: false
+    maximum-length: 100
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: REMARKS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_EVENT ===============================
+  id: 53996311338209672
+  identification: 
+    name: P317_EVENT
+    type: Text Field
+
+  label: 
+    label: Event
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: 3rd Section # 46305573872256637
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-left-md
+    css-classes: 
+    - text-bold
+    width: 95
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: BEST_WISHES
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P317_RECIPIENT ===========================
+  id: 53996437144209673
+  identification: 
+    name: P317_RECIPIENT
+    type: Text Field
+
+  label: 
+    label: Recipient
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: 3rd Section # 46305573872256637
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    - margin-top-md
+    - margin-left-md
+    css-classes: 
+    - text-bold
+    width: 95
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Update Gift Certificate # 46925993088720850
+    column: BEST_WISHES
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Back ========================================
+  id: 27686982220993160
+  identification: 
+    button-name: Back
+    label: Back - Esc
+
+  layout: 
+    sequence: 50
+    region: Buttons # 46305780776256639
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:310:&SESSION.::&DEBUG.:::'
+      page: 310 # Gift Certificate
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+- # ====== Button: Print_Gift_Certificate ======================
+  id: 27687383979993162
+  identification: 
+    button-name: Print_Gift_Certificate
+    label: <u>P</u> - Print Gift Certificate
+
+  layout: 
+    sequence: 30
+    region: Buttons # 46305780776256639
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 8
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+dynamic-actions: 
+- # ====== Dynamic Action: Enter to submit =====================
+  id: 27687946080993179
+  identification: 
+    name: Enter to submit
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P317_EVENT
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter'
+
+  actions: 
+  - # ====== Action: Check required fields =======================
+    id: 27688488230993182
+    identification: 
+      name: Check required fields
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.message.clearErrors();
+        
+        // Check if required fields have values
+        if ($('#P312_INVOICE_REQUIRED').val() === 'Y') {
+            var requiredField = [
+                                '#P317_AMOUNT',
+                                '#P317_ISSUE_DATE',
+                                '#P317_GC_TYPE',
+                                '#P317_EXPIRY_DATE',
+                                '#P317_DESCRIPTION_1'
+                                ]
+        } else {
+            var requiredField = [
+                                '#P317_AMOUNT',
+                                '#P317_ISSUE_DATE',
+                                '#P317_GC_TYPE',
+                                '#P317_EXPIRY_DATE',
+                                '#P317_DESCRIPTION_1',
+                                '#P317_INVOICE_TYPE',
+                                '#P317_INVOICE_ID'
+                                ]
+        }
+        
+        var checkRequiredFields = requiredValidation(requiredField);
+        
+        // assign value to hidden item
+        document.getElementById('P317_REQUIRED_CHECKER').value=checkRequiredFields;
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_REQUIRED_CHECKER
+
+    execution: 
+      sequence: 10
+      event: Enter to submit # 27687946080993179
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Update gc ===================================
+    id: 30477448468245229
+    identification: 
+      name: Update gc
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+        cash_invoice_id NUMBER;
+        invoice_id NUMBER;
+        BEGIN
+        
+        
+            raise_application_error(-20001, :P317_INVOICE_TYPE);
+        
+            raise_application_error(-20001, :P317_INVOICE_ID);
+         
+            IF :P317_INVOICE_TYPE = 'Cash' THEN
+        
+                cash_invoice_id := :P317_INVOICE_ID;
+                invoice_id := null;
+        
+            ELSIF :P317_INVOICE_TYPE = 'Charge/COD' THEN
+        
+                cash_invoice_id := null;
+                invoice_id := :P317_INVOICE_ID;
+        
+            END IF;
+        
+            UPDATE NPT020
+                SET GC_TYPE_ID = (SELECT GC_TYPE_ID FROM NPM013 WHERE GC_TYPE_CODE = :P317_GC_TYPE),
+                    AMOUNT = :P317_AMOUNT,
+                    ISSUE_DATE = :P317_ISSUE_DATE,
+                    EXPIRY_DATE = :P317_EXPIRY_DATE,
+                    DESCRIPTION_1 = :P317_DESCRIPTION_1,
+                    DESCRIPTION_2 = :P317_DESCRIPTION_2,
+                    THIS_ENTITLES = :P317_THIS_ENTITLES,
+                    REMARKS = :P317_REMARKS,
+                    BEST_WISHES = :P317_BEST_WISHES,
+                    RECIPIENT = :P317_RECIPIENT,
+                    EVENT = :P317_EVENT,
+                    INVOICE_ID = invoice_id, 
+                    CASH_INVOICE_ID = cash_invoice_id,
+                    USER_UPDATE = :app_user, 
+                    DATE_UPDATED = SYSDATE
+                WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            
+            :P317_REDIRECT_TO_URL := apex_page.get_url(
+               p_page   => 310
+            --    ,
+            --    p_items  => 'P18_PO_NO,P18_VENDOR_ID,P18_FROM',
+            --    p_values => :P46_CHILD_NO || ',' || :P46_VENDOR_ID_C || ',' || :P46_FROM
+            );
+        
+        END;
+        
+      items-to-submit: 
+      - P317_AMOUNT
+      - P317_GC_TYPE
+      - P317_ISSUE_DATE
+      - P317_EXPIRY_DATE
+      - P317_DESCRIPTION_1
+      - P317_DESCRIPTION_2
+      - P317_THIS_ENTITLES
+      - P317_REMARKS
+      - P317_BEST_WISHES
+      - P317_RECIPIENT
+      - P317_EVENT
+      - P317_INVOICE_TYPE
+      - P317_INVOICE_ID
+      items-to-return: 
+      - P317_REDIRECT_TO_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Enter to submit # 27687946080993179
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P317_REQUIRED_CHECKER").val() === 'true'
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34716426817647724
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.message.showPageSuccess( "Updated gift certificate" );
+        setTimeout(function() {
+            $('.t-Button--closeAlert').click();
+        }, 3000);
+
+    execution: 
+      sequence: 30
+      event: Enter to submit # 27687946080993179
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Get GC No ===========================
+  id: 30147669429825007
+  identification: 
+    name: Get GC No
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Amount ==================================
+    id: 30147988032825010
+    identification: 
+      name: Set Amount
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT AMOUNT INTO :P317_AMOUNT
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_AMOUNT;
+        END;
+      items-to-submit: 
+      - P310_GC_NO
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_AMOUNT
+
+    execution: 
+      sequence: 20
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Issue Date ==============================
+    id: 30476394102245218
+    identification: 
+      name: Set Issue Date
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                --    GC_TYPE_ID INTO :P317_GC_TYPE, 
+                   ISSUE_DATE INTO :P317_ISSUE_DATE
+                --    EXPIRY_DATE INTO :P317_EXPIRY_DATE,
+                --    DESCRIPTION_1 INTO :P317_DESCRIPTION_1,
+                --    DESCRIPTION_2 INTO :P317_DESCRIPTION_2,
+                --    THIS_ENTITLES INTO :P317_THIS_ENTITLES,
+                --    REMARKS INTO :P317_REMARKS,
+                --    BEST_WISHES INTO :P317_BEST_WISHES,
+                --    RECIPIENT INTO :P317_RECIPIENT,
+                --    EVENT INTO :P317_EVENT
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_ISSUE_DATE;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_ISSUE_DATE
+
+    execution: 
+      sequence: 40
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set GC Type =================================
+    id: 30476474442245219
+    identification: 
+      name: Set GC Type
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT npm013.GC_TYPE_CODE INTO :P317_GC_TYPE
+            FROM NPM013 npm013
+            WHERE npm013.GC_TYPE_ID = (SELECT npt020.GC_TYPE_ID
+                                FROM NPT020 npt020
+                                WHERE npt020.GIFT_CERTIFICATE_ID = :P317_GC_NO);
+            RETURN :P317_GC_TYPE;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_GC_TYPE
+
+    execution: 
+      sequence: 60
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Expiry Date =============================
+    id: 30476521197245220
+    identification: 
+      name: Set Expiry Date
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                   EXPIRY_DATE INTO :P317_EXPIRY_DATE
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_EXPIRY_DATE;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_EXPIRY_DATE
+
+    execution: 
+      sequence: 70
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: SetDescription 1 ============================
+    id: 30476645607245221
+    identification: 
+      name: SetDescription 1
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                   DESCRIPTION_1 INTO :P317_DESCRIPTION_1
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_DESCRIPTION_1;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_DESCRIPTION_1
+
+    execution: 
+      sequence: 90
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Description 2 ===========================
+    id: 30476762818245222
+    identification: 
+      name: Set Description 2
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                   DESCRIPTION_2 INTO :P317_DESCRIPTION_2
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_DESCRIPTION_2;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_DESCRIPTION_2
+
+    execution: 
+      sequence: 100
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Recipient ===============================
+    id: 30476845484245223
+    identification: 
+      name: Set Recipient
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                   RECIPIENT INTO :P317_RECIPIENT
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_RECIPIENT;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_RECIPIENT
+
+    execution: 
+      sequence: 140
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Remarks =================================
+    id: 30476940543245224
+    identification: 
+      name: Set Remarks
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                   REMARKS INTO :P317_REMARKS
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_REMARKS;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_REMARKS
+
+    execution: 
+      sequence: 120
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Entitles ================================
+    id: 30477052844245225
+    identification: 
+      name: Set Entitles
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                   THIS_ENTITLES INTO :P317_THIS_ENTITLES
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_THIS_ENTITLES;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_THIS_ENTITLES
+
+    execution: 
+      sequence: 110
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Best Wishes =============================
+    id: 30477196180245226
+    identification: 
+      name: Set Best Wishes
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                   BEST_WISHES INTO :P317_BEST_WISHES
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_BEST_WISHES;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_BEST_WISHES
+
+    execution: 
+      sequence: 130
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Event ===================================
+    id: 30477266251245227
+    identification: 
+      name: Set Event
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT
+                   EVENT INTO :P317_EVENT
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            RETURN :P317_EVENT;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_EVENT
+
+    execution: 
+      sequence: 150
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Status ==================================
+    id: 37008244206700419
+    identification: 
+      name: Set Status
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  VARCHAR(1) := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P317_GC_NO) > 0 THEN
+            
+                SELECT GC_STATUS_ID INTO l_return_value
+                FROM NPT020
+                WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+        
+            END IF;
+        
+            RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_SELECTED_GC_STATUS
+
+    execution: 
+      sequence: 160
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Invoice Type ============================
+    id: 45468290986718750
+    identification: 
+      name: Set Invoice Type
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        invoice_type VARCHAR(20);
+        type_cash VARCHAR(20);
+        type_cod VARCHAR(20);
+        
+        BEGIN
+            
+            SELECT CASH_INVOICE_ID INTO type_cash
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+        
+        
+            SELECT INVOICE_ID INTO type_cod
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+        
+        
+            IF type_cash > 0 AND (type_cod IS NULL OR type_cod = 0) THEN
+                RETURN 'Cash';
+            ELSIF type_cod > 0 THEN
+                RETURN 'Charge/COD';
+            ELSE
+                RETURN NULL;
+            END IF;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_INVOICE_TYPE
+
+    execution: 
+      sequence: 50
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set Invoice ID ==============================
+    id: 46457586236673101
+    identification: 
+      name: Set Invoice ID
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        invoice_type VARCHAR(20);
+        type_cash VARCHAR(20);
+        type_cod VARCHAR(20);
+        
+        BEGIN
+            SELECT INVOICE_ID INTO type_cash
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+            
+            SELECT CASH_INVOICE_ID INTO type_cod
+            FROM NPT020
+            WHERE GIFT_CERTIFICATE_ID = :P317_GC_NO;
+        
+            IF type_cash > 0 AND (type_cod IS NULL OR type_cod = 0) THEN
+                RETURN type_cash;
+            ELSIF type_cod > 0 THEN
+                RETURN type_cod;
+            ELSE
+                RETURN NULL;
+            END IF;
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_INVOICE_ID
+
+    execution: 
+      sequence: 80
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+  - # ====== Action: Set INVOICE REQUIRED ========================
+    id: 46457669095673102
+    identification: 
+      name: Set INVOICE REQUIRED
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            SELECT DONATION INTO :P317_INVOICE_REQUIRED
+            FROM NPM013 
+            WHERE GC_TYPE_CODE = :P317_GC_TYPE;
+        
+            RETURN :P317_INVOICE_REQUIRED;
+        END;
+      items-to-submit: 
+      - P317_GC_TYPE
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_INVOICE_REQUIRED
+
+    execution: 
+      sequence: 170
+      event: Get GC No # 30147669429825007
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P317_GC_NO
+
+- # ====== Dynamic Action: Compute Expiry Date =================
+  id: 30475930727245214
+  identification: 
+    name: Compute Expiry Date
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P317_ISSUE_DATE
+    - P317_GC_TYPE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 30476012543245215
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  DATE := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P317_ISSUE_DATE) > 0 AND LENGTH(:P317_GC_TYPE) > 0 THEN
+        
+                SELECT (EXPIRY_DAYS + TO_DATE(:P317_ISSUE_DATE)) INTO l_return_value
+        
+                FROM NPM013
+        
+                WHERE GC_TYPE_CODE = :P317_GC_TYPE;
+        
+            END IF;
+        
+        RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P317_ISSUE_DATE
+      - P317_GC_TYPE
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_EXPIRY_DATE
+
+    execution: 
+      sequence: 20
+      event: Compute Expiry Date # 30475930727245214
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: |
+        // console.log("hihihihi")
+        // console.log($("#P317_DATE_CHECKER").val())
+        $("#P317_DATE_CHECKER").val() === 'false'
+
+  - # ====== Action: Refresh =====================================
+    id: 30476189298245216
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_EXPIRY_DATE
+
+    execution: 
+      sequence: 30
+      event: Compute Expiry Date # 30475930727245214
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34716034346647720
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var isValid = false;
+        var count = 0;
+        
+        
+        var date_regex = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d$/;
+        var date_regex_1 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|2[09])[- \/.](19|20)\d\d$/;
+        var date_regex_2 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-8]|2[08])[- \/.](19|20)\d\d$/;
+        
+        if ($('#P317_ISSUE_DATE').val().substring(0,3) === "02/" || $('#P317_ISSUE_DATE').val().substring(0,2) === "2/") {
+            var year = '';
+            if ($('#P317_ISSUE_DATE').val().length === 10) {
+                year = $('#P317_ISSUE_DATE').val().substring(6, 10);
+            } else {
+                year = $('#P317_ISSUE_DATE').val().substring(5, 9);
+            }
+            if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+                if (date_regex_1.test($('#P317_ISSUE_DATE').val()) || $('#P317_ISSUE_DATE').val().trim().length === 0) {
+                } else {
+                    count = count + 1;
+                }
+            } else {
+                if (date_regex_2.test($('#P317_ISSUE_DATE').val()) || $('#P317_ISSUE_DATE').val().trim().length === 0) {
+                    $('#P317_ISSUE_DATE' + '_error_placeholder').html('');
+                } else {
+                    count = count + 1;
+                }
+            }
+        } else {
+            if (date_regex.test($('#P317_ISSUE_DATE').val()) || $('#P317_ISSUE_DATE').val().trim().length === 0) {
+            } else {
+                count = count + 1;
+            }
+        }
+        
+        if (count > 0) {
+            isValid = true;
+        } else {
+            isValid = false;
+        }
+        
+        
+        document.getElementById('P317_DATE_CHECKER').value=isValid;
+
+    execution: 
+      sequence: 10
+      event: Compute Expiry Date # 30475930727245214
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open copies popup ===================
+  id: 37007943871700416
+  identification: 
+    name: Open copies popup
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print_Gift_Certificate # 27687383979993162
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 37008008456700417
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P317_REDIRECT_TO_URL := apex_page.get_url(
+               p_page   => 313,
+               p_items  => 'P313_SELECTED_GC_NO',
+               p_values => :P317_GC_NO
+             );
+        END;
+      items-to-submit: 
+      - P317_GC_NO
+      items-to-return: 
+      - P317_REDIRECT_TO_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Open copies popup # 37007943871700416
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P317_SELECTED_GC_STATUS").val() !== "4" && $("#P317_SELECTED_GC_STATUS").val() !== "5"
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37008301699700420
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P317_REDIRECT_TO_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Open copies popup # 37007943871700416
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P317_SELECTED_GC_STATUS").val() !== "4" && $("#P317_SELECTED_GC_STATUS").val() !== "5"
+
+- # ====== Dynamic Action: Clear invoice id ====================
+  id: 46443637125424346
+  identification: 
+    name: Clear invoice id
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P317_INVOICE_TYPE
+
+  actions: 
+  - # ====== Action: Clear =======================================
+    id: 46444018481424354
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_INVOICE_ID
+
+    execution: 
+      sequence: 10
+      event: Clear invoice id # 46443637125424346
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Check if Invoice exists =============
+  id: 46444985895430929
+  identification: 
+    name: Check if Invoice exists
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Lose Focus
+    selection-type: Item(s)
+    item(s): 
+    - P317_INVOICE_ID
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 46445362553430931
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        BEGIN
+        
+            -- check if CASH or Charge/COD
+            IF :P317_INVOICE_TYPE = 'Cash' THEN
+        
+                SELECT COUNT(*) INTO :P317_INVOICE_CHECKER
+                FROM NPT033 npt033
+                WHERE npt033.CASH_INVOICE_ID = :P317_INVOICE_ID;
+        
+            ELSIF :P317_INVOICE_TYPE = 'Charge/COD' THEN
+        
+                SELECT COUNT(*) INTO :P317_INVOICE_CHECKER
+                FROM NPT001 npt001
+                WHERE npt001.INVOICE_ID = :P317_INVOICE_ID;
+        
+            END IF;
+        
+            RETURN :P317_INVOICE_CHECKER;
+        
+        END;
+      items-to-submit: 
+      - P317_INVOICE_ID
+      - P317_INVOICE_TYPE
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_INVOICE_CHECKER
+
+    execution: 
+      sequence: 20
+      event: Check if Invoice exists # 46444985895430929
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46445800192430932
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ($('#P317_INVOICE_REQUIRED').val() === 'N') {
+            if ($('#P317_INVOICE_CHECKER').val() == null) {
+                $('#P317_INVOICE_TYPE').focus();
+                $('#P317_INVOICE_ID' + '_error_placeholder').html('<span>Please select invoice type.</span>');
+                $('#P317_INVOICE_ID' + '_error_placeholder').addClass("show");
+            } else if ($('#P317_INVOICE_CHECKER').val() == 0) {
+                $('#P317_INVOICE_ID').focus();
+                $('#P317_INVOICE_ID' + '_error_placeholder').html('<span>Invalid invoice.</span>');
+                $('#P317_INVOICE_ID' + '_error_placeholder').addClass("show");
+            } else {
+                $('#P317_INVOICE_ID' + '_error_placeholder').html('');
+            }
+        }
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_INVOICE_ID
+
+    execution: 
+      sequence: 30
+      event: Check if Invoice exists # 46444985895430929
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Check if invoice is required ========
+  id: 46462694086697468
+  identification: 
+    name: Check if invoice is required
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P317_GC_TYPE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 46463058035697470
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  VARCHAR(1) := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P317_GC_TYPE) > 0 THEN
+        
+                SELECT DONATION INTO l_return_value
+                FROM NPM013 
+                WHERE GC_TYPE_CODE = :P317_GC_TYPE;
+        
+            END IF;
+        
+        RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P317_GC_TYPE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P317_INVOICE_REQUIRED
+
+    execution: 
+      sequence: 10
+      event: Check if invoice is required # 46462694086697468
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46463544971697471
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ($('#P317_INVOICE_REQUIRED').val() === 'Y') {
+            document.getElementById('invoice-type').style.display = 'none';
+            document.getElementById('invoice-id').style.display = 'none';
+        }
+
+    execution: 
+      sequence: 20
+      event: Check if invoice is required # 46462694086697468
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Initialize form Add/Update Gift Certificate 
+  id: 27677550520993137
+  identification: 
+    name: Initialize form Add/Update Gift Certificate
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Update Gift Certificate # 46925993088720850
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Add/Update Gift Certificate ===
+  id: 27677914672993139
+  identification: 
+    name: Process form Add/Update Gift Certificate
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Update Gift Certificate # 46925993088720850
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+branches: 
+- # ====== Branch: Go To Page 1 ================================
+  id: 27688942665993184
+  identification: 
+    name: Go To Page 1
+
+  execution: 
+    sequence: 1
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:1:&APP_SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+      page: 1 # Main Menu
+

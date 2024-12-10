@@ -1,0 +1,6882 @@
+---
+# ====== Page: Convert Item A to Item B ======================
+id: 91
+identification: 
+  name: Convert Item A to Item B
+  alias: CONVERT-ITEM-A-TO-ITEM-B
+  title: Convert Item A to Item B
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p91KeyMap = {
+        a: (v) => {
+            $("#a").trigger("click");
+        },
+        u: (v) => {
+            $("#u").trigger("click");
+        },
+        i: (v) => {
+            $("#i").trigger("click");
+        },
+        p: (v) => {
+            $("#p").trigger("click");
+        },
+        o: (v) => {
+            $("#o").trigger("click");
+        },
+        r: (v) => {
+            $("#r").trigger("click");
+        },
+        home: (v) => {
+            $("#home").trigger("click");
+        },
+        end: (v) => {
+            $("#end").trigger("click");
+        },
+        s: (v) => {
+            $("#s").trigger("click");
+        },
+        escape: (v) => {
+            if($("#search").is(":visible")) {
+                $("#close-search").trigger("click");
+            } else if($("#sort-by").is(":visible")) {
+                $("#close-sort").trigger("click");
+            } else if($("#reports").is(":visible")) {
+                $("#close-reports").trigger("click");
+            } else if($("#option").is(":visible")) {
+                $("#close-option").trigger("click");
+            } else {
+                $("#exit").trigger("click");
+            }
+        }
+    }
+    
+    function mapP91Keys() {
+        $(document).off('keydown.p91keyevents');
+        $(document).on('keydown.p91keyevents', (ev) => {
+    
+            const focusedElement = document.activeElement;
+            if (focusedElement.tagName === "INPUT" || focusedElement.tagName === "TEXTAREA") {
+                return;
+            }
+            
+            var key = ev.key?.toLowerCase();
+            if (p91KeyMap[key]) {
+                ev.preventDefault();
+                p91KeyMap[key]();
+            }
+        });
+    }
+    
+    function selectFirstRow() {
+        let region = apex.region("table")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        let rec = model.recordAt(0);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+    
+    function selectLastRow() {
+        let region = apex.region("table")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        
+        let totalRec = model.getTotalRecords();
+        let rec = model.recordAt(totalRec - 1);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+  execute-when-page-loads: |
+    mapP91Keys();
+    setTitle("Convert Item A to Item B");
+    
+    $(document).ready(function() { 
+        $("#P91_SEARCH_VALUE").on("keydown", function(event) {
+            if (event.key === "Enter" || event.keyCode === 13) {
+                $("#goto").trigger("click");
+                event.preventDefault();
+            }
+        });
+    });
+    
+    $(document).on("keydown", function(e) {
+        if ($("#sort-by").is(":visible")) {
+            const buttons = $(".sort-btns");
+            const focusedIndex = buttons.index(document.activeElement);
+            
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                const nextIndex = (focusedIndex + 1) % buttons.length;
+                buttons.eq(nextIndex).focus();
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                const prevIndex = (focusedIndex - 1 + buttons.length) % buttons.length;
+                buttons.eq(prevIndex).focus();
+            }
+        }
+    
+        if($("#reports").is(":visible")) {
+            if(e.key.toLowerCase() === "a") {
+                setTimeout(() => {
+                    apex.item("P91_REPORT").setValue("A");
+                    $.event.trigger('reportA');
+                }, 100)
+                e.preventDefault();
+            } else if(e.key.toLowerCase() === "b") {
+                apex.item("P91_REPORT").setValue("B");
+                $.event.trigger('reportBSetMonth');
+                e.preventDefault();
+            } else if(e.key.toLowerCase() === "c") {
+                apex.item("P91_REPORT").setValue("C");
+                $.event.trigger('reportCSetItem');
+                e.preventDefault();
+            }
+        }
+    
+        if($("#option").is(":visible")) {
+            if(e.key.toLowerCase() === "a") {
+                $.event.trigger('printA');
+            } else if(e.key.toLowerCase() === "b") {
+                $.event.trigger('printB');
+            }
+        }
+    
+        if($("#crr-b").is(":visible")) {
+            $("#P91_MONTH_FROM_B, #P91_MONTH_TO_B").on("keydown", function(event) {
+                if (event.key === "Enter" || event.keyCode === 13) {
+                    $("#submit-months").trigger("click");
+                    event.preventDefault();
+                }
+            });
+        }
+    
+        if($("#icr-c").is(":visible")) {
+            $("#P91_ITEM_FROM_C, #P91_ITEM_TO_C").on("keydown", function(event) {
+                if (event.key === "Enter" || event.keyCode === 13) {
+                    $("#submit-items").trigger("click");
+                    event.preventDefault();
+                }
+            });
+        }
+    });
+
+css: 
+  inline: |
+    #inquire span {
+        font-size: 1.125rem !important;
+    }
+    
+    #from-to span {
+        font-size: 1rem !important;
+    }
+    
+    .ui-dialog {
+        background-color: #056AC8;
+    }
+    
+    .t-Region#table-wrapper {
+        background-color: white;
+        border: none;
+        padding: .5rem .5rem 1.5rem .5rem;
+    }
+    
+    #table-wrapper .t-Region-body {
+        color: black;
+    }
+    
+    #inquire,
+    #sort-by,
+    #search,
+    #reports,
+    #crr-b,
+    #icr-c {
+        border-radius: 12px;
+    }
+    
+    #inquire {
+        overflow: hidden;
+        background-color: #056AC8 !important;
+    }
+    
+    #sort-by .t-Region-body {
+        background-color: #056AC8;
+    }
+    
+    #inquire .a-GV-cell,
+    #inquire .a-GV-header {
+        pointer-events: none;
+    }
+    
+    .t-Region#single ,
+    .t-Region#period,
+    .t-Region#period-two,
+    .t-Region#dot,
+    .t-Region#graphic {
+        border-radius: 0 !important;
+        font-size: 1.125rem;
+        border: none !important;
+        outline: none !important;
+        background-color: #056AC8 !important; 
+        color: white !important;
+    }
+    
+    .sort-btns:focus {
+        background-color: #beddfa !important;
+        border: none;
+        outline: none;
+    }
+    
+    #sort-by .t-DialogRegion-body,
+    #reports .t-DialogRegion-body {
+        padding-block-end: var(--ut-dialog-region-padding-y, .5rem) !important;
+        padding-inline-end: var(--ut-dialog-region-padding-x, .5rem) !important;
+        padding-inline-start: var(--ut-dialog-region-padding-x, .5rem) !important;
+    }
+    
+    .sort-btns {
+        text-align: left !important;
+        font-size: 1.125rem;
+        padding: 1rem .5rem 1rem .5rem;
+        background-color: white !important;
+        border-radius: 0 !important;
+    }
+    
+    div#sort-by.ui-dialog-content,
+    div#reports.ui-dialog-content {
+        padding: 0 !important;
+        background-color: #056AC8;
+    }
+    
+    
+    .t-Form-labelContainer {
+        display: flex;
+        align-items: start;
+    }
+    
+    #inquire .t-DialogRegion-body {
+        background-color: #056AC8;
+    }
+    
+    .t-DialogRegion-bodyWrapperOut {
+        overflow: hidden !important;
+    }
+    
+    #search.t-DialogRegion,
+    #crr-b.t-DialogRegion,
+    #icr-c.t-DialogRegion {
+        min-height: 120px !important;
+        background-color: white;
+        border-radius: 12px;
+    }
+    
+    #crr-b.t-DialogRegion,
+    #icr-c.t-DialogRegion {
+        min-height: auto !important;
+    }
+    
+    .t-Region#search-header,
+    .t-Region#crr-b-header,
+    .t-Region#icr-c-header {
+        background-color: #056AC8 !important;
+    }
+    
+    #year-sort span.t-Form-itemText,
+    #year-sort span.display_only {
+        font-size: 1rem !important;
+        color: white !important;
+        margin-bottom: 0 !important;
+    }
+    
+    .t-Region#year-sort {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, .0);
+        padding-block-start: var(--ut-field-padding-y, .0);
+    }
+    
+    .t-Form-labelContainer {
+        padding-block-end: var(--ut-field-padding-y, .0);
+        padding-block-start: var(--ut-field-padding-y, .0);
+    }
+    
+    #table .a-IG {
+        height: calc(65vh + 2px) !important;
+    } 
+    
+    #table .a-IG-contentContainer {
+        height: 65vh !important;
+    }
+    
+    #table .a-IG-gridView.a-GV {
+        height: 65vh !important;
+    }
+    
+    #table .a-GV-bdy {
+        height: calc(65vh - 2.5625rem) !important;
+    }
+    
+    .sort-btns {
+        text-align: left !important;
+        font-size: 1.125rem;
+        padding: 1rem .5rem 1rem .5rem;
+    }
+    
+    .text-white {
+        color: white;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #table table,
+    #table tr,
+    #table th {
+        font-size: 1rem;
+    }
+    
+    #table td {
+        font-size: 1.125rem;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+        text-align: left;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .text-red {
+        color: red;
+    }
+    
+    #table .a-GV-header a, #table th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    #table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(1) {
+        width: 3rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(2) {
+        width: 7rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(3),
+    #table .a-GV-table colgroup col:nth-child(5) {
+        width: 8rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(4),
+    #table .a-GV-table colgroup col:nth-child(6) {
+        width: 20rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(7) {
+        width: 3rem;
+    }
+    
+    #table1 table,
+    #table1 tr,
+    #table1 th {
+        font-size: 1rem;
+        color: black;
+    }
+    
+    #table1 td {
+        font-size: 1.125rem;
+    }
+    
+    #table1 .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #table1 .a-GV-table colgroup col:nth-child(1), 
+    #table1 .a-GV-table colgroup col:nth-child(3), 
+    #table1 .a-GV-table colgroup col:nth-child(6) {
+        width: 3rem;
+    }
+    
+    #table1 .a-GV-table colgroup col:nth-child(8),
+    #table1 .a-GV-table colgroup col:nth-child(9) {
+        width: 7rem;
+    }
+    
+    #table1 .a-GV-table colgroup col:nth-child(2), 
+    #table1 .a-GV-table colgroup col:nth-child(5) {
+        width: 4rem;
+    }
+    
+    #table1 .a-GV-table colgroup col:nth-child(4), 
+    #table1 .a-GV-table colgroup col:nth-child(7) {
+        width: 6rem;
+    }
+    #table1 .a-GV-table colgroup col:nth-child(10) {
+        width: 9rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Year & Sort =================================
+  id: 32047105191460408
+  identification: 
+    name: Year & Sort
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: year-sort
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Item From & To ==============================
+  id: 32047261067460409
+  identification: 
+    name: Item From & To
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="display: flex; margin-left: 6rem; color: white;">
+          <span>----------------------------------------Item From----------------------------------------</span>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          <span>-----------------------------------------Item To-----------------------------------------</span>
+      </div>
+      
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: item-from
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 32047525374460412
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Search ======================================
+  id: 32048537665460422
+  identification: 
+    name: Search
+    type: Static Content
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - t-DialogRegion--noPadding
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Header ======================================
+  id: 32049288067460429
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="background-color: #056AC8; font-size: 1.5rem; color: white; padding: .50rem 0 .50rem 0; margin-left: 1rem;"
+           id="search-header">
+          Search
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: Search # 32048537665460422
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-header
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: errorArea ===================================
+  id: 32049347679460430
+  identification: 
+    name: errorArea
+    type: Static Content
+
+  source: 
+    html-code: '<span id="errorArea" class="hide text-red" style="margin-left: 1rem;">Please fill in the search field</span>'
+
+  layout: 
+    sequence: 30
+    parent-region: Search # 32048537665460422
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Inquire =====================================
+  id: 32050570604460442
+  identification: 
+    name: Inquire
+    type: Static Content
+
+  layout: 
+    sequence: 100
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: inquire
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Converted Item Details ======================
+  id: 32050626736460443
+  identification: 
+    name: Converted Item Details
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          nim027.warehouse_location AS "WHS_LOCATION",
+          nit020.from_no_of_units AS "FROM_QTY",
+          nim026_from.uom_code AS "FROM_UOM",
+          nit020.from_no_of_units * (SELECT nit02.quantity
+                                     FROM NIT002 nit02
+                                     WHERE nit02.item_id = nit020.from_item_id
+                                     AND nit02.uom_id = nit020.from_uom_id) AS "FROM_UNITS",
+          nit020.to_no_of_units AS "TO_QTY",
+          nim026_to.uom_code AS "TO_UOM",
+          nit020.to_no_of_units * (SELECT nit02.quantity
+                                     FROM NIT002 nit02
+                                     WHERE nit02.item_id = nit020.to_item_id
+                                     AND nit02.uom_id = nit020.to_uom_id) AS "TO_UNITS",
+          nit020.invoice_number AS "INV_NO",
+          nit020.invoice_date AS "INV_DATE",
+          nit020.customer_name AS "CUST_NAME"
+      FROM
+          NIT020 nit020
+          JOIN NIM027 nim027 ON nim027.warehouse_id = nit020.warehouse_id
+          JOIN NIM026 nim026_from ON nim026_from.uom_id = nit020.from_uom_id
+          JOIN NIM026 nim026_to ON nim026_to.uom_id = nit020.to_uom_id
+      WHERE
+          nit020.convert_id = :P91_CONVERT_ID;
+    page-items-to-submit: 
+    - P91_CONVERT_ID
+
+  layout: 
+    sequence: 30
+    parent-region: Table Wrapper # 33266318802145311
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table1
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 32050743558460444
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 33288396721176403
+      identification: 
+        name: Primary Report
+        alias: 332884
+
+  columns: 
+  - # ====== Column: WHS_LOCATION ================================
+    id: 40136284132196235
+    identification: 
+      column-name: WHS_LOCATION
+      type: Text Field
+
+    heading: 
+      heading: Locn
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: WHS_LOCATION
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: FROM_QTY ====================================
+    id: 40136355520196236
+    identification: 
+      column-name: FROM_QTY
+      type: Text Field
+
+    heading: 
+      heading: Qty
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: FROM_QTY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: FROM_UOM ====================================
+    id: 40136476767196237
+    identification: 
+      column-name: FROM_UOM
+      type: Text Field
+
+    heading: 
+      heading: UOM
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: FROM_UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: FROM_UNITS ==================================
+    id: 40136549357196238
+    identification: 
+      column-name: FROM_UNITS
+      type: Text Field
+
+    heading: 
+      heading: Total Units
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: FROM_UNITS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: TO_QTY ======================================
+    id: 40136606981196239
+    identification: 
+      column-name: TO_QTY
+      type: Text Field
+
+    heading: 
+      heading: Qty
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: TO_QTY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: TO_UOM ======================================
+    id: 40136733813196240
+    identification: 
+      column-name: TO_UOM
+      type: Text Field
+
+    heading: 
+      heading: UOM
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: TO_UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: TO_UNITS ====================================
+    id: 40136805915196241
+    identification: 
+      column-name: TO_UNITS
+      type: Text Field
+
+    heading: 
+      heading: Total Units
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TO_UNITS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: INV_NO ======================================
+    id: 40136937375196242
+    identification: 
+      column-name: INV_NO
+      type: Text Field
+
+    heading: 
+      heading: Invoice No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: INV_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: INV_DATE ====================================
+    id: 40137088305196243
+    identification: 
+      column-name: INV_DATE
+      type: Text Field
+
+    heading: 
+      heading: Invoice Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: INV_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CUST_NAME ===================================
+    id: 40137172856196244
+    identification: 
+      column-name: CUST_NAME
+      type: Text Field
+
+    heading: 
+      heading: Customer Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 100
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: CUST_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Convert Item A to Item B ====================
+  id: 33082059287059321
+  identification: 
+    name: Convert Item A to Item B
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      WITH my_select AS (
+          SELECT
+              SUBSTR(nit020.convert_id, 6, 8) AS "NO",
+              nit020.processing_date AS "PROCESS_DATE",
+              nit001_from_item.item_num AS "FROM_ITEM_NUM",
+              nit001_from_item.item_desc AS "FROM_ITEM_DESC",
+              nit001_to_item.item_num AS "TO_ITEM_NUM",
+              nit001_to_item.item_desc AS "TO_ITEM_DESC",
+              CASE WHEN nit020.is_posted = 'N' THEN NULL
+              ELSE 'P'
+              END AS "POST",
+              nit020.convert_id AS "CONVERT_ID"
+          FROM
+              NIT020 nit020
+          LEFT JOIN
+              NIT001 nit001_from_item ON nit020.from_item_id = nit001_from_item.item_id
+          LEFT JOIN
+              NIT001 nit001_to_item ON nit020.to_item_id = nit001_to_item.item_id
+          WHERE
+              (:P91_YEAR IS NOT NULL AND SUBSTR(nit020.convert_id, 1, 4) = :P91_YEAR)
+          ORDER BY 
+              CASE 
+                  WHEN :P91_SORTED_BY = 'Item From' THEN nit001_from_item.item_num
+                  WHEN :P91_SORTED_BY = 'Item To' THEN nit001_to_item.item_num
+              END,
+              CASE
+                  WHEN :P91_SORTED_BY = 'Conversion Record Number' THEN nit020.convert_id
+              END
+      )
+      
+      SELECT * FROM my_select;
+    page-items-to-submit: 
+    - P91_YEAR
+    - P91_SORTED_BY
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 33082525300059328
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 33082962172059329
+      identification: 
+        name: Primary Report
+        alias: 330830
+
+  columns: 
+  - # ====== Column: NO ==========================================
+    id: 33083329196059335
+    identification: 
+      column-name: NO
+      type: Text Field
+
+    heading: 
+      heading: No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 0
+
+    source: 
+      type: Database Column
+      database-column: NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: PROCESS_DATE ================================
+    id: 33084356039059340
+    identification: 
+      column-name: PROCESS_DATE
+      type: Text Field
+
+    heading: 
+      heading: Processing Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 0
+
+    source: 
+      type: Database Column
+      database-column: PROCESS_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: FROM_ITEM_NUM ===============================
+    id: 33085398031059342
+    identification: 
+      column-name: FROM_ITEM_NUM
+      type: Text Field
+
+    heading: 
+      heading: Item Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 0
+
+    source: 
+      type: Database Column
+      database-column: FROM_ITEM_NUM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: FROM_ITEM_DESC ==============================
+    id: 33086315983059342
+    identification: 
+      column-name: FROM_ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 0
+
+    source: 
+      type: Database Column
+      database-column: FROM_ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: TO_ITEM_NUM =================================
+    id: 33087378480059345
+    identification: 
+      column-name: TO_ITEM_NUM
+      type: Text Field
+
+    heading: 
+      heading: Item Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 0
+
+    source: 
+      type: Database Column
+      database-column: TO_ITEM_NUM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: TO_ITEM_DESC ================================
+    id: 33088383545059346
+    identification: 
+      column-name: TO_ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 0
+
+    source: 
+      type: Database Column
+      database-column: TO_ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: POST ========================================
+    id: 33089356420059348
+    identification: 
+      column-name: POST
+      type: Text Field
+
+    heading: 
+      heading: Post
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 0
+
+    source: 
+      type: Database Column
+      database-column: POST
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CONVERT_ID ==================================
+    id: 40133206946196205
+    identification: 
+      column-name: CONVERT_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 80
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: CONVERT_ID
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Header ======================================
+  id: 33266037330145308
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="background-color: #056AC8; font-size: 1.5rem; color: white;">
+          Converted Item Details
+      </div>
+
+  layout: 
+    sequence: 30
+    parent-region: Inquire # 32050570604460442
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Table Wrapper ===============================
+  id: 33266318802145311
+  identification: 
+    name: Table Wrapper
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: Inquire # 32050570604460442
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table-wrapper
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Conversion Item Info ========================
+  id: 33266557148145313
+  identification: 
+    name: Conversion Item Info
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Table Wrapper # 33266318802145311
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-lg
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Footer ======================================
+  id: 33267237541145320
+  identification: 
+    name: Footer
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="text-align: center; color: white; font-size: 1rem;">
+          Press any key to exit
+      </div>
+
+  layout: 
+    sequence: 60
+    parent-region: Inquire # 32050570604460442
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Item From & To ==============================
+  id: 33267378852145321
+  identification: 
+    name: Item From & To
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="display: flex; margin-left: 4.3rem;" id="from-to">
+          <span>--------------Item From--------------</span>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          <span>---------------Item To---------------</span>
+      </div>
+      
+
+  layout: 
+    sequence: 20
+    parent-region: Table Wrapper # 33266318802145311
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Sort By =====================================
+  id: 33268666928145334
+  identification: 
+    name: Sort By
+    type: Static Content
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: sort-by
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: |
+      <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;" class="text-white">
+          Sort By
+      </div>
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Reports =====================================
+  id: 33623591866196801
+  identification: 
+    name: Reports
+    type: Static Content
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: reports
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: |
+      <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;" class="text-white">
+          Report Options
+      </div>
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Conversion Record Report (Single) ===========
+  id: 33623638622196802
+  identification: 
+    name: Conversion Record Report (Single)
+    type: Static Content
+
+  source: 
+    html-code: A - Conversion Record Report (single)
+
+  layout: 
+    sequence: 10
+    parent-region: Reports # 33623591866196801
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: single
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Conversion Record Report (period) ===========
+  id: 33623913404196805
+  identification: 
+    name: Conversion Record Report (period)
+    type: Static Content
+
+  source: 
+    html-code: B - Conversion Record Report (for a period)
+
+  layout: 
+    sequence: 30
+    parent-region: Reports # 33623591866196801
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: period
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Item Conversion Report (period) =============
+  id: 40829263142330228
+  identification: 
+    name: Item Conversion Report (period)
+    type: Static Content
+
+  source: 
+    html-code: C - Item Conversion Report (for a period)
+
+  layout: 
+    sequence: 40
+    parent-region: Reports # 33623591866196801
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: period-two
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Printing Options ============================
+  id: 40829341937330229
+  identification: 
+    name: Printing Options
+    type: Static Content
+
+  layout: 
+    sequence: 130
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: option
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: |
+      <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;" class="text-white">
+          Printing Options
+      </div>
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Dotmatrix ===================================
+  id: 40829801115330234
+  identification: 
+    name: Dotmatrix
+    type: Static Content
+
+  source: 
+    html-code: A - Dotmatrix
+
+  layout: 
+    sequence: 40
+    parent-region: Printing Options # 40829341937330229
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: dot
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Graphic Printer =============================
+  id: 40829924775330235
+  identification: 
+    name: Graphic Printer
+    type: Static Content
+
+  source: 
+    html-code: B - Graphic Printer
+
+  layout: 
+    sequence: 50
+    parent-region: Printing Options # 40829341937330229
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: graphic
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Convert Record Report =======================
+  id: 42170243821532402
+  identification: 
+    name: Convert Record Report
+    type: Static Content
+
+  layout: 
+    sequence: 140
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - t-DialogRegion--noPadding
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: crr-b
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Header ======================================
+  id: 42170654560532406
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="background-color: #056AC8; font-size: 1.5rem; color: white; padding: .50rem 0 .50rem 0;"
+           id="crr-b-header">
+           <div id="crr-b-header-two" style="margin-left: 1rem;">
+              
+           </div>
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: Convert Record Report # 42170243821532402
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: crr-b-header
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: errorArea ===================================
+  id: 42170784417532407
+  identification: 
+    name: errorArea
+    type: Static Content
+
+  source: 
+    html-code: '<span id="errorAreaTwo" class="hide text-red" style="margin-left: 1rem;">Please fill in the search fields</span>'
+
+  layout: 
+    sequence: 30
+    parent-region: Convert Record Report # 42170243821532402
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Item Conversion Report ======================
+  id: 42171779600532417
+  identification: 
+    name: Item Conversion Report
+    type: Static Content
+
+  layout: 
+    sequence: 150
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - t-DialogRegion--noPadding
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: icr-c
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Header ======================================
+  id: 42171828100532418
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="background-color: #056AC8; font-size: 1.5rem; color: white; padding: .50rem 0 .50rem 0;"
+           id="icr-c-header">
+           <div id="icr-c-header-two" style="margin-left: 1rem;">
+              Item Conversion Report (for a period)
+           </div>
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: Item Conversion Report # 42171779600532417
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: icr-c-header
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: errorArea ===================================
+  id: 42172337831532423
+  identification: 
+    name: errorArea
+    type: Static Content
+
+  source: 
+    html-code: '<span id="errorAreaThree" class="hide text-red" style="margin-left: 1rem;">Please fill in the search fields</span>'
+
+  layout: 
+    sequence: 20
+    parent-region: Item Conversion Report # 42171779600532417
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P91_YEAR =================================
+  id: 32046926496460406
+  identification: 
+    name: P91_YEAR
+    type: Display Only
+
+  label: 
+    label: New
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Year & Sort # 32047105191460408
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: Review Conversion Records
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_SORTED_BY ============================
+  id: 32047051860460407
+  identification: 
+    name: P91_SORTED_BY
+    type: Display Only
+
+  label: 
+    label: New
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Year & Sort # 32047105191460408
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: 'Sorted By:&nbsp;'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_SEARCH_VALUE =========================
+  id: 32049139180460428
+  identification: 
+    name: P91_SEARCH_VALUE
+    type: Text Field
+
+  label: 
+    label: Search Value
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Search # 32048537665460422
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 12
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="font-size: 1.125rem; margin-left: 1rem;">Conversion Record Year: &nbsp;&nbsp;</div>'
+    post-text-: '<div style="margin-right: 1rem;"></div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_RECORD_NO ============================
+  id: 33266637869145314
+  identification: 
+    name: P91_RECORD_NO
+    type: Display Only
+
+  label: 
+    label: Conversion Record No
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Conversion Item Info # 33266557148145313
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: |
+      <div>
+          Conversion Record No <span style="margin-left: 1rem">:&nbsp;</span>
+      </div>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_PROCESS_DATE =========================
+  id: 33266772192145315
+  identification: 
+    name: P91_PROCESS_DATE
+    type: Display Only
+
+  label: 
+    label: Processing Date
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Conversion Item Info # 33266557148145313
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: |
+      <div>
+          Processing Date <span style="margin-left: 1rem">:&nbsp;</span>
+      </div>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_ITEM_FROM ============================
+  id: 33266837267145316
+  identification: 
+    name: P91_ITEM_FROM
+    type: Display Only
+
+  label: 
+    label: Item From
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Conversion Item Info # 33266557148145313
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: |
+      <div>
+          Item From <span style="margin-left: 7rem">:&nbsp;</span>
+      </div>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_POSTED ===============================
+  id: 33266968058145317
+  identification: 
+    name: P91_POSTED
+    type: Display Only
+
+  label: 
+    label: Posted
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Conversion Item Info # 33266557148145313
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: |
+      <div>
+          Posted <span style="margin-left: 5.6rem">:&nbsp;</span>
+      </div>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_ITEM_TO ==============================
+  id: 33267082837145318
+  identification: 
+    name: P91_ITEM_TO
+    type: Display Only
+
+  label: 
+    label: Item To
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Conversion Item Info # 33266557148145313
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: |
+      <div>
+          Item To <span style="margin-left: 8.4rem">:&nbsp;</span>
+      </div>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_NOTE =================================
+  id: 33267158695145319
+  identification: 
+    name: P91_NOTE
+    type: Display Only
+
+  label: 
+    label: Note
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: Conversion Item Info # 33266557148145313
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: |
+      <div>
+          Note <span style="margin-left: 6.5rem">:&nbsp;</span>
+      </div>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_URL ==================================
+  id: 39855693415059233
+  identification: 
+    name: P91_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Convert Item A to Item B # 33082059287059321
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_CONVERT_ID ===========================
+  id: 39856916321059246
+  identification: 
+    name: P91_CONVERT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_ITEM_FROM_DESC =======================
+  id: 40135759902196230
+  identification: 
+    name: P91_ITEM_FROM_DESC
+    type: Display Only
+
+  label: 
+    label: Item From
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Conversion Item Info # 33266557148145313
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_ITEM_TO_DESC =========================
+  id: 40135829293196231
+  identification: 
+    name: P91_ITEM_TO_DESC
+    type: Display Only
+
+  label: 
+    label: Item To
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Conversion Item Info # 33266557148145313
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_FROM =================================
+  id: 40826546899330201
+  identification: 
+    name: P91_FROM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_CONVERT_ID_F =========================
+  id: 40826698641330202
+  identification: 
+    name: P91_CONVERT_ID_F
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_REPORT ===============================
+  id: 40829429451330230
+  identification: 
+    name: P91_REPORT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Printing Options # 40829341937330229
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_MONTH_FROM_B =========================
+  id: 40830925104330245
+  identification: 
+    name: P91_MONTH_FROM_B
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Convert Record Report # 42170243821532402
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 9
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-sm
+    width: 30
+    value-placeholder: MM/DD/YYYY
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="font-size: 1.125rem; margin-left: 1rem;">Month From &nbsp;&nbsp;</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_MONTH_TO_B ===========================
+  id: 42170568260532405
+  identification: 
+    name: P91_MONTH_TO_B
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Convert Record Report # 42170243821532402
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 9
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-md
+    width: 30
+    value-placeholder: MM/DD/YYYY
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="font-size: 1.125rem; margin-left: 1rem; margin-right: 1.45rem">Month To &nbsp;&nbsp;</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_ITEM_FROM_C ==========================
+  id: 42172034135532420
+  identification: 
+    name: P91_ITEM_FROM_C
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Item Conversion Report # 42171779600532417
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 9
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="font-size: 1.125rem; margin-left: 1rem;">Item From &nbsp;&nbsp;</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_ITEM_TO_C ============================
+  id: 42172114881532421
+  identification: 
+    name: P91_ITEM_TO_C
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Item Conversion Report # 42171779600532417
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 9
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-md
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="font-size: 1.125rem; margin-left: 1rem; margin-right: 1.45rem;">Item To &nbsp;&nbsp;</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P91_MODE =================================
+  id: 42174821286532448
+  identification: 
+    name: P91_MODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Printing Options # 40829341937330229
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD =========================================
+  id: 32047624867460413
+  identification: 
+    button-name: ADD
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: UPDATE ======================================
+  id: 32047766404460414
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: INQUIRE =====================================
+  id: 32047834132460415
+  identification: 
+    button-name: INQUIRE
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 30
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: POST ========================================
+  id: 32047963502460416
+  identification: 
+    button-name: POST
+    label: <u>P</u> - Post
+
+  layout: 
+    sequence: 40
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: SORT ========================================
+  id: 32048013028460417
+  identification: 
+    button-name: SORT
+    label: <u>O</u> - Sort
+
+  layout: 
+    sequence: 50
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: o
+
+- # ====== Button: REPORTS =====================================
+  id: 32048195510460418
+  identification: 
+    button-name: REPORTS
+    label: <u>R</u> - Reports
+
+  layout: 
+    sequence: 60
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: r
+
+- # ====== Button: HOME ========================================
+  id: 32048262227460419
+  identification: 
+    button-name: HOME
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 70
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: home
+
+- # ====== Button: END =========================================
+  id: 32048361391460420
+  identification: 
+    button-name: END
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 80
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: end
+
+- # ====== Button: SEARCH ======================================
+  id: 32048423211460421
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 90
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Search ======================================
+  id: 33268178127145329
+  identification: 
+    button-name: Search
+    label: Search
+
+  layout: 
+    sequence: 60
+    region: Search # 32048537665460422
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: goto
+
+- # ====== Button: RECORD_NO ===================================
+  id: 33268712051145335
+  identification: 
+    button-name: RECORD_NO
+    label: Conversion Record Number
+
+  layout: 
+    sequence: 10
+    region: Sort By # 33268666928145334
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - sort-btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: ITEM_FROM ===================================
+  id: 33268823119145336
+  identification: 
+    button-name: ITEM_FROM
+    label: Item From
+
+  layout: 
+    sequence: 20
+    region: Sort By # 33268666928145334
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - sort-btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: ITEM_TO =====================================
+  id: 33268941078145337
+  identification: 
+    button-name: ITEM_TO
+    label: Item To
+
+  layout: 
+    sequence: 30
+    region: Sort By # 33268666928145334
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - sort-btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: EXIT ========================================
+  id: 33269347580145341
+  identification: 
+    button-name: EXIT
+    label: Exit
+
+  layout: 
+    sequence: 100
+    region: Buttons # 32047525374460412
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:300:&SESSION.::&DEBUG.:::'
+      page: 300 # Warehouse Transactions Submenu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+- # ====== Button: Close_Search ================================
+  id: 33269431505145342
+  identification: 
+    button-name: Close_Search
+    label: Close Search
+
+  layout: 
+    sequence: 70
+    region: Search # 32048537665460422
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close-search
+
+- # ====== Button: Close_Sort ==================================
+  id: 33269710094145345
+  identification: 
+    button-name: Close_Sort
+    label: Close Sort
+
+  layout: 
+    sequence: 40
+    region: Sort By # 33268666928145334
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close-sort
+
+- # ====== Button: Close_Reports ===============================
+  id: 33624161728196807
+  identification: 
+    button-name: Close_Reports
+    label: Close Reports
+
+  layout: 
+    sequence: 10
+    region: Reports # 33623591866196801
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close-reports
+
+- # ====== Button: Close_Options ===============================
+  id: 40830297808330238
+  identification: 
+    button-name: Close_Options
+    label: Close Sort
+
+  layout: 
+    sequence: 30
+    region: Printing Options # 40829341937330229
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close-option
+
+- # ====== Button: SubmitMonths ================================
+  id: 42170899477532408
+  identification: 
+    button-name: SubmitMonths
+    label: Submitmonths
+
+  layout: 
+    sequence: 70
+    region: Convert Record Report # 42170243821532402
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: submit-months
+
+- # ====== Button: SubmitItems =================================
+  id: 42172974757532429
+  identification: 
+    button-name: SubmitItems
+    label: Submititems
+
+  layout: 
+    sequence: 60
+    region: Item Conversion Report # 42171779600532417
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: submit-items
+
+dynamic-actions: 
+- # ====== Dynamic Action: Open Search =========================
+  id: 32048694850460423
+  identification: 
+    name: Open Search
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH # 32048423211460421
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32048702864460424
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $("#search").dialog("option", "width", 450);
+
+    execution: 
+      sequence: 30
+      event: Open Search # 32048694850460423
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 32048804669460425
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search # 32048537665460422
+
+    execution: 
+      sequence: 40
+      event: Open Search # 32048694850460423
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Inquire ========================
+  id: 33265755526145305
+  identification: 
+    name: Open Inquire
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: INQUIRE # 32047834132460415
+
+  client-side-condition: 
+    type: Item is not null
+    item: P91_CONVERT_ID
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 33265840963145306
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Inquire # 32050570604460442
+
+    execution: 
+      sequence: 20
+      event: Open Inquire # 33265755526145305
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33265964113145307
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#inquire").dialog({
+          width: 1150,
+          position: { my: "right", at: "right-20", of: window }
+        });
+
+    execution: 
+      sequence: 10
+      event: Open Inquire # 33265755526145305
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33267418635145322
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p91keyevents');
+        $(document).on('keydown.p91keyevents', (ev) => {
+            $('#inquire').dialog("close")
+        });
+        
+        $("#inquire").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP91Keys, 0);
+        });
+
+    execution: 
+      sequence: 50
+      event: Open Inquire # 33265755526145305
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 40135574535196228
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            i_convert_id NIT020.convert_id%TYPE := :P91_CONVERT_ID;
+            i_process_date NIT020.processing_date%TYPE;
+            i_item_from_id NIT020.from_item_id%TYPE;
+            i_item_to_id NIT020.to_item_id%TYPE;
+            i_item_from NIT001.item_num%TYPE;
+            i_item_to NIT001.item_num%TYPE;
+            i_posted NIT020.is_posted%TYPE;
+            i_note NIT020.notes%TYPE;
+            i_item_from_desc NIT001.item_desc%TYPE;
+            i_item_to_desc NIT001.item_desc%TYPE;
+        BEGIN
+            SELECT processing_date, from_item_id, to_item_id, is_posted, notes
+            INTO i_process_date, i_item_from_id, i_item_to_id, i_posted, i_note
+            FROM NIT020
+            WHERE convert_id = i_convert_id;
+        
+            :P91_RECORD_NO := i_convert_id;
+            :P91_PROCESS_DATE := i_process_date;
+            IF i_posted = 'N' THEN 
+                :P91_POSTED := 'NO';
+            ELSIF i_posted = 'P' THEN 
+                :P91_POSTED := 'YES';
+            END IF;
+            :P91_NOTE := i_note;
+        
+            SELECT item_num, item_desc
+            INTO i_item_from, i_item_from_desc
+            FROM NIT001
+            WHERE item_id = i_item_from_id;
+        
+            :P91_ITEM_FROM := i_item_from;
+            :P91_ITEM_FROM_DESC := i_item_from_desc;
+        
+            SELECT item_num, item_desc
+            INTO i_item_to, i_item_to_desc
+            FROM NIT001
+            WHERE item_id = i_item_to_id;
+        
+            :P91_ITEM_TO := i_item_to;
+            :P91_ITEM_TO_DESC := i_item_to_desc;
+            
+        END;
+      items-to-submit: 
+      - P91_CONVERT_ID
+      items-to-return: 
+      - P91_RECORD_NO
+      - P91_PROCESS_DATE
+      - P91_POSTED
+      - P91_NOTE
+      - P91_ITEM_TO
+      - P91_ITEM_FROM_DESC
+      - P91_ITEM_TO_DESC
+      - P91_ITEM_FROM
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: Open Inquire # 33265755526145305
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 40137207107196245
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Converted Item Details # 32050626736460443
+
+    execution: 
+      sequence: 40
+      event: Open Inquire # 33265755526145305
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Modal =========================
+  id: 33267744770145325
+  identification: 
+    name: Close Modal
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Press
+    selection-type: Region
+    region: Inquire # 32050570604460442
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 33267852399145326
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Inquire # 32050570604460442
+
+    execution: 
+      sequence: 10
+      event: Close Modal # 33267744770145325
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Search ===========================
+  id: 33268297804145330
+  identification: 
+    name: On Search
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 33268178127145329
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33268389381145331
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var searchValue = $v("P91_SEARCH_VALUE");
+        var errorArea = document.getElementById("errorArea");
+        
+        var isFourDigitNumber = /^\d{4}$/;
+        
+        if (!searchValue) {
+            errorArea.textContent = "Please fill in the search field";
+            errorArea.style.display = "block";
+            document.getElementById("P91_SEARCH_VALUE").focus();
+            return false;
+        } else if (!isFourDigitNumber.test(searchValue)) {
+            errorArea.textContent = "Search value must be a year (YYYY)";
+            errorArea.style.display = "block";
+            document.getElementById("P91_SEARCH_VALUE").focus();
+            return false;
+        } else {
+            errorArea.style.display = "none";
+            $("#P91_YEAR_CONTAINER .t-Form-itemText").html("Review Conversion Records for the year&nbsp;")
+            return true;
+        }
+
+    execution: 
+      sequence: 10
+      event: On Search # 33268297804145330
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 33268411327145332
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search # 32048537665460422
+
+    execution: 
+      sequence: 20
+      event: On Search # 33268297804145330
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Clear =======================================
+    id: 33268550107145333
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P91_SEARCH_VALUE
+
+    execution: 
+      sequence: 40
+      event: On Search # 33268297804145330
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 33270100365145349
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: $v("P91_SEARCH_VALUE")
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P91_YEAR
+
+    execution: 
+      sequence: 30
+      event: On Search # 33268297804145330
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 39857002727059247
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Convert Item A to Item B # 33082059287059321
+
+    execution: 
+      sequence: 50
+      event: On Search # 33268297804145330
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40133170749196204
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function() {
+            $(".a-GV-cell").first().trigger("click");
+        }, 500);
+
+    execution: 
+      sequence: 60
+      event: On Search # 33268297804145330
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Sort ===========================
+  id: 33269017783145338
+  identification: 
+    name: Open Sort
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SORT # 32048013028460417
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 33269128864145339
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Sort By # 33268666928145334
+
+    execution: 
+      sequence: 30
+      event: Open Sort # 33269017783145338
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33624708132196813
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p91keyevents');
+        $("#sort-by").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP91Keys, 0);
+        });
+
+    execution: 
+      sequence: 40
+      event: Open Sort # 33269017783145338
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close ===============================
+  id: 33269539753145343
+  identification: 
+    name: Close
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close_Search # 33269431505145342
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 33269687362145344
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search # 32048537665460422
+
+    execution: 
+      sequence: 10
+      event: Close # 33269539753145343
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Sort ==========================
+  id: 33269820973145346
+  identification: 
+    name: Close Sort
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close_Sort # 33269710094145345
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 33269959764145347
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Sort By # 33268666928145334
+
+    execution: 
+      sequence: 10
+      event: Close Sort # 33269820973145346
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Reports ========================
+  id: 33623760397196803
+  identification: 
+    name: Open Reports
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: REPORTS # 32048195510460418
+
+  client-side-condition: 
+    type: Item is not null
+    item: P91_CONVERT_ID
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 33623884350196804
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Reports # 33623591866196801
+
+    execution: 
+      sequence: 30
+      event: Open Reports # 33623760397196803
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33624015790196806
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $("#reports").dialog("option", "width", 400);
+
+    execution: 
+      sequence: 20
+      event: Open Reports # 33623760397196803
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33624898659196814
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p91keyevents');
+        $("#reports").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP91Keys, 0);
+        });
+
+    execution: 
+      sequence: 40
+      event: Open Reports # 33623760397196803
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Reports =======================
+  id: 33624233198196808
+  identification: 
+    name: Close Reports
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close_Reports # 33624161728196807
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 33624317787196809
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Reports # 33623591866196801
+
+    execution: 
+      sequence: 10
+      event: Close Reports # 33624233198196808
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Sorted ==========================
+  id: 33625042411196816
+  identification: 
+    name: Set Sorted
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: RECORD_NO # 33268712051145335
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 33625120943196817
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: Conversion Record Number
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P91_SORTED_BY
+
+    execution: 
+      sequence: 10
+      event: Set Sorted # 33625042411196816
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Close Region ================================
+    id: 33625643287196822
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Sort By # 33268666928145334
+
+    execution: 
+      sequence: 30
+      event: Set Sorted # 33625042411196816
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 39857136556059248
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Convert Item A to Item B # 33082059287059321
+
+    execution: 
+      sequence: 20
+      event: Set Sorted # 33625042411196816
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40132888041196201
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function() {
+            $(".a-GV-cell").first().trigger("click");
+        }, 500);
+
+    execution: 
+      sequence: 40
+      event: Set Sorted # 33625042411196816
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Sorted to Item From =============
+  id: 33625260238196818
+  identification: 
+    name: Set Sorted to Item From
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ITEM_FROM # 33268823119145336
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 33625351877196819
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: Item From
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P91_SORTED_BY
+
+    execution: 
+      sequence: 10
+      event: Set Sorted to Item From # 33625260238196818
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Close Region ================================
+    id: 33625783336196823
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Sort By # 33268666928145334
+
+    execution: 
+      sequence: 30
+      event: Set Sorted to Item From # 33625260238196818
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 39857245817059249
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Convert Item A to Item B # 33082059287059321
+
+    execution: 
+      sequence: 20
+      event: Set Sorted to Item From # 33625260238196818
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40132972249196202
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function() {
+            $(".a-GV-cell").first().trigger("click");
+        }, 500);
+
+    execution: 
+      sequence: 40
+      event: Set Sorted to Item From # 33625260238196818
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Sorted to Item To ===============
+  id: 33625485253196820
+  identification: 
+    name: Set Sorted to Item To
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ITEM_TO # 33268941078145337
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 33625579936196821
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: Item To
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P91_SORTED_BY
+
+    execution: 
+      sequence: 10
+      event: Set Sorted to Item To # 33625485253196820
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Close Region ================================
+    id: 33625836038196824
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Sort By # 33268666928145334
+
+    execution: 
+      sequence: 30
+      event: Set Sorted to Item To # 33625485253196820
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 39857328355059250
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Convert Item A to Item B # 33082059287059321
+
+    execution: 
+      sequence: 20
+      event: Set Sorted to Item To # 33625485253196820
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40133033452196203
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function() {
+            $(".a-GV-cell").first().trigger("click");
+        }, 500);
+
+    execution: 
+      sequence: 40
+      event: Set Sorted to Item To # 33625485253196820
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Search on Load =================
+  id: 33625956018196825
+  identification: 
+    name: Open Search on Load
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 33626043825196826
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Search # 32048537665460422
+
+    execution: 
+      sequence: 20
+      event: Open Search on Load # 33625956018196825
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33626139444196827
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $("#search").dialog("option", "width", 450);
+
+    execution: 
+      sequence: 10
+      event: Open Search on Load # 33625956018196825
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Redirect To Add =====================
+  id: 39855796899059234
+  identification: 
+    name: Redirect To Add
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ADD # 32047624867460413
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39855862649059235
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P91_URL := apex_page.get_url(
+               p_page   => 94,
+               p_items  => 'P94_FROM',
+               p_values => 'A'
+             );
+        END;
+      items-to-return: 
+      - P91_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Redirect To Add # 39855796899059234
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39855913564059236
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P91_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Redirect To Add # 39855796899059234
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Redirect to Update ==================
+  id: 39856544778059242
+  identification: 
+    name: Redirect to Update
+
+  execution: 
+    sequence: 150
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UPDATE # 32047766404460414
+
+  client-side-condition: 
+    type: Item is not null
+    item: P91_CONVERT_ID
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 40133302991196206
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P91_URL := apex_page.get_url(
+               p_page   => 94,
+               p_items  => 'P94_FROM,P94_RECORD_NUM',
+               p_values => 'U' || ',' || :P91_CONVERT_ID
+             );
+        END;
+      items-to-submit: 
+      - P91_CONVERT_ID
+      items-to-return: 
+      - P91_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Redirect to Update # 39856544778059242
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40133422426196207
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P91_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Redirect to Update # 39856544778059242
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40828364693330219
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var grid = apex.region("table").widget().interactiveGrid('getViews', 'grid');
+        var model = grid.model;
+        var selectedRecord = grid.getSelectedRecords()[0][6];
+        
+        if(selectedRecord === 'P') {
+            return false;
+        } else {
+            return true;
+        }
+
+    execution: 
+      sequence: 10
+      event: Redirect to Update # 39856544778059242
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection Change ====================
+  id: 39856744525059244
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Convert Item A to Item B # 33082059287059321
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39856874902059245
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.selectedRecords && this.data.selectedRecords.length > 0) {
+            let convertIDSelected = this.data.selectedRecords[0][7];
+            apex.item("P91_CONVERT_ID").setValue(convertIDSelected);
+        }
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 39856744525059244
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Top ===========================
+  id: 40135180242196224
+  identification: 
+    name: Go to Top
+
+  execution: 
+    sequence: 170
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: HOME # 32048262227460419
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40135283454196225
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectFirstRow();
+
+    execution: 
+      sequence: 10
+      event: Go to Top # 40135180242196224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Bottom ========================
+  id: 40135314329196226
+  identification: 
+    name: Go to Bottom
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: END # 32048361391460420
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40135401138196227
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectLastRow();
+
+    execution: 
+      sequence: 10
+      event: Go to Bottom # 40135314329196226
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Show Success Pop-up =================
+  id: 40826790680330203
+  identification: 
+    name: Show Success Pop-up
+
+  execution: 
+    sequence: 190
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40826858502330204
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const ICON_OK_LARGE = "fa fa-lg fa-check-circle";
+        let convertIdF = $v("P91_CONVERT_ID_F");
+        let fromF = $v("P91_FROM");
+        if(convertIdF && fromF) {
+            if(fromF === "A") {
+                showGPopup({message: `Conversion Record Number : ${convertIdF} has been created!`, 
+                icon: ICON_OK_LARGE, width: 540, top: "85%", timeoutActive: true})
+            } else if(fromF === "U") {
+                showGPopup({message: `Conversion Record Number : ${convertIdF} has been updated!`, 
+                icon: ICON_OK_LARGE, width: 540, top: "85%", timeoutActive: true})
+            }
+        
+            apex.item("P91_CONVERT_ID_F").setValue(null);
+            apex.item("P91_FROM").setValue(null);
+        }
+
+    execution: 
+      sequence: 10
+      event: Show Success Pop-up # 40826790680330203
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Posting =============================
+  id: 40827394191330209
+  identification: 
+    name: Posting
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: POST # 32047963502460416
+
+  client-side-condition: 
+    type: Item is not null
+    item: P91_CONVERT_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40827448750330210
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const ICON_FAIL_LARGE = 'fa fa-lg fa-times-circle msg-icon-yellow';
+        const ICON_OK_LARGE = 'fa fa-lg fa-check-circle';
+        
+        async function processPosting() {
+        
+            const convertId = $v("P91_CONVERT_ID");
+        
+            try {
+                const fromExistsInWarehouse = await checkItemInWarehouse(convertId, 'FROM');
+                console.log("FROM WAREHOUSE:", fromExistsInWarehouse)
+                // if (!fromExistsInWarehouse) {
+                //     throw `Item From does not exist in the warehouse.`;
+                // }
+        
+                const fromUomExists = await checkUomForItem(convertId, 'FROM');
+                console.log("FROM UOM:", fromUomExists)
+                // if (!fromUomExists) {
+                //     throw `Item From UOM for Item From does not exist.`;
+                // }
+        
+                const toExistsInWarehouse = await checkItemInWarehouse(convertId, 'TO');
+                console.log("TO WAREHOUSE:", fromUomExists)
+                if (!toExistsInWarehouse) {
+                    throw `Item To does not exist in the warehouse.`;
+                }
+        
+                const toUomExists = await checkUomForItem(convertId, 'TO');
+                console.log("TO UOM:", fromUomExists)
+                if (!toUomExists) {
+                    throw `Item To UOM for Item To does not exist.`;
+                }
+        
+                await updateNit004Qty(convertId, 'FROM');
+                await updateNit004Qty(convertId, 'TO');
+        
+                await updateIsPosted(convertId);
+        
+                showGPopup({ message: `Conversion Record Number: ${convertId} has been posted!`, width: 600, icon: ICON_OK_LARGE, top: "85%", timeoutActive: true });
+        
+            } catch (error) {
+                showGPopup({ message: error, width: 600, icon: ICON_FAIL_LARGE, top: "85%", timeoutActive: true });
+            }
+        }
+        
+        async function checkItemInWarehouse(convertId, itemType) {
+            const response = await apex.server.process('CHECK_ITEM_IN_WAREHOUSE', {
+                pageItems: '#P91_CONVERT_ID',
+                x01: convertId,
+                x02: itemType
+            }, {
+                dataType: 'json'
+            });
+            console.log("Warehouse response:", response)
+            if (response.success) {
+                return true;
+            } else {
+                throw response.message || 'An unknown error occured.'
+            }
+        }
+        
+        async function checkUomForItem(convertId, itemType) {
+            const response = await apex.server.process('CHECK_UOM_FOR_ITEM', {
+                pageItems: '#P91_CONVERT_ID',
+                x01: convertId,
+                x02: itemType
+            }, {
+                dataType: 'json'
+            });
+            console.log("UOM response:", response)
+            if (response.success) {
+                return true;
+            } else {
+                throw response.message || 'An unknown error occured.'
+            }
+        }
+        
+        async function updateNit004Qty(convertId, itemType) {
+            const response = await apex.server.process('UPDATE_NIT004_QTY', {
+                pageItems: '#P91_CONVERT_ID',
+                x01: convertId,
+                x02: itemType
+            }, {
+                dataType: 'json'
+            });
+            console.log("Qty response:", response)
+        
+            if (response.success) {
+                return true;
+            } else {
+                throw response.message || 'An unknown error occured. Row not Updated.'
+            }
+        }
+        
+        async function updateIsPosted(convertId) {
+            const response = await apex.server.process('UPDATE_IS_POSTED', {
+                pageItems: '#P91_CONVERT_ID',
+                x01: convertId
+            }, {
+                dataType: 'json'
+            });
+        
+            if (response.success) {
+                apex.region("table").refresh();
+                return true;
+            } else {
+                throw response.message || 'An unknown error occured while Posting.'
+            }
+        }
+        
+        processPosting()
+
+    execution: 
+      sequence: 20
+      event: Posting # 40827394191330209
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40828247387330218
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var grid = apex.region("table").widget().interactiveGrid('getViews', 'grid');
+        var model = grid.model;
+        var selectedRecord = grid.getSelectedRecords()[0][6];
+        
+        if(selectedRecord === 'P') {
+            return false;
+        } else {
+            return true;
+        }
+
+    execution: 
+      sequence: 10
+      event: Posting # 40827394191330209
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Report A ============================
+  id: 40829562723330231
+  identification: 
+    name: Report A
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: reportA
+    selection-type: JavaScript Expression
+    javascript-expression: |
+      document
+      
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 40829641487330232
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Reports # 33623591866196801
+
+    execution: 
+      sequence: 10
+      event: Report A # 40829562723330231
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 40829707947330233
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 40829341937330229
+
+    execution: 
+      sequence: 30
+      event: Report A # 40829562723330231
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40830021119330236
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $(document).off('keydown.p91keyevents');
+        }, 100)
+        
+        $("#option").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP91Keys, 0);
+        });
+
+    execution: 
+      sequence: 40
+      event: Report A # 40829562723330231
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Options =======================
+  id: 40830308915330239
+  identification: 
+    name: Close Options
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close_Options # 40830297808330238
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 40830407345330240
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 40829341937330229
+
+    execution: 
+      sequence: 10
+      event: Close Options # 40830308915330239
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Report B Set Month ==================
+  id: 40831029519330246
+  identification: 
+    name: Report B Set Month
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: reportBSetMonth
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 40831153710330247
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Reports # 33623591866196801
+
+    execution: 
+      sequence: 10
+      event: Report B Set Month # 40831029519330246
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42170102761532401
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $(document).off('keydown.p91keyevents');
+        }, 100)
+        
+        $("#crr-b").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP91Keys, 0);
+        });
+
+    execution: 
+      sequence: 40
+      event: Report B Set Month # 40831029519330246
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 42170336523532403
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Convert Record Report # 42170243821532402
+
+    execution: 
+      sequence: 30
+      event: Report B Set Month # 40831029519330246
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42170444279532404
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#crr-b").dialog("option", "width", 460);
+        
+        let reportValue = $v("P91_REPORT")
+        
+        $("#crr-b-header-two").html(reportValue === "B" ? "Conversion Record Report (for a period)" : "Item Conversion Report (for a period)");
+
+    execution: 
+      sequence: 20
+      event: Report B Set Month # 40831029519330246
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: SubmitMonths ========================
+  id: 42170985663532409
+  identification: 
+    name: SubmitMonths
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SubmitMonths # 42170899477532408
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42171089444532410
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var monthFrom = $v("P91_MONTH_FROM_B");
+        var monthTo = $v("P91_MONTH_TO_B")
+        var errorArea = document.getElementById("errorAreaTwo");
+        var hasError = false;
+        
+        function isDateValid(dateString) {
+            var datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+        
+            if (!dateString.match(datePattern)) {
+                return false;
+            }
+        
+            var parts = dateString.split("/");
+            var month = parseInt(parts[0], 10);
+            var day = parseInt(parts[1], 10);
+            var year = parseInt(parts[2], 10);
+        
+            var date = new Date(year, month - 1, day);
+            return (date.getFullYear() === year && date.getMonth() === (month - 1) && date.getDate() === day);
+        }
+        
+        if (!monthFrom || !monthTo) {
+            errorArea.textContent = "Please fill in the search fields";
+            errorArea.style.display = "block";
+            if(!monthFrom) {
+                document.getElementById("P91_MONTH_FROM_B").focus();
+            } else {
+                document.getElementById("P91_MONTH_TO_B").focus();
+            }
+            hasError = true;
+        } else if (!isDateValid(monthFrom) || !isDateValid(monthTo)) {
+            errorArea.textContent = "Search Value must follow this date format (MM/DD/YYYY)";
+            errorArea.style.display = "block";
+            if(!isDateValid(monthFrom)) {
+                document.getElementById("P91_MONTH_FROM_B").focus();
+            } else {
+                document.getElementById("P91_MONTH_TO_B").focus();
+            }
+            hasError = true;
+        }
+        
+        if(hasError) {
+            return false
+        } else {
+            errorArea.style.display = "none";
+            return true;
+        }
+
+    execution: 
+      sequence: 10
+      event: SubmitMonths # 42170985663532409
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42171524905532415
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $.event.trigger('reportB');
+
+    execution: 
+      sequence: 20
+      event: SubmitMonths # 42170985663532409
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Report B ============================
+  id: 42171140204532411
+  identification: 
+    name: Report B
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: reportB
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 42171267690532412
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Convert Record Report # 42170243821532402
+
+    execution: 
+      sequence: 10
+      event: Report B # 42171140204532411
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 42171340079532413
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 40829341937330229
+
+    execution: 
+      sequence: 20
+      event: Report B # 42171140204532411
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42171429173532414
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $(document).off('keydown.p91keyevents');
+        }, 100)
+        
+        $("#option").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP91Keys, 0);
+        });
+
+    execution: 
+      sequence: 30
+      event: Report B # 42171140204532411
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Report C Set Item ===================
+  id: 42172453240532424
+  identification: 
+    name: Report C Set Item
+
+  execution: 
+    sequence: 250
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: reportCSetItem
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 42172544583532425
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Reports # 33623591866196801
+
+    execution: 
+      sequence: 10
+      event: Report C Set Item # 42172453240532424
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42172680672532426
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $("#icr-c").dialog("option", "width", 460);
+
+    execution: 
+      sequence: 20
+      event: Report C Set Item # 42172453240532424
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 42172780162532427
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Conversion Report # 42171779600532417
+
+    execution: 
+      sequence: 30
+      event: Report C Set Item # 42172453240532424
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42172811986532428
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $(document).off('keydown.p91keyevents');
+        }, 100)
+        
+        $("#icr-c").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP91Keys, 0);
+        });
+
+    execution: 
+      sequence: 40
+      event: Report C Set Item # 42172453240532424
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Submit Items ========================
+  id: 42173007103532430
+  identification: 
+    name: Submit Items
+
+  execution: 
+    sequence: 260
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SubmitItems # 42172974757532429
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42173130350532431
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var itemFrom = $v("P91_ITEM_FROM_C");
+        var itemTo = $v("P91_ITEM_TO_C")
+        var errorArea = document.getElementById("errorAreaThree");
+        var hasError = false;
+        
+        if (itemFrom && itemTo) {
+            errorArea.textContent = "Only one field can be filled in.";
+            errorArea.style.display = "block";
+            hasError = true;
+        } else if (!itemFrom && !itemTo) {
+            errorArea.textContent = "Please fill in one search field.";
+            errorArea.style.display = "block";
+            hasError = true;
+        }
+        
+        if(hasError) {
+            return false
+        } else {
+            errorArea.style.display = "none";
+            return true;
+        }
+
+    execution: 
+      sequence: 10
+      event: Submit Items # 42173007103532430
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42173610864532436
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if($v("P91_ITEM_FROM_C") && !$v("P91_ITEM_TO_C")) {
+            apex.item("P91_MODE").setValue("Item From");
+        } else if($v("P91_ITEM_TO_C") && !$v("P91_ITEM_FROM_C")) {
+            apex.item("P91_MODE").setValue("Item To");
+        }
+        $.event.trigger("reportC");
+
+    execution: 
+      sequence: 20
+      event: Submit Items # 42173007103532430
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Report C ============================
+  id: 42173242925532432
+  identification: 
+    name: Report C
+
+  execution: 
+    sequence: 230
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: reportC
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 42173391118532433
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Conversion Report # 42171779600532417
+
+    execution: 
+      sequence: 10
+      event: Report C # 42173242925532432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 42173468726532434
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Convert Record Report # 42170243821532402
+
+    execution: 
+      sequence: 30
+      event: Report C # 42173242925532432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42173547064532435
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $(document).off('keydown.p91keyevents');
+        }, 100)
+        
+        $("#option").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP91Keys, 0);
+        });
+
+    execution: 
+      sequence: 40
+      event: Report C # 42173242925532432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42173773568532437
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#crr-b").dialog("option", "width", 460);
+        
+        let reportValue = $v("P91_REPORT")
+        
+        $("#crr-b-header-two").html(reportValue === "B" ? "Conversion Record Report (for a period)" : "Item Conversion Report (for a period)");
+
+    execution: 
+      sequence: 20
+      event: Report C # 42173242925532432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: PrintA ==============================
+  id: 42174126582532441
+  identification: 
+    name: PrintA
+
+  execution: 
+    sequence: 270
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: printA
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42174247131532442
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let currentDate = new Date();
+        let formattedDate = currentDate.getFullYear().toString() + 
+            (currentDate.getMonth() + 1).toString().padStart(2, '0') + 
+            currentDate.getDate().toString().padStart(2, '0');
+        let monthFrom = $v("P91_MONTH_FROM_B");
+        let monthTo = $v("P91_MONTH_TO_B");
+        let sortedBy = $v("P91_SORTED_BY");
+        
+        let mode = $v("P91_MODE");
+        let itemFromC = $v("P91_ITEM_FROM_C");
+        let itemToC = $v("P91_ITEM_TO_C");
+        
+        if($v("P91_REPORT") === "A") {
+            generateReport("CONVERT_ITEM_PRINT_REPORT_A_COURIER_NEW", "pdf", {
+                fileName: `ConversionRecordReport(single)_${formattedDate}`,
+                mode : "print",
+                parameters : {
+                    P_CONVERT_ID : $v("P91_CONVERT_ID"),
+                },
+                spinnerEnabled : true
+            });
+        } else if($v("P91_REPORT") === "B") {
+            generateReport("CONVERT_ITEM_PRINT_REPORT_B_COURIER_NEW", "pdf", {
+                fileName: `ConversionRecordReport(for a period)_${formattedDate}`,
+                mode : "print",
+                parameters : {
+                    P_MONTH_FROM : monthFrom,
+                    P_MONTH_TO   : monthTo,
+                    P_SORTED_BY  : sortedBy
+                },
+                spinnerEnabled : true
+            });
+        } else if($v("P91_REPORT") === "C") {
+            generateReport("CONVERT_ITEM_PRINT_REPORT_C_COURIER_NEW", "pdf", {
+                fileName: `ItemConversionReport_${formattedDate}`,
+                mode : "print",
+                parameters : {
+                    P_MONTH_FROM : monthFrom,
+                    P_MONTH_TO   : monthTo,
+                    P_SEARCH_MODE  : mode,
+                    P_ITEM_NUM : mode === "Item From" ? itemFromC : itemToC
+                },
+                spinnerEnabled : true
+            });
+        }
+
+    execution: 
+      sequence: 10
+      event: PrintA # 42174126582532441
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P91_CONVERT_ID
+
+- # ====== Dynamic Action: PrintB ==============================
+  id: 42174528349532445
+  identification: 
+    name: PrintB
+
+  execution: 
+    sequence: 280
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: printB
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42174786261532447
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let currentDate = new Date();
+        let formattedDate = currentDate.getFullYear().toString() + 
+            (currentDate.getMonth() + 1).toString().padStart(2, '0') + 
+            currentDate.getDate().toString().padStart(2, '0');
+        
+        let monthFrom = $v("P91_MONTH_FROM_B");
+        let monthTo = $v("P91_MONTH_TO_B");
+        let sortedBy = $v("P91_SORTED_BY");
+        
+        let mode = $v("P91_MODE");
+        let itemFromC = $v("P91_ITEM_FROM_C");
+        let itemToC = $v("P91_ITEM_TO_C");
+        
+        if($v("P91_REPORT") === "A") {
+            generateReport("CONVERT_ITEM_PRINT_REPORT_A_ARIAL", "pdf", {
+                fileName: `ConversionRecordReport(single)_${formattedDate}`,
+                mode : "print",
+                parameters : {
+                    P_CONVERT_ID : $v("P91_CONVERT_ID"),
+                },
+                spinnerEnabled : true
+            });
+        } else if($v("P91_REPORT") === "B") {
+            generateReport("CONVERT_ITEM_PRINT_REPORT_B_ARIAL", "pdf", {
+                fileName: `ConversionRecordReport(for a period)_${formattedDate}`,
+                mode : "print",
+                parameters : {
+                    P_MONTH_FROM : monthFrom,
+                    P_MONTH_TO   : monthTo,
+                    P_SORTED_BY  : sortedBy
+                },
+                spinnerEnabled : true
+            });
+        } else if($v("P91_REPORT") === "C") {
+            generateReport("CONVERT_ITEM_PRINT_REPORT_C_ARIAL", "pdf", {
+                fileName: `ItemConversionReport_${formattedDate}`,
+                mode : "print",
+                parameters : {
+                    P_MONTH_FROM : monthFrom,
+                    P_MONTH_TO   : monthTo,
+                    P_SEARCH_MODE  : mode,
+                    P_ITEM_NUM : mode === "Item From" ? itemFromC : itemToC
+                },
+                spinnerEnabled : true
+            });
+        }
+
+    execution: 
+      sequence: 20
+      event: PrintB # 42174528349532445
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P91_CONVERT_ID
+
+processes: 
+- # ====== Process: CHECK_ITEM_IN_WAREHOUSE ====================
+  id: 40827545157330211
+  identification: 
+    name: CHECK_ITEM_IN_WAREHOUSE
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          v_warehouse_id NUMBER;
+          v_warehouse_loc NUMBER;
+          v_item_id NUMBER;
+          v_exists NUMBER;
+          v_item_num VARCHAR(30);
+      BEGIN
+          SELECT warehouse_id, 
+                 CASE WHEN apex_application.g_x02 = 'FROM' THEN from_item_id ELSE to_item_id END
+          INTO v_warehouse_id, v_item_id
+          FROM NIT020
+          WHERE convert_id = apex_application.g_x01;
+      
+          SELECT item_num
+          INTO v_item_num
+          FROM NIT001
+          WHERE item_id = v_item_id;
+      
+          SELECT warehouse_location
+          INTO v_warehouse_loc
+          FROM NIM027
+          WHERE warehouse_id = v_warehouse_id;
+      
+          SELECT COUNT(*)
+          INTO v_exists
+          FROM NIT004
+          WHERE ITEM_ID = v_item_id
+            AND WAREHOUSE_ID = v_warehouse_id;
+      
+          IF v_exists = 0 THEN
+              HTP.P('{"success": false, "message": "Item: ' || v_item_num || ' does not exist in Warehouse: ' || v_warehouse_loc || '"}');
+          ELSE
+              HTP.P('{"success": true}');
+          END IF;
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CHECK_UOM_FOR_ITEM =========================
+  id: 40827649334330212
+  identification: 
+    name: CHECK_UOM_FOR_ITEM
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          v_warehouse_id NUMBER;
+          v_item_id NUMBER;
+          v_uom_id NUMBER;
+          v_exists NUMBER;
+          v_uom_code VARCHAR(10);
+          v_item_num VARCHAR(30);
+      BEGIN
+          SELECT warehouse_id,
+                 CASE apex_application.g_x02 WHEN 'FROM' THEN from_item_id ELSE to_item_id END,
+                 CASE apex_application.g_x02 WHEN 'FROM' THEN from_uom_id ELSE to_uom_id END
+          INTO v_warehouse_id, v_item_id, v_uom_id
+          FROM NIT020
+          WHERE convert_id = apex_application.g_x01;
+      
+          SELECT item_num
+          INTO v_item_num
+          FROM NIT001
+          WHERE item_id = v_item_id;
+      
+          SELECT uom_code
+          INTO v_uom_code
+          FROM NIM026
+          WHERE uom_id = v_uom_id;
+      
+          SELECT COUNT(*)
+          INTO v_exists
+          FROM NIT004
+          WHERE ITEM_ID = v_item_id
+            AND UOM_ID = v_uom_id
+            AND WAREHOUSE_ID = v_warehouse_id;
+      
+          IF v_exists = 0 THEN
+              HTP.P('{"success": false, "message": "UOM: ' || v_uom_code || ' does not exist for Item: '|| v_item_num ||'."}');
+          ELSE
+              HTP.P('{"success": true}');
+          END IF;
+      END;
+      
+      -- DECLARE
+      --     v_warehouse_id NUMBER;
+      --     v_item_id NUMBER;
+      --     v_uom_id NUMBER;
+      --     v_exists NUMBER;
+      -- BEGIN
+      --     SELECT warehouse_id,
+      --            CASE :x02 WHEN 'FROM' THEN from_item_id ELSE to_item_id END,
+      --            CASE :x02 WHEN 'FROM' THEN from_uom_id ELSE to_uom_id END
+      --     INTO v_warehouse_id, v_item_id, v_uom_id
+      --     FROM NIT020
+      --     WHERE convert_id = :x01;
+      
+      --     SELECT COUNT(*)
+      --     INTO v_exists
+      --     FROM NIT004
+      --     WHERE ITEM_ID = v_item_id
+      --       AND WAREHOUSE_ID = v_warehouse_id
+      --       AND UOM_ID = v_uom_id;
+      
+      --     IF v_exists = 0 THEN
+      --         HTP.P('false');
+      --     ELSE
+      --         HTP.P('true');
+      --     END IF;
+      -- END;
+
+  execution: 
+    sequence: 30
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: UPDATE_NIT004_QTY ==========================
+  id: 40827780260330213
+  identification: 
+    name: UPDATE_NIT004_QTY
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      -- DECLARE
+      --     v_warehouse_id NUMBER;
+      --     v_item_id NUMBER;
+      --     v_uom_id NUMBER;
+      --     v_no_of_units NUMBER;
+      -- BEGIN
+      --     SELECT warehouse_id,
+      --            CASE apex_application.g_x02 WHEN 'FROM' THEN from_item_id ELSE to_item_id END,
+      --            CASE apex_application.g_x02 WHEN 'FROM' THEN from_uom_id ELSE to_uom_id END,
+      --            CASE apex_application.g_x02 WHEN 'FROM' THEN from_no_of_units ELSE to_no_of_units END
+      --     INTO v_warehouse_id, v_item_id, v_uom_id, v_no_of_units
+      --     FROM NIT020
+      --     WHERE convert_id = apex_application.g_x01;
+      
+      --     UPDATE NIT004
+      --     SET QTY = v_no_of_units
+      --     WHERE ITEM_ID = v_item_id
+      --       AND UOM_ID = v_uom_id
+      --       AND WAREHOUSE_ID = v_warehouse_id;
+      
+      --     COMMIT;
+      -- END;
+      
+      DECLARE
+          v_warehouse_id NUMBER;
+          v_item_id NUMBER;
+          v_uom_id NUMBER;
+          v_no_of_units NUMBER;
+      BEGIN
+          SELECT warehouse_id,
+                 CASE apex_application.g_x02 WHEN 'FROM' THEN from_item_id ELSE to_item_id END,
+                 CASE apex_application.g_x02 WHEN 'FROM' THEN from_uom_id ELSE to_uom_id END,
+                 CASE apex_application.g_x02 WHEN 'FROM' THEN from_no_of_units ELSE to_no_of_units END
+          INTO v_warehouse_id, v_item_id, v_uom_id, v_no_of_units
+          FROM NIT020
+          WHERE convert_id = apex_application.g_x01;
+      
+          UPDATE NIT004
+          SET QTY = v_no_of_units
+          WHERE ITEM_ID = v_item_id
+            AND UOM_ID = v_uom_id
+            AND WAREHOUSE_ID = v_warehouse_id;
+      
+          IF SQL%ROWCOUNT = 0 THEN
+              HTP.P('{"success": false}');
+          ELSE
+              HTP.P('{"success": true}');
+          END IF;
+      
+          COMMIT;
+      END;
+
+  execution: 
+    sequence: 40
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: UPDATE_IS_POSTED ===========================
+  id: 40827840996330214
+  identification: 
+    name: UPDATE_IS_POSTED
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          UPDATE NIT020
+          SET IS_POSTED = 'Y'
+          WHERE CONVERT_ID = apex_application.g_x01;
+      
+          COMMIT;
+      
+          HTP.P('{"success": true}');
+      END;
+
+  execution: 
+    sequence: 50
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

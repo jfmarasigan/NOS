@@ -1,0 +1,654 @@
+---
+# ====== Page: Update Inventory Balance Search ===============
+id: 37
+identification: 
+  name: Update Inventory Balance Search
+  alias: UPDATE-INVENTORY-BALANCE-SEARCH
+  title: Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p37KeyMap = {
+        enter : (v) => {
+            if($v("P37_ITEM_NUM") != '' || $v("P37_UPC") != '' || $v("P37_DESCRIPTION") != ''){
+                $.event.trigger("Search");
+            } else {
+                if($v("P37_NEXT_ITEM") == "SEARCH"){
+                    apex.item("P37_ITEM_NUM").setFocus();
+                    apex.item("P37_ERR_MESSAGE").show();
+                } else {
+                    jQuery($v("P37_NEXT_ITEM")).trigger("focus");
+                }
+            }
+        },
+    }
+    
+    function mapP37Keys() {
+        $(document).off('keydown.p37keyevents');
+        $(document).on('keydown.p37keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p37KeyMap[key]) {
+                ev.preventDefault();
+                p37KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP37Keys();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/p37_css#MIN#.css'
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search ======================================
+  id: 9518298922251334
+  identification: 
+    name: Search
+    title: Search
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P37_ITEM_NUM =============================
+  id: 9518369369251335
+  identification: 
+    name: P37_ITEM_NUM
+    type: Text Field
+
+  label: 
+    label: '<p class="format-size">Item Number:</p>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Search # 9518298922251334
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_UPC ==================================
+  id: 9518405753251336
+  identification: 
+    name: P37_UPC
+    type: Text Field
+
+  label: 
+    label: '<p class="format-size">UPC:</p>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Search # 9518298922251334
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_DESCRIPTION ==========================
+  id: 9518571292251337
+  identification: 
+    name: P37_DESCRIPTION
+    type: Text Field
+
+  label: 
+    label: '<p class="format-size">Item Desc:</p>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Search # 9518298922251334
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_PREPARED_URL =========================
+  id: 10218672094449126
+  identification: 
+    name: P37_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_NEXT_ITEM ============================
+  id: 11424084434400409
+  identification: 
+    name: P37_NEXT_ITEM
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: '#P26_UPC'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P37_ERR_MESSAGE ==========================
+  id: 11425032511400419
+  identification: 
+    name: P37_ERR_MESSAGE
+    type: Display Only
+
+  label: 
+    label: Err Message
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Search # 9518298922251334
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    css-classes: 
+    - error-text
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Please fill up at least one field
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: focus ===============================
+  id: 11424119163400410
+  identification: 
+    name: focus
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P37_ITEM_NUM
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 11424203842400411
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P37_UPC'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P37_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: focus # 11424119163400410
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: focus 2 =============================
+  id: 11424597379400414
+  identification: 
+    name: focus 2
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P37_UPC
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 11424637383400415
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P37_DESCRIPTION'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P37_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: focus 2 # 11424597379400414
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: focus 3 =============================
+  id: 11424720353400416
+  identification: 
+    name: focus 3
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P37_DESCRIPTION
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 11424899542400417
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: SEARCH
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P37_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: focus 3 # 11424720353400416
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: focus on first field ================
+  id: 11425408262400423
+  identification: 
+    name: focus on first field
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 11425566461400424
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P37_ITEM_NUM
+
+    execution: 
+      sequence: 10
+      event: focus on first field # 11425408262400423
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 11425682384400425
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P37_ERR_MESSAGE
+
+    execution: 
+      sequence: 20
+      event: focus on first field # 11425408262400423
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Search ==============================
+  id: 13779283051768150
+  identification: 
+    name: Search
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: Search
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 14053708640524201
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            IF :P37_ITEM_NUM IS NULL AND :P37_UPC IS NULL AND :P37_DESCRIPTION IS NULL THEN
+                :P37_PREPARED_URL := '';
+            ELSE
+                :P37_PREPARED_URL := apex_page.get_url(
+                   p_page   => 25,
+                   p_items  => 'P25_ITEM_NUM_QUERY,P25_UPC_QUERY,P25_ITEM_DESC_QUERY,P25_PREVIOUS_PAGE',
+                   p_values => :P37_ITEM_NUM ||','|| :P37_UPC ||','|| :P37_DESCRIPTION || ',' || 37
+                 );
+        
+                :P37_ITEM_NUM := null;
+                :P37_UPC := null;
+                :P37_DESCRIPTION := null;
+            END IF;
+        END;
+      items-to-submit: 
+      - P37_ITEM_NUM
+      - P37_UPC
+      - P37_DESCRIPTION
+      items-to-return: 
+      - P37_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Search # 13779283051768150
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14053838432524202
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if($v("P37_PREPARED_URL") == ''){
+            $v("P37_PREPARED_URL").show();
+        } else {
+            let url = $v("P37_PREPARED_URL");
+            apex.navigation.redirect(url);
+        }
+
+    execution: 
+      sequence: 20
+      event: Search # 13779283051768150
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

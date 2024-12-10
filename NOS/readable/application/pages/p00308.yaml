@@ -1,0 +1,2041 @@
+---
+# ====== Page: Gift Certificate Statistics Table =============
+id: 308
+identification: 
+  name: Gift Certificate Statistics Table
+  alias: GIFT-CERTIFICATE-STATISTICS-TABLE
+  title: Gift Certificate Statistics Table
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 1000
+  maximum-width: 1000
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p6KeyMap = {
+        s : (v) => {
+            $("#exit").trigger("click");
+        },
+        i : (v) => {
+            $("#exit").trigger("click");
+        },
+        t : (v) => {
+            $("#exit").trigger("click");
+        },
+        escape : (v) => {
+            $("#exit").trigger("click");
+        },
+    }
+    
+    function mapP6Keys() {
+        $(document).off('keydown.p6keyevents');
+        $(document).on('keydown.p6keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            $("#exit").trigger("click");
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP6Keys();
+    }
+  execute-when-page-loads: mapP6Keys();
+
+css: 
+  inline: |
+    .t-Dialog-bodyWrapperIn {
+        background-color: #056AC8;
+    }
+    
+    .t-Region {
+        margin-block-end: .5rem;
+    }
+    
+    .t-Dialog-body {
+        padding-block-start: var(--ut-dialog-padding-y, .5rem);
+    }
+    
+    .t-Form-labelContainer, .t-Form-inputContainer {
+        padding-block-end: 0;
+        padding-block-start: 0;
+    }
+    
+    .col {
+        padding-inline-end: 0;
+        padding-inline-start: 0;
+    }
+    
+    /* custom column width of tables */
+    .col-2 {
+        flex-basis: 10% !important;
+        max-width: 10% !important;
+    }
+    
+    .col-3 {
+        flex-basis: 30% !important;
+        max-width: 30% !important;
+    }
+    
+    #status-table table, 
+    #donations-table table, 
+    #sold-table table, 
+    #total-table table {
+        border-collapse: collapse !important;
+    }
+    
+    #status-table .a-GV-cell, 
+    #donations-table .a-GV-cell,
+    #sold-table .a-GV-cell,
+    #total-table .a-GV-cell {
+        font-weight: 700;
+        border-left: 0px solid white;
+        border-right: 0px solid white;
+    }
+    
+    #status-table, #donations-table, #sold-table, #total-table {
+        border: 1px solid black;
+    }
+    #status-table th, #donations-table th, #sold-table th, #total-table th,
+    #status-table td, #donations-table td, #sold-table td, #total-table td {
+        border-bottom: 1.5px solid black;
+    }
+    
+    #status-table tr:last-child td,
+    #donations-table tr:last-child td,
+    #sold-table tr:last-child td,
+    #total-table tr:last-child td {
+        border-top: 2px solid black
+    }
+    
+    #status-table .a-GV-table,
+    #donations-table .a-GV-table,
+    #sold-table .a-GV-table,
+    #total-table .a-GV-table {
+        box-shadow: none;
+    }
+    
+    #status-table .a-GV-header,
+    #donations-table .a-GV-header,
+    #sold-table .a-GV-header,
+    #total-table .a-GV-header {
+        border-right: 0px solid white;
+        height: 2.55rem;
+    }
+    
+    #donations-table .a-GV-headerLabel,
+    #sold-table .a-GV-headerLabel,
+    #total-table .a-GV-headerLabel {
+        white-space: break-spaces !important;
+    }
+    
+    .header-text {
+        color: white;
+        margin-left: .5rem;
+        font-size: 1.125rem;
+        font-weight: 500;
+    }
+    
+    /* style returned values */
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-weight: 400;
+        color: white;
+    }
+    
+    .hide {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Status ======================================
+  id: 27797982255719121
+  identification: 
+    name: Status
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Sold Table ==================================
+  id: 27798031810719122
+  identification: 
+    name: Sold Table
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          A.GC_STATUS_ID AS "GC_STATUS_ID",
+          COALESCE( C.COUNT, 0 ) AS "COUNT",
+          COALESCE( C.SOLD_AMOUNT, 0.00 ) AS "SOLD_AMOUNT",
+          COALESCE( C.BALANCE, 0.00 ) AS "BALANCE"
+      FROM 
+          (
+              SELECT
+                  (SELECT GC_STATUS_NAME
+                  FROM NPM014 npm014 
+                  WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                  0 AS "COUNT",
+                  0.00 AS "SOLD_AMOUNT",
+                  0.00 AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+              GROUP BY ( "GC_STATUS_ID" )
+          ) A
+           
+      LEFT JOIN
+          (
+              SELECT
+                  (SELECT GC_STATUS_NAME
+                  FROM NPM014 npm014 
+                  WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                  COALESCE( COUNT(*), 0 ) "COUNT",
+                  COALESCE( SUM(npt020.AMOUNT), 0 ) AS "SOLD_AMOUNT",
+                  COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  ((npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+                  AND
+                  (SELECT DONATION
+                   FROM NPM013 npm013
+                   WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = 'N'
+                  )
+              GROUP BY ( "GC_STATUS_ID" )
+          ) C
+      
+          ON A.GC_STATUS_ID = C.GC_STATUS_ID
+      
+      UNION
+      
+      -- union this to get total using GROUP BY ROLLUP
+      
+      SELECT 
+             (SELECT GC_STATUS_NAME
+              FROM NPM014 npm014 
+              WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+              COALESCE( COUNT(*), 0 ) "COUNT",
+              COALESCE( SUM(npt020.AMOUNT), 0 ) AS "SOLD_AMOUNT",
+              COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+      FROM NPT020 npt020
+      WHERE 
+          (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+          AND
+          (SELECT DONATION
+           FROM NPM013 npm013
+           WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = 'N'
+      GROUP BY ROLLUP ( "GC_STATUS_ID" )
+      
+      UNION
+          
+      SELECT '0', 0, 0, 0
+      FROM dual
+      WHERE NOT EXISTS
+            ( 
+              SELECT 
+                     (SELECT GC_STATUS_NAME
+                      FROM NPM014 npm014 
+                      WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                      COALESCE( COUNT(*), 0 ) "COUNT",
+                      COALESCE( SUM(npt020.AMOUNT), 0 ) AS "SOLD_AMOUNT",
+                      COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+                  AND
+                  (SELECT DONATION
+                   FROM NPM013 npm013
+                   WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = 'N'
+              GROUP BY ROLLUP ( "GC_STATUS_ID" )
+            );
+      
+    page-items-to-submit: 
+    - P308_DATE_FROM
+    - P308_DATE_TO
+
+  layout: 
+    sequence: 30
+    parent-region: Status # 27797982255719121
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: sold-table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 33726924168036926
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 33807631234879514
+      identification: 
+        name: Primary Report
+        alias: 338077
+
+  columns: 
+  - # ====== Column: COUNT =======================================
+    id: 33727222429036929
+    identification: 
+      column-name: COUNT
+      type: Text Field
+
+    heading: 
+      heading: Count
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: COUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: BALANCE =====================================
+    id: 33727450505036931
+    identification: 
+      column-name: BALANCE
+      type: Text Field
+
+    heading: 
+      heading: Balance
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BALANCE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: GC_STATUS_ID ================================
+    id: 33728428256036941
+    identification: 
+      column-name: GC_STATUS_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: GC_STATUS_ID
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+
+  - # ====== Column: SOLD_AMOUNT =================================
+    id: 33728611790036943
+    identification: 
+      column-name: SOLD_AMOUNT
+      type: Number Field
+
+    heading: 
+      heading: Sold Amount
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: SOLD_AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Total Table =================================
+  id: 27798852860719130
+  identification: 
+    name: Total Table
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          A.GC_STATUS_ID AS "GC_STATUS_ID",
+          COALESCE( C.COUNT, 0 ) AS "COUNT",
+          COALESCE( C.TOTAL_AMOUNT, 0.00 ) AS "TOTAL_AMOUNT",
+          COALESCE( C.BALANCE, 0.00 ) AS "BALANCE"
+      FROM 
+          (
+              SELECT
+                  (SELECT GC_STATUS_NAME
+                  FROM NPM014 npm014 
+                  WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                  0 AS "COUNT",
+                  0.00 AS "TOTAL_AMOUNT",
+                  0.00 AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+              GROUP BY ( "GC_STATUS_ID" )
+          ) A
+           
+      LEFT JOIN
+          (
+              SELECT
+                  (SELECT GC_STATUS_NAME
+                  FROM NPM014 npm014 
+                  WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                  COALESCE( COUNT(*), 0 ) "COUNT",
+                  COALESCE( SUM(npt020.AMOUNT), 0 ) AS "TOTAL_AMOUNT",
+                  COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+              GROUP BY ( "GC_STATUS_ID" )
+          ) C
+      
+          ON A.GC_STATUS_ID = C.GC_STATUS_ID
+      
+      UNION
+      
+      -- union this to get total using GROUP BY ROLLUP
+      
+      SELECT 
+             (SELECT GC_STATUS_NAME
+              FROM NPM014 npm014 
+              WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+              COALESCE( COUNT(*), 0 ) "COUNT",
+              COALESCE( SUM(npt020.AMOUNT), 0 ) AS "TOTAL_AMOUNT",
+              COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+      FROM NPT020 npt020
+      WHERE 
+          (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+      GROUP BY ROLLUP ( "GC_STATUS_ID" )
+      
+      UNION
+          
+      SELECT '0', 0, 0, 0
+      FROM dual
+      WHERE NOT EXISTS
+            ( 
+              SELECT 
+                     (SELECT GC_STATUS_NAME
+                      FROM NPM014 npm014 
+                      WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                      COALESCE( COUNT(*), 0 ) "COUNT",
+                      COALESCE( SUM(npt020.AMOUNT), 0 ) AS "TOTAL_AMOUNT",
+                      COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+              GROUP BY ROLLUP ( "GC_STATUS_ID" )
+            );
+      
+    page-items-to-submit: 
+    - P308_DATE_FROM
+    - P308_DATE_TO
+
+  layout: 
+    sequence: 40
+    parent-region: Status # 27797982255719121
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: total-table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 33727521287036932
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 33808321578879515
+      identification: 
+        name: Primary Report
+        alias: 338084
+
+  columns: 
+  - # ====== Column: COUNT =======================================
+    id: 33727845209036935
+    identification: 
+      column-name: COUNT
+      type: Text Field
+
+    heading: 
+      heading: Count
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: COUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: TOTAL_AMOUNT ================================
+    id: 33727930945036936
+    identification: 
+      column-name: TOTAL_AMOUNT
+      type: Text Field
+
+    heading: 
+      heading: Total Amount
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TOTAL_AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: BALANCE =====================================
+    id: 33728058655036937
+    identification: 
+      column-name: BALANCE
+      type: Text Field
+
+    heading: 
+      heading: Balance
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BALANCE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: GC_STATUS_ID ================================
+    id: 33728117655036938
+    identification: 
+      column-name: GC_STATUS_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: GC_STATUS_ID
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Status Table ================================
+  id: 27799510421719137
+  identification: 
+    name: Status Table
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+             (SELECT "GC_STATUS_NAME" 
+              FROM "NPM014" npm014 
+              WHERE npm014."GC_STATUS_ID" = npt020."GC_STATUS_ID") "ID",
+             (SELECT "GC_STATUS_NAME" 
+              FROM "NPM014" npm014 
+              WHERE npm014."GC_STATUS_ID" = npt020."GC_STATUS_ID") "GC_STATUS_ID"
+      FROM "NPT020" npt020
+      WHERE 
+          -- TO_DATE(npt001.date_created, 'MM/DD/YYYY') BETWEEN TO_DATE(:P83_DATE_FROM, 'MM/DD/YYYY') 
+          npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO
+      GROUP BY "GC_STATUS_ID"
+      
+      UNION 
+      
+      SELECT NULL, 'Total' FROM "NPT020"
+    page-items-to-submit: 
+    - P308_DATE_FROM
+    - P308_DATE_TO
+
+  layout: 
+    sequence: 10
+    parent-region: Status # 27797982255719121
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: status-table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 33726149637036918
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: false
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 33777941288739795
+      identification: 
+        name: Primary Report
+        alias: 337780
+
+  columns: 
+  - # ====== Column: GC_STATUS_ID ================================
+    id: 33726227069036919
+    identification: 
+      column-name: GC_STATUS_ID
+      type: Text Field
+
+    heading: 
+      heading: Status
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 48
+
+    source: 
+      type: Database Column
+      database-column: GC_STATUS_ID
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ID ==========================================
+    id: 34715483348647714
+    identification: 
+      column-name: ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ID
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Date range ==================================
+  id: 27800178242719143
+  identification: 
+    name: Date range
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - t-Form--leftLabels
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Donations Table =============================
+  id: 28141685092254517
+  identification: 
+    name: Donations Table
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          A.GC_STATUS_ID AS "GC_STATUS_ID",
+          COALESCE( C.COUNT, 0 ) AS "COUNT",
+          COALESCE( C.DONATIONS_AMOUNT, 0.00 ) AS "DONATIONS_AMOUNT",
+          COALESCE( C.BALANCE, 0.00 ) AS "BALANCE"
+      FROM 
+          (
+              SELECT
+                  (SELECT GC_STATUS_NAME
+                  FROM NPM014 npm014 
+                  WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                  0 AS "COUNT",
+                  0.00 AS "DONATIONS_AMOUNT",
+                  0.00 AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+              GROUP BY ( "GC_STATUS_ID" )
+          ) A
+           
+      LEFT JOIN
+          (
+              SELECT
+                  (SELECT GC_STATUS_NAME
+                  FROM NPM014 npm014 
+                  WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                  COALESCE( COUNT(*), 0 ) "COUNT",
+                  COALESCE( SUM(npt020.AMOUNT), 0 ) AS "DONATIONS_AMOUNT",
+                  COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  ((npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+                  AND
+                  (SELECT DONATION
+                   FROM NPM013 npm013
+                   WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = 'Y'
+                  )
+              GROUP BY ( "GC_STATUS_ID" )
+          ) C
+      
+          ON A.GC_STATUS_ID = C.GC_STATUS_ID
+      
+      UNION
+      
+      -- union this to get total using GROUP BY ROLLUP
+      
+      SELECT 
+             (SELECT GC_STATUS_NAME
+              FROM NPM014 npm014 
+              WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+              COALESCE( COUNT(*), 0 ) "COUNT",
+              COALESCE( SUM(npt020.AMOUNT), 0 ) AS "DONATIONS_AMOUNT",
+              COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+      FROM NPT020 npt020
+      WHERE 
+          (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+          AND
+          (SELECT DONATION
+           FROM NPM013 npm013
+           WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = 'Y'
+      
+      GROUP BY ROLLUP ( "GC_STATUS_ID" )
+      
+      UNION
+          
+      SELECT '0', 0, 0, 0
+      FROM dual
+      WHERE NOT EXISTS
+            ( 
+              SELECT 
+                     (SELECT GC_STATUS_NAME
+                      FROM NPM014 npm014 
+                      WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",
+                      COALESCE( COUNT(*), 0 ) "COUNT",
+                      COALESCE( SUM(npt020.AMOUNT), 0 ) AS "DONATIONS_AMOUNT",
+                      COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"
+              FROM NPT020 npt020
+              WHERE 
+                  (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)
+                  AND
+                  (SELECT DONATION
+                   FROM NPM013 npm013
+                   WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = 'Y'
+      
+              GROUP BY ROLLUP ( "GC_STATUS_ID" )
+            )
+      ;
+    page-items-to-submit: 
+    - P308_DATE_FROM
+    - P308_DATE_TO
+
+  layout: 
+    sequence: 20
+    parent-region: Status # 27797982255719121
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: donations-table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 33726306173036920
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 33806915070879510
+      identification: 
+        name: Primary Report
+        alias: 338070
+
+  columns: 
+  - # ====== Column: COUNT =======================================
+    id: 33726650038036923
+    identification: 
+      column-name: COUNT
+      type: Text Field
+
+    heading: 
+      heading: Count
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: COUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: BALANCE =====================================
+    id: 33726853049036925
+    identification: 
+      column-name: BALANCE
+      type: Text Field
+
+    heading: 
+      heading: Balance
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BALANCE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: GC_STATUS_ID ================================
+    id: 33728228409036939
+    identification: 
+      column-name: GC_STATUS_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: GC_STATUS_ID
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+
+  - # ====== Column: DONATIONS_AMOUNT ============================
+    id: 33728760717036944
+    identification: 
+      column-name: DONATIONS_AMOUNT
+      type: Number Field
+
+    heading: 
+      heading: Donations Amount
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: DONATIONS_AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+page-items: 
+- # ====== Page Item: P308_TITLE ===============================
+  id: 27800285457719144
+  identification: 
+    name: P308_TITLE
+    type: Display Only
+
+  label: 
+    label: <span class="header-text">Statistics</span>
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Date range # 27800178242719143
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P308_DATE-RANGE ==========================
+  id: 27800396537719145
+  identification: 
+    name: P308_DATE-RANGE
+    type: Display Only
+
+  label: 
+    label: '<span class="header-text">Date Range: &P308_DATE_FROM. - &P308_DATE_TO.</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Date range # 27800178242719143
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 7
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P308_DATE_FROM ===========================
+  id: 33724827512036905
+  identification: 
+    name: P308_DATE_FROM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P308_DATE_TO =============================
+  id: 33724953226036906
+  identification: 
+    name: P308_DATE_TO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Close =======================================
+  id: 33725253975036909
+  identification: 
+    button-name: Close
+    label: Close
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: exit
+
+dynamic-actions: 
+- # ====== Dynamic Action: Escape ==============================
+  id: 33725389331036910
+  identification: 
+    name: Escape
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 33725253975036909
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 33725470937036911
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 10
+      event: Escape # 33725389331036910
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

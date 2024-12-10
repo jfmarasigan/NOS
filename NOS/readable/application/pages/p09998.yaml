@@ -1,0 +1,571 @@
+---
+# ====== Page: Print report ==================================
+id: 9998
+identification: 
+  name: Print report
+  alias: PRINT-REPORT
+  title: Print report
+
+appearance: 
+  page-mode: Normal
+  page-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/qz-tray.min.js'
+  - '#APP_FILES#js/print.min.js'
+  function-and-global-variable-declaration: let printer;
+  execute-when-page-loads: |
+    getPhysicalPrinters((printers) => {
+        $.each(printers, (index, printer) => {
+            $('#P9998_SELECT_PRINTER').append($('<option/>', { 
+                value: printer,
+                text : printer
+            }));
+        })
+    });
+    
+    // $(".dropdown-select2").select2({
+    //     placeholder : "Select an option",
+    //     minimumInputLength: 2,
+    //     ajax: {
+    //         delay: 250,
+    //         dataType: "json",
+    //         processResults : function(data) {
+    //             console.log("process results");
+    //             console.log(data);
+    //             return {
+    //                 results : data.results
+    //             };
+    //         },
+    //         transport : function (params, success, failure) {
+    //             console.log(params);
+    //             apex.server.process("GET_REF_NOS", {
+    //                 x01: params.term
+    //             })
+    //             .done(success)
+    //             .fail(failure);
+    //         }
+    //     }
+    // });
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P9998_REP_NAME ===========================
+  id: 12165752725578314
+  identification: 
+    name: P9998_REP_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9998_FORMAT =============================
+  id: 12165850234578315
+  identification: 
+    name: P9998_FORMAT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9998_ADD_PARAMS =========================
+  id: 12165965102578316
+  identification: 
+    name: P9998_ADD_PARAMS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9998_SELECT_PRINTER =====================
+  id: 12166511689578322
+  identification: 
+    name: P9998_SELECT_PRINTER
+    type: Select List
+
+  label: 
+    label: Select Printer
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC:-'
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P9998_NEW ================================
+  id: 17925068481262927
+  identification: 
+    name: P9998_NEW
+    type: Text Field
+
+  label: 
+    label: New
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Above
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - dropdown-select2
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SAMPLE_PRINT ================================
+  id: 8720802328866724
+  identification: 
+    button-name: SAMPLE_PRINT
+    label: Sample Print
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: PRINT_BASE64 ================================
+  id: 12166203103578319
+  identification: 
+    button-name: PRINT_BASE64
+    label: Print Base64
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: Print sample ========================
+  id: 8720916804866725
+  identification: 
+    name: Print sample
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SAMPLE_PRINT # 8720802328866724
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8721040842866726
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const options = {
+            parameters: {
+                parameter1: "test111",
+                parameter2: "222test"
+            },
+            mode : "printer",    
+            printerCallback : (filePath) => {
+                // let printer = "Microsoft Print to PDF";
+                qzprint(defaultPrinter, filePath);
+            }
+        };
+        
+        generateReport("test", "pdf", options);
+
+    execution: 
+      sequence: 10
+      event: Print sample # 8720916804866725
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set up QZ Tray ======================
+  id: 12166006832578317
+  identification: 
+    name: Set up QZ Tray
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12166112422578318
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        // set digital certificate
+        // qz.security.setCertificatePromise(function(resolve, reject) {
+        //     resolve("-----BEGIN CERTIFICATE-----\n" +
+        //             "MIIDsTCCApmgAwIBAgIULW8CT5p2CqSMuWQiMXl3CMeq/P8wDQYJKoZIhvcNAQEL\n" +
+        //             "BQAwZzELMAkGA1UEBhMCVVMxCjAIBgNVBAgMAS0xCjAIBgNVBAcMAS0xDDAKBgNV\n" +
+        //             "BAoMA05PUzEMMAoGA1UECwwDTk9TMRIwEAYDVQQDDAlsb2NhbGhvc3QxEDAOBgkq\n" +
+        //             "hkiG9w0BCQEWAS0wIBcNMjQwODE2MDY0NDAwWhgPMjA1NjAyMDkwNjQ0MDBaMGcx\n" +
+        //             "CzAJBgNVBAYTAlVTMQowCAYDVQQIDAEtMQowCAYDVQQHDAEtMQwwCgYDVQQKDANO\n" +
+        //             "T1MxDDAKBgNVBAsMA05PUzESMBAGA1UEAwwJbG9jYWxob3N0MRAwDgYJKoZIhvcN\n" +
+        //             "AQkBFgEtMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtWTCGYlReXAZ\n" +
+        //             "sIFAIc6+jNj/HeNnYl2Bug+l1mXYVOC1bJEITC0058k0HGJ5bXxD5wnoiMC6SlQQ\n" +
+        //             "PI5OhUjgG8SXluQXrCNofJ350mpu+H9WNkpAART20HCDSqWe+cIhJo4WZfxg7Gnr\n" +
+        //             "bh/fWuQKMLJD5NrU/w/7m9Iy0OzZf5JtfzPYHtUqQuZGC7Ak26Br2VMiwVdSkZ3v\n" +
+        //             "HNl4MLcCvLAmwDt2EFYX8Rvb1WJVSAaa6hAcLFUOmR93xURVSZgfmI2x3Nz4st7D\n" +
+        //             "C6P7lTtwJK03zDeuz4zhp/AZIpLz911LBUwsOb+sbr0LjCAaeBh+/8rWztpzvGJX\n" +
+        //             "sMF7Pcg9dQIDAQABo1MwUTAdBgNVHQ4EFgQUafSoScCKUX2vpr/QYRtSg6ZJfosw\n" +
+        //             "HwYDVR0jBBgwFoAUafSoScCKUX2vpr/QYRtSg6ZJfoswDwYDVR0TAQH/BAUwAwEB\n" +
+        //             "/zANBgkqhkiG9w0BAQsFAAOCAQEAGLgMUmFVk6z4q+vil8l8YNzl784SfDvQtGwY\n" +
+        //             "doMoudoLvcvc0wQ3jhI1Js7rjsBQS6GCqPwtJXH4mW9Vjry2+ldXD5sAByu58LSe\n" +
+        //             "6YeKiwZr7kWjlGXGQLd1ZTMyLcfnOEn/EQVFp95uJyj7noHWOgLZuLCODFeDSrJ7\n" +
+        //             "XL46C4EtFgGkTdd0z1jDL9Bih8ykcce3JA6T8fCJXnKwgCkHtBfAQIiQVGkIJNGx\n" +
+        //             "ajkl4vUntRuLdEOZhAazrYjjfrcMT4tgJcbFQaqeeYQEl4rNir9sGhWXjuQIhT/h\n" +
+        //             "MVd1cuamQs7FmOxZsqoQJiVftqQWju03wzdw+Lnkix+NMp64pA==\n" +
+        //             "-----END CERTIFICATE-----\n");
+        // });
+        
+        // // set printer
+        // printer = qz.websocket.connect().then(function() { 
+        //     qz.printers.find()
+        //     .then(function(printersList) {
+        //         // var list = '';
+        //         // for(var i = 0; i < data.length; i++) {
+        //         //     list += "&nbsp; " + data[i] + "<br/>";
+        //         // }
+        //         // displayMessage("<strong>Available printers:</strong><br/>" + list);
+        //         console.log(printersList);
+        //         $("#P9998_SELECT_PRINTER").html("");
+        //         $.each(printersList, function (index, value) {
+        //             $('#P9998_SELECT_PRINTER').append($('<option/>', { 
+        //                 value: value,
+        //                 text : value
+        //             }));
+        //         });
+        //     })
+        //     .catch(function(e) { console.error(e); });
+        
+        //     return qz.printers.find("Microsoft Print to PDF");
+        // });
+        
+        printer = connect().then(function() { 
+            qz.printers.find()
+                .then(function(printersList) {
+                    $.each(printersList, function (index, value) {
+                        $('#P9998_SELECT_PRINTER').append($('<option/>', { 
+                            value: value,
+                            text : value
+                        }));
+                    });
+                })
+                .catch(function(e) { console.error(e); });
+        
+            return qz.printers.find("Microsoft Print to PDF");    
+        });
+
+    execution: 
+      sequence: 10
+      event: Set up QZ Tray # 12166006832578317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print ===============================
+  id: 12166302923578320
+  identification: 
+    name: Print
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: PRINT_BASE64 # 12166203103578319
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12166484465578321
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        // printer.then((printerz) => {
+        //     console.log(printerz);
+        //     var config = qz.configs.create(printerz);
+        //     var printData = [{ 
+        //         type: 'pixel',
+        //         format: 'pdf',
+        //         flavor: 'base64',
+        //         data: testData
+        //     }];
+        //     qz.print(config, printData).catch(function(e) { 
+        //         console.error(e); 
+        //     });
+        // });
+        
+        connect().then(() => {
+            var config = qz.configs.create($("#P9998_SELECT_PRINTER").value());
+            var printData = [{ 
+                type: 'pixel',
+                format: 'pdf',
+                flavor: 'base64',
+                data: testData
+            }];
+            qz.print(config, printData).catch(function(e) { 
+                console.error(e); 
+            });
+        });
+
+    execution: 
+      sequence: 10
+      event: Print # 12166302923578320
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: GET_REF_NOS ================================
+  id: 26821573847203701
+  identification: 
+    name: GET_REF_NOS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor        sys_refcursor;
+          v_term          varchar2(300) := apex_application.g_x01;
+          v_vendor_id     nit006.vendor_id%TYPE := apex_application.g_x02;
+      begin
+          OPEN l_cursor FOR 
+              SELECT vendor_id "realValue", vendor_name "label", vendor_name "value", v_vendor_id "test"
+                FROM nit006
+               WHERE UPPER(vendor_name) like UPPER('%' || v_term || '%')
+                 AND NOT EXISTS (SELECT null
+                                   FROM apex_collections
+                                  WHERE collection_name = 'P9998_VENDOR_CODES'
+                                    AND n001 = vendor_id)
+               ORDER BY vendor_name ASC;
+      
+          APEX_JSON.write(l_cursor);
+      end;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

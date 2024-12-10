@@ -1,0 +1,872 @@
+---
+# ====== Page: Order Entry and Invoicing =====================
+id: 305
+identification: 
+  name: Order Entry and Invoicing
+  alias: ORDER-ENTRY-AND-INVOICING
+  title: Order Entry and Invoicing
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/order-entry-invoice#MIN#.js'
+  execute-when-page-loads: mapKeys();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/menu#MIN#.css'
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .main-menu-header {
+        margin-top: none;
+        margin-block-start: 2rem;
+    }
+    
+    .menu-instruction {
+        margin-block-start: 2.5rem;
+    }
+    
+    #menu-btns .row:nth-child(even) {
+        height: 1.1rem
+    }
+    
+    .h2rem {
+        height: 2rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Header ======================================
+  id: 37507405730229229
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <!-- <div class="title-header main-menu-header">
+      Order Entry &amp; Invoicing
+      </div> -->
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 37507535107229230
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: menu-btns
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Footer ======================================
+  id: 51238926935447957
+  identification: 
+    name: Footer
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="menu-instruction">
+      Press the underlined letter to proceed
+      </div>
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--textContent
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P305_MURL ================================
+  id: 47507540342473902
+  identification: 
+    name: P305_MURL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: APEX_PAGE.GET_URL(p_page => 1)
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P305_HEADER ==============================
+  id: 51239133139447995
+  identification: 
+    name: P305_HEADER
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 10
+    region: Header # 37507405730229229
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 4
+    new-column: true
+    column-span: 6
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    css-classes: 
+    - p-header
+
+  advanced: 
+    css-classes: 
+    - h2rem
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Order Entry & Invoicing
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P305_PLACEHOLDER1 ========================
+  id: 51244622189448005
+  identification: 
+    name: P305_PLACEHOLDER1
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 30
+    region: Buttons # 37507535107229230
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P305_PLACEHOLDER2 ========================
+  id: 51244920271448008
+  identification: 
+    name: P305_PLACEHOLDER2
+    type: Display Only
+
+  label: 
+    label: Placeholder2
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 60
+    region: Buttons # 37507535107229230
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P305_PLACEHOLDER3 ========================
+  id: 51245025700448009
+  identification: 
+    name: P305_PLACEHOLDER3
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 100
+    region: Buttons # 37507535107229230
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P305_PLACEHOLDER4 ========================
+  id: 58479621466161020
+  identification: 
+    name: P305_PLACEHOLDER4
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 130
+    region: Buttons # 37507535107229230
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: INQUIRE_VIEW_INV_DETAILS ====================
+  id: 31846677107912976
+  identification: 
+    button-name: INQUIRE_VIEW_INV_DETAILS
+    label: <u>D</u> - Inquire&#47;View Invoice Details
+
+  layout: 
+    sequence: 120
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:79:&SESSION.::&DEBUG.:79::'
+      page: 79 # Invoice Details
+      clear-cache: 79
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: inq-inv-dets
+
+- # ====== Button: REFUND ======================================
+  id: 31847017603912976
+  identification: 
+    button-name: REFUND
+    label: <u>X</u> - Refund
+
+  layout: 
+    sequence: 20
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:95:&SESSION.::&DEBUG.:95::'
+      page: 95 # Return List
+      clear-cache: 95
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: refund
+
+- # ====== Button: RESERVATIONS_ENTRY_UPDATE ===================
+  id: 31847482567912978
+  identification: 
+    button-name: RESERVATIONS_ENTRY_UPDATE
+    label: <u>R</u> - Reservations Entry&#47;Update
+
+  layout: 
+    sequence: 110
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: reservations
+
+- # ====== Button: CREDIT_MEMO_CREATE_UPDATE ===================
+  id: 31847800893912978
+  identification: 
+    button-name: CREDIT_MEMO_CREATE_UPDATE
+    label: <u>M</u> - Credit Memo Create&#47;Update
+
+  layout: 
+    sequence: 50
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: credit-memo
+
+- # ====== Button: INQ_VIEW_SUMM_INV ===========================
+  id: 31848201027912978
+  identification: 
+    button-name: INQ_VIEW_SUMM_INV
+    label: <u>S</u> - Inquire&#47;View Summary of Invoices
+
+  layout: 
+    sequence: 150
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 8
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:78:&SESSION.::&DEBUG.:::'
+      page: 78 # Summary of Invoices
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: inq-sum-inv
+
+- # ====== Button: CUSTOMER_ITEM_PURCHASE_HIST =================
+  id: 31849411324912979
+  identification: 
+    button-name: CUSTOMER_ITEM_PURCHASE_HIST
+    label: <u>P</u> - Customer Item Purchase History
+
+  layout: 
+    sequence: 80
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:83:&SESSION.::&DEBUG.:::'
+      page: 83 # Customer Item Purchase History
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: pur-hist
+
+- # ====== Button: CASH_INVOICING ==============================
+  id: 31850241185912981
+  identification: 
+    button-name: CASH_INVOICING
+    label: <u>C</u> - Cash Invoicing
+
+  layout: 
+    sequence: 10
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:35:&SESSION.::&DEBUG.:35::'
+      page: 35 # POS Cashiering Main Screen
+      clear-cache: 35
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: cash-invoicing
+
+- # ====== Button: CHARGE_COD_INVOICING ========================
+  id: 31850671835912981
+  identification: 
+    button-name: CHARGE_COD_INVOICING
+    label: <u>H</u> - Charge&#47;CoD Invoicing
+
+  layout: 
+    sequence: 40
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:55:&SESSION.::&DEBUG.:55::'
+      page: 55 # Wholesale Invoice
+      clear-cache: 55
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: charge-cod-invoicing
+
+- # ====== Button: QUOTE_ENTRY_UPDATE ==========================
+  id: 31851052986912981
+  identification: 
+    button-name: QUOTE_ENTRY_UPDATE
+    label: <u>Q</u> - Quote Entry&#47;Update
+
+  layout: 
+    sequence: 70
+    region: Buttons # 37507535107229230
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--stretch
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:86:&SESSION.::&DEBUG.:86::'
+      page: 86 # Wholesale Quotation
+      clear-cache: 86
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: quote-entry-update
+
+branches: 
+- # ====== Branch: Redirect to POS =============================
+  id: 31853188219912998
+  identification: 
+    name: Redirect to POS
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:305:&SESSION.::&DEBUG.:::'
+      page: 305 # Order Entry and Invoicing
+
+  server-side-condition: 
+    type: Rows returned
+    sql-query: |
+      SELECT null
+        FROM NPM009
+       WHERE user_name = 'POS_USER';
+

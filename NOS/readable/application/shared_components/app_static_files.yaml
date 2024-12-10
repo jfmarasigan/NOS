@@ -1,0 +1,955 @@
+---
+- # ====== Static Application File: icons/app-icon-32.png ======
+  id: 4498661270084818
+  identification: 
+    file-name: icons/app-icon-32.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: icons/app-icon-144-rounded.p
+  id: 4498967486084825
+  identification: 
+    file-name: icons/app-icon-144-rounded.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: icons/app-icon-192.png =====
+  id: 4499221976084825
+  identification: 
+    file-name: icons/app-icon-192.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: icons/app-icon-256-rounded.p
+  id: 4499543717084826
+  identification: 
+    file-name: icons/app-icon-256-rounded.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: icons/app-icon-512.png =====
+  id: 4499898985084835
+  identification: 
+    file-name: icons/app-icon-512.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/cmn.js ==================
+  id: 5656503554282157
+  identification: 
+    file-name: js/cmn.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/cmn.css ================
+  id: 5667998535324601
+  identification: 
+    file-name: css/cmn.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/menu.css ===============
+  id: 5821714516934403
+  identification: 
+    file-name: css/menu.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/main-menu.js ============
+  id: 5831087619020240
+  identification: 
+    file-name: js/main-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/items_masterfile_css.css
+  id: 6153839321317578
+  identification: 
+    file-name: css/items_masterfile_css.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/masterfile-menu.js ======
+  id: 6180567774570487
+  identification: 
+    file-name: js/masterfile-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/items_masterfile_css.min
+  id: 6224340824817968
+  identification: 
+    file-name: css/items_masterfile_css.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: img/login-img2.png =========
+  id: 6484321909861851
+  identification: 
+    file-name: img/login-img2.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/add_item_css.css =======
+  id: 7294161292512185
+  identification: 
+    file-name: css/add_item_css.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/inv-trans-menu.js =======
+  id: 8991289949807985
+  identification: 
+    file-name: js/inv-trans-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/ibi-css.css ============
+  id: 9491216040113367
+  identification: 
+    file-name: css/ibi-css.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/add_item_css.min.css ===
+  id: 10436487529642328
+  identification: 
+    file-name: css/add_item_css.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/p25_css.css ============
+  id: 10682026956600429
+  identification: 
+    file-name: css/p25_css.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/p26_css.css ============
+  id: 10684775312612037
+  identification: 
+    file-name: css/p26_css.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/p27_css.css ============
+  id: 10686347688620510
+  identification: 
+    file-name: css/p27_css.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/itemmasterfile.js =======
+  id: 11225686247256765
+  identification: 
+    file-name: js/itemmasterfile.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/p37_css.css ============
+  id: 11601864508026960
+  identification: 
+    file-name: css/p37_css.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/wh-trans-menu.js ========
+  id: 11708486169143462
+  identification: 
+    file-name: js/wh-trans-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/ship-trans-menu.js ======
+  id: 13303533600261743
+  identification: 
+    file-name: js/ship-trans-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/pur-trans-menu.js =======
+  id: 13308831111328218
+  identification: 
+    file-name: js/pur-trans-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/acc-payable-menu.js =====
+  id: 13329809421454107
+  identification: 
+    file-name: js/acc-payable-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/data.js =================
+  id: 13489848228131254
+  identification: 
+    file-name: js/data.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/jsrsasign-all-min.js ====
+  id: 13490094409131268
+  identification: 
+    file-name: js/jsrsasign-all-min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/qz-tray.js ==============
+  id: 13490365121131270
+  identification: 
+    file-name: js/qz-tray.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/sign-message.js =========
+  id: 13490613203131271
+  identification: 
+    file-name: js/sign-message.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/qz-tray.min.js ==========
+  id: 13491359199139209
+  identification: 
+    file-name: js/qz-tray.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/data.min.js =============
+  id: 13493759880161862
+  identification: 
+    file-name: js/data.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/itemmasterfile-validation
+  id: 14296805627022503
+  identification: 
+    file-name: js/itemmasterfile-validations.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/inv-trans-menu.min.js ===
+  id: 15915135772782467
+  identification: 
+    file-name: js/inv-trans-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/acc-payable-menu.min.js =
+  id: 15929191782862875
+  identification: 
+    file-name: js/acc-payable-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/itemmasterfile.min.js ===
+  id: 16682290826337485
+  identification: 
+    file-name: js/itemmasterfile.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/p37_css.min.css ========
+  id: 17130561647433540
+  identification: 
+    file-name: css/p37_css.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: img/login-img.png ==========
+  id: 17468483983446017
+  identification: 
+    file-name: img/login-img.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/sign-message.min.js =====
+  id: 18233410500383021
+  identification: 
+    file-name: js/sign-message.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/print.js ================
+  id: 18273288808218370
+  identification: 
+    file-name: js/print.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/jquery-ui.min.js ========
+  id: 18805833883613501
+  identification: 
+    file-name: js/jquery-ui.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/jquery-ui.min.css ======
+  id: 18806332942614879
+  identification: 
+    file-name: css/jquery-ui.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/jquery-ui.structure.min.
+  id: 18806556827614879
+  identification: 
+    file-name: css/jquery-ui.structure.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/jquery-ui.theme.min.css 
+  id: 18806862224614881
+  identification: 
+    file-name: css/jquery-ui.theme.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: images/ui-icons_444444_256x2
+  id: 18807795260615957
+  identification: 
+    file-name: images/ui-icons_444444_256x240.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: images/ui-icons_555555_256x2
+  id: 18807947691615957
+  identification: 
+    file-name: images/ui-icons_555555_256x240.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: images/ui-icons_777620_256x2
+  id: 18808222444615959
+  identification: 
+    file-name: images/ui-icons_777620_256x240.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: images/ui-icons_777777_256x2
+  id: 18808589884615959
+  identification: 
+    file-name: images/ui-icons_777777_256x240.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: images/ui-icons_cc0000_256x2
+  id: 18808872905615960
+  identification: 
+    file-name: images/ui-icons_cc0000_256x240.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: images/ui-icons_ffffff_256x2
+  id: 18809199401615962
+  identification: 
+    file-name: images/ui-icons_ffffff_256x240.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/wh-trans-menu.min.js ====
+  id: 18997414276161021
+  identification: 
+    file-name: js/wh-trans-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/ship-trans-menu.min.js ==
+  id: 21898778471385218
+  identification: 
+    file-name: js/ship-trans-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/gift-certificate-validati
+  id: 21937960783342943
+  identification: 
+    file-name: js/gift-certificate-validations.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/view-ind-ship-exp.js ====
+  id: 22329812609740539
+  identification: 
+    file-name: js/view-ind-ship-exp.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/view-ind-ship-exp.min.js 
+  id: 22335672946793307
+  identification: 
+    file-name: js/view-ind-ship-exp.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/view-ind-ship-exp.css ==
+  id: 22335975377857073
+  identification: 
+    file-name: css/view-ind-ship-exp.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/inv-hist-menu.js ========
+  id: 24683518325715628
+  identification: 
+    file-name: js/inv-hist-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/inv-hist-menu.min.js ====
+  id: 24684542229736107
+  identification: 
+    file-name: js/inv-hist-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/inv-hist.css ===========
+  id: 24775192544157950
+  identification: 
+    file-name: css/inv-hist.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/inv-hist.js =============
+  id: 24777865874184909
+  identification: 
+    file-name: js/inv-hist.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/view-ind-ship-exp.min.cs
+  id: 24801767078426654
+  identification: 
+    file-name: css/view-ind-ship-exp.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/inv-hist.min.js =========
+  id: 24882551668674750
+  identification: 
+    file-name: js/inv-hist.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/inv-hist-item.js ========
+  id: 25003040264291056
+  identification: 
+    file-name: js/inv-hist-item.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/inv-hist-item.min.js ====
+  id: 25004397517296818
+  identification: 
+    file-name: js/inv-hist-item.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/inv-hist-item.css ======
+  id: 25005086956300796
+  identification: 
+    file-name: css/inv-hist-item.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/inv-hist-item.min.css ==
+  id: 25006185148304856
+  identification: 
+    file-name: css/inv-hist-item.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/inv-hist.min.css =======
+  id: 25250230962572931
+  identification: 
+    file-name: css/inv-hist.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/pur-trans-menu.min.js ===
+  id: 26368525349270851
+  identification: 
+    file-name: js/pur-trans-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/print.min.js ============
+  id: 27809284855034312
+  identification: 
+    file-name: js/print.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/gc-menu.js ==============
+  id: 28500950295559071
+  identification: 
+    file-name: js/gc-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/gc-menu.min.js ==========
+  id: 28502494195569246
+  identification: 
+    file-name: js/gc-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: onscan.js ==================
+  id: 28513154313694089
+  identification: 
+    file-name: onscan.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: onscan.min.js ==============
+  id: 28514615375695203
+  identification: 
+    file-name: onscan.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: img/circle-info-solid.png ==
+  id: 29296344592228484
+  identification: 
+    file-name: img/circle-info-solid.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/order-entry-invoice.js ==
+  id: 29980175814688507
+  identification: 
+    file-name: js/order-entry-invoice.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: wholesale_invoice.css ======
+  id: 31326820051890889
+  identification: 
+    file-name: wholesale_invoice.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: wholesale_invoice.min.css ==
+  id: 31429958082513768
+  identification: 
+    file-name: wholesale_invoice.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/itemmasterfile-validation
+  id: 31540002518685446
+  identification: 
+    file-name: js/itemmasterfile-validations.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/main-menu.min.js ========
+  id: 31839968988862310
+  identification: 
+    file-name: js/main-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/menu.min.css ===========
+  id: 31856460943964673
+  identification: 
+    file-name: css/menu.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/coll-and-outs-menu.js ===
+  id: 31885781366123226
+  identification: 
+    file-name: js/coll-and-outs-menu.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/coll-and-outs-menu.min.js
+  id: 31886713039137279
+  identification: 
+    file-name: js/coll-and-outs-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/order-entry-invoice.min.j
+  id: 31894697213244695
+  identification: 
+    file-name: js/order-entry-invoice.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: wholesale-invoicing.css ====
+  id: 32071192141520445
+  identification: 
+    file-name: wholesale-invoicing.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: wholesale-invoicing.min.css 
+  id: 32072164752521135
+  identification: 
+    file-name: wholesale-invoicing.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: APEX$DATA$PKG/NPM012$171916.
+  id: 34625070979415971
+  identification: 
+    file-name: APEX$DATA$PKG/NPM012$171916.zip
+
+  attributes: 
+    mime-type: application/x-zip
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: APEX$DATA$PKG/NPM011$996596.
+  id: 34625248768415992
+  identification: 
+    file-name: APEX$DATA$PKG/NPM011$996596.zip
+
+  attributes: 
+    mime-type: application/x-zip
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/shipment-line-items.css 
+  id: 35484915273390704
+  identification: 
+    file-name: css/shipment-line-items.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/shipment-line-items.js ==
+  id: 35493711840429871
+  identification: 
+    file-name: js/shipment-line-items.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: img/circle-check-solid.png =
+  id: 36001151878027981
+  identification: 
+    file-name: img/circle-check-solid.png
+
+  attributes: 
+    mime-type: image/png
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/shipment-line-items.min.
+  id: 38661574474892751
+  identification: 
+    file-name: css/shipment-line-items.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/ibi-css.min.css ========
+  id: 38696290832943056
+  identification: 
+    file-name: css/ibi-css.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/p25_css.min.css ========
+  id: 38709240478232434
+  identification: 
+    file-name: css/p25_css.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/p26_css.min.css ========
+  id: 38710398189238093
+  identification: 
+    file-name: css/p26_css.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/p27_css.min.css ========
+  id: 38711173201240976
+  identification: 
+    file-name: css/p27_css.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/review-shipment-orders.c
+  id: 39275050421972607
+  identification: 
+    file-name: css/review-shipment-orders.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/review-shipment-orders.js
+  id: 39282154366029276
+  identification: 
+    file-name: js/review-shipment-orders.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/spinner.js ==============
+  id: 41851107945272596
+  identification: 
+    file-name: js/spinner.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/spinner.min.js ==========
+  id: 41852384042279078
+  identification: 
+    file-name: js/spinner.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/cmn.min.css ============
+  id: 42077399071420670
+  identification: 
+    file-name: css/cmn.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/shipment-line-items.min.j
+  id: 42176461306535953
+  identification: 
+    file-name: js/shipment-line-items.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: css/review-shipment-orders.m
+  id: 42843918535337392
+  identification: 
+    file-name: css/review-shipment-orders.min.css
+
+  attributes: 
+    mime-type: text/css
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/cmn.min.js ==============
+  id: 42892752814463176
+  identification: 
+    file-name: js/cmn.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/masterfile-menu.min.js ==
+  id: 43109688972255189
+  identification: 
+    file-name: js/masterfile-menu.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/review-shipment-orders.mi
+  id: 45530725722050584
+  identification: 
+    file-name: js/review-shipment-orders.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+
+- # ====== Static Application File: js/gift-certificate-validati
+  id: 46414988112133092
+  identification: 
+    file-name: js/gift-certificate-validations.min.js
+
+  attributes: 
+    mime-type: text/javascript
+    file-character-set: Unicode UTF-8
+

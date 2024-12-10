@@ -1,0 +1,246 @@
+---
+# ====== Page: Create Invoice ================================
+id: 85
+identification: 
+  name: Create Invoice
+  alias: CREATE-INVOICE
+  title: Create Invoice
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 640px
+  height: 95
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p85KeyMap = {
+        w : (v) => {
+            $("#w").click();
+        },
+        o : (v) => {
+            $("#o").click();
+        }
+    
+    }
+    
+    function mapP85Keys() {
+        $(document).off('keydown.p85keyevents');
+        $(document).on('keydown.p85keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p85KeyMap[key]) {
+                ev.preventDefault();
+                p85KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP85Keys();
+    }
+  execute-when-page-loads: mapP85Keys();
+
+css: 
+  inline: |
+    .t-Form-label {
+        font-size: 1.125rem;
+        white-space: nowrap;
+        
+    }
+    
+    .hiddenbtn{
+        display: none;
+    }
+    
+    #P85_DBA {
+        --a-field-input-flex-grow: .9;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P85_HIDDEN ===============================
+  id: 34403692026626231
+  identification: 
+    name: P85_HIDDEN
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P85_DBA ==================================
+  id: 37203776446281202
+  identification: 
+    name: P85_DBA
+    type: Text Field
+
+  label: 
+    label: 'DBA:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: With ========================================
+  id: 30806815951808229
+  identification: 
+    button-name: With
+    label: <u>W</u> - With Quotation
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:88:&SESSION.::&DEBUG.:88::'
+      page: 88 # Create Invoice - With Quotation
+      clear-cache: 88
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: w
+
+dynamic-actions: 
+- # ====== Dynamic Action: Focus ===============================
+  id: 34403455438626229
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 34403553971626230
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Button
+      button: With # 30806815951808229
+
+    execution: 
+      sequence: 10
+      event: Focus # 34403455438626229
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+

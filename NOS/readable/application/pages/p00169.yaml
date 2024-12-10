@@ -1,0 +1,689 @@
+---
+# ====== Page: SIC Utility Add ===============================
+id: 169
+identification: 
+  name: SIC Utility Add
+  alias: SIC-UTILITY-ADD
+  title: Add
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 40rem
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p169KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+           let activeElement = document.activeElement;
+    
+            if ($(activeElement).is('input')) {
+                var currentField = $(activeElement);
+                var allInputs = $('input:visible:enabled');
+                var currentIndex = allInputs.index(currentField); 
+                var nextField = allInputs.eq(currentIndex + 1);
+    
+                if (currentIndex === allInputs.length - 1) {
+                    $("#submit").trigger("click");
+                } else {
+                    nextField.focus();
+                }
+            } else {
+                $("#submit").trigger("click"); 
+            }
+        }
+    
+    }
+    
+    
+    function mapP169Keys() {
+        $(document).off('keydown.p169keyevents');
+        $(document).on('keydown.p169keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p169KeyMap[key]) {
+                ev.preventDefault();
+                p169KeyMap[key]();
+            }
+        });
+    }
+    
+    
+  execute-when-page-loads: |
+    mapP169Keys();
+    
+    $x('P169_SIC_CODE').focus();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+    }
+    
+    .t-Dialog-body label, .t-Dialog-body input, .t-Dialog-body .apex-item-display-only {
+        font-size: 1.125rem;
+    }
+    
+    .t-Dialog-body label {
+        color: white;
+    }
+    
+    .t-Region-body{
+        background-color: #056AC8;
+        padding-bottom: 0;
+    }
+    
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important;
+    }
+    
+    
+    .white-text {
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .t-Form-error {
+        color: #FFD700;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Form / Table ================================
+  id: 117584873025384283
+  identification: 
+    name: Form / Table
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM023
+    include-rowid-column: false
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P169_SIC_CODE ============================
+  id: 36405105536386218
+  identification: 
+    name: P169_SIC_CODE
+    type: Text Field
+
+  label: 
+    label: 'Code<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: Upper
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Form / Table # 117584873025384283
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 3
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 117584873025384283
+    column: SIC_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P169_SIC_NAME ============================
+  id: 36405233099386219
+  identification: 
+    name: P169_SIC_NAME
+    type: Text Field
+
+  label: 
+    label: 'Name<span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Form / Table # 117584873025384283
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 117584873025384283
+    column: SIC_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P169_DESC ================================
+  id: 36405320675386220
+  identification: 
+    name: P169_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Form / Table # 117584873025384283
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 117584873025384283
+    column: DESC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P169_SIC_ID ==============================
+  id: 36405485482386221
+  identification: 
+    name: P169_SIC_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Form / Table # 117584873025384283
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 117584873025384283
+    column: SIC_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P169_CREATE_USER =========================
+  id: 107838984528684377
+  identification: 
+    name: P169_CREATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Form / Table # 117584873025384283
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 117584873025384283
+    column: CREATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P169_CREATE_DATE =========================
+  id: 107839064809684378
+  identification: 
+    name: P169_CREATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Form / Table # 117584873025384283
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 117584873025384283
+    column: CREATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSTIMESTAMP
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P169_UPDATE_USER =========================
+  id: 107839196731684379
+  identification: 
+    name: P169_UPDATE_USER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Form / Table # 117584873025384283
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 117584873025384283
+    column: UPDATE_USER
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':APP_USER'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P169_UPDATE_DATE =========================
+  id: 107839332800684380
+  identification: 
+    name: P169_UPDATE_DATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Form / Table # 117584873025384283
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form / Table # 117584873025384283
+    column: UPDATE_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSTIMESTAMP
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 37237237976632234
+  identification: 
+    button-name: Enter
+    label: Press enter to add
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - white-text
+    - hiddenbtn
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+    database-action: SQL INSERT action
+
+  advanced: 
+    static-id: submit
+    custom-attributes: 
+    - tabindex="-1"
+
+validations: 
+- # ====== Validation: Code_empty ==============================
+  id: 36406877813386235
+  identification: 
+    name: Code_empty
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P169_SIC_CODE
+    always-execute: false
+
+  error: 
+    error-message: Field cannot be empty.
+    display-location: Inline with Field
+    associated-item: P169_SIC_CODE # 36405105536386218
+
+- # ====== Validation: Name_empty ==============================
+  id: 36406922005386236
+  identification: 
+    name: Name_empty
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Item is NOT NULL
+    item: P169_SIC_NAME
+    always-execute: false
+
+  error: 
+    error-message: Field cannot be empty.
+    display-location: Inline with Field
+    associated-item: P169_SIC_NAME # 36405233099386219
+
+- # ====== Validation: Unique_code =============================
+  id: 38763023335655620
+  identification: 
+    name: Unique_code
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      SELECT SIC_CODE FROM NIM023
+      WHERE SIC_CODE = :P169_SIC_CODE
+    always-execute: false
+
+  error: 
+    error-message: SIC code already exists.
+    display-location: Inline with Field
+    associated-item: P169_SIC_CODE # 36405105536386218
+
+- # ====== Validation: Unique_name =============================
+  id: 38763149184655621
+  identification: 
+    name: Unique_name
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: No Rows returned
+    sql-query: |
+      SELECT SIC_NAME FROM NIM023
+      WHERE UPPER(SIC_NAME) = UPPER(:P169_SIC_NAME)
+    always-execute: false
+
+  error: 
+    error-message: SIC name already exists.
+    display-location: Inline with Field
+    associated-item: P169_SIC_NAME # 36405233099386219
+
+processes: 
+- # ====== Process: Initialize form SIC Utility Add ============
+  id: 37242726652632292
+  identification: 
+    name: Initialize form SIC Utility Add
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Form / Table # 117584873025384283
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Add ========================================
+  id: 37243298341632335
+  identification: 
+    name: Add
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      INSERT INTO NIM023 (SIC_CODE, SIC_NAME, CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE)
+      VALUES (:P169_SIC_CODE, :P169_SIC_NAME, :APP_USER, SYSTIMESTAMP, :APP_USER, SYSTIMESTAMP);
+      
+      apex_util.set_session_state('SUCCESS_MSG', 'SIC added successfully');
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 37243624473632337
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: false
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

@@ -1,0 +1,57 @@
+.t-Dialog{
+    background-color: #056AC8;
+}
+
+
+.p26-white-text{
+    color: white;
+    font-size: 1.125rem;
+    font-family: Arial;
+}
+
+.t-Dialog-body{
+    padding-top: 0;
+}
+
+.format-size{
+    font-size: 1.125rem !important;
+    font-family: Arial;
+}
+
+.qty-title{
+    font-weight: normal;
+    font-size: 1.125rem;
+    font-family: Arial;
+    text-align: center;
+}
+
+#qty{
+    width: 10rem;
+}
+
+.qty-fields{
+    max-width: 100%;
+}
+
+.header {
+    font-size: 1.125rem;
+    font-family: Arial;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.width50 {
+    max-width: 50% !important;
+}
+
+.width375 {
+    max-width: 37.5% !important;
+}
+
+.width125 {
+    max-width: 12.5% !important;
+}
+
+.t-Dialog-body {
+    padding-bottom: 0.25rem;
+}

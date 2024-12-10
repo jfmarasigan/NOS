@@ -1,0 +1,2641 @@
+---
+# ====== Page: Invoice Details ===============================
+id: 79
+identification: 
+  name: Invoice Details
+  alias: INVOICE-DETAILS
+  title: Invoice Details
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p79KeyMap = {
+        i : (v) => {
+            $("#i").trigger("click");
+        },
+        d : (v) => {
+            $("#d").trigger("click");
+        },
+        s : (v) => {
+            $("#s").trigger("click");
+        },
+        escape : (v) => {
+            apex.navigation.redirect($('#P79_EXIT_URL').val());
+        },
+        home : (v) => {
+            $('#to-top').trigger("click");
+        },
+        end : (v) => {
+            $('#to-bottom').trigger('click');
+        }
+    }
+    
+    function mapP79Keys() {
+        $(document).off('keydown.p79keyevents');
+        $(document).on('keydown.p79keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p79KeyMap[key]) {
+                ev.preventDefault();
+                p79KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP79Keys();
+    setTitle('Invoice Details');
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .buttons-row {
+        position: absolute;
+        width: 90vw;
+        bottom: 1.75rem;
+    }
+    
+    #invoice-details .a-IG {
+        height: calc(60vh + 2px) !important;
+    } 
+    
+    #invoice-details .a-IG-contentContainer {
+        height: 60vh !important;
+    }
+    
+    #invoice-details .a-IG-gridView.a-GV {
+        height: 60vh !important;
+    }
+    
+    #invoice-details .a-GV-bdy {
+        height: calc(60vh - 2.5625rem) !important;
+    }
+    
+    
+    #invoice-details table, 
+    #invoice-details tr, 
+    #invoice-details td{
+        font-size: 1.125rem;
+        border: 0.0625rem solid black;
+    }
+        
+    #invoice-details th{
+        font-size: 1rem;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: black;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .btns{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        /* color: #056BC9; */
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+     
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+    }
+    .ui-dialog.delivery-details{
+        left: 50% !important;
+    }
+    .t-Dialog{
+        background-color: #056AC8;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    .ui-dialog-title{
+        font-size : 1.5rem;
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
+    
+    }
+    .text-general{
+        font-size: 1.125rem;
+        color:white;
+    }
+    .t-Form-labelContainer.col.col-1{
+        /* #P15_ITEM_NUM_LABEL{ */
+            text-align: start;
+        /* } */
+    }
+    .t-Form-label{
+        font-size:1.125rem;
+        color:white;
+    }
+    .text-white{
+        color:white;
+    }
+    .t-Form-labelContainer, .t-Form-inputContainer{
+        padding: 0;
+        text-align: start;
+    }
+    .t-Form-error{
+        color: #FFD700;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Invoice Details =============================
+  id: 25233539632376537
+  identification: 
+    name: Invoice Details
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT npt002.item_id, 
+          nim022.brand_code,
+          nit001.item_desc,
+          npt002.quantity,
+          npt002.item_price,
+          nim026.uom_code,
+          npt008.category,
+          npt008.ds,
+          npt002.discounted_price,
+          npt002.discounted_price * npt002.quantity AS EXTENDED_PRICE
+      FROM npt002 npt002, nim022 nim022, nit001 nit001, nim026 nim026, npt008 npt008
+      , npt001 npt001
+      WHERE npt002.invoice_id = :P79_INVOICE_NO 
+          AND nim022.brand_id = nit001.item_id 
+          AND nit001.item_id = npt002.item_id
+          AND nim026.uom_id = npt002.uom_id
+          AND npt001.discount_id = npt008.discount_id(+)
+          AND npt001.invoice_id = npt002.invoice_id;
+          
+
+  layout: 
+    sequence: 190
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: invoice-details
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 25233608987376538
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 30080284996574618
+      identification: 
+        name: Primary Report
+        alias: 300803
+
+  columns: 
+  - # ====== Column: ITEM_ID =====================================
+    id: 34229542384738334
+    identification: 
+      column-name: ITEM_ID
+      type: Number Field
+
+    heading: 
+      heading: Item No
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 10
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true//,
+                // width: 150
+            };
+            return options;
+        }
+
+  - # ====== Column: BRAND_CODE ==================================
+    id: 34229669372738335
+    identification: 
+      column-name: BRAND_CODE
+      type: Text Field
+
+    heading: 
+      heading: Co
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 12
+
+    source: 
+      type: Database Column
+      database-column: BRAND_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true,
+                width: 90
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_DESC ===================================
+    id: 34229750106738336
+    identification: 
+      column-name: ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true,
+                width: 400
+            };
+            return options;
+        }
+
+  - # ====== Column: QUANTITY ====================================
+    id: 34229872340738337
+    identification: 
+      column-name: QUANTITY
+      type: Number Field
+
+    heading: 
+      heading: Qty
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: QUANTITY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true,
+                width: 70
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_PRICE ==================================
+    id: 34229977140738338
+    identification: 
+      column-name: ITEM_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Reg Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: ITEM_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true,
+                width: 90
+            };
+            return options;
+        }
+
+  - # ====== Column: UOM_CODE ====================================
+    id: 34230040689738339
+    identification: 
+      column-name: UOM_CODE
+      type: Text Field
+
+    heading: 
+      heading: UOM
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 16
+
+    source: 
+      type: Database Column
+      database-column: UOM_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true,
+                width: 70
+            };
+            return options;
+        }
+
+  - # ====== Column: DS ==========================================
+    id: 34230236665738341
+    identification: 
+      column-name: DS
+      type: Text Field
+
+    heading: 
+      heading: DS
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 1
+
+    source: 
+      type: Database Column
+      database-column: DS
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true,
+                width: 60
+            };
+            return options;
+        }
+
+  - # ====== Column: EXTENDED_PRICE ==============================
+    id: 34230418198738343
+    identification: 
+      column-name: EXTENDED_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Extended Price
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 100
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: EXTENDED_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true//,
+                // width: 150
+            };
+            return options;
+        }
+
+  - # ====== Column: CATEGORY ====================================
+    id: 35234750935472413
+    identification: 
+      column-name: CATEGORY
+      type: Text Field
+
+    heading: 
+      heading: Category
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 110
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 80
+
+    source: 
+      type: Database Column
+      database-column: CATEGORY
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true//,
+                // width: 150
+            };
+            return options;
+        }
+
+  - # ====== Column: DISCOUNTED_PRICE ============================
+    id: 35234875413472414
+    identification: 
+      column-name: DISCOUNTED_PRICE
+      type: Number Field
+
+    heading: 
+      heading: Discounted Price
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 120
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: DISCOUNTED_PRICE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true//,
+                // width: 150
+            };
+            return options;
+        }
+
+page-items: 
+- # ====== Page Item: P79_CUSTOMER_DBA =========================
+  id: 25234839339376550
+  identification: 
+    name: P79_CUSTOMER_DBA
+    type: Display Only
+
+  label: 
+    label: 'Customer DBA:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_BILLING_ADDRESS ======================
+  id: 30127460999678901
+  identification: 
+    name: P79_BILLING_ADDRESS
+    type: Display Only
+
+  label: 
+    label: 'Billing Address:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_SPECIAL_INSTRUCTIONS =================
+  id: 30127503392678902
+  identification: 
+    name: P79_SPECIAL_INSTRUCTIONS
+    type: Display Only
+
+  label: 
+    label: 'Special Instructions:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_INVOICE_NO ===========================
+  id: 30127606743678903
+  identification: 
+    name: P79_INVOICE_NO
+    type: Text Field
+
+  label: 
+    label: 'Invoice #:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 6
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_REF_PO_NO ============================
+  id: 30127707099678904
+  identification: 
+    name: P79_REF_PO_NO
+    type: Display Only
+
+  label: 
+    label: 'Ref PO #:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 11
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_DATE =================================
+  id: 30127812371678905
+  identification: 
+    name: P79_DATE
+    type: Display Only
+
+  label: 
+    label: 'Date:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_TERMS ================================
+  id: 30127963920678906
+  identification: 
+    name: P79_TERMS
+    type: Display Only
+
+  label: 
+    label: 'Terms:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 11
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_ORDER_WRITER =========================
+  id: 30128058530678907
+  identification: 
+    name: P79_ORDER_WRITER
+    type: Display Only
+
+  label: 
+    label: 'Order Writer:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 7
+    new-column: true
+    column-span: 6
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_TOTAL_DISC ===========================
+  id: 30128194531678908
+  identification: 
+    name: P79_TOTAL_DISC
+    type: Display Only
+
+  label: 
+    label: 'Total Disc:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 110
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 11
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_TOTAL_AMT ============================
+  id: 30128246636678909
+  identification: 
+    name: P79_TOTAL_AMT
+    type: Display Only
+
+  label: 
+    label: 'Total Amt:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 120
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-none
+    - margin-bottom-none
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_ITEM_NO ==============================
+  id: 33674139440716442
+  identification: 
+    name: P79_ITEM_NO
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 130
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_ITEM_DESC ============================
+  id: 34226556768738304
+  identification: 
+    name: P79_ITEM_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 140
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_PREPARED_URL =========================
+  id: 34226997548738308
+  identification: 
+    name: P79_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 150
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_EXIT_URL =============================
+  id: 34228347267738322
+  identification: 
+    name: P79_EXIT_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 180
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: |
+      APEX_PAGE.GET_URL(
+          p_page => 305
+      )
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_DELIVERY_BATCH =======================
+  id: 35234671275472412
+  identification: 
+    name: P79_DELIVERY_BATCH
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 160
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P79_DELIVERY_ID ==========================
+  id: 44051249173431032
+  identification: 
+    name: P79_DELIVERY_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 170
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CHANGE_INVOICE ==============================
+  id: 30128330395678910
+  identification: 
+    button-name: CHANGE_INVOICE
+    label: <u>I</u> - Change Invoice
+
+  layout: 
+    sequence: 200
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: DELIVERY_DETAILS ============================
+  id: 30128489259678911
+  identification: 
+    button-name: DELIVERY_DETAILS
+    label: <u>D</u> - Delivery Details
+
+  layout: 
+    sequence: 210
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: d
+
+- # ====== Button: TO_TOP ======================================
+  id: 30128566662678912
+  identification: 
+    button-name: TO_TOP
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 230
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-top
+
+- # ====== Button: TO_BOTTOM ===================================
+  id: 30128662666678913
+  identification: 
+    button-name: TO_BOTTOM
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 240
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-bottom
+
+- # ====== Button: CHECK_SERIAL_NO =============================
+  id: 33673673900716437
+  identification: 
+    button-name: CHECK_SERIAL_NO
+    label: <u>S</u> - Check Serial Numbers
+
+  layout: 
+    sequence: 220
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: s
+
+dynamic-actions: 
+- # ====== Dynamic Action: On Value Change =====================
+  id: 30130509088678932
+  identification: 
+    name: On Value Change
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P79_INVOICE_NO
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 30130691338678933
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT npt009.DBA FROM NPT009 npt009, NPT001 npt001 WHERE npt009.CUSTOMER_ID = npt001.customer_id and npt001.invoice_id = :P79_INVOICE_NO;'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_CUSTOMER_DBA
+
+    execution: 
+      sequence: 20
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 30130730086678934
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT npt009.billing_address FROM NPT009 npt009, NPT001 npt001 WHERE npt009.CUSTOMER_ID = npt001.customer_id and npt001.invoice_id = :P79_INVOICE_NO;'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_BILLING_ADDRESS
+
+    execution: 
+      sequence: 40
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 30130869808678935
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT special_instructions FROM npt001 WHERE invoice_id = :P79_INVOICE_NO;'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_SPECIAL_INSTRUCTIONS
+
+    execution: 
+      sequence: 50
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 30131086487678937
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT date_created FROM npt001 WHERE invoice_id = :P79_INVOICE_NO;'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_DATE
+
+    execution: 
+      sequence: 60
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 30131129875678938
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT user_created FROM npt001 WHERE invoice_id = :P79_INVOICE_NO;'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_ORDER_WRITER
+
+    execution: 
+      sequence: 70
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 30131279698678939
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT reference_po FROM NPT005 where invoice_id = :P79_INVOICE_NO'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_REF_PO_NO
+
+    execution: 
+      sequence: 80
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 30131333391678940
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT payment_terms_name from npm006 npm006, npt009 npt009, NPT001 npt001
+        where npm006.payment_terms_id = npt009.payment_terms_id
+        AND npt009.CUSTOMER_ID = npt001.customer_id
+        and npt001.invoice_id = :P79_INVOICE_NO;
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_TERMS
+
+    execution: 
+      sequence: 90
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 30131491400678941
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT total_discount from npt001 where invoice_id = :P79_INVOICE_NO;'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_TOTAL_DISC
+
+    execution: 
+      sequence: 100
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 30131537783678942
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT total_amount from npt001 where invoice_id = :P79_INVOICE_NO;'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_TOTAL_AMT
+
+    execution: 
+      sequence: 110
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 33671906501716420
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Invoice Details # 25233539632376537
+
+    execution: 
+      sequence: 30
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 44051085371431030
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT npt012.batch FROM NPT012 npt012, NPT031 npt031
+        WHERE npt012.delivery_id = npt031.delivery_id AND npt031.invoice_id = :P79_INVOICE_NO
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_DELIVERY_BATCH
+
+    execution: 
+      sequence: 120
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 44051349950431033
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT delivery_id from npt031 where invoice_id = :P79_INVOICE_NO'
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_DELIVERY_ID
+
+    execution: 
+      sequence: 130
+      event: On Value Change # 30130509088678932
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On I press ==========================
+  id: 33672091249716421
+  identification: 
+    name: On I press
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CHANGE_INVOICE # 30128330395678910
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 33672125491716422
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_INVOICE_NO
+
+    execution: 
+      sequence: 10
+      event: On I press # 33672091249716421
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: On Change Selection =================
+  id: 33674267655716443
+  identification: 
+    name: On Change Selection
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Invoice Details # 25233539632376537
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 34227223682738311
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        :P79_PREPARED_URL := apex_page.get_url(
+            p_clear_cache => 80,
+            p_page => 80,
+            p_items => 'P80_ITEM_NO,P80_ITEM_DESC',
+            p_values => :P79_ITEM_NO || ',' || :P79_ITEM_DESC
+        );
+        END;
+      items-to-submit: 
+      - P79_ITEM_DESC
+      - P79_ITEM_NO
+      items-to-return: 
+      - P79_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 50
+      event: On Change Selection # 33674267655716443
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Set Value ===================================
+    id: 34227446510738313
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: getSelectedIGRecord('invoice-details')[0][0];
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_ITEM_NO
+
+    execution: 
+      sequence: 20
+      event: On Change Selection # 33674267655716443
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: getSelectedIGRecord('invoice-details')[0]!=undefined;
+
+  - # ====== Action: Set Value ===================================
+    id: 34227588973738314
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: getSelectedIGRecord('invoice-details')[0][2];
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_ITEM_DESC
+
+    execution: 
+      sequence: 40
+      event: On Change Selection # 33674267655716443
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: getSelectedIGRecord('invoice-details')[0]!=undefined;
+
+  - # ====== Action: Set Value ===================================
+    id: 34230737962738346
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: NULL
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_ITEM_NO
+      - P79_ITEM_DESC
+
+    execution: 
+      sequence: 10
+      event: On Change Selection # 33674267655716443
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Switch Focus ========================
+  id: 33674679676716447
+  identification: 
+    name: Switch Focus
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Lose Focus
+    selection-type: Item(s)
+    item(s): 
+    - P79_INVOICE_NO
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33674759717716448
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        },"500");
+
+    execution: 
+      sequence: 30
+      event: Switch Focus # 33674679676716447
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 34230623858738345
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: "TO_CHAR(:P79_INVOICE_NO, '000009')"
+      items-to-submit: 
+      - P79_INVOICE_NO
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P79_INVOICE_NO
+
+    execution: 
+      sequence: 10
+      event: Switch Focus # 33674679676716447
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On S click ==========================
+  id: 34226783541738306
+  identification: 
+    name: On S click
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CHECK_SERIAL_NO # 33673673900716437
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: $('#P79_ITEM_NO').val() != '' && $('#P79_ITEM_DESC') != '';
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34227319095738312
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p79keyevents');
+        apex.navigation.redirect($v('P79_PREPARED_URL'));
+        parent.$('.ui-dialog-title').html('Item: ' + $v('P79_ITEM_DESC'));
+
+    execution: 
+      sequence: 30
+      event: On S click # 34226783541738306
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 35234298997472408
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        :P79_PREPARED_URL := apex_page.get_url(
+            p_clear_cache => 80,
+            p_page => 80,
+            p_items => 'P80_ITEM_NO,P80_ITEM_DESC',
+            p_values => :P79_ITEM_NO || ',' || :P79_ITEM_DESC
+        );
+        END;
+      items-to-submit: 
+      - P79_ITEM_DESC
+      - P79_ITEM_NO
+      items-to-return: 
+      - P79_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: On S click # 34226783541738306
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On Home Press =======================
+  id: 34229012855738329
+  identification: 
+    name: On Home Press
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: TO_TOP # 30128566662678912
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34229131243738330
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGFirstRecordFirstCell('invoice-details', 'ITEM_ID');
+
+    execution: 
+      sequence: 10
+      event: On Home Press # 34229012855738329
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On End Press ========================
+  id: 34229298681738331
+  identification: 
+    name: On End Press
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: TO_BOTTOM # 30128662666678913
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34229365690738332
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGLastRecordFirstCell('invoice-details');
+
+    execution: 
+      sequence: 10
+      event: On End Press # 34229298681738331
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Serial Dialog Close ==============
+  id: 35233796819472403
+  identification: 
+    name: On Serial Dialog Close
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35233873165472404
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP79Keys();
+
+    execution: 
+      sequence: 10
+      event: On Serial Dialog Close # 35233796819472403
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On D click ==========================
+  id: 35234479651472410
+  identification: 
+    name: On D click
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: DELIVERY_DETAILS # 30128489259678911
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 35234323812472409
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        :P79_PREPARED_URL := apex_page.get_url(
+            p_clear_cache => 70,
+            p_page => 70,
+            p_items => 'P70_INVOICE_NO,P70_DELIVERY_BATCH,P70_DELIVERY_ID',
+            p_values => :P79_INVOICE_NO || ',' || :P79_DELIVERY_BATCH || ',' || :P79_DELIVERY_ID
+        );
+        END;
+      items-to-submit: 
+      - P79_ITEM_DESC
+      - P79_ITEM_NO
+      - P79_DELIVERY_BATCH
+      - P79_DELIVERY_ID
+      items-to-return: 
+      - P79_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: On D click # 35234479651472410
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35234591161472411
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p79keyevents');
+        apex.navigation.redirect($v('P79_PREPARED_URL'));
+        parent.$('.ui-dialog-title').html('Delivery Batch X - Invoice ' + $v('P79_INVOICE_NO'));
+
+    execution: 
+      sequence: 20
+      event: On D click # 35234479651472410
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P79_ITEM_NO ============================
+  id: 34228614442738325
+  identification: 
+    item-name: P79_ITEM_NO
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P79_ITEM_DESC ==========================
+  id: 34228752357738326
+  identification: 
+    item-name: P79_ITEM_DESC
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P79_PREPARED_URL =======================
+  id: 34228892706738327
+  identification: 
+    item-name: P79_PREPARED_URL
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P79_INVOICE_NO =========================
+  id: 34228908502738328
+  identification: 
+    item-name: P79_INVOICE_NO
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+

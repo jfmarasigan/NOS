@@ -1,0 +1,692 @@
+---
+# ====== Page: POS Cashiering - Credit Card Payment ==========
+id: 45
+identification: 
+  name: POS Cashiering - Credit Card Payment
+  alias: POS-CASHIERING-CREDIT-CARD-PAYMENT
+  title: Credit Card
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Wizard Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p45KeyMap = {
+        enter: (v) => {
+            console.log("to-top");
+            $("#enter-card").trigger("click");
+        }
+    }
+    
+    function mapP45Keys() {
+        $(document).off('keydown.p45keyevents');
+        $(document).on('keydown.p45keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p45KeyMap[key]) {
+                ev.preventDefault();
+                p45KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP45Keys();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        label, input {
+            font-size: 1.125rem;
+        }
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .t-Button-label{
+        font-size: 1rem;
+        font-family: Arial;
+        text-align: left;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P45_AMOUNT ===============================
+  id: 18712514303804238
+  identification: 
+    name: P45_AMOUNT
+    type: Display Only
+
+  label: 
+    label: 'Amount:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+    - margin-left-sm
+    format-mask: FML999G999G999G999G990D00
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_LAST4 ================================
+  id: 18712610341804239
+  identification: 
+    name: P45_LAST4
+    type: Number Field
+
+  label: 
+    label: 'Last 4-digit:'
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - margin-left-sm
+    width: 4
+
+  validation: 
+    value-required: true
+    maximum-length: 4
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_AUTH_CODE ============================
+  id: 35548144444882712
+  identification: 
+    name: P45_AUTH_CODE
+    type: Text Field
+
+  label: 
+    label: 'Auth Code:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - margin-left-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_CARD_TYPE ============================
+  id: 35548288343882713
+  identification: 
+    name: P45_CARD_TYPE
+    type: Text Field
+
+  label: 
+    label: 'Card Type:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - margin-left-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_CARD_ISSUER ==========================
+  id: 35548317565882714
+  identification: 
+    name: P45_CARD_ISSUER
+    type: Text Field
+
+  label: 
+    label: 'Card Issuer:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - margin-left-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_UNPAID ===============================
+  id: 38716907859254550
+  identification: 
+    name: P45_UNPAID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P45_URL ==================================
+  id: 44521582337129202
+  identification: 
+    name: P45_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Submit ======================================
+  id: 40389954814268804
+  identification: 
+    button-name: Submit
+    label: Submit
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter-card
+
+dynamic-actions: 
+- # ====== Dynamic Action: Console Log =========================
+  id: 40390002552268805
+  identification: 
+    name: Console Log
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40390103762268806
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var amount = $v('P45_AMOUNT');
+        
+        console.log("=====================" + amount);
+
+    execution: 
+      sequence: 10
+      event: Console Log # 40390002552268805
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Validate then Insert ================
+  id: 44276530191177749
+  identification: 
+    name: Validate then Insert
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Submit # 40389954814268804
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 44276625847177750
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            apex_collection.add_member(
+                        p_collection_name => 'PAYMENT',
+                        p_c001 => 'Credit Card',
+                        p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P45_AMOUNT, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n002 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P45_UNPAID, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n003 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(0, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n004 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')), 2), 'FM999999999.00')
+                        );
+        
+             :P45_URL := apex_page.get_url(
+                    p_page        => 43,
+                    p_clear_cache => '43'
+                );
+        
+           INSERT INTO NPT034 (amount, last_4_digits, auth_code, card_type, card_issuer, user_created, date_created)
+           VALUES (:P45_AMOUNT, :P45_LAST4, :P45_AUTH_CODE, :P45_CARD_TYPE, :P45_CARD_ISSUER, :app_user, SYSDATE);
+        
+           COMMIT;
+        END;
+      items-to-submit: 
+      - P45_AMOUNT
+      - P45_LAST4
+      - P45_AUTH_CODE
+      - P45_CARD_TYPE
+      - P45_CARD_ISSUER
+      items-to-return: 
+      - P45_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Validate then Insert # 44276530191177749
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44521435926129201
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P45_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Validate then Insert # 44276530191177749
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 44521652519129203
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 30
+      event: Validate then Insert # 44276530191177749
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Insert into Table ==========================
+  id: 40390373514268808
+  identification: 
+    name: Insert into Table
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+         INSERT INTO NPT034 (amount, last_4_digits, auth_code, card_type, card_issuer, user_created, date_created)
+         VALUES (:P45_AMOUNT, :P45_LAST4, :P45_AUTH_CODE, :P45_CARD_TYPE, :P45_CARD_ISSUER, :APP_USER, SYSDATE);
+      
+         COMMIT;
+      END;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Process: Add Collection =============================
+  id: 40390638141268811
+  identification: 
+    name: Add Collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          apex_collection.add_member(
+                      p_collection_name => 'PAYMENT',
+                      p_c001 => 'Credit Card',
+                      p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P45_AMOUNT, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                      p_n002 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P45_UNPAID, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                      p_n003 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(0, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                      p_n004 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')), 2), 'FM999999999.00')
+                      );
+      END;
+      
+      
+      
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Process: Close Dialog ===============================
+  id: 44276435365177748
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+branches: 
+- # ====== Branch: Redirect to Summary =========================
+  id: 40390235455268807
+  identification: 
+    name: Redirect to Summary
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+      page: 43 # POS Cashiering - Payment Summary
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+

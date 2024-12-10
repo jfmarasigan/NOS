@@ -1,0 +1,642 @@
+---
+# ====== Page: Masterfile Maintenance Submenu ================
+id: 2
+identification: 
+  name: Masterfile Maintenance Submenu
+  alias: MASTERFILE-MAINTENANCE
+  title: Masterfile Maintenance
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/masterfile-menu#MIN#.js'
+  execute-when-page-loads: mapKeys();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/menu#MIN#.css'
+  inline: |
+    .menu-instruction {
+        margin-block-start: 2rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Header ======================================
+  id: 5663793909316316
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="title-header">
+      Masterfile Maintenance
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 5663842628316317
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: menu-btns
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Footer ======================================
+  id: 39170889874744637
+  identification: 
+    name: Footer
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="menu-instruction">
+      Press the underlined letter to proceed
+      </div>
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--textContent
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P2_MURL ==================================
+  id: 15654889823560910
+  identification: 
+    name: P2_MURL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: APEX_PAGE.GET_URL(p_page => 1)
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P2_PLACEHOLDER1 ==========================
+  id: 19393713017535029
+  identification: 
+    name: P2_PLACEHOLDER1
+    type: Display Only
+
+  label: 
+    label: Placeholder1
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 40
+    region: Buttons # 5663842628316317
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P2_PLACEHOLDER2 ==========================
+  id: 19394014371535032
+  identification: 
+    name: P2_PLACEHOLDER2
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 70
+    region: Buttons # 5663842628316317
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P2_PLACEHOLDER3 ==========================
+  id: 19394121267535033
+  identification: 
+    name: P2_PLACEHOLDER3
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 100
+    region: Buttons # 5663842628316317
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ITEM_MASTERFILE =============================
+  id: 5663996248316318
+  identification: 
+    button-name: ITEM_MASTERFILE
+    label: <u>I</u> - Item Masterfile
+
+  layout: 
+    sequence: 50
+    region: Buttons # 5663842628316317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:4::'
+      page: 4 # Item Masterfile
+      clear-cache: 4
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: itm-master
+
+- # ====== Button: VENDOR_MASTERFILE ===========================
+  id: 5664020222316319
+  identification: 
+    button-name: VENDOR_MASTERFILE
+    label: <u>V</u> - Vendor Masterfile
+
+  layout: 
+    sequence: 30
+    region: Buttons # 5663842628316317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:5:&SESSION.::&DEBUG.:::'
+      page: 5 # Vendor Masterfile
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: sup-master
+
+- # ====== Button: ORD_SALES_MASTERFILE ========================
+  id: 5664135019316320
+  identification: 
+    button-name: ORD_SALES_MASTERFILE
+    label: <u>O</u> - Ordertaker and Salesman Masterfile
+
+  layout: 
+    sequence: 80
+    region: Buttons # 5663842628316317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:32:&SESSION.::&DEBUG.:::'
+      page: 32 # Ordertaker and Salesman Masterfile
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: ord-sales-master
+
+- # ====== Button: EXIT ========================================
+  id: 5664290351316321
+  identification: 
+    button-name: EXIT
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 110
+    region: Buttons # 5663842628316317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 6
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:1:&SESSION.::&DEBUG.:::'
+      page: 1 # Main Menu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: CUSTOMER_MASTERFILE =========================
+  id: 18081554922113220
+  identification: 
+    button-name: CUSTOMER_MASTERFILE
+    label: <u>C</u> - Customer Masterfile
+
+  layout: 
+    sequence: 20
+    region: Buttons # 5663842628316317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:57:&SESSION.::&DEBUG.::P57_SEARCH_CUSTOMER_CODE,P57_SEARCH_DBA,P57_SEARCH_LEGAL_NAME:,,'
+      page: 57 # Customer Masterfile
+      values: 
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: customer-masterfile
+
+- # ====== Button: BANK_MASTERFILE =============================
+  id: 31307982368578711
+  identification: 
+    button-name: BANK_MASTERFILE
+    label: <u>B</u> - Bank Masterfile
+
+  layout: 
+    sequence: 60
+    region: Buttons # 5663842628316317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:4:&SESSION.::&DEBUG.:4::'
+      page: 4 # Item Masterfile
+      clear-cache: 4
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: bank-masterfile
+
+- # ====== Button: DISCOUNT_MASTERFILE =========================
+  id: 31308021841578712
+  identification: 
+    button-name: DISCOUNT_MASTERFILE
+    label: <u>D</u> - Discount Masterfile
+
+  layout: 
+    sequence: 90
+    region: Buttons # 5663842628316317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:66:&SESSION.::&DEBUG.:::'
+      page: 66 # Discount List
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: discount-masterfile
+

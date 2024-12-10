@@ -1,0 +1,2478 @@
+---
+# ====== Page: Credit Memo Creator ===========================
+id: 122
+identification: 
+  name: Credit Memo Creator
+  alias: CREDIT-MEMO-CREATOR
+  title: Credit Memo Creator
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p122KeyMap = {
+        a : (v) => {
+            if($("#printingOptions").is(':visible')){
+                $("#a2").trigger("click");
+            } else {
+                $("#a").trigger("click");
+            }
+        },
+    
+        b : (v) => {
+            if($("#printingOptions").is(':visible')){
+                $("#b").trigger("click");
+            }
+        },
+    
+        r : (v) => {
+            $("#r").trigger("click");
+        },
+    
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+    
+        home: (v) => {
+            $("#top").trigger("click");
+        },
+        
+        end: (v) => {
+            $("#bottom").trigger("click");
+        },
+    
+        escape: (v) => {
+            if(!($("#printingOptions").is(':visible'))){
+                $("#esc").trigger("click");
+            }     
+        }
+    }
+    
+    function mapP122Keys() {
+        $(document).off('keydown.p122keyevents');
+        $(document).on('keydown.p122keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p122KeyMap[key]) {
+                ev.preventDefault();
+                p122KeyMap[key]();
+            }
+        });
+    }
+    
+    function selectFirstRow() {
+        let region = apex.region("creditMemo")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$; // assumes current view is grid!
+        
+        let rec = model.recordAt(0);
+        if ( rec ) {
+            // estimate scroll offset and scroll into view.
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            // assumes ig scroll is the scroll parent!
+            $(".a-GV-w-scroll").scrollTop( offset );
+            // issue sometimes a full page isn't rendered but
+            // the user can just scroll a little and it will fill in
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+    
+    function selectLastRow() {
+        let region = apex.region("creditMemo")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$; // assumes current view is grid!
+        
+        let totalRec = model.getTotalRecords();
+        let rec = model.recordAt(totalRec - 1);
+        if ( rec ) {
+            // estimate scroll offset and scroll into view.
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            // assumes ig scroll is the scroll parent!
+            $(".a-GV-w-scroll").scrollTop( offset );
+            // issue sometimes a full page isn't rendered but
+            // the user can just scroll a little and it will fill in
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+  execute-when-page-loads: |
+    mapP122Keys();
+    setTitle("Credit Memo Creator");
+    $("#s").trigger("click");
+    setIGInputFilter($("#refund"), function(value) {  
+        var val = parseInt(value);
+        var limit = parseInt(apex.item("P96_REFUNDABLE").getValue());
+        var isValid = (limit >= val) || value == '';
+        return isValid;
+    }, "Refund Quantity must be lower or equal to refundable quantity");
+    
+
+css: 
+  inline: |
+    .t-DialogRegion-body{
+        padding-top: 0;
+    }
+    
+    #printingOptions, #a2, #b {
+        padding-top: 0;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    #a2, #b{
+        outline: none;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #returnSummary{
+        height: 550px;
+    }
+    
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        /* color: #056BC9; */
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+    
+    body, #content, #nav{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    table, tr, td, th {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        font-family: Arial;
+        background-color: rgb(30, 58, 138);
+        color: white;
+        margin-top: 0.5rem;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.125rem;
+        font-family: Arial;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #056BC9;
+        color: white;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+        border-bottom: 0;
+        padding-bottom: 0.2rem;
+    }
+    
+    
+    .ui-dialog.modal-dialog--pullout{
+        left: 40% !important;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+        padding-bottom: 0.2rem;
+        padding-top: 0.2rem;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    } 
+    
+    .format-size{
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .input-size{
+        font-size: 1.125rem;
+    }
+    
+    .title-size{
+        font-size: 1.5rem;
+    }
+    
+    .title-bar{
+        text-align: center;
+        border-bottom: 0;
+    }
+    
+    #esc{
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: CM Creator ==================================
+  id: 90030674966048483
+  identification: 
+    name: CM Creator
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          npt2.ITEM_DESC,
+          npt2.BRAND_CODE,
+          npt2.DISCOUNTED_PRICE,
+          npt2.QUANTITY,
+          npt37.RETURNABLE_QUANTITY,
+          npt37.RETURN_QUANTITY,
+          npt37.ITEM_INVOICE_ID,
+          0 AS "Cumulative Qty"
+      FROM
+          NPT002 npt2,
+          NPT033 npt33,
+          NPT037 npt37
+      WHERE
+          npt2.ITEM_INVOICE_ID = npt37.ITEM_INVOICE_ID AND
+          npt2.CASH_INVOICE_ID = npt33.CASH_INVOICE_ID AND
+          npt33.CASH_INVOICE_ID = :P122_INVOICE_NUMBER AND
+          (
+          (:P122_PAGE_MODE = 'inquire' AND npt37.RETURN_ID = :P122_RETURN_NUMBER) OR 
+          (:P122_PAGE_MODE = 'add' AND npt37.RETURN_ID IS NULL)
+          )
+    page-items-to-submit: 
+    - P122_INVOICE_NUMBER
+    - P122_PAGE_MODE
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: creditMemo
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 90030737155048484
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 550
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: true,
+                reorderColumns: false,
+                // stickyFooter: true
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 90091040583426937
+      identification: 
+        name: Primary Report
+        alias: 438192
+
+  columns: 
+  - # ====== Column: Cumulative Qty ==============================
+    id: 45601813180188044
+    identification: 
+      column-name: Cumulative Qty
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 140
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: Cumulative Qty
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: RETURNABLE_QUANTITY =========================
+    id: 46318728045497912
+    identification: 
+      column-name: RETURNABLE_QUANTITY
+      type: Display Only
+
+    heading: 
+      heading: Returnable Quantity
+      alignment: start
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 120
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: RETURNABLE_QUANTITY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+            };
+            return options;
+        }
+
+  - # ====== Column: RETURN_QUANTITY =============================
+    id: 46318857088497913
+    identification: 
+      column-name: RETURN_QUANTITY
+      type: Number Field
+
+    heading: 
+      heading: Return Quantity
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 130
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: RETURN_QUANTITY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_DESC ===================================
+    id: 90030891875048485
+    identification: 
+      column-name: ITEM_DESC
+      type: Display Only
+
+    heading: 
+      heading: Item Desc
+      alignment: center
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESC
+      data-type: VARCHAR2
+      query-only: true
+      primary-key: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+            };
+            return options;
+        }
+
+  - # ====== Column: BRAND_CODE ==================================
+    id: 90030955873048486
+    identification: 
+      column-name: BRAND_CODE
+      type: Display Only
+
+    heading: 
+      heading: Brand Code
+      alignment: center
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: BRAND_CODE
+      data-type: VARCHAR2
+      query-only: true
+      primary-key: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+            };
+            return options;
+        }
+
+  - # ====== Column: DISCOUNTED_PRICE ============================
+    id: 90031087258048487
+    identification: 
+      column-name: DISCOUNTED_PRICE
+      type: Display Only
+
+    heading: 
+      heading: Discounted Price
+      alignment: center
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: DISCOUNTED_PRICE
+      data-type: NUMBER
+      query-only: true
+      primary-key: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_INVOICE_ID =============================
+    id: 90032380385048500
+    identification: 
+      column-name: ITEM_INVOICE_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 150
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_INVOICE_ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+            };
+            return options;
+        }
+
+  - # ====== Column: QUANTITY ====================================
+    id: 90033581842048512
+    identification: 
+      column-name: QUANTITY
+      type: Display Only
+
+    heading: 
+      heading: Quantity
+      alignment: center
+
+    settings: 
+      format: Plain Text
+      based-on: Item Value
+
+    layout: 
+      sequence: 60
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: QUANTITY
+      data-type: NUMBER
+      query-only: true
+      primary-key: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+            };
+            return options;
+        }
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: <span class="title-size">Return Summary</span
+  id: 90031428528048491
+  identification: 
+    name: <span class="title-size">Return Summary</span>
+    type: Static Content
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - title-bar
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: returnSummary
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Printing Options ============================
+  id: 90194069617785991
+  identification: 
+    name: Printing Options
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: printingOptions
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P122_RETURN_NUMBER =======================
+  id: 90033798154048539
+  identification: 
+    name: P122_RETURN_NUMBER
+    type: Display Only
+
+  label: 
+    label: '<span class="input-size">Return Number:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: <span class="title-size">Return Summary</span> # 90031428528048491
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: '-'
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_DATE_OF_RETURN ======================
+  id: 90033886023048540
+  identification: 
+    name: P122_DATE_OF_RETURN
+    type: Display Only
+
+  label: 
+    label: '<span class="input-size">Date:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: <span class="title-size">Return Summary</span> # 90031428528048491
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: SYSDATE()
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_RETURN_QUANTITY =====================
+  id: 90033996473048541
+  identification: 
+    name: P122_RETURN_QUANTITY
+    type: Display Only
+
+  label: 
+    label: '<span class="input-size">Quantity:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: <span class="title-size">Return Summary</span> # 90031428528048491
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_qty NUMBER := 0;
+      BEGIN
+          IF :P122_PAGE_MODE = 'inquire' THEN
+              SELECT
+                  SUM(RETURN_QUANTITY)
+              INTO
+                  l_qty
+              FROM
+                  NPT037
+              WHERE
+                  RETURN_ID = :P122_RETURN_NUMBER;
+          END IF;
+          
+          RETURN l_qty;
+      END;
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_RETURN_AMOUNT =======================
+  id: 90034051774048542
+  identification: 
+    name: P122_RETURN_AMOUNT
+    type: Display Only
+
+  label: 
+    label: '<span class="input-size">Amount:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: <span class="title-size">Return Summary</span> # 90031428528048491
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_amt NUMBER := 0;
+      BEGIN
+          IF :P122_PAGE_MODE = 'inquire' THEN
+              SELECT
+                  SUM(npt37.RETURN_QUANTITY * npt2.DISCOUNTED_PRICE)
+              INTO
+                  l_amt
+              FROM
+                  NPT002 npt2,
+                  NPT037 npt37
+              WHERE
+                  npt37.RETURN_ID = :P122_RETURN_NUMBER AND
+                  npt37.ITEM_INVOICE_ID = npt2.ITEM_INVOICE_ID;
+          END IF;
+          
+          RETURN '$' || l_amt;
+      END;
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_REASON ==============================
+  id: 90034196866048543
+  identification: 
+    name: P122_REASON
+    type: Display Only
+
+  label: 
+    label: '<span class="input-size">Reason:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: <span class="title-size">Return Summary</span> # 90031428528048491
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 6
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - input-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_reason VARCHAR2(100) := '-';
+      BEGIN
+          IF :P122_PAGE_MODE = 'inquire' THEN
+              SELECT
+                  REASON
+              INTO
+                  l_reason
+              FROM
+                  NPT016
+              WHERE
+                  REFUND_ID = :P122_REFUND_NUMBER;
+          END IF;
+          
+          RETURN l_reason;
+      END;
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_INVOICE_NUMBER ======================
+  id: 90040638175048574
+  identification: 
+    name: P122_INVOICE_NUMBER
+    type: Display Only
+
+  label: 
+    label: Invoice Number
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_INVOICE_DATE ========================
+  id: 90040781992048575
+  identification: 
+    name: P122_INVOICE_DATE
+    type: Display Only
+
+  label: 
+    label: Invoice Date
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): |
+      SELECt
+          DATE_CREATED
+      FROM
+          NPT033
+      WHERE
+          :P122_INVOICE_NUMBER = CASH_INVOICE_ID
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_PAGE_MODE ===========================
+  id: 90041597801048583
+  identification: 
+    name: P122_PAGE_MODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_INVOICE_NUMBER_LABEL ================
+  id: 90043344288048601
+  identification: 
+    name: P122_INVOICE_NUMBER_LABEL
+    type: Display Only
+
+  label: 
+    label: <span class="format-size">Invoice Number</span>
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: '<span class="format-size">Invoice Number:</span>'
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_INVOICE_DATE_LABEL ==================
+  id: 90043522727048602
+  identification: 
+    name: P122_INVOICE_DATE_LABEL
+    type: Display Only
+
+  label: 
+    label: Invoice Date
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: '<span class="format-size">Invoice Date:</span>'
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_RETURN_QUANTITY_CUMULATIVE ==========
+  id: 90195739017786033
+  identification: 
+    name: P122_RETURN_QUANTITY_CUMULATIVE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: <span class="title-size">Return Summary</span> # 90031428528048491
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_RETURN_AMOUNT_CUMULATIVE ============
+  id: 90195867858786034
+  identification: 
+    name: P122_RETURN_AMOUNT_CUMULATIVE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: <span class="title-size">Return Summary</span> # 90031428528048491
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_RETURN_AMOUNT_RETURN ================
+  id: 90198013241786055
+  identification: 
+    name: P122_RETURN_AMOUNT_RETURN
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: <span class="title-size">Return Summary</span> # 90031428528048491
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P122_RETURNABLE ==========================
+  id: 90202661562786068
+  identification: 
+    name: P122_RETURNABLE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: RefundAll ===================================
+  id: 46272276046182803
+  identification: 
+    button-name: RefundAll
+    label: <u>A</u> - Refund All
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: RefundReason ================================
+  id: 46272659912182804
+  identification: 
+    button-name: RefundReason
+    label: <u>R</u> - Refund Reason
+
+  layout: 
+    sequence: 110
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:97:&SESSION.::&DEBUG.:::'
+      page: 97 # Refund Reason
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: r
+
+  server-side-condition: 
+    type: Item = Value
+    item: P122_PAGE_MODE
+    value: add
+
+- # ====== Button: PrintSummary ================================
+  id: 46273050755182806
+  identification: 
+    button-name: PrintSummary
+    label: <u>P</u> - Print Refund Summary
+
+  layout: 
+    sequence: 120
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+  server-side-condition: 
+    type: Item = Value
+    item: P122_PAGE_MODE
+    value: add
+
+- # ====== Button: Back ========================================
+  id: 46273412799182806
+  identification: 
+    button-name: Back
+    label: esc
+
+  layout: 
+    sequence: 130
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:124:&SESSION.::&DEBUG.:::'
+      page: 124 # Credit Memo List
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+- # ====== Button: Dotmatrix ===================================
+  id: 46276931896182832
+  identification: 
+    button-name: Dotmatrix
+    label: <u>A</u> - Dotmatrix
+
+  layout: 
+    sequence: 10
+    region: Printing Options # 90194069617785991
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a2
+
+- # ====== Button: Graphic =====================================
+  id: 46277344090182832
+  identification: 
+    button-name: Graphic
+    label: <u>B</u> - Graphic
+
+  layout: 
+    sequence: 20
+    region: Printing Options # 90194069617785991
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: b
+
+dynamic-actions: 
+- # ====== Dynamic Action: Print ===============================
+  id: 46283962935182867
+  identification: 
+    name: Print
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Dotmatrix # 46276931896182832
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46284445819182870
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("REFUND", "pdf", { 
+            fileName: "Refund_" + $v("P122_REFUND_NUMBER") + "_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_REFUND_ID : $v("P122_REFUND_NUMBER"),
+                P_PRINT_TYPE: "dotmatrix",
+                P_APP_USER: '&APP_USER.'
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print # 46283962935182867
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print_1 =============================
+  id: 46284853831182870
+  identification: 
+    name: Print_1
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Graphic # 46277344090182832
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46285374927182871
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("REFUND", "pdf", { 
+            fileName: "Refund_" + $v("P122_REFUND_NUMBER") + "_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_REFUND_ID : $v("P122_REFUND_NUMBER"),
+                P_PRINT_TYPE: "graphic",
+                P_APP_USER: '&APP_USER.'
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print_1 # 46284853831182870
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Region =========================
+  id: 46285769660182871
+  identification: 
+    name: Open Region
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: PrintSummary # 46273050755182806
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: '!($("#p").is(":disabled"))'
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 46286225232182873
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            IF :P122_REFUND_NUMBER = '-' THEN
+                INSERT INTO NPT016 (TOTAL_AMOUNT, TOTAL_QUANTITY, REASON, USER_CREATED, DATE_CREATED)
+                VALUES(:P122_REFUND_AMOUNT_RETURN, :P122_REFUND_QUANTITY, :P122_REASON, :APP_USER, SYSDATE())
+                RETURNING REFUND_ID
+                INTO :P122_REFUND_NUMBER;
+        
+                UPDATE NPT035
+                SET REFUND_ID = :P122_REFUND_NUMBER
+                WHERE REFUND_ID IS NULL AND USER_CREATED = :APP_USER AND REFUND_QUANTITY > 0;
+            END IF;
+        END;
+      items-to-submit: 
+      - P122_RETURN_AMOUNT_CUMULATIVE
+      - P122_RETURN_QUANTITY
+      - P122_REASON
+      - P122_RETURN_NUMBER
+      items-to-return: 
+      - P122_RETURN_NUMBER
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: Open Region # 46285769660182871
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Open Region =================================
+    id: 46286707513182875
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 90194069617785991
+
+    execution: 
+      sequence: 70
+      event: Open Region # 46285769660182871
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable =====================================
+    id: 46287267826182876
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: RefundAll # 46272276046182803
+
+    execution: 
+      sequence: 50
+      event: Open Region # 46285769660182871
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Disable =====================================
+    id: 46287710349182878
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: RefundReason # 46272659912182804
+
+    execution: 
+      sequence: 60
+      event: Open Region # 46285769660182871
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close ===============================
+  id: 46288196844182878
+  identification: 
+    name: Close
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: RefundReason # 46272659912182804
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 46288613455182879
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P97_REFUND_REASON
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P122_REASON
+
+    execution: 
+      sequence: 10
+      event: Close # 46288196844182878
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: When load ===========================
+  id: 46289023827182879
+  identification: 
+    name: When load
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Focus =======================================
+    id: 46289547552182879
+    identification: 
+      name: Focus
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "500");
+
+    execution: 
+      sequence: 10
+      event: When load # 46289023827182879
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46290019764182881
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var model = apex.region("creditMemo").widget().interactiveGrid("getViews", "grid").model;
+        var qtyKey = model.getFieldKey("RETURN_QUANTITY");
+        
+        model.forEach(function(i){
+            model.setValue(i, "RETURN_QUANTITY", '');
+        })
+        apex.region("creditMemo").widget().interactiveGrid("getActions").invoke("save");
+        
+
+    execution: 
+      sequence: 50
+      event: When load # 46289023827182879
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P122_PAGE_MODE
+      value: add
+
+  - # ====== Action: Hide ========================================
+    id: 46290509391182881
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: RefundAll # 46272276046182803
+
+    execution: 
+      sequence: 20
+      event: When load # 46289023827182879
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    client-side-condition: 
+      type: Item = Value
+      item: P122_PAGE_MODE
+      value: inquire
+
+  - # ====== Action: Hide ========================================
+    id: 46291041829182882
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: RefundReason # 46272659912182804
+
+    execution: 
+      sequence: 40
+      event: When load # 46289023827182879
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    client-side-condition: 
+      type: Item = Value
+      item: P122_PAGE_MODE
+      value: inquire
+
+  - # ====== Action: Hide ========================================
+    id: 46291589368182882
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Button
+      button: PrintSummary # 46273050755182806
+
+    execution: 
+      sequence: 30
+      event: When load # 46289023827182879
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    client-side-condition: 
+      type: Item = Value
+      item: P122_PAGE_MODE
+      value: inquire
+
+- # ====== Dynamic Action: Refund all ==========================
+  id: 46291935443182882
+  identification: 
+    name: Refund all
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: RefundAll # 46272276046182803
+
+  client-side-condition: 
+    type: Item = Value
+    item: P122_PAGE_MODE
+    value: add
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46292404369182882
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var model = apex.region("creditMemo").widget().interactiveGrid("getViews", "grid").model;
+        var qtyKey = model.getFieldKey("REFUND_QUANTITY");
+        var refundableKey = model.getFieldKey("REFUNDABLE_QUANTITY");
+        var amtKey = model.getFieldKey("DISCOUNTED_PRICE");
+        var totalQty = parseInt($v("P122_REFUND_QUANTITY_CUMULATIVE"));
+        var totalAmt = parseInt($v("P122_REFUND_AMOUNT_CUMULATIVE"));
+        
+        model.forEach(function(i){
+            var qty = parseInt(i[qtyKey],10);
+            var amt = parseInt(i[amtKey],10);
+            var ref = parseInt(i[refundableKey],10);
+        
+            if(!isNaN(qty)){
+                totalQty += qty;
+                totalAmt += parseFloat((qty * amt), 10.00);
+                
+                model.setValue(i, "REFUNDABLE_QUANTITY", (ref - qty).toString());
+                model.setValue(i, "REFUND_QUANTITY", '');
+        
+                apex.item("P122_REFUND_QUANTITY_CUMULATIVE").setValue(totalQty);
+                apex.item("P122_REFUND_AMOUNT_CUMULATIVE").setValue(totalAmt);
+        
+                apex.item("P122_REFUND_QUANTITY").setValue(apex.item("P122_REFUND_QUANTITY_CUMULATIVE").getValue());
+                apex.item("P122_REFUND_AMOUNT").setValue('$' + parseInt(apex.item("P122_REFUND_AMOUNT_CUMULATIVE").getValue()).toFixed(2));
+                apex.item("P122_REFUND_AMOUNT_RETURN").setValue(apex.item("P122_REFUND_AMOUNT_CUMULATIVE").getValue());
+            }
+        })
+        
+        apex.region("creditMemo").widget().interactiveGrid("getActions").invoke("save");
+        
+
+    execution: 
+      sequence: 10
+      event: Refund all # 46291935443182882
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Enable ======================================
+    id: 46292945560182884
+    identification: 
+      action: Enable
+
+    affected-elements: 
+      selection-type: Button
+      button: PrintSummary # 46273050755182806
+
+    execution: 
+      sequence: 20
+      event: Refund all # 46291935443182882
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    client-side-condition: 
+      type: Item > Value
+      item: P122_RETURN_QUANTITY
+      value: 0
+
+- # ====== Dynamic Action: Get refundable ======================
+  id: 46293372046182884
+  identification: 
+    name: Get refundable
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: CM Creator # 90030674966048483
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46293866524182884
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var selectedRefundable
+        model=this.data.model;
+        
+        if(this.data != null){
+            if(this.data.selectedRecords[0] != null){
+                selectedRefundable = model.getValue(this.data.selectedRecords[0], "REFUNDABLE_QUANTITY");
+            }
+        } 
+        apex.item("P122_REFUNDABLE").setValue(selectedRefundable);
+        
+
+    execution: 
+      sequence: 10
+      event: Get refundable # 46293372046182884
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change ==============================
+  id: 46294212606182885
+  identification: 
+    name: Change
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: CM Creator # 90030674966048483
+    column(s): 
+    - RETURN_QUANTITY
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46294758481182885
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.region("creditMemo").widget().interactiveGrid("getActions").invoke("save");
+        var model = apex.region("creditMemo").widget().interactiveGrid("getViews", "grid").model;
+        var qtyKey = model.getFieldKey("REFUND_QUANTITY");
+        var amtKey = model.getFieldKey("DISCOUNTED_PRICE");
+        var totalQty = parseInt(apex.item("P122_REFUND_QUANTITY_CUMULATIVE").getValue());
+        var totalAmt = parseFloat(apex.item("P122_REFUND_AMOUNT_CUMULATIVE").getValue());
+        
+        model.forEach(function(i){
+            var qty = parseInt(i[qtyKey],10);
+            var amt = parseFloat(i[amtKey]);
+        
+            if(!isNaN(qty)){
+                totalQty += qty;
+                totalAmt += parseFloat((qty * amt));
+            }
+        })
+        
+        $s("P122_REFUND_QUANTITY", totalQty);
+        $s("P122_REFUND_AMOUNT", "$" + totalAmt.toFixed(2));
+        $s("P122_REFUND_AMOUNT_RETURN", totalAmt.toFixed(2));
+
+    execution: 
+      sequence: 10
+      event: Change # 46294212606182885
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Disable button ======================
+  id: 46295135653182885
+  identification: 
+    name: Disable button
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Disable =====================================
+    id: 46295691594182887
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: PrintSummary # 46273050755182806
+
+    execution: 
+      sequence: 10
+      event: Disable button # 46295135653182885
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Reset filter ========================
+  id: 46296010994182887
+  identification: 
+    name: Reset filter
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridsave
+    selection-type: Region
+    region: CM Creator # 90030674966048483
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46296515982182887
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setIGInputFilter($("#refund"), function(value) {  
+            var val = parseInt(value);
+            var limit = parseInt(apex.item("P122_REFUNDABLE").getValue());
+            var isValid = (limit >= val) || value == '';
+            return isValid;
+        }, "Refund Quantity must be lower or equal to refundable quantity");
+
+    execution: 
+      sequence: 10
+      event: Reset filter # 46296010994182887
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Refund Creator - Save Interactive Grid Data 
+  id: 46281747652182854
+  identification: 
+    name: Refund Creator - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: CM Creator # 90030674966048483
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

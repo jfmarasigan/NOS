@@ -1,0 +1,2433 @@
+---
+# ====== Page: User Utilities Add ============================
+id: 219
+identification: 
+  name: User Utilities Add
+  alias: USER-UTILITIES-ADD
+  title: User Utilities Add
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p219KeyMap = {
+        f6 : (v) => {
+            $("#f6").trigger("click");
+        },
+        space : (v) => {
+           $("#space").trigger("click");
+        },
+        enter : (v) => {
+           $("#enter").trigger("click");
+        },
+        escape : (v) => {
+            $("#esc").trigger("click");
+        },
+        home : (v) => {
+            $("#home").trigger("click");
+        },
+        end : (v) => {
+            $("#end").trigger("click");
+        }
+    }
+    
+    function mapP219Keys() {
+        $(document).off('keydown.p219keyevents');
+        $(document).on('keydown.p219keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p219KeyMap[key]) {
+                ev.preventDefault();
+                p219KeyMap[key]();
+            }
+        });
+    }
+    
+    function checkValidations(){
+        let isValid = true;
+    
+        // Name
+        if($v("P219_NAME").length <= 0){
+            $("#P219_NAME").addClass("apex-page-item-error");
+            $("#P219_NAME_error_placeholder").removeClass("u-hidden");
+            $("#P219_NAME_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else{
+            $("#P219_NAME").removeClass("apex-page-item-error");
+            $("#P219_NAME_error_placeholder").addClass("u-hidden");
+        }
+    
+        // Username
+        console.log($v("P219_USER_NAME").length)
+        if($v("P219_USER_NAME").length <= 0){
+            $("#P219_USER_NAME").addClass("apex-page-item-error");
+            $("#P219_USER_NAME_error_placeholder").removeClass("u-hidden");
+            $("#P219_USER_NAME_error_placeholder").html("Must have some value.");
+            isValid = false;
+        } else if( Number( $v("P219_USERNAME_EXISTS") ) == 1 ){
+            $("#P219_USER_NAME").addClass("apex-page-item-error");
+            $("#P219_USER_NAME_error_placeholder").removeClass("u-hidden");
+            $("#P219_USER_NAME_error_placeholder").html("Username already exists.");
+            isValid = false;
+        } 
+        else{
+            $("#P219_USER_NAME").removeClass("apex-page-item-error");
+            $("#P219_USER_NAME_error_placeholder").addClass("u-hidden");
+        }
+    
+        return isValid;
+    }
+  execute-when-page-loads: |
+    setTitle("Add User");
+    mapP219Keys();
+    $x("P219_NAME").focus();
+    apex.actions.shortcutSupport("off");
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #esc, #enter {
+        display: none;
+    }
+    
+    #user-form {
+        background-color: rgb(30, 58, 138);
+    }
+    #user-form label,
+    #user-form input,
+    #user-form select {
+        font-size: 1.125rem;
+    }
+    #user-form label {
+        color: white;
+    }
+    #user-form .a-Form-error{
+        color: #FFD700;
+    }
+    #user-form select {
+        padding-top: 0.438rem;
+        padding-bottom: 0.438rem;
+    }
+    
+    #list .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #list .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #list .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #list .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    #list table,
+    #list tr,
+    #list td,
+    #list th {
+        font-size: 1.125rem;
+    }
+    
+    #list_ig{
+        border: 0.0625rem solid black;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header {
+        border-color: black;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .ui-dialog{
+        border: 2px solid black;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.625rem 0.625rem -0.25rem rgba(0,0,0,0.2);
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+    }
+    
+    .ui-dialog-titlebar-close {
+        display:none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    html::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    } 
+    
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    .a-GV-w-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .a-GV-w-scroll {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    
+    .t-Form-labelContainer:has(> #P219_NAME_LABEL),
+    .t-Form-labelContainer:has(> #P219_USER_NAME_LABEL),
+    .t-Form-labelContainer:has(> #P219_PASSWORD_LABEL),
+    .t-Form-labelContainer:has(> #P219_ROLE_LABEL),
+    .t-Form-labelContainer:has(> #P219_STATUS_LABEL), 
+    .t-Form-labelContainer:has(> #P219_PASSWORD_GENERATED_LABEL) {
+        text-align: start;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Form ========================================
+  id: 45031334131682449
+  identification: 
+    name: Form
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM009
+    include-rowid-column: false
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: user-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Buttons =====================================
+  id: 45410223266383613
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: List ========================================
+  id: 45410378734383614
+  identification: 
+    name: List
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          seq_id,
+          n001,
+          n002,
+          c001,
+          c002
+      FROM APEX_COLLECTIONS
+      WHERE COLLECTION_NAME = 'ACCESS_LIST'
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 45410425107383615
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 360
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 45427561855494876
+      identification: 
+        name: Primary Report
+        alias: 454276
+
+  columns: 
+  - # ====== Column: SEQ_ID ======================================
+    id: 45412483771383635
+    identification: 
+      column-name: SEQ_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SEQ_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: N001 ========================================
+    id: 45412514270383636
+    identification: 
+      column-name: N001
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 20
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: N001
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: C001 ========================================
+    id: 45412679291383637
+    identification: 
+      column-name: C001
+      type: Textarea
+
+    heading: 
+      heading: Module
+      alignment: center
+
+    settings: 
+      resizable: false
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: C001
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: C002 ========================================
+    id: 45412727252383638
+    identification: 
+      column-name: C002
+      type: Textarea
+
+    heading: 
+      heading: Access
+      alignment: center
+
+    settings: 
+      resizable: false
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: C002
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+  - # ====== Column: N002 ========================================
+    id: 45413056698383641
+    identification: 
+      column-name: N002
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 60
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: N002
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: ADD =========================================
+    id: 45413245424383643
+    identification: 
+      column-name: ADD
+      type: Checkbox
+
+    heading: 
+      alignment: center
+
+    settings: 
+      use-defaults: false
+      checked-value: y
+      unchecked-value: n
+
+    layout: 
+      sequence: 40
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: None
+
+    enable-users-to: 
+      hide: false
+
+page-items: 
+- # ====== Page Item: P219_USER_ID =============================
+  id: 45409071887383601
+  identification: 
+    name: P219_USER_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form # 45031334131682449
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: USER_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P219_USER_NAME ===========================
+  id: 45409118860383602
+  identification: 
+    name: P219_USER_NAME
+    type: Text Field
+
+  label: 
+    label: 'User Name <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: USER_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P219_PASSWORD_GENERATED ==================
+  id: 45409270000383603
+  identification: 
+    name: P219_PASSWORD_GENERATED
+    type: Text Field
+
+  label: 
+    label: 'Password <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 100
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P219_USER_ID
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P219_DATE_CREATED ========================
+  id: 45409358569383604
+  identification: 
+    name: P219_DATE_CREATED
+    type: Date Picker
+
+  label: 
+    label: Date Created
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 90
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P219_USER_UPDATE =========================
+  id: 45409498380383605
+  identification: 
+    name: P219_USER_UPDATE
+    type: Text Field
+
+  label: 
+    label: User Update
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 100
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: USER_UPDATE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P219_DATE_UPDATED ========================
+  id: 45409583751383606
+  identification: 
+    name: P219_DATE_UPDATED
+    type: Date Picker
+
+  label: 
+    label: Date Updated
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 110
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: DATE_UPDATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P219_SALT ================================
+  id: 45409600487383607
+  identification: 
+    name: P219_SALT
+    type: Text Field
+
+  label: 
+    label: Salt
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 120
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: SALT
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P219_STATUS ==============================
+  id: 45409705865383608
+  identification: 
+    name: P219_STATUS
+    type: Select List
+
+  label: 
+    label: 'Status <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 80
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: Static Values
+    static-values: 'STATIC:Active;A,Inactive;I,Locked;L'
+    display-extra-values: false
+    display-null-value: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: STATUS
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P219_INVALID_LOGIN_TRIES =================
+  id: 45409818861383609
+  identification: 
+    name: P219_INVALID_LOGIN_TRIES
+    type: Number Field
+
+  label: 
+    label: Invalid Login Tries
+    alignment: Left
+
+  settings: 
+    number-alignment: Start
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 130
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: INVALID_LOGIN_TRIES
+    data-type: NUMBER
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P219_LAST_LOCKED_DATE ====================
+  id: 45409974604383610
+  identification: 
+    name: P219_LAST_LOCKED_DATE
+    type: Date Picker
+
+  label: 
+    label: Last Locked Date
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 140
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Floating
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: LAST_LOCKED_DATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P219_NAME ================================
+  id: 45410077456383611
+  identification: 
+    name: P219_NAME
+    type: Text Field
+
+  label: 
+    label: 'Name <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P219_ROLE ================================
+  id: 45410103087383612
+  identification: 
+    name: P219_ROLE
+    type: Text Field
+
+  label: 
+    label: Role
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: ROLE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P219_PASSWORD ============================
+  id: 45412117172383632
+  identification: 
+    name: P219_PASSWORD
+    type: Password
+
+  label: 
+    label: 'Password <span style="color:red">*</span>'
+    alignment: Left
+
+  settings: 
+    submit-when-enter-pressed: false
+
+  layout: 
+    sequence: 60
+    region: Form # 45031334131682449
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 100
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: PASSWORD
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P219_USER_ID
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P219_USERNAME_EXISTS =====================
+  id: 46249911620877010
+  identification: 
+    name: P219_USERNAME_EXISTS
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P219_USER_NAME_INITIAL ===================
+  id: 46250092772877011
+  identification: 
+    name: P219_USER_NAME_INITIAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Form # 45031334131682449
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 45031334131682449
+    column: USER_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P219_ACCESSED_COMPONENTS =================
+  id: 46250887154877019
+  identification: 
+    name: P219_ACCESSED_COMPONENTS
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Navigate ====================================
+  id: 45410711214383618
+  identification: 
+    button-name: Navigate
+    label: <u>F6</u> - Navigate
+
+  layout: 
+    sequence: 10
+    region: Buttons # 45410223266383613
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: f6
+
+- # ====== Button: Top =========================================
+  id: 45410817298383619
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 20
+    region: Buttons # 45410223266383613
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+- # ====== Button: Bottom ======================================
+  id: 45410934095383620
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 30
+    region: Buttons # 45410223266383613
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+- # ====== Button: Escape ======================================
+  id: 45411092354383621
+  identification: 
+    button-name: Escape
+    label: '-'
+
+  layout: 
+    sequence: 40
+    region: Buttons # 45410223266383613
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:217:&SESSION.::&DEBUG.:::'
+      page: 217 # User Utilities
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+- # ====== Button: Enter =======================================
+  id: 46250185449877012
+  identification: 
+    button-name: Enter
+    label: '-'
+
+  layout: 
+    sequence: 50
+    region: Buttons # 45410223266383613
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Generate Password ===================
+  id: 45411910968383630
+  identification: 
+    name: Generate Password
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P219_USER_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45412052861383631
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var charPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()-_+={}[]|\<>/?";
+        console.log("~!@#$%^&*()-_+={}[]|\<>/?".length)
+        var result = "";
+        for(var i = 0; i <= 3; i++){
+            result += charPool.charAt(Math.floor(Math.random() * 86));
+        }
+        
+        var position = Math.floor(Math.random() * 4);
+        result = [result.slice(0, position), "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(Math.floor(Math.random() * 26)), result.slice(position)].join('');
+        position = Math.floor(Math.random() * 5);
+        result = [result.slice(0, position), "abcdefghijklmnopqrstuvwxyz".charAt(Math.floor(Math.random() * 26)), result.slice(position)].join('');
+        position = Math.floor(Math.random() * 6);
+        result = [result.slice(0, position), "0123456789".charAt(Math.floor(Math.random() * 10)), result.slice(position)].join('');
+        position = Math.floor(Math.random() * 7);
+        result = [result.slice(0, position), "~!@#$%^&*()-_+={}[]|\<>/?".charAt(Math.floor(Math.random() * 24)), result.slice(position)].join('');
+        
+        apex.item('P219_PASSWORD_GENERATED').setValue(result);
+        
+        $("#P219_PASSWORD_GENERATED").attr({
+            readonly:"",
+            tabindex:"-1"
+        })
+
+    execution: 
+      sequence: 10
+      event: Generate Password # 45411910968383630
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Create Collections ==================
+  id: 45412844870383639
+  identification: 
+    name: Create Collections
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 45412987324383640
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_collection_name varchar2(20) := 'ACCESS_LIST';
+            v_first_id NUMBER;
+            v_first_name VARCHAR2(100);
+        BEGIN
+            APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(v_collection_name);
+            FOR a IN (
+                SELECT MODULE_ID, SCREEN
+                FROM NPM011
+                ORDER BY MODULE_ID
+            ) LOOP
+                SELECT COMPONENT_ID, COMPONENT_NAME
+                INTO v_first_id, v_first_name
+                FROM NPM012
+                WHERE MODULE_ID = a.MODULE_ID AND ROWNUM = 1
+                ORDER BY COMPONENT_ID;
+        
+                apex_collection.add_member (p_collection_name => v_collection_name,
+                    p_n001 => v_first_id,
+                    p_n002 => a.MODULE_ID,
+                    p_c001 => a.SCREEN,
+                    p_c002 => v_first_name
+                );
+        
+                FOR b IN (
+                    SELECT COMPONENT_ID, COMPONENT_NAME
+                    FROM NPM012
+                    WHERE MODULE_ID = a.MODULE_ID AND COMPONENT_ID != v_first_id
+                    ORDER BY COMPONENT_ID
+                ) LOOP
+                    apex_collection.add_member (p_collection_name => v_collection_name,
+                        p_n001 => b.COMPONENT_ID,
+                        p_n002 => a.MODULE_ID,
+                        p_c001 => '',
+                        p_c002 => b.COMPONENT_NAME
+                    );
+                END LOOP;
+            END LOOP;
+        
+            EXCEPTION WHEN others THEN
+                raise_application_error(-2000,DBMS_UTILITY.format_error_backtrace);
+        END;
+
+    execution: 
+      sequence: 10
+      event: Create Collections # 45412844870383639
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 45413151530383642
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: List # 45410378734383614
+
+    execution: 
+      sequence: 20
+      event: Create Collections # 45412844870383639
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+- # ====== Dynamic Action: Navigate To Table ===================
+  id: 46249378211877004
+  identification: 
+    name: Navigate To Table
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Navigate # 45410711214383618
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46249491829877005
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(".a-GV-cell").eq(1).trigger("click");
+
+    execution: 
+      sequence: 10
+      event: Navigate To Table # 46249378211877004
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Check Validations ===================
+  id: 46250285047877013
+  identification: 
+    name: Check Validations
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Enter # 46250185449877012
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 46250350008877014
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT DISTINCT(1)
+        FROM NPM009
+        WHERE UPPER(USER_NAME) = UPPER(:P219_USER_NAME)
+      items-to-submit: 
+      - P219_USER_NAME
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P219_USERNAME_EXISTS
+
+    execution: 
+      sequence: 10
+      event: Check Validations # 46250285047877013
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    server-side-condition: 
+      type: Item is NULL
+      item: P219_USER_ID
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46250487808877015
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let isValid = checkValidations();
+        
+        if (isValid) {
+            console.log("valid");
+            let checkedId = [];
+            $("#list_ig_grid_vc .a-GV-bdy .a-GV-w-scroll .a-GV-table tbody").children(".a-GV-row").each( function () {
+                if( $(this).find("input[type=checkbox]").is(":checked") ){
+                    checkedId.push( Number($(this).attr("data-id")) );
+                }
+            });
+            console.log("checked rows: " + checkedId)
+            console.log($v('P219_NAME'));
+            console.log($v('P219_USER_NAME'));
+            console.log($v('P219_PASSWORD_GENERATED'));
+            console.log($v('P219_ROLE'));
+            console.log($v('P219_STATUS'));
+            // apex.server.process(
+            //     'ADD_USER',
+            //     {   
+            //         x01: $v('P219_NAME'),
+            //         x02: $v('P219_USER_NAME'),
+            //         x03: $v('P219_PASSWORD_GENERATED'),
+            //         x04: $v('P219_ROLE'),
+            //         x05: $v('P219_STATUS'),
+            //         f01: checkedId
+            //     },
+            //     {
+            //         dataType: 'text', 
+            //         success: function(){
+            //             apex.submit('submit');
+            //             // if(data == 'Error in closing cases !'){
+            //             //     apex.message.showErrors({
+            //             //         type: 'error',
+            //             //         location: 'page',
+            //             //         message: data
+            //             //     });  
+            //             // } else {
+            //             //     console.log('Selected cases closed')
+            //             // }
+            //         }
+            //     }
+            // );
+        }
+        else {
+            $(".apex-page-item-error").first().focus();
+        }
+
+    execution: 
+      sequence: 30
+      event: Check Validations # 46250285047877013
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Item is NULL
+      item: P219_USER_ID
+
+  - # ====== Action: Set Value ===================================
+    id: 46250741241877018
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT DISTINCT(1)
+        FROM NPM009
+        WHERE UPPER(USER_NAME) = UPPER(:P219_USER_NAME) AND USER_ID != UPPER(:P219_USER_ID)
+      items-to-submit: 
+      - P219_USER_NAME
+      - P219_USER_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P219_USERNAME_EXISTS
+
+    execution: 
+      sequence: 20
+      event: Check Validations # 46250285047877013
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    server-side-condition: 
+      type: Item is NOT NULL
+      item: P219_USER_ID
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46251590910877026
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let isValid = checkValidations();
+        let initialAccess = $v('P219_ACCESSED_COMPONENTS').split(',').map( Number );
+        
+        if (isValid) {
+            console.log("valid");
+            let checkedId = [];
+            $("#list_ig_grid_vc .a-GV-bdy .a-GV-w-scroll .a-GV-table tbody").children(".a-GV-row").each( function () {
+                if( $(this).find("input[type=checkbox]").is(":checked") ){
+                    checkedId.push( Number($(this).attr("data-id")) );
+                }
+            });
+            console.log("checked rows: " + checkedId)
+            console.log("Initial Access: " + initialAccess)
+            console.log($v('P219_USER_ID'));
+            console.log($v('P219_NAME'));
+            console.log($v('P219_USER_NAME'));
+            console.log($v('P219_ROLE'));
+            console.log($v('P219_STATUS'));
+            apex.server.process(
+                'UPDATE_USER',
+                {   
+                    x01: $v('P219_USER_ID'),
+                    x02: $v('P219_NAME'),
+                    x03: $v('P219_USER_NAME'),
+                    x04: $v('P219_ROLE'),
+                    x05: $v('P219_STATUS'),
+                    f01: checkedId,
+                    f02: initialAccess
+                },
+                {
+                    dataType: 'text', 
+                    success: function(){
+                        apex.submit('submit');
+                        // if(data == 'Error in closing cases !'){
+                        //     apex.message.showErrors({
+                        //         type: 'error',
+                        //         location: 'page',
+                        //         message: data
+                        //     });  
+                        // } else {
+                        //     console.log('Selected cases closed')
+                        // }
+                    }
+                }
+            );
+        }
+        else {
+            $(".apex-page-item-error").first().focus();
+        }
+
+    execution: 
+      sequence: 40
+      event: Check Validations # 46250285047877013
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Item is NOT NULL
+      item: P219_USER_ID
+
+- # ====== Dynamic Action: Check Rows ==========================
+  id: 46251076654877021
+  identification: 
+    name: Check Rows
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P219_USER_ID
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46251137110877022
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var toCheckArr = $v('P219_ACCESSED_COMPONENTS').split(',').map( Number );
+        
+        $("#list_ig_grid_vc .a-GV-bdy .a-GV-w-scroll .a-GV-table tbody").children(".a-GV-row").each( function () {
+            for (let i = 0; i < toCheckArr.length; i++){
+                if( $(this).attr("data-id") ==  toCheckArr[i]){
+                    $(this).find("input[type=checkbox]").trigger("click");
+                }
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Check Rows # 46251076654877021
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Title ===========================
+  id: 46251749094877028
+  identification: 
+    name: Set Title
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46251878082877029
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: setTitle("Add User");
+
+    execution: 
+      sequence: 10
+      event: Set Title # 46251749094877028
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Item is NULL
+      item: P219_USER_ID
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 46251971630877030
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: setTitle("Update User");
+
+    execution: 
+      sequence: 20
+      event: Set Title # 46251749094877028
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    server-side-condition: 
+      type: Item is NOT NULL
+      item: P219_USER_ID
+
+computations: 
+- # ====== Computation: P219_ACCESSED_COMPONENTS ===============
+  id: 46250952881877020
+  identification: 
+    item-name: P219_ACCESSED_COMPONENTS
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT LISTAGG(COMPONENT_ID, ',') WITHIN GROUP (ORDER BY USER_ID) AS ACCESSED_COMPONENT
+      FROM NPT010
+      WHERE USER_ID = :P219_USER_ID
+      GROUP BY USER_ID;
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P219_USER_ID
+
+processes: 
+- # ====== Process: Initialize form User Utilities Add =========
+  id: 45031482769682450
+  identification: 
+    name: Initialize form User Utilities Add
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Form # 45031334131682449
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: List - Save Interactive Grid Data ==========
+  id: 45411522254383626
+  identification: 
+    name: List - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: List # 45410378734383614
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Process: ADD_USER ===================================
+  id: 46250568388877016
+  identification: 
+    name: ADD_USER
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          v_user_id NUMBER;
+          v_component_id NUMBER;
+      BEGIN
+          INSERT INTO NPM009(
+              NAME,
+              USER_NAME,
+              PASSWORD,
+              ROLE,
+              STATUS,
+              DATE_CREATED,
+              USER_UPDATE,
+              DATE_UPDATED
+          )
+          VALUES(
+              APEX_APPLICATION.g_x01,
+              APEX_APPLICATION.g_x02,
+              APEX_APPLICATION.g_x03,
+              APEX_APPLICATION.g_x04,
+              APEX_APPLICATION.g_x05,
+              SYSDATE,
+              v('APP_USER'),
+              SYSDATE
+          )
+          RETURNING USER_ID INTO v_user_id;
+      
+          FOR i in 1..APEX_APPLICATION.G_F01.COUNT LOOP
+              -- SELECT N001
+              -- INTO v_component_id
+              -- FROM APEX_COLLECTIONS 
+              -- WHERE SEQ_ID = TO_NUMBER( APEX_APPLICATION.G_F01(i) );
+      
+              INSERT INTO NPT010 (USER_ID, COMPONENT_ID, USER_CREATED, DATE_CREATED, USER_UPDATE, DATE_UPDATED)
+              VALUES (v_user_id, TO_NUMBER( APEX_APPLICATION.G_F01(i) ), v('APP_USER'), SYSDATE, v('APP_USER'), SYSDATE);
+          END LOOP;
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: UPDATE_USER ================================
+  id: 46251677906877027
+  identification: 
+    name: UPDATE_USER
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          temp NUMBER;
+          v_user_id NUMBER := TO_NUMBER(APEX_APPLICATION.g_x01);
+      BEGIN
+          UPDATE NPM009 SET
+              NAME = APEX_APPLICATION.g_x02,
+              USER_NAME = APEX_APPLICATION.g_x03,
+              ROLE = APEX_APPLICATION.g_x04,
+              STATUS = APEX_APPLICATION.g_x05,
+              USER_UPDATE = v('APP_USER'),
+              DATE_UPDATED = SYSDATE
+          WHERE USER_ID = TO_NUMBER(APEX_APPLICATION.g_x01);
+      
+          FOR i in 1..APEX_APPLICATION.G_F01.COUNT LOOP
+              SELECT COUNT(1)
+              INTO temp
+              FROM NPT010
+              WHERE USER_ID = v_user_id AND COMPONENT_ID = TO_NUMBER(APEX_APPLICATION.G_F01(i));
+      
+              IF (temp <= 0) THEN
+                  INSERT INTO NPT010 (USER_ID, COMPONENT_ID, USER_CREATED, DATE_CREATED, USER_UPDATE, DATE_UPDATED)
+                  VALUES (v_user_id, TO_NUMBER( APEX_APPLICATION.G_F01(i) ), v('APP_USER'), SYSDATE, v('APP_USER'), SYSDATE);
+              ELSE
+                  UPDATE NPT010 SET
+                      USER_UPDATE = v('APP_USER'),
+                      DATE_UPDATED = SYSDATE
+                  WHERE USER_ID = v_user_id AND COMPONENT_ID = TO_NUMBER(APEX_APPLICATION.G_F01(i));
+              END IF;
+          END LOOP;
+      
+          FOR i in 1..APEX_APPLICATION.G_F02.COUNT LOOP
+              temp := 0;
+      
+              FOR j in 1..APEX_APPLICATION.G_F01.COUNT LOOP
+                  IF TO_NUMBER( APEX_APPLICATION.G_F02(i) ) = TO_NUMBER( APEX_APPLICATION.G_F01(j) ) THEN
+                  temp := temp + 1;
+                  END IF;
+              END LOOP;
+      
+              IF (temp <= 0) THEN
+                  DELETE FROM NPT010
+                  WHERE USER_ID = v_user_id AND COMPONENT_ID = TO_NUMBER(APEX_APPLICATION.G_F02(i));
+              END IF;
+          END LOOP;
+      END;
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+branches: 
+- # ====== Branch: Go To Page 217 Add ==========================
+  id: 46252030444877031
+  identification: 
+    name: Go To Page 217 Add
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:217:&SESSION.::&DEBUG.::P217_ADD_POPUP:1'
+      page: 217 # User Utilities
+      values: 
+        p217_add_popup: 1
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P219_USER_ID
+
+- # ====== Branch: Go To Page 217 Update =======================
+  id: 46252383951877034
+  identification: 
+    name: Go To Page 217 Update
+
+  execution: 
+    sequence: 20
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:217:&SESSION.::&DEBUG.::P217_UPDATE_POPUP:1'
+      page: 217 # User Utilities
+      values: 
+        p217_update_popup: 1
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P219_USER_ID
+

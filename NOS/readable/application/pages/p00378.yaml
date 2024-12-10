@@ -1,0 +1,819 @@
+---
+# ====== Page: Reservation History Updates ===================
+id: 378
+identification: 
+  name: Reservation History Updates
+  alias: RESERVATION-HISTORY-UPDATES
+  title: Reservation History Updates
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 460
+  maximum-width: 460
+  css-classes: 
+  - inquire-dialog
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+css: 
+  inline: |
+    .t-Dialog-body {
+        background-color: #056AC8;
+        padding-block-end: var(--ut-dialog-padding-y, .1rem);
+        padding-block-start: var(--ut-dialog-padding-y, .1rem);
+        padding-inline-end: var(--ut-dialog-padding-x, .5rem);
+        padding-inline-start: var(--ut-dialog-padding-x, .5rem);
+        font-weight: 600;
+    }
+    
+    .t-Form-labelContainer {
+        padding-block-end: var(--ut-field-padding-y, .1rem);
+        padding-block-start: var(--ut-field-padding-y, .1rem);
+        padding-inline-end: var(--ut-field-padding-x, .1rem);
+        padding-inline-start: var(--ut-field-padding-x, .5rem);
+        font-weight: 700 !important;
+    }
+    
+    .apex-item-display-only {
+        font-size: var(--ut-field-label-font-size, .75rem);
+        font-weight: 700 !important;
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, .1rem);
+        padding-block-start: var(--ut-field-padding-y, .1rem);
+    }
+    
+    .t-Form-inputContainer:has(#P314_AMOUNT) {
+        max-width: 33.33% !important;
+    }
+    
+    .t-Form-labelContainer:has(#P314_AMOUNT_LABEL) {
+        max-width: fit-content !important;
+    }
+    
+    .t-Form-fieldContainer.rel-col {
+        flex-direction: row;
+    }
+    
+    .t-Form-labelContainer:has(#P314_GC_NO_LABEL),
+    .t-Form-labelContainer:has(#P314_GC_TYPE_LABEL),
+    .t-Form-labelContainer:has(#P314_STATUS_LABEL) {
+        max-width: 3.5rem !important;
+    }
+    
+    .t-Form-labelContainer:has(#P314_RELEASE_LABEL),
+    .t-Form-labelContainer:has(#P314_INVOICE_DATE_LABEL){
+        max-width: 7rem !important;
+    }
+    
+    .t-Form-labelContainer:has(#P314_ISSUED_DATE_LABEL),
+    .t-Form-labelContainer:has(#P314_EXPIRATION_LABEL) {
+        max-width: 5rem !important;
+    }
+    
+    #header, #header2 {
+        margin-block-end: .1rem;
+    }
+    
+    .text-white {
+        color: white;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .header-fs {
+        font-size: 1.125rem;
+    }
+    
+    .fw-600 {
+        font-weight: 600;
+    }
+    
+    .fw-500 {
+        font-weight: 500;
+    }
+    
+    .pl-4 {
+        padding-left: .4rem;
+    }
+    
+    .section-3-padding {
+        padding-left: .8rem;
+        padding-right: .8rem;
+        padding-top: .4rem;
+        padding-bottom: .4rem;
+    }
+    
+    /* section 4 start */
+    table, th, td {
+        border-collapse: collapse;
+        border: 1px solid #046BC8;
+        table-layout: fixed;
+    }
+    
+    /* th, td {
+        width: 33.33%;
+    } */
+    /* section 4 end */
+    
+    .hide {
+        display: none;
+    }
+    
+    .width-5rem {
+        width: 5rem;
+    }
+    
+    .width-3rem {
+        width: 3rem;
+    }
+    
+    #table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #table_ig {
+        height: fit-content !important;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Header ======================================
+  id: 65034829136189922
+  identification: 
+    name: Header
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: History Updates # 65181453050736893
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--accent1
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    - t-Form--leftLabels
+    - margin-left-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: header
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: History Updates =============================
+  id: 65181453050736893
+  identification: 
+    name: History Updates
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          NULL AS "HISTORY"
+      FROM 
+          DUAL
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+- # ====== Region: History =====================================
+  id: 77535612061378962
+  identification: 
+    name: History
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT * 
+      
+      FROM 
+          (SELECT npt036.RESERVATION_UPDATE_ID AS "RESERVATION_UPDATE_ID",
+                 npt036.DATE_CREATED AS "DATE",
+                 npt036.USER_CREATED AS "USER_NAME",
+                 npt036.UPDATED AS "UPDATED"
+          FROM NPT036 npt036
+          WHERE npt036.RESERVE_ID = :P378_RESERVE_NO
+          ORDER BY npt036.RESERVATION_UPDATE_ID DESC) tbl
+      
+      WHERE rownum <= 3;
+    page-items-to-submit: 
+    - P378_RESERVE_NO
+
+  layout: 
+    sequence: 30
+    parent-region: History Updates # 65181453050736893
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 77535668863378963
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: false
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 78008085470027078
+      identification: 
+        name: Primary Report
+        alias: 324651
+
+  columns: 
+  - # ====== Column: USER_NAME ===================================
+    id: 45464854209718716
+    identification: 
+      column-name: USER_NAME
+      type: Text Field
+
+    heading: 
+      heading: User Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: USER_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATED =====================================
+    id: 45464943889718717
+    identification: 
+      column-name: UPDATED
+      type: Text Field
+
+    heading: 
+      heading: Updated
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 80
+
+    source: 
+      type: Database Column
+      database-column: UPDATED
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: RESERVATION_UPDATE_ID =======================
+    id: 45466003268718728
+    identification: 
+      column-name: RESERVATION_UPDATE_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: RESERVATION_UPDATE_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: DATE ========================================
+    id: 77535914115378965
+    identification: 
+      column-name: DATE
+      type: Text Field
+
+    heading: 
+      heading: Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+page-items: 
+- # ====== Page Item: P378_RESERVE_NO ==========================
+  id: 45464631711718714
+  identification: 
+    name: P378_RESERVE_NO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P378_HISTORY =============================
+  id: 45465590571718723
+  identification: 
+    name: P378_HISTORY
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: History Updates # 65181453050736893
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: History Updates # 65181453050736893
+    column: HISTORY
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P378_HISTORY_UPDATES =====================
+  id: 65050857926189970
+  identification: 
+    name: P378_HISTORY_UPDATES
+    type: Display Only
+
+  label: 
+    label: <text class="text-white header-fs fw-500">History Updates</text>
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Header # 65034829136189922
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--postTextBlock
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Close =======================================
+  id: 45543617859099421
+  identification: 
+    button-name: Close
+    label: Close
+
+  layout: 
+    sequence: 50
+    region: History Updates # 65181453050736893
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: Close Dialog ========================
+  id: 45568483117099495
+  identification: 
+    name: Close Dialog
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 45543617859099421
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 45568986285099521
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 10
+      event: Close Dialog # 45568483117099495
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Initialize form Gift Certificate Inquire ===
+  id: 45544118479099421
+  identification: 
+    name: Initialize form Gift Certificate Inquire
+    type: Form - Initialization
+    execution-chain: None
+    form-region: History Updates # 65181453050736893
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Gift Certificate Inquire ======
+  id: 45544519183099423
+  identification: 
+    name: Process form Gift Certificate Inquire
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: History Updates # 65181453050736893
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 45559667599099467
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

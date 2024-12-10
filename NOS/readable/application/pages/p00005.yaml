@@ -1,0 +1,2224 @@
+---
+# ====== Page: Vendor Masterfile =============================
+id: 5
+identification: 
+  name: Vendor Masterfile
+  alias: VENDOR-MASTERFILE
+  title: Vendor Masterfile
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    setTitle("Vendor Masterfile")
+    
+    const p5KeyMap = {
+        a : (v) => {
+            $("#a").trigger("click");
+        },
+        u : (v) => {
+            $("#u").trigger("click");
+        },
+        i : (v) => {
+            $("#i").trigger("click");
+        },
+        s : (v) => {
+            $("#s").trigger("click");
+        },
+        escape : (v) => {
+            $("#esc").trigger("click");
+        },
+        home : (v) => {
+            $("#home").trigger("click");
+        },
+        end : (v) => {
+            $("#end").trigger("click");
+        },
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        h : (v) => {
+            $("#h").trigger("click");
+        }
+    }
+    
+    function mapP5Keys() {
+        $(document).off('keydown.p5keyevents');
+        $(document).on('keydown.p5keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p5KeyMap[key]) {
+                ev.preventDefault();
+                p5KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP5Keys();
+    }
+    
+    const exportKeyMap = {
+        escape : (v) => {
+            mapP5Keys();
+        },
+        d: (v) => {
+            $(".ui-button--hot").trigger("click");
+        }
+    }
+    
+    function mapExportKeys(){
+        $(document).off('keydown.p5keyevents');
+        $(document).on('keydown.p5keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (exportKeyMap[key]) {
+                ev.preventDefault();
+                exportKeyMap[key]();
+            }
+        });
+    }
+    
+    function exportDialogOpened() {
+        $(".ui-button--hot").removeClass("ui-button ui-corner-all ui-widget").addClass("t-Button--noUI t-Button");
+        $(".ui-button--hot").html("<u>D</u> - Download");
+        $(".ui-button-help").remove();
+        $(".ui-button").addClass("t-Button--noUI t-Button");
+        $(".ui-button").html("<u>Esc</u> - Cancel");
+    }
+  execute-when-page-loads: |
+    mapP5Keys();
+    $("#s").trigger("click");
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #esc {
+        display: none;
+    }
+    
+    #sample1 .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #sample1 .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #sample1 .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #sample1 .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    #sample1 table,
+    #sample1 tr,
+    #sample1 td,
+    #sample1 th {
+        font-size: 1.125rem;
+    }
+    
+    #sample1_ig{
+        border: 0.0625rem solid black;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header {
+        border-color: black;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .ui-dialog{
+        border: 2px solid black;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.625rem 0.625rem -0.25rem rgba(0,0,0,0.2);
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+    }
+    
+    .ui-dialog-titlebar-close {
+        display:none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    html::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    } 
+    
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    .a-GV-w-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .a-GV-w-scroll {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Header ======================================
+  id: 6042569232733001
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: '<h1 style="color:white">Vendor Masterfile</h1>'
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 6044103588733017
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 100
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Vendor Grid =================================
+  id: 6480433320850443
+  identification: 
+    name: Vendor Grid
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT  
+          VENDOR_ID,
+          VENDOR_CODE,
+          VENDOR_NAME, 
+          CONTACT_PERSON, 
+          PHONE_NUMBER, 
+          EMAIL_ADDRESS1, 
+          PAYMENT_TERM, 
+          'DUMMY' AS OS_BALANCE, 
+          'DUMMY' AS OS_CREDIT_MEMO
+      FROM NIT006
+      WHERE   
+              (:P5_SEARCH_CODE IS NULL AND :P5_SEARCH_NAME IS NULL AND :P5_ENABLE_ALL IS NOT NULL) OR
+              (:P5_SEARCH_CODE IS NOT NULL AND :P5_SEARCH_NAME IS NULL 
+                  AND UPPER(VENDOR_CODE) LIKE '%' || UPPER(:P5_SEARCH_CODE) || '%') OR
+              (:P5_SEARCH_CODE IS NULL AND :P5_SEARCH_NAME IS NOT NULL 
+                  AND UPPER(VENDOR_NAME) LIKE '%' || UPPER(:P5_SEARCH_NAME) || '%') OR
+              (:P5_SEARCH_CODE IS NOT NULL AND :P5_SEARCH_NAME IS NOT NULL 
+                  AND UPPER(VENDOR_CODE) LIKE '%' || UPPER(:P5_SEARCH_CODE) || '%')
+    page-items-to-submit: 
+    - P5_SEARCH_CODE
+    - P5_SEARCH_NAME
+    - P5_ENABLE_ALL
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: sample1
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 6480505268850444
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: true
+
+    download: 
+      formats: 
+      - PDF
+      - Excel
+      send-as-email: false
+      filename: aaa
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 600
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 6694200451654300
+      identification: 
+        name: Primary Report
+        alias: 66943
+
+  columns: 
+  - # ====== Column: VENDOR_CODE =================================
+    id: 6480616510850445
+    identification: 
+      column-name: VENDOR_CODE
+      type: Text Field
+
+    heading: 
+      heading: Vendor Code
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 12
+
+    source: 
+      type: Database Column
+      database-column: VENDOR_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: VENDOR_NAME =================================
+    id: 6480762214850446
+    identification: 
+      column-name: VENDOR_NAME
+      type: Text Field
+
+    heading: 
+      heading: Vendor Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: VENDOR_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CONTACT_PERSON ==============================
+    id: 6480830902850447
+    identification: 
+      column-name: CONTACT_PERSON
+      type: Text Field
+
+    heading: 
+      heading: Contact Person
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 80
+
+    source: 
+      type: Database Column
+      database-column: CONTACT_PERSON
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: PHONE_NUMBER ================================
+    id: 6480972262850448
+    identification: 
+      column-name: PHONE_NUMBER
+      type: Number Field
+
+    heading: 
+      heading: Phone Number
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: PHONE_NUMBER
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: EMAIL_ADDRESS1 ==============================
+    id: 6481011385850449
+    identification: 
+      column-name: EMAIL_ADDRESS1
+      type: Text Field
+
+    heading: 
+      heading: Email Address
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 80
+
+    source: 
+      type: Database Column
+      database-column: EMAIL_ADDRESS1
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: PAYMENT_TERM ================================
+    id: 6481175531850450
+    identification: 
+      column-name: PAYMENT_TERM
+      type: Text Field
+
+    heading: 
+      heading: Payment Terms
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: PAYMENT_TERM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: OS_BALANCE ==================================
+    id: 6688308491653701
+    identification: 
+      column-name: OS_BALANCE
+      type: Text Field
+
+    heading: 
+      heading: OS Balance
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 100
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 5
+
+    source: 
+      type: Database Column
+      database-column: OS_BALANCE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: OS_CREDIT_MEMO ==============================
+    id: 6688443249653702
+    identification: 
+      column-name: OS_CREDIT_MEMO
+      type: Text Field
+
+    heading: 
+      heading: OS Credit Memo
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 110
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 5
+
+    source: 
+      type: Database Column
+      database-column: OS_CREDIT_MEMO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: VENDOR_ID ===================================
+    id: 6691004243653728
+    identification: 
+      column-name: VENDOR_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: VENDOR_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+page-items: 
+- # ====== Page Item: P5_SELECTED_VAL ==========================
+  id: 6691184166653729
+  identification: 
+    name: P5_SELECTED_VAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_PREPARED_URL ==========================
+  id: 6692432520653742
+  identification: 
+    name: P5_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_SEARCH_CODE ===========================
+  id: 8967535751281309
+  identification: 
+    name: P5_SEARCH_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_SEARCH_NAME ===========================
+  id: 8970152293281335
+  identification: 
+    name: P5_SEARCH_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P5_ENABLE_ALL ============================
+  id: 11486164197867037
+  identification: 
+    name: P5_ENABLE_ALL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Add =========================================
+  id: 6044294971733018
+  identification: 
+    button-name: Add
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:6:&SESSION.::&DEBUG.:::'
+      page: 6 # Add Vendor
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 2, 6) = 'Y'"
+
+- # ====== Button: Update ======================================
+  id: 6688506251653703
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 2, 7) = 'Y'"
+
+- # ====== Button: Inquire =====================================
+  id: 6688633717653704
+  identification: 
+    button-name: Inquire
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 30
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: Print =======================================
+  id: 6688751439653705
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 80
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: p
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 2, 8) = 'Y'"
+
+- # ====== Button: Search ======================================
+  id: 6688986312653707
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 90
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:8:&SESSION.::&DEBUG.:::'
+      page: 8 # Vendor Masterlist Search
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Top =========================================
+  id: 6689029756653708
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 100
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: home
+
+- # ====== Button: Bottom ======================================
+  id: 6689172075653709
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 110
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: end
+
+- # ====== Button: To_Exit =====================================
+  id: 6689219250653710
+  identification: 
+    button-name: To_Exit
+    label: '-'
+
+  layout: 
+    sequence: 120
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:::'
+      page: 2 # Masterfile Maintenance Submenu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+- # ====== Button: Export ======================================
+  id: 6689306061653711
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 60
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: false
+
+  advanced: 
+    static-id: h
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 2, 9) = 'Y'"
+
+- # ====== Button: Export_all ==================================
+  id: 11484690956867022
+  identification: 
+    button-name: Export_all
+    label: <u>E</u> - Export All
+
+  layout: 
+    sequence: 70
+    region: Buttons # 6044103588733017
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: e
+
+dynamic-actions: 
+- # ====== Dynamic Action: Selection Change ====================
+  id: 6689454091653712
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Vendor Grid # 6480433320850443
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6689595145653713
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.selectedRecords.length > 0) {
+            let itemNoSelected = this.data.selectedRecords[0][0];
+            apex.item("P5_SELECTED_VAL").setValue(itemNoSelected);
+        }
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 6689454091653712
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Redirect to Update ==================
+  id: 6692215612653740
+  identification: 
+    name: Redirect to Update
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 6688506251653703
+
+  client-side-condition: 
+    type: Item is not null
+    item: P5_SELECTED_VAL
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 6692396037653741
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P5_PREPARED_URL := apex_page.get_url(
+               p_page   => 6,
+               p_items  => 'P6_VENDOR_ID,P6_VENDOR_ID_BILLING,P6_ADDRESS_TYPE_ID,P6_VENDOR_ID_SHIPPING_1,P6_ADDRESS_TYPE_ID_1',
+               p_values => :P5_SELECTED_VAL ||','|| :P5_SELECTED_VAL ||','|| 1 ||','|| :P5_SELECTED_VAL ||','|| 2
+             );
+        END;
+      items-to-submit: 
+      - P5_SELECTED_VAL
+      items-to-return: 
+      - P5_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Redirect to Update # 6692215612653740
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6692508910653743
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P5_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Redirect to Update # 6692215612653740
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P5_PREPARED_URL
+
+- # ====== Dynamic Action: Redirect to Inquire =================
+  id: 6692658850653744
+  identification: 
+    name: Redirect to Inquire
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Inquire # 6688633717653704
+
+  client-side-condition: 
+    type: Item is not null
+    item: P5_SELECTED_VAL
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 6692797196653745
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P5_PREPARED_URL := apex_page.get_url(
+               p_page   => 7,
+               p_items  => 'P7_VENDOR_ID',
+               p_values => :P5_SELECTED_VAL
+             );
+        END;
+      items-to-submit: 
+      - P5_SELECTED_VAL
+      items-to-return: 
+      - P5_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Redirect to Inquire # 6692658850653744
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 6692926231653747
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P5_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Redirect to Inquire # 6692658850653744
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Top ===========================
+  id: 6693289052653750
+  identification: 
+    name: Go to Top
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 6689029756653708
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 11484371922867019
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGFirstRecordFirstCell("sample1", "VENDOR_CODE");
+
+    execution: 
+      sequence: 20
+      event: Go to Top # 6693289052653750
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Bottom ========================
+  id: 7710997854207202
+  identification: 
+    name: Go to Bottom
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 6689172075653709
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 11484415438867020
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGLastRecordFirstCell("sample1");
+
+    execution: 
+      sequence: 20
+      event: Go to Bottom # 7710997854207202
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Reset keys ==========================
+  id: 7711725050207210
+  identification: 
+    name: Reset keys
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Inquire # 6688633717653704
+
+  client-side-condition: 
+    type: Item is not null
+    item: P5_SELECTED_VAL
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 7711875096207211
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p5keyevents');
+        $(document).on('keydown.p5keyevents', (ev) => {
+            apex.navigation.dialog.close(true);
+        });
+        
+
+    execution: 
+      sequence: 10
+      event: Reset keys # 7711725050207210
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Reset Keys ==========================
+  id: 8967047416281304
+  identification: 
+    name: Reset Keys
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 6688986312653707
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8967117377281305
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p5keyevents');
+
+    execution: 
+      sequence: 10
+      event: Reset Keys # 8967047416281304
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: When Dialog Closed ==================
+  id: 8968022789281314
+  identification: 
+    name: When Dialog Closed
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 6688986312653707
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 8968161857281315
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P8_SEARCH_CODE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P5_SEARCH_CODE
+
+    execution: 
+      sequence: 20
+      event: When Dialog Closed # 8968022789281314
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 8970017566281334
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Vendor Grid # 6480433320850443
+
+    execution: 
+      sequence: 60
+      event: When Dialog Closed # 8968022789281314
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 8970594786281339
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P8_SEARCH_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P5_SEARCH_NAME
+
+    execution: 
+      sequence: 30
+      event: When Dialog Closed # 8968022789281314
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8970626643281340
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        }, "500");
+
+    execution: 
+      sequence: 70
+      event: When Dialog Closed # 8968022789281314
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: When Closed or Canceled =============
+  id: 8969863059281332
+  identification: 
+    name: When Closed or Canceled
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 6688986312653707
+
+  actions: 
+  - # ====== Action: Reset Keys ==================================
+    id: 8969943767281333
+    identification: 
+      name: Reset Keys
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP5Keys();
+
+    execution: 
+      sequence: 10
+      event: When Closed or Canceled # 8969863059281332
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export Report =======================
+  id: 11485074150867026
+  identification: 
+    name: Export Report
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 6689306061653711
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Print Report ================================
+    id: 11485820086867034
+    identification: 
+      action: Print Report
+
+    settings: 
+      report-query: VENDOR_MASTERLIST_EXPORT # 13475822217852560
+      filename: AAA
+      view-file-as: Inline
+      items-to-submit: 
+      - P5_SEARCH_CODE
+      - P5_SEARCH_NAME
+
+    execution: 
+      sequence: 10
+      event: Export Report # 11485074150867026
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 11486088666867036
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.region( "sample1" ).widget().interactiveGrid( "getActions" ).invoke( "show-download-dialog" );
+        mapExportKeys();
+        exportDialogOpened();
+
+    execution: 
+      sequence: 20
+      event: Export Report # 11485074150867026
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export All Report ===================
+  id: 11486202311867038
+  identification: 
+    name: Export All Report
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export_all # 11484690956867022
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Clear =======================================
+    id: 11486383095867039
+    identification: 
+      action: Clear
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P5_SEARCH_CODE
+      - P5_SEARCH_NAME
+
+    execution: 
+      sequence: 10
+      event: Export All Report # 11486202311867038
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 11486477609867040
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 1
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P5_ENABLE_ALL
+
+    execution: 
+      sequence: 20
+      event: Export All Report # 11486202311867038
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 11486544969867041
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Vendor Grid # 6480433320850443
+
+    execution: 
+      sequence: 30
+      event: Export All Report # 11486202311867038
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 11486610578867042
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.region( "sample1" ).widget().interactiveGrid( "getActions" ).invoke( "show-download-dialog" );
+        mapExportKeys();
+        exportDialogOpened();
+
+    execution: 
+      sequence: 40
+      event: Export All Report # 11486202311867038
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print ===============================
+  id: 17193645911817140
+  identification: 
+    name: Print
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 6688751439653705
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: ($v('P5_SEARCH_CODE').length > 0 || $v('P5_SEARCH_NAME').length > 0);
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17193763421817141
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var searchContext;
+        var searchVal;
+        var d = new Date();
+        if($v("P5_SEARCH_CODE").length > 0){
+            searchContext = "CODE";
+            searchVal = $v("P5_SEARCH_CODE");
+        } else {
+            searchContext = "NAME";
+            searchVal = $v("P5_SEARCH_NAME");
+        }
+        var fileDate = d.getFullYear() + 
+            ( (d.getMonth() + 1) >= 10 ? ( d.getMonth() + 1) + "" : "0" + (d.getMonth() + 1)) + 
+            (d.getDate >= 10 ? (d.getDate() + "") : "0" + d.getDate() );
+        
+        generateReport("VENDOR_MASTERFILE_COURIER_NEW_PDF", "pdf", { 
+            fileName: "VendorMasterfile_"+fileDate+".pdf",
+            mode : "print",
+            parameters : {
+                P_SEARCH_CONTEXT : searchContext,
+                P_SEARCH_VALUE : searchVal
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print # 17193645911817140
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export ==============================
+  id: 17193804966817142
+  identification: 
+    name: Export
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 6689306061653711
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: ($v('P5_SEARCH_CODE').length > 0 || $v('P5_SEARCH_NAME').length > 0);
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17193921466817143
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var searchContext;
+        var searchVal;
+        var d = new Date();
+        if($v("P5_SEARCH_CODE").length > 0){
+            searchContext = "CODE";
+            searchVal = $v("P5_SEARCH_CODE");
+        } else {
+            searchContext = "NAME";
+            searchVal = $v("P5_SEARCH_NAME");
+        }
+        
+        var fileDate = d.getFullYear() + 
+            ( (d.getMonth() + 1) >= 10 ? ( d.getMonth() + 1) + "" : "0" + (d.getMonth() + 1)) + 
+            (d.getDate >= 10 ? (d.getDate() + "") : "0" + d.getDate() );
+        
+        generateReport("VENDOR_MASTERFILE_XLSX", "xlsx", { 
+            fileName: "VendorMasterfile_"+fileDate+".xlsx",
+            mode : "export",
+            parameters : {
+                P_SEARCH_CONTEXT : searchContext,
+                P_SEARCH_VALUE : searchVal
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Export # 17193804966817142
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export All ==========================
+  id: 17194041212817144
+  identification: 
+    name: Export All
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export_all # 11484690956867022
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17194118715817145
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var fileDate = d.getFullYear() + 
+            ( (d.getMonth() + 1) >= 10 ? ( d.getMonth() + 1) + "" : "0" + (d.getMonth() + 1)) + 
+            (d.getDate >= 10 ? (d.getDate() + "") : "0" + d.getDate() );
+        generateReport("VENDOR_MASTERFILE_XLSX", "xlsx", { 
+            fileName: "VendorMasterfile_"+fileDate+".xlsx",
+            mode : "export",
+            parameters : {
+                P_SEARCH_CONTEXT : "ALL"
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Export All # 17194041212817144
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

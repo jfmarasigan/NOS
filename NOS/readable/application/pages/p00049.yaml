@@ -1,0 +1,486 @@
+---
+# ====== Page: POS Cashiering - Yellow GCert Payment =========
+id: 49
+identification: 
+  name: POS Cashiering - Yellow GCert Payment
+  alias: POS-CASHIERING-YELLOW-GCERT-PAYMENT
+  title: Gift Certificate (YELLOW)
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: false
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p49KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        },
+    
+        escape: (v) => {
+            $("#escape").trigger("click");
+        }
+    
+    }
+    
+    function mapP49Keys() {
+        $(document).off('keydown.p49keyevents');
+        $(document).on('keydown.p49keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p49KeyMap[key]) {
+                ev.preventDefault();
+                p49KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP49Keys();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        label, input {
+            font-size: 1.125rem;
+        }
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P49_AMOUNT ===============================
+  id: 38078488687075511
+  identification: 
+    name: P49_AMOUNT
+    type: Display Only
+
+  label: 
+    label: 'Amount:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P49_CODE =================================
+  id: 38078654246075513
+  identification: 
+    name: P49_CODE
+    type: Text Field
+
+  label: 
+    label: 'Code:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P49_URL ==================================
+  id: 44273104043177715
+  identification: 
+    name: P49_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P49_EXISTS ===============================
+  id: 44276194177177745
+  identification: 
+    name: P49_EXISTS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Submit ======================================
+  id: 44272879664177712
+  identification: 
+    button-name: Submit
+    label: Submit
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: submit
+
+dynamic-actions: 
+- # ====== Dynamic Action: Click Submit ========================
+  id: 44272975904177713
+  identification: 
+    name: Click Submit
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Submit # 44272879664177712
+
+  actions: 
+  - # ====== Action: Deduct ======================================
+    id: 44273025281177714
+    identification: 
+      name: Deduct
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_balance NUMBER;
+            v_amount NUMBER;
+        BEGIN
+            SELECT balance
+              INTO v_balance
+              FROM NPT020
+             WHERE gift_certificate_id = :P49_CODE;
+             
+        
+            IF v_balance >= :P47_AMOUNT THEN
+                apex_collection.add_member(
+                        p_collection_name => 'PAYMENT',
+                        p_c001 => 'Gift Certificate',
+                        p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n002 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n003 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, '$', ''), ',', '')), 2), 'FM999999999.00'),
+                        p_n004 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')), 2), 'FM999999999.00')
+                ); 
+        
+                UPDATE NPT020
+                SET balance = balance - TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, '$', ''), ',', ''))
+                WHERE gift_certificate_id = :P49_CODE;
+        
+                :P47_URL := apex_page.get_url(
+                    p_page        => 43,
+                    p_clear_cache => '43'
+                );
+                
+        
+            ELSE
+                apex_collection.add_member(
+                        p_collection_name => 'PAYMENT',
+                        p_c001 => 'Gift Certificate',
+                        p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(v_balance, '$', ''), ',', '')), 2), 'FM999999999.00')
+                        );
+                  
+                 
+                UPDATE NPT020
+                SET balance = 0
+                WHERE gift_certificate_id = :P49_CODE;
+        
+                
+                 :P47_URL := apex_page.get_url(
+                    p_page        => 41,
+                    p_clear_cache => '41'
+                );
+            END IF;
+            
+        END;
+        
+      items-to-submit: 
+      - P49_AMOUNT
+      - P49_CODE
+      - P41_TOTAL
+      items-to-return: 
+      - P49_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Click Submit # 44272975904177713
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Redirect ====================================
+    id: 44273241377177716
+    identification: 
+      name: Redirect
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P49_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 40
+      event: Click Submit # 44272975904177713
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 44273322645177717
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 50
+      event: Click Submit # 44272975904177713
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Validate ====================================
+    id: 44523971456129226
+    identification: 
+      name: Validate
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var field1 = $v('P49_EXISTS'); 
+        if (field1 < 1 ) {
+            apex.message.clearErrors(); 
+            apex.message.showErrors([{
+                type: 'error',
+                location: 'inline', 
+                pageItem: 'P49_CODE', 
+                message: 'Gift Code does not exist.'
+            }]);
+        
+            return false; 
+        } else {
+            apex.message.clearErrors(); 
+            return true; 
+        }
+        
+
+    execution: 
+      sequence: 10
+      event: Click Submit # 44272975904177713
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New =================================
+  id: 44276225657177746
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P49_CODE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 44276379923177747
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT count(balance)
+              FROM NPT020
+             WHERE gift_certificate_id = :P49_CODE
+               AND balance = amount;
+      items-to-submit: 
+      - P49_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P49_EXISTS
+
+    execution: 
+      sequence: 10
+      event: New # 44276225657177746
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+

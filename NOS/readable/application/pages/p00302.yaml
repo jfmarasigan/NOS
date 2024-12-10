@@ -1,0 +1,918 @@
+---
+# ====== Page: Purchasing Transactions Submenu ===============
+id: 302
+identification: 
+  name: Purchasing Transactions Submenu
+  alias: PURCHASING-TRANSACTIONS
+  title: Purchasing Transactions
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/pur-trans-menu#MIN#.js'
+  execute-when-page-loads: mapKeys();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/menu#MIN#.css'
+  inline: |
+    .menu-instruction {
+        margin-block-start: 6rem;
+    }
+    
+    div#incoming.ui-dialog-content {
+        padding: 0 !important;
+        background-color: #056AC8;
+    }
+    
+    .h-110 {
+        height: 110px;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .bg-success {
+        background-color: #056AC8;
+    }
+    
+    div#success.ui-dialog-content {
+        padding: 0 !important;
+    }
+    
+    #success,
+    #incoming {
+        border-radius: 12px;
+    }
+    
+    #inc {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Wrapper - Incoming ==========================
+  id: 26261582753850127
+  identification: 
+    name: Wrapper - Incoming
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: incoming
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Incoming ====================================
+  id: 26261699875850128
+  identification: 
+    name: Incoming
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="margin-bottom: 1rem;">
+          <p style="margin-bottom: .5rem;" id="currentProcess">Initializing Incoming Shipment Logs</p>
+          <p>Record Count: <span id="recordCount">0</span></p>
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: Wrapper - Incoming # 26261582753850127
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    css-classes: 
+    - h-110
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: inc
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Loading Bar =================================
+  id: 26261783236850129
+  identification: 
+    name: Loading Bar
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="position: relative; width: 100%; height: 50px; border: 1px solid black; background-color: white;">
+          <div id="loadingProgressBar" style="width: 0; height: 100%; background-color: #A3D5F7;">
+          </div>
+          <div id="progressText" style="position: absolute; top: 30%; left: 50%; transform: translateX(-50%, -50%); color: black;">
+              0%
+          </div>
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: Incoming # 26261699875850128
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Wrapper - Success ===========================
+  id: 26262565693850137
+  identification: 
+    name: Wrapper - Success
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - t-DialogRegion--noPadding
+    - js-dialog-nosize
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    css-classes: 
+    - bg-success
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: success
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: |
+      <div style="display: flex; justify-content: space-between; font-size: 1.125rem; color: white;">
+          <div style="font-weight: 600; margin: .50rem 0 2rem .50rem;">
+              Successful Update
+          </div>
+          <div style="margin-right: .50rem;">x</div>
+      </div>
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Message =====================================
+  id: 26262605942850138
+  identification: 
+    name: Message
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="color: white; display: flex; justify-content: center; margin-right: 2rem;">
+          <img src="#APP_FILES#img/circle-info-solid.png" style="width: 40px; height: 40px;">
+          <div style="display: flex; align-items: center; margin-left: .25rem;">
+              <p>Incoming shipments log successfully updated.</p>
+          </div>
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: Wrapper - Success # 26262565693850137
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--showIcon
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-lg
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Button ======================================
+  id: 26262803490850140
+  identification: 
+    name: Button
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: Wrapper - Success # 26262565693850137
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-lg
+    - margin-bottom-none
+    - margin-right-none
+    css-classes: 
+    - bg-success
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Header ======================================
+  id: 43970978877982316
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="title-header">
+      Purchasing Transactions
+      </div>
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 43971027596982317
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: menu-btns
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Footer ======================================
+  id: 58954674580975596
+  identification: 
+    name: Footer
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="menu-instruction">
+      Press the underlined letter to proceed
+      </div>
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--textContent
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P302_MURL ================================
+  id: 15655190643560913
+  identification: 
+    name: P302_MURL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: APEX_PAGE.GET_URL(p_page => 1)
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P302_PLACEHOLDER1 ========================
+  id: 19394235012535034
+  identification: 
+    name: P302_PLACEHOLDER1
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 20
+    region: Buttons # 43971027596982317
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P302_TOTAL_COUNT =========================
+  id: 26263365656850145
+  identification: 
+    name: P302_TOTAL_COUNT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Buttons # 43971027596982317
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: REVIEW_PURCHASE_ORDERS ======================
+  id: 13306362609310896
+  identification: 
+    button-name: REVIEW_PURCHASE_ORDERS
+    label: <u>I</u> - Review Purchase Orders
+
+  layout: 
+    sequence: 10
+    region: Buttons # 43971027596982317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 5
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:29:&SESSION.::&DEBUG.:::'
+      page: 29 # Review Purchase Order
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: review-purchase-orders
+
+- # ====== Button: UPD_INC_SHIP_LOG ============================
+  id: 13306782442310896
+  identification: 
+    button-name: UPD_INC_SHIP_LOG
+    label: <u>L</u> - Update Incoming Shipment Log
+
+  layout: 
+    sequence: 30
+    region: Buttons # 43971027596982317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 5
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: upd-inc-ship-log
+
+- # ====== Button: EXIT ========================================
+  id: 13307178903310896
+  identification: 
+    button-name: EXIT
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 50
+    region: Buttons # 43971027596982317
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 5
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:1:&SESSION.::&DEBUG.:::'
+      page: 1 # Main Menu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: OK ==========================================
+  id: 26263003467850142
+  identification: 
+    button-name: OK
+    label: Ok
+
+  layout: 
+    sequence: 10
+    region: Button # 26262803490850140
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 12
+    new-column: true
+    column-span: 1
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--small
+    - t-Button--padTop
+    - t-Button--padBottom
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: ok
+
+dynamic-actions: 
+- # ====== Dynamic Action: Update Incoming Shipment Log ========
+  id: 26261831626850130
+  identification: 
+    name: Update Incoming Shipment Log
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UPD_INC_SHIP_LOG # 13306782442310896
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 26262044196850132
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#incoming").dialog("option", "width", 600);
+        $(document).ready(function() {
+            $("#success").dialog({
+                autoOpen: false,
+                modal: true,
+                width: 520,
+            });
+        
+            $('#incoming').dialog("open");
+            let progress = 0;
+            let totalRecords = $v("P302_TOTAL_COUNT");
+            let interval = setInterval(function() {
+                let currentCount = Math.floor(progress / 100 * totalRecords);
+        
+                $("#loadingProgressBar").css("width", progress + "%");
+                $("#progressText").text(progress + "%");
+                $("#recordCount").text(currentCount)
+                
+                if(progress <= 30) {
+                    $("#currentProcess").text("Initializing Incoming Shipment Logs");
+                } else {
+                    $("#currentProcess").text("Incoming Goods of 2024")
+                }
+        
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(function() {
+                        $('#incoming').dialog("close");
+                        $("#currentProcess").text("Initializing Incoming Shipment Logs");
+                        $('#success').dialog("open");
+                    }, 500);
+                }
+                progress += 10;
+            }, 500);
+        });
+
+    execution: 
+      sequence: 20
+      event: Update Incoming Shipment Log # 26261831626850130
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 26262424264850136
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_record_count NUMBER := 0;
+            v_total_po NUMBER;
+            v_po_id NIT012.PO_ID%TYPE;
+        BEGIN
+            DELETE FROM NIT025;
+            DELETE FROM NIT024;
+        
+            FOR r IN (
+                SELECT nit012.po_id
+                FROM NIT012 nit012
+                WHERE TRUNC(nit012.eta_date) >= TRUNC(SYSDATE)
+                ORDER BY nit012.eta_date
+                FETCH FIRST 6 ROWS ONLY
+            ) LOOP
+                INSERT INTO NIT024 (PO_ID, CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE)
+                VALUES (r.po_id, V('APP_USER'), SYSDATE, V('APP_USER'), SYSDATE);
+        
+                INSERT INTO NIT025 (PO_ID, ITEM_ID, QTY, CREATE_USER, CREATE_DATE, UPDATE_USER, UPDATE_DATE, VENDOR_PRICE, INTERNAL_UOM_ID, EXTERNAL_UOM_ID, INTERNAL_PRICE, EXTERNAL_PRICE)
+                SELECT nit013.po_id, nit013.item_id, nit013.qty, V('APP_USER'), SYSDATE, V('APP_USER'), SYSDATE, nit013.vendor_price, nit013.internal_uom_id, nit013.external_uom_id, nit013.internal_price, nit013.external_price
+                FROM NIT013 nit013
+                WHERE nit013.po_id = r.po_id;
+        
+                v_record_count := v_record_count + SQL%ROWCOUNT;
+            END LOOP;
+        
+            :P302_TOTAL_COUNT := v_record_count;
+        END;
+      items-to-return: 
+      - P302_TOTAL_COUNT
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Update Incoming Shipment Log # 26261831626850130
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Close ===============================
+  id: 26263172903850143
+  identification: 
+    name: Close
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: OK # 26263003467850142
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 26263240216850144
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Wrapper - Success # 26262565693850137
+
+    execution: 
+      sequence: 10
+      event: Close # 26263172903850143
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

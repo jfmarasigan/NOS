@@ -1,0 +1,667 @@
+---
+# ====== Page: Customer Account Type Utility Add =============
+id: 206
+identification: 
+  name: Customer Account Type Utility Add
+  alias: CUSTOMER-ACCOUNT-TYPE-UTILITY-ADD
+  title: Add
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p206KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+            $("#enter").trigger("click"); 
+        }
+    }
+    
+    function mapP206Keys() {
+        $(document).off('keydown.p206keyevents');
+        $(document).on('keydown.p206keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p206KeyMap[key]) {
+                ev.preventDefault();
+                p206KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP206Keys();
+    
+    $x('P206_ACCOUNT_TYPE_CODE').focus();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+    }
+    
+    .t-Dialog-body label, .t-Dialog-body input, .t-Dialog-body .apex-item-display-only {
+        font-size: 1.125rem;
+    }
+    
+    .t-Dialog-body label {
+        color: white;
+    }
+    
+    .t-Region-body{
+        background-color: #056AC8;
+        padding-bottom: 0;
+    }
+    
+    .t-Form-error {
+        color: #FFD700;
+    }
+    
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: '' !important; /* Remove the asterisk before the label */
+    }
+    
+    
+    .white-text {
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Form ========================================
+  id: 42743986443111417
+  identification: 
+    name: Form
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPM003
+    include-rowid-column: false
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P206_ACCOUNT_TYPE_ID =====================
+  id: 42744134372111419
+  identification: 
+    name: P206_ACCOUNT_TYPE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Form # 42743986443111417
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 42743986443111417
+    column: ACCOUNT_TYPE_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P206_ACCOUNT_TYPE_NAME ===================
+  id: 42744256603111420
+  identification: 
+    name: P206_ACCOUNT_TYPE_NAME
+    type: Text Field
+
+  label: 
+    label: 'Name <span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Form # 42743986443111417
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 42743986443111417
+    column: ACCOUNT_TYPE_NAME
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P206_ACCOUNT_TYPE_CODE ===================
+  id: 42744314133111421
+  identification: 
+    name: P206_ACCOUNT_TYPE_CODE
+    type: Text Field
+
+  label: 
+    label: 'Code <span style="color:red;">*</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: Upper
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Form # 42743986443111417
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 1
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 42743986443111417
+    column: ACCOUNT_TYPE_CODE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P206_DESCRIPTION =========================
+  id: 42744404933111422
+  identification: 
+    name: P206_DESCRIPTION
+    type: Text Field
+
+  label: 
+    label: Description
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Form # 42743986443111417
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 200
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 42743986443111417
+    column: DESCRIPTION
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P206_USER_CREATED ========================
+  id: 42744544839111423
+  identification: 
+    name: P206_USER_CREATED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Form # 42743986443111417
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 42743986443111417
+    column: USER_CREATED
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P206_DATE_CREATE =========================
+  id: 42744652362111424
+  identification: 
+    name: P206_DATE_CREATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Form # 42743986443111417
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 42743986443111417
+    column: DATE_CREATE
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P206_USER_UPDATE =========================
+  id: 42744744968111425
+  identification: 
+    name: P206_USER_UPDATE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Form # 42743986443111417
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 42743986443111417
+    column: USER_UPDATE
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P206_DATE_UPDATED ========================
+  id: 42744829752111426
+  identification: 
+    name: P206_DATE_UPDATED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Form # 42743986443111417
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Form # 42743986443111417
+    column: DATE_UPDATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 42745471820111432
+  identification: 
+    button-name: Enter
+    label: '-'
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: enter
+
+validations: 
+- # ====== Validation: Empty Code ==============================
+  id: 42744928630111427
+  identification: 
+    name: Empty Code
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P206_ACCOUNT_TYPE_CODE
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P206_ACCOUNT_TYPE_CODE # 42744314133111421
+
+- # ====== Validation: Empty Name ==============================
+  id: 42745053227111428
+  identification: 
+    name: Empty Name
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Item is NOT NULL
+    item: P206_ACCOUNT_TYPE_NAME
+    always-execute: true
+
+  error: 
+    error-message: Must have some value.
+    display-location: Inline with Field
+    associated-item: P206_ACCOUNT_TYPE_NAME # 42744256603111420
+
+- # ====== Validation: Code Already Exists =====================
+  id: 42745599032111433
+  identification: 
+    name: Code Already Exists
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: No Rows returned
+    sql-query: 'SELECT 1 FROM NPM003 WHERE ACCOUNT_TYPE_CODE = :P206_ACCOUNT_TYPE_CODE'
+    always-execute: true
+
+  error: 
+    error-message: Code already exists
+    display-location: Inline with Field
+    associated-item: P206_ACCOUNT_TYPE_CODE # 42744314133111421
+
+- # ====== Validation: Name Already Exists =====================
+  id: 42745672863111434
+  identification: 
+    name: Name Already Exists
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: No Rows returned
+    sql-query: 'SELECT 1 FROM NPM003 WHERE UPPER(ACCOUNT_TYPE_NAME) = UPPER(:P206_ACCOUNT_TYPE_NAME)'
+    always-execute: true
+
+  error: 
+    error-message: Name already exists.
+    display-location: Inline with Field
+    associated-item: P206_ACCOUNT_TYPE_NAME # 42744256603111420
+
+processes: 
+- # ====== Process: Initialize form Customer Account Type Utilit
+  id: 42744056138111418
+  identification: 
+    name: Initialize form Customer Account Type Utility Add
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Form # 42743986443111417
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Add Account Type ===========================
+  id: 42745715923111435
+  identification: 
+    name: Add Account Type
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+          INSERT INTO NPM003 (ACCOUNT_TYPE_CODE, ACCOUNT_TYPE_NAME, DESCRIPTION, USER_CREATED, DATE_CREATE, USER_UPDATE, DATE_UPDATED)
+          VALUES (:P206_ACCOUNT_TYPE_CODE, :P206_ACCOUNT_TYPE_NAME, :P206_DESCRIPTION, v('APP_USER'), SYSTIMESTAMP, v('APP_USER'), SYSTIMESTAMP);
+      
+          apex_util.set_session_state('SUCCESS_MSG', 'Account Type added successfully');
+      END;
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 42746132989111439
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

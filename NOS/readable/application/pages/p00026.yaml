@@ -1,0 +1,2932 @@
+---
+# ====== Page: Update Item Qty ===============================
+id: 26
+identification: 
+  name: Update Item Qty
+  alias: UPDATE-ITEM-QTY
+  title: Update Item Qty
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 20rem
+  css-classes: 
+  - modal-dialog--pullout
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p26KeyMap = {
+        enter : (v) => {
+            if($v("P26_NEXT_ITEM") == "UPDATE"){
+                if($v("P26_WAREHOUSE") == ''){
+                    $.event.trigger('showError');
+                } else {
+                    $("#u").trigger("click");
+                }
+            } else if($v("P26_NEXT_ITEM") == "WAREHOUSE"){
+                $.event.trigger('showError');
+            } else {
+                    jQuery($v("P26_NEXT_ITEM")).trigger("focus").trigger("select");
+            }
+        }
+    }
+    
+    function mapP26Keys() {
+        $(document).off('keydown.p26keyevents');
+        $(document).on('keydown.p26keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p26KeyMap[key]) {
+                ev.preventDefault();
+                p26KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP26Keys();
+    setInputFilter($("#P26_NEW_QTY_4"), function(value) {  return /^\d*$/.test(value);}, "Only digits are allowed");
+    setInputFilter($("#P26_NEW_QTY_3"), function(value) {  return /^\d*$/.test(value);}, "Only digits are allowed");
+    setInputFilter($("#P26_NEW_QTY_2"), function(value) {  return /^\d*$/.test(value);}, "Only digits are allowed");
+    setInputFilter($("#P26_NEW_QTY_1"), function(value) {  return /^\d*$/.test(value);}, "Only digits are allowed");
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/p26_css.css'
+  inline: |
+    .err{
+        font-size: 0.75rem;
+        color: red;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Content =====================================
+  id: 7689036388126426
+  identification: 
+    name: Content
+    type: Static Content
+
+  source: 
+    html-code: '<div class="header">Item Number: &P26_ITEM_NUMBER.</div>'
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - t-Form--noPadding
+    - margin-left-none
+    - margin-right-none
+    render-components: Below Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P26_ITEM_NUMBER ==========================
+  id: 7689150169126427
+  identification: 
+    name: P26_ITEM_NUMBER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Content # 7689036388126426
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_REASON ===============================
+  id: 8089122032356315
+  identification: 
+    name: P26_REASON
+    type: Select List
+
+  label: 
+    label: <p="format-size">Reason</p>
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 220
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-sm
+    height: 1
+
+  validation: 
+    value-required: true
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT
+          REASON_NAME AS "display1",
+          QTY_REASON_ID AS "return1"
+      FROM
+          NIM028
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    pre-text: '<p class ="format-size">Reason: </p>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_ITEM_ID ==============================
+  id: 8090008287356324
+  identification: 
+    name: P26_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Content # 7689036388126426
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          item_id
+      FROM
+          NIT001
+      WHERE
+          :P26_ITEM_NUMBER = item_num
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_CURRENT_QTY_4 ========================
+  id: 9515597246251307
+  identification: 
+    name: P26_CURRENT_QTY_4
+    type: Display Only
+
+  label: 
+    label: crt
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 100
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width50
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--postTextBlock
+    - margin-bottom-sm
+    - margin-right-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    post-text-: <p class="format-size">crt</p>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          SUM(qty)
+      FROM
+          NIT004
+      WHERE
+          :P26_ITEM_ID = item_id AND
+          uom_id = 4;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 4 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_CURRENT_QTY_3 ========================
+  id: 9515791585251309
+  identification: 
+    name: P26_CURRENT_QTY_3
+    type: Display Only
+
+  label: 
+    label: box
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 130
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width50
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - t-Form-fieldContainer--postTextBlock
+    - margin-bottom-sm
+    - margin-right-sm
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+
+  advanced: 
+    css-classes: 
+    - format-size
+    post-text-: <p class="format-size">box</p>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          SUM(qty)
+      FROM
+          NIT004
+      WHERE
+          :P26_ITEM_ID = item_id AND
+          uom_id = 3;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 3 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_CURRENT_QTY_2 ========================
+  id: 9515869510251310
+  identification: 
+    name: P26_CURRENT_QTY_2
+    type: Display Only
+
+  label: 
+    label: pk
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 160
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width50
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - t-Form-fieldContainer--postTextBlock
+    - margin-bottom-sm
+    - margin-right-sm
+    - t-Form-fieldContainer--normalDisplay
+    - '#DEFAULT#'
+
+  advanced: 
+    css-classes: 
+    - format-size
+    post-text-: <p class="format-size">pk</p>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          SUM(qty)
+      FROM
+          NIT004
+      WHERE
+          :P26_ITEM_ID = item_id AND
+          uom_id = 2;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 2 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_CURRENT_QTY_1 ========================
+  id: 9515930900251311
+  identification: 
+    name: P26_CURRENT_QTY_1
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 190
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width50
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - t-Form-fieldContainer--postTextBlock
+    - margin-bottom-sm
+    - margin-right-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    post-text-: <p class="format-size">pcs</p>
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          SUM(qty)
+      FROM
+          NIT004
+      WHERE
+          :P26_ITEM_ID = item_id AND
+          uom_id = 1;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 1 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY_4 ============================
+  id: 9516008179251312
+  identification: 
+    name: P26_NEW_QTY_4
+    type: Number Field
+
+  label: 
+    label: crt
+    alignment: Left
+
+  settings: 
+    minimum-value: 0
+    maximum-value: 999
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 110
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width375
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - margin-right-sm
+    - t-Form-fieldContainer--normalDisplay
+    width: 10
+
+  validation: 
+    value-required: true
+    maximum-length: 3
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          SUM(qty)
+      FROM
+          NIT004
+      WHERE
+          :P26_ITEM_ID = item_id AND
+          uom_id = 4;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 4 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY_3 ============================
+  id: 9516130833251313
+  identification: 
+    name: P26_NEW_QTY_3
+    type: Number Field
+
+  label: 
+    label: box
+    alignment: Left
+
+  settings: 
+    minimum-value: 0
+    maximum-value: 999
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 140
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width375
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - margin-right-sm
+    - t-Form-fieldContainer--normalDisplay
+    width: 10
+
+  validation: 
+    value-required: true
+    maximum-length: 3
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          SUM(qty)
+      FROM
+          NIT004
+      WHERE
+          :P26_ITEM_ID = item_id AND
+          uom_id = 3;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 3 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY_2 ============================
+  id: 9516257797251314
+  identification: 
+    name: P26_NEW_QTY_2
+    type: Number Field
+
+  label: 
+    label: pk
+    alignment: Left
+
+  settings: 
+    minimum-value: 0
+    maximum-value: 999
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 170
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width375
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - margin-right-sm
+    - t-Form-fieldContainer--normalDisplay
+    width: 10
+
+  validation: 
+    value-required: true
+    maximum-length: 3
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          SUM(qty)
+      FROM
+          NIT004
+      WHERE
+          :P26_ITEM_ID = item_id AND
+          uom_id = 2;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 2 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY_1 ============================
+  id: 9516326872251315
+  identification: 
+    name: P26_NEW_QTY_1
+    type: Number Field
+
+  label: 
+    label: pcs
+    alignment: Left
+
+  settings: 
+    minimum-value: 0
+    maximum-value: 999
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 200
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width375
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - margin-right-sm
+    - t-Form-fieldContainer--normalDisplay
+    width: 10
+
+  validation: 
+    value-required: true
+    maximum-length: 4
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT
+          SUM(qty)
+      FROM
+          NIT004
+      WHERE
+          :P26_ITEM_ID = item_id AND
+          uom_id = 1;
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 1 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY_LABEL_1 ======================
+  id: 10216941763449109
+  identification: 
+    name: P26_NEW_QTY_LABEL_1
+    type: Display Only
+
+  label: 
+    label: pcs
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 210
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+    column-css-classes: 
+    - width125
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - t-Form-fieldContainer--normalDisplay
+    css-classes: 
+    - format-size
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: <p class="format-size">pcs</p>
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 1 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY_LABEL_2 ======================
+  id: 10217020556449110
+  identification: 
+    name: P26_NEW_QTY_LABEL_2
+    type: Display Only
+
+  label: 
+    label: pk
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 180
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+    column-css-classes: 
+    - width125
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: <p class="format-size">pk</p>
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 2 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY_LABEL_3 ======================
+  id: 10217169542449111
+  identification: 
+    name: P26_NEW_QTY_LABEL_3
+    type: Display Only
+
+  label: 
+    label: box
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 150
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+    column-css-classes: 
+    - width125
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: <p class="format-size">box</p>
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 3 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY_LABEL_4 ======================
+  id: 10217245858449112
+  identification: 
+    name: P26_NEW_QTY_LABEL_4
+    type: Display Only
+
+  label: 
+    label: crt
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 120
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+    column-css-classes: 
+    - width125
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: <p class="format-size">crt</p>
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  server-side-condition: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: |
+      DECLARE
+          l_show BOOLEAN;
+      BEGIN
+          l_show := FALSE;
+          FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id) LOOP
+              IF i.uom_id = 4 THEN
+                  l_show := TRUE;
+              END IF;
+          END LOOP;
+      
+          RETURN l_show;
+      END;
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEXT_ITEM ============================
+  id: 10906070329353227
+  identification: 
+    name: P26_NEXT_ITEM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Content # 7689036388126426
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: WAREHOUSE
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_CURRENT_QTY ==========================
+  id: 11428084697400449
+  identification: 
+    name: P26_CURRENT_QTY
+    type: Display Only
+
+  label: 
+    label: Current Qty
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width50
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - qty-title
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: Current Qty
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_NEW_QTY ==============================
+  id: 11428107564400450
+  identification: 
+    name: P26_NEW_QTY
+    type: Display Only
+
+  label: 
+    label: New Qty
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - width50
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+
+  advanced: 
+    css-classes: 
+    - qty-title
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Static Value
+    static-value: New Qty
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_WAREHOUSE ============================
+  id: 28550856257120028
+  identification: 
+    name: P26_WAREHOUSE
+    type: Select List
+
+  label: 
+    label: Warehouse
+    alignment: Left
+
+  settings: 
+    page-action-on-selection: None
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 40
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    height: 1
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT DISTINCT
+          nim27.WAREHOUSE_LOCATION as d,
+          nit4.WAREHOUSE_ID as r
+      FROM
+          NIM027 nim27,
+          NIT004 nit4
+      WHERE 
+          nim27.WAREHOUSE_ID = nit4.WAREHOUSE_ID AND
+          nit4.ITEM_ID = :P26_ITEM_ID
+      ORDER BY
+          nit4.WAREHOUSE_ID
+    display-extra-values: true
+    display-null-value: true
+    null-display-value: ALL
+
+  advanced: 
+    pre-text: '<p class ="format-size">Warehouse: </p>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P26_WAREHOUSE_ERR ========================
+  id: 30678110750189119
+  identification: 
+    name: P26_WAREHOUSE_ERR
+    type: Display Only
+
+  label: 
+    label: Warehouse
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Content # 7689036388126426
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    css-classes: 
+    - err
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Please select a warehouse to update before proceeding
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Update ======================================
+  id: 8089294696356316
+  identification: 
+    button-name: Update
+    label: press enter to update or exit
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - p26-white-text
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+dynamic-actions: 
+- # ====== Dynamic Action: Update QTY ==========================
+  id: 8089877045356322
+  identification: 
+    name: Update QTY
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 8089294696356316
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 8090298579356326
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 80
+      event: Update QTY # 8089877045356322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: UPDATE PCS ==================================
+    id: 8090425485356328
+    identification: 
+      name: UPDATE PCS
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P26_CURRENT_QTY_1 := TO_NUMBER(:P26_CURRENT_QTY_1);
+            IF :P26_CURRENT_QTY_1 != :P26_NEW_QTY_1 THEN
+                INSERT INTO NIT004
+                VALUES(
+                    :P26_ITEM_ID,
+                    :P26_WAREHOUSE,
+                    :APP_USER,
+                    SYSDATE(),
+                    '',
+                    '',
+                    :P26_NEW_QTY_1,
+                    1
+                );
+                INSERT INTO NIT005
+                VALUES('',
+                    :P26_ITEM_ID, 
+                    :P26_REASON, 
+                    :P26_CURRENT_QTY_1,
+                    ABS(:P26_NEW_QTY_1 - :P26_CURRENT_QTY_1),
+                    :P26_NEW_QTY_1,
+                    :APP_USER,
+                    SYSDATE(),
+                    1,
+                    :P26_WAREHOUSE);  
+            END IF;
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                UPDATE  
+                    NIT004
+                SET
+                    qty = :P26_NEW_QTY_1,
+                    update_user = :APP_USER,
+                    update_date = SYSDATE()
+                WHERE
+                    warehouse_id = :P26_WAREHOUSE AND
+                    item_id = :P26_ITEM_ID AND
+                    uom_id = 1;
+        
+                INSERT INTO NIT005
+                VALUES('',
+                    :P26_ITEM_ID, 
+                    :P26_REASON, 
+                    :P26_CURRENT_QTY_1,
+                    ABS(:P26_NEW_QTY_1 - :P26_CURRENT_QTY_1),
+                    :P26_NEW_QTY_1,
+                    :APP_USER,
+                    SYSDATE(),
+                    1,
+                    :P26_WAREHOUSE);  
+        END;
+        
+      items-to-submit: 
+      - P26_ITEM_ID
+      - P26_REASON
+      - P26_CURRENT_QTY_1
+      - P26_NEW_QTY_1
+      - P26_WAREHOUSE
+
+    execution: 
+      sequence: 30
+      event: Update QTY # 8089877045356322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: UPDATE PK ===================================
+    id: 9517166234251323
+    identification: 
+      name: UPDATE PK
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P26_CURRENT_QTY_2 := TO_NUMBER(:P26_CURRENT_QTY_2);
+            IF :P26_CURRENT_QTY_2 != :P26_NEW_QTY_2 THEN     
+                INSERT INTO NIT004
+                VALUES(
+                    :P26_ITEM_ID,
+                    :P26_WAREHOUSE,
+                    :APP_USER,
+                    SYSDATE(),
+                    '',
+                    '',
+                    :P26_NEW_QTY_2,
+                    2
+                );
+                INSERT INTO NIT005 
+                VALUES('',
+                    :P26_ITEM_ID, 
+                    :P26_REASON, 
+                    :P26_CURRENT_QTY_2,
+                    ABS(:P26_NEW_QTY_2 - :P26_CURRENT_QTY_2),
+                    :P26_NEW_QTY_2,
+                    :APP_USER,
+                    SYSDATE(),
+                    2,
+                    :P26_WAREHOUSE);  
+            END IF;
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                UPDATE  
+                    NIT004
+                SET
+                    qty = :P26_NEW_QTY_2,
+                    update_user = :APP_USER,
+                    update_date = SYSDATE()
+                WHERE
+                    warehouse_id = :P26_WAREHOUSE AND
+                    item_id = :P26_ITEM_ID AND
+                    uom_id = 2;
+               INSERT INTO NIT005 
+                VALUES('',
+                    :P26_ITEM_ID, 
+                    :P26_REASON, 
+                    :P26_CURRENT_QTY_2,
+                    ABS(:P26_NEW_QTY_2 - :P26_CURRENT_QTY_2),
+                    :P26_NEW_QTY_2,
+                    :APP_USER,
+                    SYSDATE(),
+                    2,
+                    :P26_WAREHOUSE);
+        END;
+        
+      items-to-submit: 
+      - P26_ITEM_ID
+      - P26_REASON
+      - P26_CURRENT_QTY_2
+      - P26_NEW_QTY_2
+      - P26_WAREHOUSE
+
+    execution: 
+      sequence: 50
+      event: Update QTY # 8089877045356322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: UPDATE BOX ==================================
+    id: 9517219801251324
+    identification: 
+      name: UPDATE BOX
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P26_CURRENT_QTY_3 := TO_NUMBER(:P26_CURRENT_QTY_3);
+            IF :P26_CURRENT_QTY_3 != :P26_NEW_QTY_3 THEN   
+                INSERT INTO NIT004
+                VALUES(
+                    :P26_ITEM_ID,
+                    :P26_WAREHOUSE,
+                    :APP_USER,
+                    SYSDATE(),
+                    '',
+                    '',
+                    :P26_NEW_QTY_3,
+                    3
+                );
+        
+                INSERT INTO NIT005 
+                VALUES('',
+                    :P26_ITEM_ID, 
+                    :P26_REASON, 
+                    :P26_CURRENT_QTY_3,
+                    ABS(:P26_NEW_QTY_3 - :P26_CURRENT_QTY_3),
+                    :P26_NEW_QTY_3,
+                    :APP_USER,
+                    SYSDATE(),
+                    3,
+                    :P26_WAREHOUSE);     
+            END IF;
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                UPDATE  
+                    NIT004
+                SET
+                    qty = :P26_NEW_QTY_3,
+                    update_user = :APP_USER,
+                    update_date = SYSDATE()
+                WHERE
+                    warehouse_id = :P26_WAREHOUSE AND
+                    item_id = :P26_ITEM_ID AND
+                    uom_id = 3; 
+        
+                INSERT INTO NIT005 
+                VALUES('',
+                    :P26_ITEM_ID, 
+                    :P26_REASON, 
+                    :P26_CURRENT_QTY_3,
+                    ABS(:P26_NEW_QTY_3 - :P26_CURRENT_QTY_3),
+                    :P26_NEW_QTY_3,
+                    :APP_USER,
+                    SYSDATE(),
+                    3,
+                    :P26_WAREHOUSE);
+        END;
+        
+      items-to-submit: 
+      - P26_ITEM_ID
+      - P26_REASON
+      - P26_CURRENT_QTY_3
+      - P26_NEW_QTY_3
+      - P26_WAREHOUSE
+
+    execution: 
+      sequence: 60
+      event: Update QTY # 8089877045356322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: UPDATE CRT ==================================
+    id: 9517390143251325
+    identification: 
+      name: UPDATE CRT
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P26_CURRENT_QTY_4 := TO_NUMBER(:P26_CURRENT_QTY_4);
+            IF :P26_CURRENT_QTY_4 != :P26_NEW_QTY_4 THEN
+                INSERT INTO NIT004
+                VALUES(
+                    :P26_ITEM_ID,
+                    :P26_WAREHOUSE,
+                    :APP_USER,
+                    SYSDATE(),
+                    '',
+                    '',
+                    :P26_NEW_QTY_4,
+                    4
+                );
+                
+                INSERT INTO NIT005 
+                VALUES('',
+                    :P26_ITEM_ID, 
+                    :P26_REASON, 
+                    :P26_CURRENT_QTY_4,
+                    ABS(:P26_NEW_QTY_4 - :P26_CURRENT_QTY_4),
+                    :P26_NEW_QTY_4,
+                    :APP_USER,
+                    SYSDATE(),
+                    4,
+                    :P26_WAREHOUSE);
+            END IF;
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN
+                UPDATE  
+                    NIT004
+                SET
+                    qty = :P26_NEW_QTY_4,
+                    update_user = :APP_USER,
+                    update_date = SYSDATE()
+                WHERE
+                    warehouse_id = :P26_WAREHOUSE AND
+                    item_id = :P26_ITEM_ID AND
+                    uom_id = 4;   
+                
+                INSERT INTO NIT005 
+                VALUES('',
+                    :P26_ITEM_ID, 
+                    :P26_REASON, 
+                    :P26_CURRENT_QTY_4,
+                    ABS(:P26_NEW_QTY_4 - :P26_CURRENT_QTY_4),
+                    :P26_NEW_QTY_4,
+                    :APP_USER,
+                    SYSDATE(),
+                    4,
+                    :P26_WAREHOUSE);
+        END;
+        
+      items-to-submit: 
+      - P26_ITEM_ID
+      - P26_REASON
+      - P26_CURRENT_QTY_4
+      - P26_NEW_QTY_4
+      - P26_WAREHOUSE
+
+    execution: 
+      sequence: 70
+      event: Update QTY # 8089877045356322
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: focus next input 1 ==================
+  id: 10906111999353228
+  identification: 
+    name: focus next input 1
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P26_NEW_QTY_4
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 10906205213353229
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id ORDER BY uom_id DESC) LOOP
+                IF i.uom_id = 3 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_3';
+                    EXIT;
+                ELSIF i.uom_id = 2 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_2';
+                    EXIT;
+                ELSIF i.uom_id = 1 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_1';
+                    EXIT;
+                ELSE
+                    :P26_NEXT_ITEM := '#P26_REASON';
+                END IF;
+            END LOOP;
+        
+            RETURN :P26_NEXT_ITEM;
+        END;
+      items-to-submit: 
+      - P26_ITEM_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: focus next input 1 # 10906111999353228
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: focus next input 2 ==================
+  id: 10907505509353242
+  identification: 
+    name: focus next input 2
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P26_NEW_QTY_3
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 10907602883353243
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id ORDER BY uom_id DESC) LOOP
+                IF i.uom_id = 2 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_2';
+                    EXIT;
+                ELSIF i.uom_id = 1 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_1';
+                    EXIT;
+                ELSE
+                    :P26_NEXT_ITEM := '#P26_REASON';
+                END IF;
+            END LOOP;
+        
+            RETURN :P26_NEXT_ITEM;
+        END;
+      items-to-submit: 
+      - P26_ITEM_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: focus next input 2 # 10907505509353242
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: focus next input 3 ==================
+  id: 10907767937353244
+  identification: 
+    name: focus next input 3
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P26_NEW_QTY_2
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 10907843566353245
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id ORDER BY uom_id DESC) LOOP
+                IF i.uom_id = 1 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_1';
+                    EXIT;
+                ELSE
+                    :P26_NEXT_ITEM := '#P26_REASON';
+                END IF;
+            END LOOP;
+        
+            RETURN :P26_NEXT_ITEM;
+        END;
+      items-to-submit: 
+      - P26_ITEM_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: focus next input 3 # 10907767937353244
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: focus next input 4 ==================
+  id: 10907922465353246
+  identification: 
+    name: focus next input 4
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P26_NEW_QTY_1
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 10908000655353247
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P26_REASON'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: focus next input 4 # 10907922465353246
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: focus next input 4_1 ================
+  id: 11423296217400401
+  identification: 
+    name: focus next input 4_1
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P26_REASON
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 11423309765400402
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: UPDATE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: focus next input 4_1 # 11423296217400401
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On Change ===========================
+  id: 28551046080120030
+  identification: 
+    name: On Change
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P26_WAREHOUSE
+
+  actions: 
+  - # ====== Action: Set Current QTY 4 ===========================
+    id: 28551213513120032
+    identification: 
+      name: Set Current QTY 4
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            qty
+        FROM
+            NIT004
+        WHERE
+            warehouse_id = :P26_WAREHOUSE AND
+            :P26_ITEM_ID = item_id AND
+            uom_id = 4;
+      items-to-submit: 
+      - P26_WAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_4
+
+    execution: 
+      sequence: 20
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Default 4 ===============================
+    id: 28551306701120033
+    identification: 
+      name: Set Default 4
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            SUM(qty)
+        FROM
+            NIT004
+        WHERE
+            :P26_ITEM_ID = item_id AND
+            uom_id = 4;
+      items-to-submit: 
+      - P26_WAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_4
+
+    execution: 
+      sequence: 30
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_WAREHOUSE
+
+  - # ====== Action: Set Current QTY 3 ===========================
+    id: 28551946780120039
+    identification: 
+      name: Set Current QTY 3
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            qty
+        FROM
+            NIT004
+        WHERE
+            warehouse_id = :P26_WAREHOUSE AND
+            :P26_ITEM_ID = item_id AND
+            uom_id = 3;
+      items-to-submit: 
+      - P26_WAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_3
+
+    execution: 
+      sequence: 40
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Current QTY 2 ===========================
+    id: 28552053044120040
+    identification: 
+      name: Set Current QTY 2
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            qty
+        FROM
+            NIT004
+        WHERE
+            warehouse_id = :P26_WAREHOUSE AND
+            :P26_ITEM_ID = item_id AND
+            uom_id = 2;
+      items-to-submit: 
+      - P26_WAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_2
+
+    execution: 
+      sequence: 60
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Current QTY 1 ===========================
+    id: 28552108016120041
+    identification: 
+      name: Set Current QTY 1
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            qty
+        FROM
+            NIT004
+        WHERE
+            warehouse_id = :P26_WAREHOUSE AND
+            :P26_ITEM_ID = item_id AND
+            uom_id = 1;
+      items-to-submit: 
+      - P26_WAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_1
+
+    execution: 
+      sequence: 80
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Default 3 ===============================
+    id: 30677024409189108
+    identification: 
+      name: Set Default 3
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            SUM(qty)
+        FROM
+            NIT004
+        WHERE
+            :P26_ITEM_ID = item_id AND
+            uom_id = 3;
+      items-to-submit: 
+      - P26_WAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_3
+
+    execution: 
+      sequence: 50
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_WAREHOUSE
+
+  - # ====== Action: Set Default 2 ===============================
+    id: 30677143733189109
+    identification: 
+      name: Set Default 2
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            SUM(qty)
+        FROM
+            NIT004
+        WHERE
+            :P26_ITEM_ID = item_id AND
+            uom_id = 2;
+      items-to-submit: 
+      - P26_WAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_2
+
+    execution: 
+      sequence: 70
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_WAREHOUSE
+
+  - # ====== Action: Set Default 1 ===============================
+    id: 30677216512189110
+    identification: 
+      name: Set Default 1
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            SUM(qty)
+        FROM
+            NIT004
+        WHERE
+            :P26_ITEM_ID = item_id AND
+            uom_id = 1;
+      items-to-submit: 
+      - P26_WAREHOUSE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_1
+
+    execution: 
+      sequence: 100
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_WAREHOUSE
+
+  - # ====== Action: Change next focus ===========================
+    id: 30677764378189115
+    identification: 
+      name: Change next focus
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        BEGIN
+            FOR i IN (SELECT uom_id FROM NIT002 WHERE :P26_ITEM_ID = item_id ORDER BY uom_id DESC) LOOP
+                IF i.uom_id = 4 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_4';
+                    EXIT;
+                ELSIF i.uom_id = 3 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_3';
+                    EXIT;
+                ELSIF i.uom_id = 2 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_2';
+                    EXIT;
+                ELSIF i.uom_id = 1 THEN
+                    :P26_NEXT_ITEM := '#P26_NEW_QTY_1';
+                    EXIT;
+                ELSE
+                    :P26_NEXT_ITEM := '#P26_REASON';
+                END IF;
+            END LOOP;
+        
+            RETURN :P26_NEXT_ITEM;
+        END;
+      items-to-submit: 
+      - P26_ITEM_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEXT_ITEM
+
+    execution: 
+      sequence: 110
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P26_WAREHOUSE
+
+  - # ====== Action: Change next focus ===========================
+    id: 30678054404189118
+    identification: 
+      name: Change next focus
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: WAREHOUSE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEXT_ITEM
+
+    execution: 
+      sequence: 120
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_WAREHOUSE
+
+  - # ====== Action: Hide ========================================
+    id: 30678749458189125
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_WAREHOUSE_ERR
+
+    execution: 
+      sequence: 10
+      event: On Change # 28551046080120030
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Change Value 4 ======================
+  id: 28551564726120035
+  identification: 
+    name: Change Value 4
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P26_CURRENT_QTY_4
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 28551696394120036
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: apex.item(this.triggeringElement).getValue()
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEW_QTY_4
+
+    execution: 
+      sequence: 30
+      event: Change Value 4 # 28551564726120035
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 28551886839120038
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 0
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_4
+
+    execution: 
+      sequence: 10
+      event: Change Value 4 # 28551564726120035
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_CURRENT_QTY_4
+
+- # ====== Dynamic Action: Change Value 3 ======================
+  id: 28552245518120042
+  identification: 
+    name: Change Value 3
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P26_CURRENT_QTY_3
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 28552423527120044
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 0
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_3
+
+    execution: 
+      sequence: 10
+      event: Change Value 3 # 28552245518120042
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_CURRENT_QTY_3
+
+  - # ====== Action: Set Value ===================================
+    id: 28552593188120045
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: apex.item(this.triggeringElement).getValue()
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEW_QTY_3
+
+    execution: 
+      sequence: 30
+      event: Change Value 3 # 28552245518120042
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Change Value 2 ======================
+  id: 28553031430120050
+  identification: 
+    name: Change Value 2
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P26_CURRENT_QTY_2
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 30676447870189102
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 0
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_2
+
+    execution: 
+      sequence: 10
+      event: Change Value 2 # 28553031430120050
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_CURRENT_QTY_2
+
+  - # ====== Action: Set Value ===================================
+    id: 30676552853189103
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: apex.item(this.triggeringElement).getValue()
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEW_QTY_2
+
+    execution: 
+      sequence: 30
+      event: Change Value 2 # 28553031430120050
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Change Value 1 ======================
+  id: 30676645223189104
+  identification: 
+    name: Change Value 1
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P26_CURRENT_QTY_1
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 30676897531189106
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 0
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_CURRENT_QTY_1
+
+    execution: 
+      sequence: 10
+      event: Change Value 1 # 30676645223189104
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P26_CURRENT_QTY_1
+
+  - # ====== Action: Set Value ===================================
+    id: 30676996577189107
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: JavaScript Expression
+      javascript-expression: apex.item(this.triggeringElement).getValue()
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_NEW_QTY_1
+
+    execution: 
+      sequence: 20
+      event: Change Value 1 # 30676645223189104
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Focus to Warehouse ==================
+  id: 30677438363189112
+  identification: 
+    name: Focus to Warehouse
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 30677572804189113
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_WAREHOUSE
+
+    execution: 
+      sequence: 10
+      event: Focus to Warehouse # 30677438363189112
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 30678272446189120
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_WAREHOUSE_ERR
+
+    execution: 
+      sequence: 20
+      event: Focus to Warehouse # 30677438363189112
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Show error ==========================
+  id: 30678300948189121
+  identification: 
+    name: Show error
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: showError
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Show ========================================
+    id: 30678420377189122
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_WAREHOUSE_ERR
+
+    execution: 
+      sequence: 10
+      event: Show error # 30678300948189121
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Focus ===================================
+    id: 31966307852186012
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P26_WAREHOUSE
+
+    execution: 
+      sequence: 20
+      event: Show error # 30678300948189121
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+

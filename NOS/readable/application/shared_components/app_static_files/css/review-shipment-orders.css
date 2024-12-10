@@ -1,0 +1,288 @@
+/* View height dependent table and buttons - START */
+.buttons-row {
+    position: absolute;
+    width: 98vw;
+    bottom: 1.75rem;
+}
+
+.a-GV-header, .a-GV-headerGroup, .a-GV-cell {
+    border-color: rgba(0,0,0,.5) !important;
+}
+
+#shipment-records .a-IG {
+    height: calc(75vh + 2px) !important;
+} 
+
+#shipment-records .a-IG-contentContainer {
+    height: 75vh !important;
+}
+
+#shipment-records .a-IG-gridView.a-GV {
+    height: 75vh !important;
+}
+
+#shipment-records .a-GV-bdy {
+    height: calc(75vh - 2.5625rem) !important;
+}
+
+/* View height dependent table and buttons - END */
+
+.t-Header .t-Header-branding {
+    background-color: white !important;
+    color: rgb(30, 58, 138) !important;
+}
+
+body {
+    background-color: rgb(30, 58, 138);
+}
+
+.ui-widget-overlay {
+    background: none;
+}
+
+.menu-buttons button {
+    font-size: 1.125rem;
+    color: white;
+}
+
+.menu-buttons button:hover {
+    color: white;
+}
+
+.a-GV-header {
+    cursor: none;
+}
+
+#p100-header h2{
+    margin-top: 0;
+}
+
+.shipment-tg-header {
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+#shipment-records table,
+#shipment-records tr,
+#shipment-records td,
+#shipment-records th,
+#vp-grid table,
+#vp-grid tr,
+#vp-grid td,
+#vp-grid th,
+.rep-option label {
+    font-size: 1.125rem;
+}
+
+.a-GV-hdr .a-GV-table {
+    width: 100% !important;
+}
+
+#shipment-records .a-GV-header a, 
+#shipment-records th.a-GV-header {
+    background-color: #046BC8;
+    color: white;
+}
+
+#vp-grid .a-GV-header a, 
+#vp-grid th.a-GV-header {
+    color: black;
+}
+
+.shipment-buttons1, .shipment-buttons2 {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.shipment-buttons1 button:first-child, 
+.shipment-buttons2 button:first-child{
+    width: 9% !important;
+}
+
+.shipment-buttons1 button:nth-child(2), 
+.shipment-buttons2 button:nth-child(2){
+    width: 9% !important;
+}
+
+.shipment-buttons2 button:nth-child(3) {
+    width: 20% !important;
+}
+
+.shipment-buttons1 button:nth-child(5),
+.shipment-buttons1 button:nth-child(6) {
+    width: 14% !important;
+}
+
+.shipment-buttons2 button:nth-child(4) {
+    width: 28% !important;
+}
+
+.shipment-buttons1 button:nth-child(8),
+.shipment-buttons2 button:nth-child(6) {
+    width: 12% !important;
+}
+
+.s-button {
+    font-size: 1.125rem;
+    text-align: left;
+    width: 10%;
+}
+
+.s-button-2x {
+    width: 20% !important;
+}
+
+.s-button-3x {
+    width: 30% !important;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    background-color: #056AC8;
+    color: white;
+}
+
+.ui-dialog-titlebar-close{
+    display: none;
+}
+
+div.ui-dialog .ui-dialog-titlebar h1 {
+    font-size: 1.5rem;
+    line-height: normal;
+}
+
+div.ui-dialog #vp-modal {
+    overflow: hidden;
+}
+
+div.ui-dialog:has(#search-bar) .t-Form-labelContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+div.ui-dialog:has(#search-bar) #search-field label, 
+div.ui-dialog:has(#search-bar) #search-field input {
+    font-size: 1.125rem;
+}
+
+div.ui-dialog:has(#vp-modal) {
+    left: 45% !important;
+    top: 12% !important;
+    font-size: 1.125rem;
+}
+
+div.ui-dialog:has(#vp-modal) .vp-ship-no {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+div.ui-dialog:has(#vp-modal) .t-DialogRegion {
+    background-color: #056AC8;
+}
+
+div.ui-dialog:has(#vp-modal) #vp-ship-no-label {
+    background-color: white;
+}
+
+div.ui-dialog:has(#vp-modal) .vp-footer {
+    color: white;
+    margin-block-start: 0.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+div.ui-dialog:has(#vp-modal) .t-DialogRegion-body {
+    padding-block-end: 0%;
+}
+
+#vp-grid, #vp-grid_ig {
+    border-color: black;
+}
+
+/* SORT/REPORT OPTION - START */
+.sort, 
+.report-options,
+.pic-options,
+.printing-options,
+.nprint-options {
+    background-color: #056AC8;
+}
+
+.sort-boxes,
+.report-option-boxes,
+.pic-option-boxes,
+.printing-option-boxes,
+.nprint-option-boxes  {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: white;
+}
+
+.sort-boxes .sort-option,
+.report-option-boxes .report-option-option,
+.pic-option-boxes .pic-option-option,
+.printing-option-boxes .printing-option-option,
+.nprint-option-boxes .nprint-option-option {
+    font-size: 1.125rem;
+    width: 100%;
+    padding: 0.75rem 0.5rem;
+    box-sizing: border-box;
+    font-weight: 600;
+}
+
+.sort-boxes .sort-option:focus  {
+    background-color: rgba(4, 107, 200, 0.4);
+}
+
+/* SORT/REPORT OPTION - END */
+
+.a-IconList-item, .a-PopupLOV-search {
+    font-size: 1.125rem !important;
+}
+
+#supervisor-approval .t-Form-labelContainer label {
+    font-size: 1.125rem;
+    padding-block-start: 0.5rem;
+}
+
+
+/* post all po popup */
+.r-popup-box,
+.r-popup-box .t-DialogRegion-body {
+    background-color: #056AC8;
+    border-start-start-radius: 10px;
+    border-start-end-radius: 10px;
+}
+
+.r-popup-box {
+    background-color: #056AC8 !important;
+}
+
+.r-popup-box .t-DialogRegion-body {
+    padding-block-end: var(--ut-dialog-region-padding-y, 0.5rem);
+    padding-block-start: var(--ut-dialog-region-padding-y, 0.5rem);
+}
+
+.r-popup-div {
+    display: flex;
+    column-gap: 0.5rem;
+}
+
+.r-popup-icon {
+    color: white;
+    font-size: 1.125rem;
+}
+
+.r-popup {
+    font-size: 1.125rem;
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+div.ui-dialog:has(.r-popup-box) {
+    top: 60% !important;
+}

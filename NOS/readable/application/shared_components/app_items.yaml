@@ -1,0 +1,27 @@
+---
+- # ====== Application Item: SUCCESS_MSG =======================
+  id: 15028229000304575
+  identification: 
+    name: SUCCESS_MSG
+    scope: Application
+
+  security: 
+    session-state-protection: Restricted - May not be set from browser
+    escape-special-characters: true
+
+  subscription: 
+    version-number: 30716590
+
+- # ====== Application Item: CUSTOMER ==========================
+  id: 17423695885928534
+  identification: 
+    name: CUSTOMER
+    scope: Application
+
+  security: 
+    session-state-protection: Restricted - May not be set from browser
+    escape-special-characters: true
+
+  subscription: 
+    version-number: 38145838
+

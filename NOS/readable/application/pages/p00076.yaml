@@ -1,0 +1,324 @@
+---
+# ====== Page: Collection & Outstanding Search ===============
+id: 76
+identification: 
+  name: Collection & Outstanding Search
+  alias: COLLECTION-OUTSTANDING-SEARCH
+  title: 'Search:'
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p76KeyMap = {
+        escape : (v) => {
+            $(document).off('keydown.p76keyevents');
+            $.event.trigger("cancelDialog");
+            console.log('Reset Keys');
+        },
+        enter : (v) => {
+            apex.page.submit( "SUBMIT" );
+        }
+    }
+    
+    function mapP76Keys() {
+        $(document).off('keydown.p76keyevents');
+        $(document).on('keydown.p76keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p76KeyMap[key]) {
+                ev.preventDefault();
+                p76KeyMap[key]();
+            }
+        });
+    }
+    
+    $('#P76_SEARCH_COLLECTION_DATE_dialog').parent().change(function (){
+        console.log("Date Picker Changed");
+    });
+  execute-when-page-loads: |
+    mapP76Keys();
+    $('#P76_SEARCH_COLLECTION_DATE_LABEL').trigger('click')
+    // $('#P76_SEARCH_COLLECTION_DATE_input').focus();
+
+css: 
+  inline: |
+    .t-Dialog{
+        background-color: #046BC8;
+    }
+    
+    .t-Dialog-body{
+        background-color: #046BC8;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .t-Dialog-body label,
+    .t-Dialog-body input{
+        font-size: 1.125rem;
+    }
+    
+    .t-Region-body{
+        padding: 0.4;
+    }
+    
+    .t-Form-label{
+        white-space: nowrap;
+    }
+    
+    #search-form{
+        background-color: white;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search Field ================================
+  id: 22496291309163650
+  identification: 
+    name: Search Field
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P76_SEARCH_COLLECTION_DATE ===============
+  id: 24856769617616201
+  identification: 
+    name: P76_SEARCH_COLLECTION_DATE
+    type: Date Picker
+
+  label: 
+    label: 'Go To Collection Date: '
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Inline
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 10
+    region: Search Field # 22496291309163650
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--preTextBlock
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Cancel Search =======================
+  id: 24856866698616202
+  identification: 
+    name: Cancel Search
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: cancelDialog
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 24856945119616203
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p76keyevents');
+
+    execution: 
+      sequence: 10
+      event: Cancel Search # 24856866698616202
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Cancel Dialog ===============================
+    id: 24857069935616204
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 20
+      event: Cancel Search # 24856866698616202
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Detect Escape Key ===================
+  id: 24858597605616219
+  identification: 
+    name: Detect Escape Key
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 24858781687616221
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).keyup(function(e) {
+            console.log(e.key);
+            if (e.key === "Escape") { 
+                $(document).off('keydown.p76keyevents');
+                $.event.trigger("cancelDialog");
+                console.log('Reset Keys');
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Detect Escape Key # 24858597605616219
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Search Must not be Empty ================
+  id: 24857117544616205
+  identification: 
+    name: Search Must not be Empty
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is NOT NULL
+    item: P76_SEARCH_COLLECTION_DATE
+    always-execute: true
+
+  error: 
+    error-message: Please type value in the fields.
+    display-location: Inline with Field
+    associated-item: P76_SEARCH_COLLECTION_DATE # 24856769617616201
+
+processes: 
+- # ====== Process: Go To Page 75 ==============================
+  id: 24857268961616206
+  identification: 
+    name: Go To Page 75
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    items-to-return-: 
+    - P76_SEARCH_COLLECTION_DATE
+    show-success-messages: false
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

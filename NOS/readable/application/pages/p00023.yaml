@@ -1,0 +1,576 @@
+---
+# ====== Page: IIB Search ====================================
+id: 23
+identification: 
+  name: IIB Search
+  alias: IIB-SEARCH
+  title: IIB Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 640
+  height: 230
+  maximum-width: 640
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p7KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP7Keys() {
+        $(document).off('keydown.p7keyevents');
+        $(document).on('keydown.p7keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p7KeyMap[key]) {
+                ev.preventDefault();
+                p7KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP7Keys();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/ibi-css#MIN#.css'
+  inline: |
+    .t-Dialog-body {
+        background-color: #056AC8;
+    }
+    
+    .col > .container {
+        background-color: white;
+        padding: 1rem 1.5rem 0 1.5rem !important;
+    }
+    
+    .w-100 {
+        width: 100%;
+    }
+    
+    #header {
+        padding: 1rem;
+    }
+    
+    .t-Form-labelContainer {
+        text-align: right;
+        padding-right: 1rem;
+    }
+    
+    .t-Form-inputContainer {
+        width: 80%;
+        max-width: 80%;
+    }
+    
+    .t-Dialog-body {
+        padding: .50rem 0 0 0 !important;
+    }
+    
+    .p-1 {
+        padding-left: .50rem !important;
+        padding-bottom: .25rem;
+    }
+    
+    .bcolor-b {
+        background-color: #056BC9;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .text-red {
+        color: red;
+    }
+    
+    .ui-widget-overlay {
+        background: none !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Header ======================================
+  id: 9471760274968208
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: Search
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - p-1
+    - header
+    - color-w
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: header
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Search Item =================================
+  id: 9473168646968222
+  identification: 
+    name: Search Item
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error Area ==================================
+  id: 10468422119962431
+  identification: 
+    name: Error Area
+    type: Static Content
+
+  source: 
+    html-code: <span id="errorArea" class="hide text-red">Please fill in at least one search field</span>
+
+  layout: 
+    sequence: 10
+    parent-region: Search Item # 9473168646968222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P23_ITEM_NUM =============================
+  id: 9473278552968223
+  identification: 
+    name: P23_ITEM_NUM
+    type: Text Field
+
+  label: 
+    label: '<span style="font-size: 1.125rem;">Search for Item No : </span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Search Item # 9473168646968222
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P23_UPC ==================================
+  id: 9473300937968224
+  identification: 
+    name: P23_UPC
+    type: Text Field
+
+  label: 
+    label: '<span style="font-size : 1.125rem;">UPC : </span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Search Item # 9473168646968222
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P23_ITEM_DESC ============================
+  id: 9473455859968225
+  identification: 
+    name: P23_ITEM_DESC
+    type: Text Field
+
+  label: 
+    label: '<span style="font-size: 1.125rem;">Item Desc : </span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Search Item # 9473168646968222
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-none
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SEARCH_BTN ==================================
+  id: 9473599691968226
+  identification: 
+    button-name: SEARCH_BTN
+    label: Enter- Search
+
+  layout: 
+    sequence: 50
+    region: Search Item # 9473168646968222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+    css-classes: 
+    - bcolor-b
+    - color-w
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+- # ====== Button: CLOSE_BTN ===================================
+  id: 9475171576968242
+  identification: 
+    button-name: CLOSE_BTN
+    label: Esc - Close
+
+  layout: 
+    sequence: 60
+    region: Search Item # 9473168646968222
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+    css-classes: 
+    - bcolor-b
+    - color-w
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: Close Modal =========================
+  id: 9836728080150904
+  identification: 
+    name: Close Modal
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE_BTN # 9475171576968242
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 9836854346150905
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Close Modal # 9836728080150904
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Search Table ========================
+  id: 9838114063150918
+  identification: 
+    name: Search Table
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH_BTN # 9473599691968226
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9838259488150919
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var itemNum = $v("P23_ITEM_NUM");
+        var upc = $v("P23_UPC");
+        var itemDesc = $v("P23_ITEM_DESC");
+        var errorArea = document.getElementById("errorArea")
+        
+        if(!itemNum && !upc && !itemDesc) {
+            errorArea.style.display = "block"
+            document.getElementById("P23_ITEM_NUM").focus();
+            return false;
+        }
+        
+        
+        
+        
+        
+
+    execution: 
+      sequence: 10
+      event: Search Table # 9838114063150918
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 9839289435150929
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P23_ITEM_NUM
+      - P23_UPC
+      - P23_ITEM_DESC
+
+    execution: 
+      sequence: 20
+      event: Search Table # 9838114063150918
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

@@ -1,0 +1,1841 @@
+---
+# ====== Page: Collection and Outstanding Reports ============
+id: 147
+identification: 
+  name: Collection and Outstanding Reports
+  alias: COLLECTION-AND-OUTSTANDING-REPORTS
+  title: Collection and Outstanding Reports
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const ICON_FAIL_LARGE = "fa fa-lg fa-times-circle msg-icon-yellow";
+    const p147KeyMap = {
+        a : (v) => {
+            if($("#option2").is(':visible')){
+                $("#a2").trigger("click");
+            } else {
+                $("#a").trigger("click");
+            }
+        },
+        
+        b : (v) => {
+            if($("#option2").is(':visible')){
+                $("#b2").trigger("click");
+            } else {
+                $("#b").trigger("click");
+            }
+        },
+    
+        p : (v) => {
+            if($("#option1").is(':visible')){
+                $("#p2").trigger("click");
+            } 
+        },
+    
+        e : (v) => {
+            if($("#option1").is(':visible')){
+                $("#e").trigger("click");
+            } 
+        },
+    
+        escape : (v) => {
+            if(!($("#option1").is(':visible') || $("#option2").is(':visible'))){
+                $("#esc").trigger("click");
+            }
+        }
+    }
+    
+    function map147Keys() {
+        $(document).off('keydown.p147keyevents');
+        $(document).on('keydown.p147keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p147KeyMap[key]) {
+                ev.preventDefault();
+                p147KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: map147Keys()
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/menu#MIN#.css'
+  inline: |
+    .menu-instruction {
+        margin-block-start: 4rem;
+    }
+    
+    #option2, #a2, #b2 {
+        padding-top: 0;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    #option2{
+        height: 6rem!important;
+    }
+    
+    #a2, #b2{
+        font-size: 1.125rem;
+        outline: none;
+    }
+    #p2, #e {
+        font-size: 1.125rem;
+    }
+    
+    #p2:hover, #e:hover{
+        border: 0;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+        border-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0.1rem;
+    }
+    
+    .ui-dialog .ui-dialog-title {
+        font-size: 1.5rem;
+        padding-bottom: 0.3rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 45% !important; 
+    }
+    
+    .ui-dialog.modal-dialog--pullout{
+        left: 45% !important;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #p{
+        display: none;
+    }
+    
+    #esc{
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Buttons =====================================
+  id: 35460157515234033
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: menu-btns
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Header ======================================
+  id: 35460262776234034
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="title-header">
+      Collection and Outstanding Reports
+      </div>
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Footer ======================================
+  id: 35460397383234035
+  identification: 
+    name: Footer
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div class="menu-instruction">
+      Press the underlined letter to proceed
+      </div>
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - i-h640
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    - margin-top-lg
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Collection and Outstanding Reports Print ====
+  id: 45597817865188004
+  identification: 
+    name: Collection and Outstanding Reports Print
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: option1
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Printing Options ============================
+  id: 45598271192188008
+  identification: 
+    name: Printing Options
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: option2
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P147_LEGAL_NAME ==========================
+  id: 39228617869531903
+  identification: 
+    name: P147_LEGAL_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Buttons # 35460157515234033
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P147_CUSTOMER_ID =========================
+  id: 39229156666531908
+  identification: 
+    name: P147_CUSTOMER_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Buttons # 35460157515234033
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P147_ACCOUNT_TYPE_ID =====================
+  id: 39229752339531914
+  identification: 
+    name: P147_ACCOUNT_TYPE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Buttons # 35460157515234033
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P147_PRINT_TYPE ==========================
+  id: 39230881950531925
+  identification: 
+    name: P147_PRINT_TYPE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Buttons # 35460157515234033
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P147_PREPARED_URL ========================
+  id: 39232448727531941
+  identification: 
+    name: P147_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Buttons # 35460157515234033
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P147_PRINT_FORMAT ========================
+  id: 45599678165188022
+  identification: 
+    name: P147_PRINT_FORMAT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Buttons # 35460157515234033
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Main ========================================
+  id: 35459984332234031
+  identification: 
+    button-name: Main
+    label: <u>A</u>- SOA Main Account Summary Report
+
+  layout: 
+    sequence: 90
+    region: Buttons # 35460157515234033
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - menu-row
+    column: 5
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:148:&SESSION.::&DEBUG.::P148_LEGAL_NAME:&P147_LEGAL_NAME.'
+      page: 148 # Collection and Outstanding Reports Popup
+      values: 
+        p148_legal_name: '&P147_LEGAL_NAME.'
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: Ageing ======================================
+  id: 35460008840234032
+  identification: 
+    button-name: Ageing
+    label: <u>B</u>- Collections Ageing Summary Report
+
+  layout: 
+    sequence: 100
+    region: Buttons # 35460157515234033
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - menu-row
+    column: 5
+    new-column: true
+    column-span: 4
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--noUI
+    - t-Button--gapTop
+    - t-Button--gapBottom
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:148:&SESSION.::&DEBUG.:::'
+      page: 148 # Collection and Outstanding Reports Popup
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: b
+
+- # ====== Button: Print =======================================
+  id: 39230667758531923
+  identification: 
+    button-name: Print
+    label: Print
+
+  layout: 
+    sequence: 110
+    region: Buttons # 35460157515234033
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: Esc =========================================
+  id: 39832493571742315
+  identification: 
+    button-name: Esc
+    label: Esc
+
+  layout: 
+    sequence: 120
+    region: Buttons # 35460157515234033
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:306:&SESSION.::&DEBUG.:::'
+      page: 306 # Collection and Outstanding
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+- # ====== Button: Export ======================================
+  id: 45597953755188005
+  identification: 
+    button-name: Export
+    label: <u>E</u> - Export
+
+  layout: 
+    sequence: 10
+    region: Collection and Outstanding Reports Print # 45597817865188004
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 4
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: e
+
+- # ====== Button: Print_1 =====================================
+  id: 45598040678188006
+  identification: 
+    button-name: Print_1
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 20
+    region: Collection and Outstanding Reports Print # 45597817865188004
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p2
+
+- # ====== Button: Dotmatrix ===================================
+  id: 45598336853188009
+  identification: 
+    button-name: Dotmatrix
+    label: <u>A</u> - Dotmatrix
+
+  layout: 
+    sequence: 10
+    region: Printing Options # 45598271192188008
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a2
+
+- # ====== Button: Graphic =====================================
+  id: 45598431154188010
+  identification: 
+    button-name: Graphic
+    label: <u>B</u> - Graphic
+
+  layout: 
+    sequence: 20
+    region: Printing Options # 45598271192188008
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: b2
+
+dynamic-actions: 
+- # ====== Dynamic Action: Dialog Closed =======================
+  id: 39228422302531901
+  identification: 
+    name: Dialog Closed
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Main # 35459984332234031
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 39228522323531902
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P148_LEGAL_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_LEGAL_NAME
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed # 39228422302531901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 39229451481531911
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            CUSTOMER_ID
+        FROM
+            NPT009
+        WHERE
+            LEGAL_NAME = :P147_LEGAL_NAME
+      items-to-submit: 
+      - P147_LEGAL_NAME
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_CUSTOMER_ID
+
+    execution: 
+      sequence: 20
+      event: Dialog Closed # 39228422302531901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39229540786531912
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message: `Customer does not exist!`,
+            icon: ICON_FAIL_LARGE,
+            width: 500,
+            timeout: 1500,
+            timeoutActive: true
+        });
+
+    execution: 
+      sequence: 50
+      event: Dialog Closed # 39228422302531901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is null
+      item: P147_CUSTOMER_ID
+
+  - # ====== Action: Set Value ===================================
+    id: 39229692024531913
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            ACCOUNT_TYPE_ID
+        FROM
+            NPT009
+        WHERE
+            LEGAL_NAME = :P147_LEGAL_NAME
+      items-to-submit: 
+      - P147_LEGAL_NAME
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_ACCOUNT_TYPE_ID
+
+    execution: 
+      sequence: 30
+      event: Dialog Closed # 39228422302531901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39229842986531915
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message: `Please enter a Main Account.`,
+            icon: ICON_FAIL_LARGE,
+            width: 500,
+            timeout: 1500,
+            timeoutActive: true
+        });
+
+    execution: 
+      sequence: 60
+      event: Dialog Closed # 39228422302531901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: apex.item("P147_ACCOUNT_TYPE_ID").getValue() != 2 && apex.item("P147_CUSTOMER_ID").getValue() != ''
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39230561526531922
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $("#p").trigger("click");
+
+    execution: 
+      sequence: 70
+      event: Dialog Closed # 39228422302531901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P147_ACCOUNT_TYPE_ID
+      value: 2
+
+- # ====== Dynamic Action: Dialog Closed_1 =====================
+  id: 39231040434531927
+  identification: 
+    name: Dialog Closed_1
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Ageing # 35460008840234032
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 39231147722531928
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P148_LEGAL_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_LEGAL_NAME
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed_1 # 39231040434531927
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 39231258271531929
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            CUSTOMER_ID
+        FROM
+            NPT009
+        WHERE
+            LEGAL_NAME = :P147_LEGAL_NAME
+      items-to-submit: 
+      - P147_LEGAL_NAME
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_CUSTOMER_ID
+
+    execution: 
+      sequence: 20
+      event: Dialog Closed_1 # 39231040434531927
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 39231337062531930
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT
+            ACCOUNT_TYPE_ID
+        FROM
+            NPT009
+        WHERE
+            LEGAL_NAME = :P147_LEGAL_NAME
+      items-to-submit: 
+      - P147_LEGAL_NAME
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_ACCOUNT_TYPE_ID
+
+    execution: 
+      sequence: 30
+      event: Dialog Closed_1 # 39231040434531927
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39231572239531932
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message: `Customer does not exist!`,
+            icon: ICON_FAIL_LARGE,
+            width: 500,
+            timeout: 1500,
+            timeoutActive: true
+        });
+
+    execution: 
+      sequence: 50
+      event: Dialog Closed_1 # 39231040434531927
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is null
+      item: P147_CUSTOMER_ID
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39231643556531933
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        showGPopup({
+            message: `Please enter a Main Account.`,
+            icon: ICON_FAIL_LARGE,
+            width: 500,
+            timeout: 1500,
+            timeoutActive: true
+        });
+
+    execution: 
+      sequence: 60
+      event: Dialog Closed_1 # 39231040434531927
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: apex.item("P147_ACCOUNT_TYPE_ID").getValue() != 2 && apex.item("P147_CUSTOMER_ID").getValue() != ''
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39231729312531934
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $("#p").trigger("click");
+
+    execution: 
+      sequence: 70
+      event: Dialog Closed_1 # 39231040434531927
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P147_ACCOUNT_TYPE_ID
+      value: 2
+
+- # ====== Dynamic Action: Set Print Type ======================
+  id: 39231825898531935
+  identification: 
+    name: Set Print Type
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Main # 35459984332234031
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 39230978306531926
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: main
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_PRINT_TYPE
+
+    execution: 
+      sequence: 10
+      event: Set Print Type # 39231825898531935
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Set Print Type 2 ====================
+  id: 39232030225531937
+  identification: 
+    name: Set Print Type 2
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Ageing # 35460008840234032
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 39232147133531938
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: ageing
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_PRINT_TYPE
+
+    execution: 
+      sequence: 10
+      event: Set Print Type 2 # 39232030225531937
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Send to print =======================
+  id: 39232226728531939
+  identification: 
+    name: Send to print
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 39230667758531923
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39232326301531940
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P147_PREPARED_URL := apex_page.get_url(
+               p_page   => 149,
+               p_items  => 'P149_PRINT_TYPE,P149_CUSTOMER_ID,P149_LEGAL_NAME',
+               p_values => :P147_PRINT_TYPE || ',' || :P147_CUSTOMER_ID || ',' || :P147_LEGAL_NAME
+            );
+        END;
+      items-to-submit: 
+      - P147_CUSTOMER_ID
+      - P147_PRINT_TYPE
+      - P147_LEGAL_NAME
+      items-to-return: 
+      - P147_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Send to print # 39232226728531939
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39232537358531942
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P147_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Send to print # 39232226728531939
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Open Region =================================
+    id: 45598100901188007
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Collection and Outstanding Reports Print # 45597817865188004
+
+    execution: 
+      sequence: 10
+      event: Send to print # 39232226728531939
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export ==============================
+  id: 45598583316188011
+  identification: 
+    name: Export
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 45597953755188005
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 45598623196188012
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: export
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_PRINT_FORMAT
+
+    execution: 
+      sequence: 10
+      event: Export # 45598583316188011
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45599079027188016
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(".ui-dialog-titlebar-close").trigger("click");
+
+    execution: 
+      sequence: 20
+      event: Export # 45598583316188011
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 45599206234188018
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 45598271192188008
+
+    execution: 
+      sequence: 30
+      event: Export # 45598583316188011
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print ===============================
+  id: 45598740185188013
+  identification: 
+    name: Print
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print_1 # 45598040678188006
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 45598845224188014
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: print
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P147_PRINT_FORMAT
+
+    execution: 
+      sequence: 10
+      event: Print # 45598740185188013
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45598903253188015
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(".ui-dialog-titlebar-close").trigger("click");
+
+    execution: 
+      sequence: 20
+      event: Print # 45598740185188013
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 45599121604188017
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 45598271192188008
+
+    execution: 
+      sequence: 30
+      event: Print # 45598740185188013
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Print dotmatrix =====================
+  id: 45599363754188019
+  identification: 
+    name: Print dotmatrix
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Dotmatrix # 45598336853188009
+
+  actions: 
+  - # ====== Action: Export main =================================
+    id: 45599450581188020
+    identification: 
+      name: Export main
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_MAIN_XLS", "xlsx", { 
+            fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print dotmatrix # 45599363754188019
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P147_PRINT_FORMAT") == 'export' && $v("P147_PRINT_TYPE") == 'main'
+
+  - # ====== Action: Export ageing ===============================
+    id: 45600111163188027
+    identification: 
+      name: Export ageing
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_CUSTOMERS_XLS", "xlsx", { 
+            fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Print dotmatrix # 45599363754188019
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P147_PRINT_FORMAT") == 'export' && $v("P147_PRINT_TYPE") == 'ageing'
+
+  - # ====== Action: Print main ==================================
+    id: 45600320471188029
+    identification: 
+      name: Print main
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_MAIN", "pdf", { 
+            fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 30
+      event: Print dotmatrix # 45599363754188019
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P147_PRINT_FORMAT") == 'print' && $v("P147_PRINT_TYPE") == 'main'
+
+  - # ====== Action: Print ageing ================================
+    id: 45600522904188031
+    identification: 
+      name: Print ageing
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_CUSTOMERS", "pdf", { 
+            fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),
+                P_PRINT_TYPE: "dotmatrix"
+            }
+        });
+
+    execution: 
+      sequence: 40
+      event: Print dotmatrix # 45599363754188019
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P147_PRINT_FORMAT") == 'print' && $v("P147_PRINT_TYPE") == 'ageing'
+
+- # ====== Dynamic Action: Print graphic =======================
+  id: 45599863502188024
+  identification: 
+    name: Print graphic
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Graphic # 45598431154188010
+
+  actions: 
+  - # ====== Action: Export main =================================
+    id: 45600074333188026
+    identification: 
+      name: Export main
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_MAIN_XLS", "xlsx", { 
+            fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print graphic # 45599863502188024
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P147_PRINT_FORMAT") == 'export' && $v("P147_PRINT_TYPE") == 'main'
+
+  - # ====== Action: Export ageing ===============================
+    id: 45600206057188028
+    identification: 
+      name: Export ageing
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_CUSTOMERS_XLS", "xlsx", { 
+            fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Print graphic # 45599863502188024
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P147_PRINT_FORMAT") == 'export' && $v("P147_PRINT_TYPE") == 'ageing'
+
+  - # ====== Action: Print main ==================================
+    id: 45600435145188030
+    identification: 
+      name: Print main
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_MAIN", "pdf", { 
+            fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 30
+      event: Print graphic # 45599863502188024
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P147_PRINT_FORMAT") == 'print' && $v("P147_PRINT_TYPE") == 'main'
+
+  - # ====== Action: Print ageing ================================
+    id: 45600760183188033
+    identification: 
+      name: Print ageing
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_CUSTOMERS", "pdf", { 
+            fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),
+                P_PRINT_TYPE: "graphic"
+            }
+        });
+
+    execution: 
+      sequence: 40
+      event: Print graphic # 45599863502188024
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P147_PRINT_FORMAT") == 'print' && $v("P147_PRINT_TYPE") == 'ageing'
+

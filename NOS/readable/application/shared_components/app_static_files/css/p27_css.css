@@ -1,0 +1,33 @@
+.t-Dialog{
+    background-color: #056AC8;
+    left: 1%;
+}
+
+.t-Dialog-body{
+    padding-top: 0;
+}
+
+#exit{
+    color: white;
+    font-size: 1.125rem;
+    font-family: Arial;
+    border: none;
+}
+
+#exit:focus{
+    outline: none;
+}
+
+table, tr, td, th {
+    font-size: 1.125rem;
+    font-family: Arial;
+}
+
+.format-size{
+    font-size: 1.125rem;
+    color: white;
+}
+
+.t-Region-body{
+    padding-top: 0;
+}

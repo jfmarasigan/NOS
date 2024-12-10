@@ -1,0 +1,476 @@
+---
+# ====== Page: POS Cashiering - Credit Memo Payment ==========
+id: 61
+identification: 
+  name: POS Cashiering - Credit Memo Payment
+  alias: POS-CASHIERING-CREDIT-MEMO-PAYMENT
+  title: Credit Memo
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: false
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p61KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        },
+        escape: (v) => {
+            console.log("to bottom");
+            $("#cancel").trigger("click");
+        }
+    }
+    
+    function mapP61Keys() {
+        $(document).off('keydown.p61keyevents');
+        $(document).on('keydown.p61keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p61KeyMap[key]) {
+                ev.preventDefault();
+                p61KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP61Keys();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        label, input {
+            font-size: 1.125rem;
+        }
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P61_EXISTS ===============================
+  id: 44522080046129207
+  identification: 
+    name: P61_EXISTS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P61_URL ==================================
+  id: 44522419364129211
+  identification: 
+    name: P61_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P61_AMOUNT ===============================
+  id: 44522567053129212
+  identification: 
+    name: P61_AMOUNT
+    type: Display Only
+
+  label: 
+    label: 'Amount:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P61_CODE =================================
+  id: 57446101340361488
+  identification: 
+    name: P61_CODE
+    type: Text Field
+
+  label: 
+    label: 'Code:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 44521796068129204
+  identification: 
+    button-name: Enter
+    label: Enter
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Submit ==============================
+  id: 44521814846129205
+  identification: 
+    name: Submit
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Enter # 44521796068129204
+
+  actions: 
+  - # ====== Action: Validate ====================================
+    id: 44521946153129206
+    identification: 
+      name: Validate
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var field1 = $v('P61_EXISTS'); 
+        if (field1 < 1 ) {
+            apex.message.clearErrors(); 
+            apex.message.showErrors([{
+                type: 'error',
+                location: 'inline', 
+                pageItem: 'P61_CODE', 
+                message: 'Credit Memo does not exist.'
+            }]);
+        
+            return false; 
+        } else {
+            apex.message.clearErrors(); 
+            return true; 
+        }
+        
+
+    execution: 
+      sequence: 10
+      event: Submit # 44521814846129205
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Deduct ======================================
+    id: 44522302079129210
+    identification: 
+      name: Deduct
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_balance NUMBER;
+            v_amount  NUMBER;
+        BEGIN
+            v_amount := TO_NUMBER(REPLACE(REPLACE(:P61_AMOUNT, '$', ''), ',', ''));
+        
+            SELECT current_balance
+              INTO v_balance
+              FROM NPT015
+             WHERE credit_memo_id = :P61_CODE;
+        
+            IF v_balance > v_amount THEN
+                apex_collection.add_member(
+                    p_collection_name => 'PAYMENT',
+                    p_c001            => 'Credit Memo',
+                    p_n001            => v_amount, 
+                    p_n002            => v_amount, 
+                    p_n003            => v_amount, 
+                    p_n004            => TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')) 
+                ); 
+        
+                UPDATE NPT015
+                SET current_balance = current_balance - v_amount
+                WHERE credit_memo_id = :P61_CODE;
+        
+                -- Redirect URL
+                :P61_URL := apex_page.get_url(
+                    p_page        => 43,
+                    p_clear_cache => '43'
+                );
+            ELSE
+                -- Add collection member with remaining balance
+                apex_collection.add_member(
+                    p_collection_name => 'PAYMENT',
+                    p_c001            => 'Credit Memo',
+                    p_n001            => v_balance -- Numeric value
+                );
+        
+                -- Set balance to zero
+                UPDATE NPT015
+                SET current_balance = 0
+                WHERE credit_memo_id = :P61_CODE;
+            END IF;
+        
+        END;
+      items-to-submit: 
+      - P61_CODE
+      - P61_AMOUNT
+      - P41_TOTAL
+      items-to-return: 
+      - P61_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: Submit # 44521814846129205
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Redirect ====================================
+    id: 44522645187129213
+    identification: 
+      name: Redirect
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P61_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 40
+      event: Submit # 44521814846129205
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 44522783659129214
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 50
+      event: Submit # 44521814846129205
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Check if Memo Exists ================
+  id: 44522151552129208
+  identification: 
+    name: Check if Memo Exists
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P61_CODE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 44522260469129209
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT count(current_balance)
+              FROM NPT015
+             WHERE credit_memo_id = :P61_CODE
+               AND current_balance != 0;
+      items-to-submit: 
+      - P61_CODE
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P61_EXISTS
+
+    execution: 
+      sequence: 10
+      event: Check if Memo Exists # 44522151552129208
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+

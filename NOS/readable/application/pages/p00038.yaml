@@ -1,0 +1,1229 @@
+---
+# ====== Page: POS Cashiering Item Search ====================
+id: 38
+identification: 
+  name: POS Cashiering Item Search
+  alias: POS-CASHIERING-ITEM-SEARCH
+  title: Cashiering Item Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Wizard Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    
+    const p38KeyMap = {
+        home: (v) => {
+            $("#top").trigger("click");
+        },
+        end: (v) => {
+            $("#bottom").trigger("click");
+        },
+        f3: (v) => {
+            $("#search").trigger("click");
+        }
+    }
+    
+    function mapP38Keys() {
+        $(document).off('keydown.p38keyevents');
+        $(document).on('keydown.p38keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p38KeyMap[key]) {
+                ev.preventDefault();
+                p38KeyMap[key]();
+            }
+        });
+    }
+    
+    function selectFirstRow() {
+        let region = apex.region("searchedItems")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        let rec = model.recordAt(0);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+    
+    function selectLastRow() {
+        let region = apex.region("searchedItems")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        
+        let totalRec = model.getTotalRecords();
+        let rec = model.recordAt(totalRec - 1);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+    
+  execute-when-page-loads: |
+    mapP38Keys();
+    
+
+css: 
+  inline: |
+    #searchedItems {
+        table, tr, td, th {
+            font-size: 1.125rem;
+        
+        }
+    }
+    
+    .t-Dialog-body{
+        background-color: #226597;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .t-Dialog-body label,
+    .t-Dialog-body input{
+        font-size: 1.125rem;
+    }
+    
+    .t-Region-body{
+        padding: 0.4;
+    }
+    
+    .t-Form-label{
+        white-space: nowrap;
+    }
+    
+    #search-form{
+        background-color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header {
+        border-color: black;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Item Search =================================
+  id: 10282851383970907
+  identification: 
+    name: Item Search
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIT001
+    include-rowid-column: false
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+- # ====== Region: Searched Items ==============================
+  id: 10285220432970931
+  identification: 
+    name: Searched Items
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT B.UPC, A.ITEM_DESC, B.UOM_ID UOM, A.BRAND_ID BRAND
+        FROM NIT001 A
+        JOIN NIT002 B ON A.ITEM_ID = B.ITEM_ID
+       WHERE
+         (:P38_UPC IS NOT NULL AND B.UPC LIKE '%' || :P38_UPC || '%')
+      
+          OR (:P38_UPC IS NULL AND :P38_ITEM_DESC_F IS NOT NULL AND A.ITEM_DESC LIKE '%' || :P38_ITEM_DESC_F|| '%');
+    page-items-to-submit: 
+    - P38_UPC
+    - P38_ITEM_DESC_F
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: searchedItems
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 14727042958463444
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 16910179969495546
+      identification: 
+        name: Primary Report
+        alias: 169102
+
+  columns: 
+  - # ====== Column: UPC =========================================
+    id: 14727193153463445
+    identification: 
+      column-name: UPC
+      type: Text Field
+
+    heading: 
+      heading: UPC
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 56
+
+    source: 
+      type: Database Column
+      database-column: UPC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: ITEM_DESC ===================================
+    id: 14727232026463446
+    identification: 
+      column-name: ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: ITEM DESC
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: UOM =========================================
+    id: 14727378694463447
+    identification: 
+      column-name: UOM
+      type: Number Field
+
+    heading: 
+      heading: UOM
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: UOM
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: BRAND =======================================
+    id: 14727401920463448
+    identification: 
+      column-name: BRAND
+      type: Number Field
+
+    heading: 
+      heading: BRAND
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: BRAND
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+page-items: 
+- # ====== Page Item: P38_ITEM_ID ==============================
+  id: 10283256264970911
+  identification: 
+    name: P38_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Item Search # 10282851383970907
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Search # 10282851383970907
+    column: ITEM_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_ITEM_DESC_F ==========================
+  id: 10283769859970916
+  identification: 
+    name: P38_ITEM_DESC_F
+    type: Text Field
+
+  label: 
+    label: 'ITEM DESC:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Item Search # 10282851383970907
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 11
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Item Search # 10282851383970907
+    column: ITEM_DESC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_UPC ==================================
+  id: 10285102452970930
+  identification: 
+    name: P38_UPC
+    type: Text Field
+
+  label: 
+    label: 'UPC:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Item Search # 10282851383970907
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 11
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 14
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_UPC_SELECTED =========================
+  id: 33261451857129928
+  identification: 
+    name: P38_UPC_SELECTED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Item Search # 10282851383970907
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_BARCODE ==============================
+  id: 33261611973129930
+  identification: 
+    name: P38_BARCODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Item Search # 10282851383970907
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P38_URL ==================================
+  id: 33262061168129934
+  identification: 
+    name: P38_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Item Search # 10282851383970907
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Close =======================================
+  id: 16915763983497003
+  identification: 
+    button-name: Close
+    label: Close
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close
+
+- # ====== Button: Top =========================================
+  id: 28596904664578223
+  identification: 
+    button-name: Top
+    label: Top
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: top
+
+- # ====== Button: Bottom ======================================
+  id: 28597006621578224
+  identification: 
+    button-name: Bottom
+    label: Top
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: bottom
+
+- # ====== Button: Submit ======================================
+  id: 33261702346129931
+  identification: 
+    button-name: Submit
+    label: Submit
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: search
+
+dynamic-actions: 
+- # ====== Dynamic Action: Refresh List  =======================
+  id: 10285403902970933
+  identification: 
+    name: 'Refresh List '
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P38_UPC
+    - P38_ITEM_DESC_F
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 10285503843970934
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Searched Items # 10285220432970931
+
+    execution: 
+      sequence: 10
+      event: 'Refresh List ' # 10285403902970933
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 28598421123578238
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "500");
+
+    execution: 
+      sequence: 20
+      event: 'Refresh List ' # 10285403902970933
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 16915847419497004
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 16915763983497003
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 16915918032497005
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 16915847419497004
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Top ===========================
+  id: 28597195638578225
+  identification: 
+    name: Go to Top
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 28596904664578223
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 28597297057578226
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectFirstRow()
+
+    execution: 
+      sequence: 10
+      event: Go to Top # 28597195638578225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Bottom ========================
+  id: 28597316355578227
+  identification: 
+    name: Go to Bottom
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 28597006621578224
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 28597445214578228
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectLastRow()
+
+    execution: 
+      sequence: 10
+      event: Go to Bottom # 28597316355578227
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Value on Hidden =================
+  id: 28597978244578233
+  identification: 
+    name: Add Value on Hidden
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Searched Items # 10285220432970931
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33261306823129927
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let selectedRecords = this.data.selectedRecords;
+        
+        
+        if (selectedRecords.length > 0) {
+        
+            let upcSelected = selectedRecords[0][0];
+            let itemDescSelected = selectedRecords[0][1];
+        
+            $("#P38_UPC_SELECTED").val(upcSelected);
+        
+            console.log("Selected item: " + upcSelected + " & " + itemDescSelected);
+        } 
+        
+        
+
+    execution: 
+      sequence: 10
+      event: Add Value on Hidden # 28597978244578233
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 33261571689129929
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT DISTINCT UPC
+          FROM NIT002
+         WHERE UPC = :P38_UPC_SELECTED
+      items-to-submit: 
+      - P38_UPC_SELECTED
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P38_BARCODE
+
+    execution: 
+      sequence: 20
+      event: Add Value on Hidden # 28597978244578233
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Focus Field =========================
+  id: 28598169585578235
+  identification: 
+    name: Focus Field
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 28598272416578236
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P38_UPC
+
+    execution: 
+      sequence: 10
+      event: Focus Field # 28598169585578235
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Submit UPC to Cashiering  ===========
+  id: 33261882284129932
+  identification: 
+    name: 'Submit UPC to Cashiering '
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Submit # 33261702346129931
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 33262205818129936
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 20
+      event: 'Submit UPC to Cashiering ' # 33261882284129932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 33262886455129942
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            apex_collection.add_member(
+                        p_collection_name => 'SEARCH',
+                        p_c001 => :P38_BARCODE
+                        );
+        END;
+        
+      items-to-submit: 
+      - P38_BARCODE
+
+    execution: 
+      sequence: 10
+      event: 'Submit UPC to Cashiering ' # 33261882284129932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+processes: 
+- # ====== Process: Initialize form POS Cashiering Item Search =
+  id: 10283123394970910
+  identification: 
+    name: Initialize form POS Cashiering Item Search
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Item Search # 10282851383970907
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+

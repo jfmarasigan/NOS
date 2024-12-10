@@ -1,0 +1,66 @@
+---
+- # ====== Authentication: Oracle APEX Accounts ================
+  id: 4207513917083909
+  identification: 
+    name: Oracle APEX Accounts
+
+  subscription: 
+    version-number: 4065012
+
+  settings: 
+    type: Oracle APEX Accounts
+
+  session-not-valid: 
+    redirect-to: Login Page
+
+  login-processing: 
+    switch-in-session: false
+
+  real-application-security: 
+    ras-mode: Disabled
+
+- # ====== Authentication: NOS Authentication ==================
+  id: 5653247844266906
+  identification: 
+    name: NOS Authentication
+
+  subscription: 
+    version-number: 25727934
+
+  settings: 
+    type: Custom
+    authentication-function-name: nos_authentication_pkg.nos_authentication
+    enable-legacy-authentication-attributes: false
+
+  source: 
+    pl/sql-code: |
+      procedure post_auth
+      as
+          l_workspace_id number;
+      begin
+          select workspace_id
+            into l_workspace_id
+            from apex_workspaces
+           where workspace = (select workspace
+                                from apex_applications
+                               where application_id = :APP_ID);
+      
+          for session_rec in (select apex_session_id
+                                from apex_workspace_sessions
+                               where workspace_id = l_workspace_id
+                                 and user_name = :APP_USER
+                                 and apex_session_id != :APP_SESSION)
+          loop
+              apex_session.delete_session(p_session_id => session_rec.apex_session_id);
+          end loop;
+      end post_auth;
+
+  session-not-valid: 
+    redirect-to: Login Page
+
+  login-processing: 
+    switch-in-session: false
+
+  real-application-security: 
+    ras-mode: Disabled
+

@@ -1,0 +1,83 @@
+#clock, #date {
+    font-family: inherit;
+    /* font-size: var(--a-button-font-size, .75rem); */
+    font-size: 1.125rem;
+    font-weight: var(--a-button-font-weight, 400);
+    padding-left: .4rem;
+    padding-right: .4rem;
+}
+
+/* for user name on nav bar */
+.t-Button--navBar .t-Button-label { 
+    font-size: 1.125rem;
+}
+
+/* for logo text on nav bar */
+.apex-logo-text {
+    font-weight: 400 !important;
+}
+
+.fs-1125 {
+    font-size: 1.125rem !important;
+}
+
+/* for module name on nav bar */
+.nos-page-title {
+    justify-content: center;
+    font-size : 1.125rem;
+    font-weight: 400
+}
+
+.ui-dialog { 
+    border: 2px solid black; 
+    border-radius: 12px; 
+    box-shadow: 0 10px 10px -4px rgba(0, 0, 0, 0.2);
+} 
+
+.ui-dialog .ui-dialog-titlebar {
+    border-start-start-radius: 10px;
+    border-start-end-radius: 10px;
+}
+
+.ui-dialog .t-DialogRegion {
+    border-end-start-radius: 10px;
+    border-end-end-radius: 10px;
+}
+
+.g-popup-box,
+.g-popup-box .t-DialogRegion-body {
+    background-color: #226597;
+    border-start-start-radius: 10px;
+    border-start-end-radius: 10px;
+}
+
+.g-popup-box {
+    background-color: #226597 !important;
+}
+
+.g-popup-box .t-DialogRegion-body {
+    padding-block-end: var(--ut-dialog-region-padding-y, 0.5rem);
+    padding-block-start: var(--ut-dialog-region-padding-y, 0.5rem);
+}
+
+.g-popup-div {
+    display: flex;
+    column-gap: 0.5rem;
+}
+
+.g-popup-icon {
+    color: white;
+    font-size: 1.125rem;
+}
+
+.g-popup {
+    font-size: 1.125rem;
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+
+.msg-icon-yellow {
+    color: #FFD700 !important;
+}

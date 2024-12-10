@@ -1,0 +1,1074 @@
+---
+# ====== Page: GC Statistics Date Range ======================
+id: 318
+identification: 
+  name: GC Statistics Date Range
+  alias: GC-STATISTICS-DATE-RANGE
+  title: GC Statistics Date Range
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 350
+  height: 170
+  maximum-width: 350
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p6KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP6Keys() {
+        $(document).off('keydown.p6keyevents');
+        $(document).on('keydown.p6keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p6KeyMap[key]) {
+                ev.preventDefault();
+                p6KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP6Keys();
+    }
+  execute-when-page-loads: |
+    mapP6Keys();
+    
+    ///// FROM 
+    
+    // MM validation
+    setInputFilter($("#P318_MM"), function(value) {
+        return /^([1-9]|1[012]|^$)$/.test(value); // accepts empty string
+        // return /^([1-9]|1[012])$/.test(value); // not accepting empty string
+    }, "Invalid input. Values should only be numbers from 1 to 12.");
+    
+    
+    // DD validation
+    setInputFilter($("#P318_DD"), function(value) {
+        return (/^([1-9]$|^[1-2][0-9]$|^3[0-1]|^$)$/.test(value));
+    }, "Invalid input. Values should only be numbers from 1 to 31.")
+    
+    
+    // accept numbers only for YYYY
+    setInputFilter($("#P318_YYYY"), function(value) {
+        return /^\d*$/.test(value); // numbers only
+    }, "Invalid input. Values should be numbers only.");
+    
+    
+    ///// TO
+    
+    // MM validation
+    setInputFilter($("#P318_MM_1"), function(value) {
+        return /^([1-9]|1[012]|^$)$/.test(value); // accepts empty string
+        // return /^([1-9]|1[012])$/.test(value); // not accepting empty string
+    }, "Invalid input. Values should only be numbers from 1 to 12.");
+    
+    
+    // DD validation
+    setInputFilter($("#P318_DD_1"), function(value) {
+        return (/^([1-9]$|^[1-2][0-9]$|^3[0-1]|^$)$/.test(value));
+    }, "Invalid input. Values should only be numbers from 1 to 31.")
+    
+    
+    // accept numbers only for YYYY
+    setInputFilter($("#P318_YYYY_1"), function(value) {
+        return /^\d*$/.test(value); // numbers only
+    }, "Invalid input. Values should be numbers only.");
+    
+    
+    
+    // MM/DD/YYYY validation
+    setInputFilter($("#P318_DATE_FROM"), function(value) {
+        return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only
+    }, "Invalid input. Date should be in MM/DD/YYYY format.");
+    
+    // MM/DD/YYYY validation
+    setInputFilter($("#P318_DATE_TO"), function(value) {
+        return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only
+    }, "Invalid input. Date should be in MM/DD/YYYY format.");
+
+css: 
+  inline: |
+    .t-Dialog-header {
+        background-color: #056AC8;
+        padding: 0rem 0rem 0rem .5rem;
+    }
+    
+    .t-Dialog-body {
+        padding-block-start: 0;
+        padding-block-end: 0;
+        padding-inline-end: 0;
+        padding-inline-start: 0;
+    }
+    
+    .t-Dialog-bodyWrapperIn {
+        overflow: hidden;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .t-Region {
+        margin-block-end: .1rem;
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .row {
+        flex-wrap: initial;
+    }
+    
+    .col {
+        height: 3.5rem;
+    }
+    
+    .t-Form-label {
+        color: white;
+        font-size: 1.125rem;
+        padding-block-start: 0;
+    }
+    
+    .t-Form-labelContainer:has(#P318_SLASH_LABEL), .t-Form-labelContainer:has(#P318_SLASH_1_LABEL),
+    .t-Form-labelContainer:has(#P318_SLASH_2_LABEL), .t-Form-labelContainer:has(#P318_SLASH_1_1_LABEL) {
+        padding-inline-start: var(--ut-field-padding-x, .3rem);
+    }
+    
+    .col:has(#P318_YYYY_1_CONTAINER), .col:has(#P318_YYYY_CONTAINER) {
+        padding-inline-end: var(--ut-grid-gutter-width, 1.5rem);
+    }
+    
+    .t-Form-labelContainer {
+        padding-inline-start: var(--ut-field-padding-x, 2rem);
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-start: .2rem;
+    }
+    
+    .t-Form-itemWrapper:has(#P315_MM), .t-Form-itemWrapper:has(#P315_MM_1) {
+        margin-left: .6rem;
+        /* margin: auto;
+        width: 20%; */
+    }
+    
+    .t-Form-itemWrapper:has(#P315_YYYY), .t-Form-itemWrapper:has(#P315_YYYY_1) {
+        margin-right: .6rem;
+    }
+    
+    #P318_TO_LABEL {
+        padding-right: 1.4rem;
+    }
+    
+    .t-ButtonRegion-wrap:has(#statistics) {
+        display: none;
+    }
+    
+    
+    
+    /* new design css */
+    
+    #P318_DATE_FROM_LABEL,
+    #P318_DATE_TO_LABEL {
+        display: none;
+    }
+    
+    .max-width-label {
+        max-width: 28% !important;
+    }
+    
+    #P318_DATE_FROM,
+    #P318_DATE_TO {
+        text-align: center;
+        font-size: 1.125rem;
+        height: 2rem;
+    }
+    
+    .t-Form-inputContainer:has(#P318_DATE_FROM),
+    .t-Form-inputContainer:has(#P318_DATE_TO) {
+        max-width: 75% !important;
+    }
+    
+    .t-Form-fieldContainer:has(#P318_TO_1_LABEL) {
+        padding-right: 1.4rem;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .error-msg {
+        color: #FFD700;
+        font-size: 1rem;
+        padding-left: 1.5rem;
+        padding-top: 0.1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Error display ===============================
+  id: 32483885991104146
+  identification: 
+    name: Error display
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span id="errorArea" class="hide error-msg">Please input a valid date.</span>
+      <span id="errorArea1" class="hide error-msg">Date to should be greater than date from.</span>
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Date_Input_Fields ===========================
+  id: 54094434123752387
+  identification: 
+    name: Date_Input_Fields
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: from-id
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Title =======================================
+  id: 73634494876291332
+  identification: 
+    name: Title
+    type: Static Content
+
+  source: 
+    html-code: '<text style="font-size:1.5rem;">Date Range - Statistics</text>'
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--accent1
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    - margin-top-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Release Gift Certificate ====================
+  id: 74469282138789036
+  identification: 
+    name: Release Gift Certificate
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          NULL AS "COPIES"
+      FROM
+          DUAL
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+page-items: 
+- # ====== Page Item: P318_DATE_FROM ===========================
+  id: 32483049349104138
+  identification: 
+    name: P318_DATE_FROM
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Date_Input_Fields # 54094434123752387
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    value-placeholder: MM / DD / YYYY
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P318_DATE_TO =============================
+  id: 32483170679104139
+  identification: 
+    name: P318_DATE_TO
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Date_Input_Fields # 54094434123752387
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    value-placeholder: MM / DD / YYYY
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P318_FROM_1 ==============================
+  id: 32483228180104140
+  identification: 
+    name: P318_FROM_1
+    type: Display Only
+
+  label: 
+    label: 'From:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Date_Input_Fields # 54094434123752387
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+    column-css-classes: 
+    - max-width-label
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-sm
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P318_TO_1 ================================
+  id: 32483345635104141
+  identification: 
+    name: P318_TO_1
+    type: Display Only
+
+  label: 
+    label: 'To:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Date_Input_Fields # 54094434123752387
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: 1
+    column-css-classes: 
+    - max-width-label
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-top-sm
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P318_PREPARED_URL ========================
+  id: 33724414957036901
+  identification: 
+    name: P318_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P318_COPIES ==============================
+  id: 74475530377789158
+  identification: 
+    name: P318_COPIES
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Release Gift Certificate # 74469282138789036
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Release Gift Certificate # 74469282138789036
+    column: COPIES
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Search ======================================
+  id: 27781920204535928
+  identification: 
+    button-name: Search
+    label: Search
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Enter ===============================
+  id: 27800466896719146
+  identification: 
+    name: Enter
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 27781920204535928
+
+  actions: 
+  - # ====== Action: Close Date Range Modal ======================
+    id: 27800789784719149
+    identification: 
+      name: Close Date Range Modal
+      action: Close Dialog
+
+    execution: 
+      sequence: 70
+      event: Enter # 27800466896719146
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32483943245104147
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        
+        
+        var date_regex = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d$/;
+        var date_regex_1 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|2[09])[- \/.](19|20)\d\d$/;
+        var date_regex_2 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-8]|2[08])[- \/.](19|20)\d\d$/;
+        
+        if ($('#P318_DATE_FROM').val().substring(0,3) === "02/" || $('#P318_DATE_FROM').val().substring(0,2) === "2/") {
+            var year = '';
+            if ($('#P318_DATE_FROM').val().length === 10) {
+                year = $('#P318_DATE_FROM').val().substring(6, 10);
+            } else {
+                year = $('#P318_DATE_FROM').val().substring(5, 9);
+            }
+            if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+                if (date_regex_1.test($('#P318_DATE_FROM').val()) || $('#P318_DATE_FROM').val().trim().length === 0) {
+                    errorArea.style.display = "none"
+                    errorArea1.style.display = "none"
+                    return true;
+                } else {
+                    errorArea.style.display = "block"
+                    errorArea1.style.display = "none"
+                    document.getElementById("P318_DATE_FROM").focus();
+                    return false;
+                }
+            } else {
+                if (date_regex_2.test($('#P318_DATE_FROM').val()) || $('#P318_DATE_FROM').val().trim().length === 0) {
+                    errorArea.style.display = "none"
+                    errorArea1.style.display = "none"
+                    return true;
+                } else {
+                    errorArea.style.display = "block"
+                    errorArea1.style.display = "none"
+                    document.getElementById("P318_DATE_FROM").focus();
+                    return false;
+                }
+            }
+        } else {
+            if (date_regex.test($('#P318_DATE_FROM').val()) || $('#P318_DATE_FROM').val().trim().length === 0) {
+                errorArea.style.display = "none"
+                errorArea1.style.display = "none"
+                return true;
+            } else {
+                errorArea.style.display = "block"
+                errorArea1.style.display = "none"
+                document.getElementById("P318_DATE_FROM").focus();
+                return false;
+            }
+        }
+
+    execution: 
+      sequence: 10
+      event: Enter # 27800466896719146
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32484006823104148
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        
+        
+        var date_regex = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d$/;
+        var date_regex_1 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|2[09])[- \/.](19|20)\d\d$/;
+        var date_regex_2 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-8]|2[08])[- \/.](19|20)\d\d$/;
+        
+        if ($('#P318_DATE_TO').val().substring(0,3) === "02/" || $('#P318_DATE_TO').val().substring(0,2) === "2/") {
+            var year = '';
+            if ($('#P318_DATE_TO').val().length === 10) {
+                year = $('#P318_DATE_TO').val().substring(6, 10);
+            } else {
+                year = $('#P318_DATE_TO').val().substring(5, 9);
+            }
+            if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+                if (date_regex_1.test($('#P318_DATE_TO').val()) || $('#P318_DATE_TO').val().trim().length === 0) {
+                    errorArea.style.display = "none"
+                    errorArea1.style.display = "none"
+                    return true;
+                } else {
+                    errorArea.style.display = "block"
+                    errorArea1.style.display = "none"
+                    document.getElementById("P318_DATE_TO").focus();
+                    return false;
+                }
+            } else {
+                if (date_regex_2.test($('#P318_DATE_TO').val()) || $('#P318_DATE_TO').val().trim().length === 0) {
+                    errorArea.style.display = "none"
+                    errorArea1.style.display = "none"
+                    return true;
+                } else {
+                    errorArea.style.display = "block"
+                    errorArea1.style.display = "none"
+                    document.getElementById("P318_DATE_TO").focus();
+                    return false;
+                }
+            }
+        } else {
+            if (date_regex.test($('#P318_DATE_FROM').val()) || $('#P318_DATE_FROM').val().trim().length === 0) {
+                errorArea.style.display = "none"
+                errorArea1.style.display = "none"
+                return true;
+            } else {
+                errorArea.style.display = "block"
+                errorArea1.style.display = "none"
+                document.getElementById("P318_DATE_FROM").focus();
+                return false;
+            }
+        }
+
+    execution: 
+      sequence: 20
+      event: Enter # 27800466896719146
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Compare from and to =========================
+    id: 32484141800104149
+    identification: 
+      name: Compare from and to
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var errorArea = document.getElementById("errorArea")
+        var errorArea1 = document.getElementById("errorArea1")
+        
+        
+        var fromDate = new Date($('#P318_DATE_FROM').val())
+        var toDate = new Date($('#P318_DATE_TO').val())
+        
+        
+        if (toDate > fromDate) {
+            errorArea.style.display = "none"
+            errorArea1.style.display = "none"
+            return true;
+        } else {
+            errorArea.style.display = "none"
+            errorArea1.style.display = "block"
+            document.getElementById("P318_DATE_TO").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 30
+      event: Enter # 27800466896719146
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 33724688665036903
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P318_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 50
+      event: Enter # 27800466896719146
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 33724705175036904
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P318_PREPARED_URL := apex_page.get_url(
+               p_page   => 308,
+               p_items  => 'P308_DATE_FROM,P308_DATE_TO',
+               p_values => :P318_DATE_FROM || ',' || :P318_DATE_TO
+             );
+        END;
+      items-to-submit: 
+      - P318_DATE_FROM
+      - P318_DATE_TO
+      items-to-return: 
+      - P318_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 40
+      event: Enter # 27800466896719146
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+computations: 
+- # ====== Computation: P318_PREPARED_URL ======================
+  id: 33724584461036902
+  identification: 
+    item-name: P318_PREPARED_URL
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P318_DATE_FROM =========================
+  id: 33725048073036907
+  identification: 
+    item-name: P318_DATE_FROM
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P318_DATE_TO ===========================
+  id: 33725150459036908
+  identification: 
+    item-name: P318_DATE_TO
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+processes: 
+- # ====== Process: Initialize form Print Gift Certificate =====
+  id: 27783828479535932
+  identification: 
+    name: Initialize form Print Gift Certificate
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Release Gift Certificate # 74469282138789036
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Print Gift Certificate ========
+  id: 27784272453535937
+  identification: 
+    name: Process form Print Gift Certificate
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Release Gift Certificate # 74469282138789036
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 60
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 27787354677535960
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

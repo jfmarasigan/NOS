@@ -1,0 +1,447 @@
+---
+# ====== Page: Warehouse Location add/update =================
+id: 158
+identification: 
+  name: Warehouse Location add/update
+  alias: WAREHOUSE-LOCATION-ADD-UPDATE
+  title: Warehouse Location add/update
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    function setModalTitle(){
+        if($v("P152_COLLECTION_ID_1") == ''){
+            parent.$('.ui-dialog-title').html('Add');
+        }
+        else{
+            parent.$('.ui-dialog-title').html('Update');
+        }
+    }
+  execute-when-page-loads: setModalTitle();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .t-Dialog{
+        background-color: #056AC8;
+    }
+    .white-text{
+        color:white;
+    }
+    .btns{
+        font-size: 1.125rem;
+    }
+    .text-general{
+        font-size: 1.125rem;
+    }
+    .t-Form-label{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Warehouse Location ==========================
+  id: 83902649390920880
+  identification: 
+    name: Warehouse Location
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NIM027
+    include-rowid-column: false
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: false
+
+page-items: 
+- # ====== Page Item: P158_WAREHOUSE_ID ========================
+  id: 42620775090340712
+  identification: 
+    name: P158_WAREHOUSE_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Warehouse Location # 83902649390920880
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Warehouse Location # 83902649390920880
+    column: WAREHOUSE_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P158_WAREHOUSE_LOCATION ==================
+  id: 42620823756340713
+  identification: 
+    name: P158_WAREHOUSE_LOCATION
+    type: Text Field
+
+  label: 
+    label: 'Warehouse Location: '
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Warehouse Location # 83902649390920880
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 1
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Warehouse Location # 83902649390920880
+    column: WAREHOUSE_LOCATION
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P158_LOCATION_DESC =======================
+  id: 42620977236340714
+  identification: 
+    name: P158_LOCATION_DESC
+    type: Text Field
+
+  label: 
+    label: 'Description:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Warehouse Location # 83902649390920880
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: true
+    maximum-length: 50
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Warehouse Location # 83902649390920880
+    column: LOCATION_DESC
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: On press Enter ======================
+  id: 42681582281531954
+  identification: 
+    name: On press Enter
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P158_COLLECTION_NAME
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 42682062996531954
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P158_COLLECTION_DESC
+
+    execution: 
+      sequence: 10
+      event: On press Enter # 42681582281531954
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: On Press Enter ======================
+  id: 42682459925531956
+  identification: 
+    name: On Press Enter
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P158_COLLECTION_TYPE_NAME
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 42682958264531956
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P158_COLLECTION_TYPE_DESCRIPTION
+
+    execution: 
+      sequence: 10
+      event: On Press Enter # 42682459925531956
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+processes: 
+- # ====== Process: Initialize form Collection type utilities ad
+  id: 42679842933531951
+  identification: 
+    name: Initialize form Collection type utilities add/update
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Warehouse Location # 83902649390920880
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Add New Data ===============================
+  id: 42680354346531951
+  identification: 
+    name: Add New Data
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      INSERT INTO NIM027(warehouse_location, location_desc,create_user,create_date,
+                          update_user, update_date)
+                  VALUES(:P158_WAREHOUSE_LOCATION, :P158_LOCATION_DESC, :APP_USER, SYSDATE,
+                          :APP_USER, SYSDATE);
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P158_WAREHOUSE_ID
+
+- # ====== Process: Update Data ================================
+  id: 42680777297531953
+  identification: 
+    name: Update Data
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      UPDATE NIM027 SET warehouse_location = :P158_WAREHOUSE_LOCATION, location_desc = :P158_LOCATION_DESC,
+                          update_user = :APP_USER, update_date = SYSDATE
+      WHERE warehouse_id = :P158_WAREHOUSE_ID;
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Item is NOT NULL
+    item: P158_WAREHOUSE_ID
+
+- # ====== Process: New ========================================
+  id: 42681163239531953
+  identification: 
+    name: New
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 30
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

@@ -1,0 +1,85 @@
+table, tr, td, th {
+    font-size: 1.125rem;
+    font-family: Arial;
+}
+
+.ui-dialog-title{
+    font-size: 1.5rem;
+    padding-bottom: 0.2rem;
+    padding-top: 0.2rem;
+}
+
+.ui-dialog-titlebar{
+    border-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0.2rem;
+}
+
+
+.t-Header .t-Header-branding {
+    background-color: white !important;
+    color: rgb(30, 58, 138) !important;
+}
+
+.title-header {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+    /* color: #056BC9; */
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: normal;
+}
+
+body, #content, #nav{
+    background-color: rgb(30, 58, 138);
+}
+
+.btns {
+    font-size: 1.125rem;
+    font-family: Arial;
+    color: white;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.content-block {
+    font-size: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+}
+
+.a-GV-header a, th.a-GV-header {
+    background-color: #056BC9;
+    color: white;
+}
+
+/* set modal header to a different background and font color */
+.ui-dialog .ui-dialog-titlebar {
+    background-color: #056AC8;
+    color: white;
+}
+
+.ui-dialog.inv-qby-w {
+   left: 45% !important; 
+}
+
+.ui-dialog.modal-dialog--pullout{
+    left: 45% !important;
+}
+
+.ui-dialog-titlebar-close{
+    display: none;
+}
+
+.a-GV-hdr .a-GV-table {
+    width: 100% !important;
+}

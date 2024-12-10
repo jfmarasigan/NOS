@@ -1,0 +1,422 @@
+---
+# ====== Page: RPO Search ====================================
+id: 39
+identification: 
+  name: RPO Search
+  alias: RPO-SEARCH
+  title: RPO Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 640
+  maximum-width: 640
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p8KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP8Keys() {
+        $(document).off('keydown.p8keyevents');
+        $(document).on('keydown.p8keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p8KeyMap[key]) {
+                ev.preventDefault();
+                p8KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP8Keys();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/ibi-css#MIN#.css'
+  inline: |
+    .t-Dialog-body {
+        background-color: #056AC8;
+    }
+    
+    .col > .container {
+        background-color: white;
+        padding: 1rem 1.5rem 0 1.5rem !important;
+    }
+    
+    .w-100 {
+        width: 100%;
+    }
+    
+    #header {
+        padding: 1rem;
+    }
+    
+    .t-Form-labelContainer {
+        text-align: left;
+        padding-right: 1rem;
+    }
+    
+    .t-Form-inputContainer {
+        width: 80%;
+        max-width: 80%;
+    }
+    
+    .t-Dialog-body {
+        padding: .50rem 0 0 0 !important;
+    }
+    
+    .p-1 {
+        padding-left: .50rem !important;
+        padding-bottom: .25rem;
+    }
+    
+    .bcolor-b {
+        background-color: #056BC9;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .text-red {
+        color: red;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Header ======================================
+  id: 11736861497394634
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: Search
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - p-1
+    - header
+    - color-w
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: header
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Search Item =================================
+  id: 11736915866394635
+  identification: 
+    name: Search Item
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error Area ==================================
+  id: 11737210085394638
+  identification: 
+    name: Error Area
+    type: Static Content
+
+  source: 
+    html-code: <span id="errorArea" class="hide text-red">Please fill in the search field</span>
+
+  layout: 
+    sequence: 10
+    parent-region: Search Item # 11736915866394635
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P39_START_WITH ===========================
+  id: 11737186774394637
+  identification: 
+    name: P39_START_WITH
+    type: Text Field
+
+  label: 
+    label: '<span style="font-size: 1.125rem;">Start with PO #: </span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Search Item # 11736915866394635
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: SEARCH_BTN ==================================
+  id: 11737395239394639
+  identification: 
+    button-name: SEARCH_BTN
+    label: Search Btn
+
+  layout: 
+    sequence: 30
+    region: Search Item # 11736915866394635
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+- # ====== Button: CLOSE_BTN ===================================
+  id: 11737464991394640
+  identification: 
+    button-name: CLOSE_BTN
+    label: Close Btn
+
+  layout: 
+    sequence: 40
+    region: Search Item # 11736915866394635
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: Search Data =========================
+  id: 11737534006394641
+  identification: 
+    name: Search Data
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH_BTN # 11737395239394639
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 11737643408394642
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var poNum = $v("P39_START_WITH");
+        var errorArea = document.getElementById("errorArea")
+        
+        if(!poNum) {
+            errorArea.style.display = "block"
+            document.getElementById("P39_START_WITH").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 10
+      event: Search Data # 11737534006394641
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 11737778017394643
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P39_START_WITH
+
+    execution: 
+      sequence: 20
+      event: Search Data # 11737534006394641
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Modal =========================
+  id: 11737819884394644
+  identification: 
+    name: Close Modal
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE_BTN # 11737464991394640
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 11737970802394645
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Close Modal # 11737819884394644
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

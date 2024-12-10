@@ -1,0 +1,1880 @@
+---
+# ====== Page: POS Cashiering Main Screen - Pay ==============
+id: 41
+identification: 
+  name: POS Cashiering Main Screen - Pay
+  alias: POS-CASHIERING-MAIN-SCREEN-PAY
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+  - t-Dialog--noPadding
+  - t-DeferredRendering
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: false
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p41KeyMap = {
+        1: (v) => {
+            $("#1").trigger("click");
+        },
+    
+        2: (v) => {
+            $("#2").trigger("click");
+        },
+    
+        3: (v) => {
+            $("#3").trigger("click");
+        },
+    
+        4: (v) => {
+            $("#4").trigger("click");
+        },
+    
+        5: (v) => {
+            $("#5").trigger("click");
+        },
+    
+        6: (v) => {
+            $("#6").trigger("click");
+        }
+        
+    }
+    
+    function mapP41Keys() {
+        $(document).off('keydown.p41keyevents');
+        $(document).on('keydown.p41keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p41KeyMap[key]) {
+                ev.preventDefault();
+                p41KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP41Keys();
+    
+
+css: 
+  inline: |
+    #payment table, 
+    #payment tr,
+    #payment td,
+    #payment th {
+        font-size: 1.125rem;
+        font-family: Arial;
+        color: black;
+        background-color: white;
+    }
+    
+    /* .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    } */
+    
+    #P41_TOTAL_CONTAINER {
+        --a-field-input-flex-grow: 0.915;
+    }
+    
+    #P41_PAID_CONTAINER {
+        --a-field-input-flex-grow: 0.915;
+    }
+    #P41_UNPAID_CONTAINER {
+        --a-field-input-flex-grow: 0.915;
+    }
+    
+    .a-GV-headerLabel a, th.a-GV-header {
+        background-color: #056AC8;
+        color: white;
+        text-align: center;
+    }
+    
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .t-Dialog-body label,
+    .t-Dialog-body input{
+        font-size: 1.125rem;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .t-Region-body{
+       padding-bottom: 0;
+       padding-left: 0;
+       background-color: #056AC8;
+       color: white;
+    }
+    .t-Form-label {
+        line-height: 1.5rem;
+        white-space: nowrap;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        text-align: left;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+        white-space: nowrap;
+    }
+    
+    .t-Region-title {
+        font-size: 1.125rem;
+        font-family: Arial;
+        font-weight: 700;
+        text-align: left;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .t-Region-header{
+        background-color: #056AC8;
+         color: white;
+    }
+    
+    #payment .a-IG {
+        height: calc(20vh) !important;
+    } 
+    
+    #payment .a-IG-contentContainer {
+        height: 20vh !important;
+    }
+    
+    #payment .a-IG-gridView.a-GV {
+        height: 20vh !important;
+    }
+    
+    .a-GV-footer {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Payment Table ===============================
+  id: 17472305114454415
+  identification: 
+    name: Payment Table
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT c001, n001 
+        FROM apex_collections
+       WHERE collection_name = 'PAYMENT'
+         AND n001 IS NOT NULL;
+
+  layout: 
+    sequence: 40
+    parent-region: Payment # 23637157454246332
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-lg
+    - margin-right-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: payment
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 17472702036454419
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 17864668314849729
+      identification: 
+        name: Primary Report
+        alias: 178647
+
+  columns: 
+  - # ====== Column: C001 ========================================
+    id: 40393325440268838
+    identification: 
+      column-name: C001
+      type: Textarea
+
+    heading: 
+      heading: Payment Method
+      alignment: center
+
+    settings: 
+      resizable: true
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: C001
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: N001 ========================================
+    id: 40393468626268839
+    identification: 
+      column-name: N001
+      type: Number Field
+
+    heading: 
+      heading: Amount
+      alignment: end
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999G999G999G999G990D00
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: N001
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Payment Methods =============================
+  id: 17473517963454427
+  identification: 
+    name: Payment Methods
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: Payment # 23637157454246332
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Payment =====================================
+  id: 23637157454246332
+  identification: 
+    name: Payment
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    - margin-top-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P41_TOTAL ================================
+  id: 17471828612454410
+  identification: 
+    name: P41_TOTAL
+    type: Display Only
+
+  label: 
+    label: '<b> Total Amount: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 20
+    region: Payment # 23637157454246332
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_PAID =================================
+  id: 17473360420454425
+  identification: 
+    name: P41_PAID
+    type: Display Only
+
+  label: 
+    label: '<b>Amount Paid: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 50
+    region: Payment # 23637157454246332
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--boldDisplay
+    format-mask: 999G999G999G999G990D00
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_UNPAID ===============================
+  id: 17473468211454426
+  identification: 
+    name: P41_UNPAID
+    type: Display Only
+
+  label: 
+    label: '<b>Unpaid Amount:</b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 60
+    region: Payment # 23637157454246332
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--postTextBlock
+    format-mask: 999G999G999G999G990D00
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_ITEM_DESC ============================
+  id: 27428533616078135
+  identification: 
+    name: P41_ITEM_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Payment # 23637157454246332
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_ITEM_TOTAL ===========================
+  id: 27428638301078136
+  identification: 
+    name: P41_ITEM_TOTAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: Payment # 23637157454246332
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_SUB_TOTAL ============================
+  id: 27428709605078137
+  identification: 
+    name: P41_SUB_TOTAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 110
+    region: Payment # 23637157454246332
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_DISCOUNT =============================
+  id: 27428870919078138
+  identification: 
+    name: P41_DISCOUNT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 120
+    region: Payment # 23637157454246332
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_OVERALL_TOTAL ========================
+  id: 27428926245078139
+  identification: 
+    name: P41_OVERALL_TOTAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 130
+    region: Payment # 23637157454246332
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_CUSTOMER =============================
+  id: 27429242234078142
+  identification: 
+    name: P41_CUSTOMER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 140
+    region: Payment # 23637157454246332
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_ITEM_PRICE ===========================
+  id: 27429691587078146
+  identification: 
+    name: P41_ITEM_PRICE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Payment # 23637157454246332
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P41_PREPARED_URL =========================
+  id: 38715003202254531
+  identification: 
+    name: P41_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Payment # 23637157454246332
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Cash ========================================
+  id: 17473614559454428
+  identification: 
+    button-name: Cash
+    label: 1 - CASH
+
+  layout: 
+    sequence: 10
+    region: Payment Methods # 17473517963454427
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 1
+
+- # ====== Button: CHECK =======================================
+  id: 17473794572454429
+  identification: 
+    button-name: CHECK
+    label: 6 - COMPANY CHECK
+
+  layout: 
+    sequence: 70
+    region: Payment Methods # 17473517963454427
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 6
+
+- # ====== Button: MEMO ========================================
+  id: 17473897163454430
+  identification: 
+    button-name: MEMO
+    label: 5 - CREDIT MEMO
+
+  layout: 
+    sequence: 60
+    region: Payment Methods # 17473517963454427
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 5
+
+- # ====== Button: GYELLOW =====================================
+  id: 17473904124454431
+  identification: 
+    button-name: GYELLOW
+    label: 4 - GIFT CERT YELLOW
+
+  layout: 
+    sequence: 50
+    region: Payment Methods # 17473517963454427
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 4
+
+- # ====== Button: GBLUE =======================================
+  id: 17474017350454432
+  identification: 
+    button-name: GBLUE
+    label: 3 - GIFT CARD BLUE
+
+  layout: 
+    sequence: 40
+    region: Payment Methods # 17473517963454427
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 3
+
+- # ====== Button: Credit ======================================
+  id: 17474138450454433
+  identification: 
+    button-name: Credit
+    label: 2 - CREDIT CARD
+
+  layout: 
+    sequence: 30
+    region: Payment Methods # 17473517963454427
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 2
+
+dynamic-actions: 
+- # ====== Dynamic Action: Set Value and Refresh ===============
+  id: 25489990566440405
+  identification: 
+    name: Set Value and Refresh
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Paid ========================================
+    id: 25491168815440417
+    identification: 
+      name: Paid
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT TO_CHAR(NVL(SUM(n001), 0), 'FM9990.00') 
+          FROM apex_collections
+         WHERE collection_name = 'PAYMENT'
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P41_PAID
+
+    execution: 
+      sequence: 20
+      event: Set Value and Refresh # 25489990566440405
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Unpaid ======================================
+    id: 28595423585578208
+    identification: 
+      name: Unpaid
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        TO_CHAR(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')) - TO_NUMBER(REPLACE(REPLACE(:P41_PAID, '$', ''), ',', '')), 'FM9990.00' )
+        
+      items-to-submit: 
+      - P41_TOTAL
+      - P41_PAID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P41_UNPAID
+
+    execution: 
+      sequence: 40
+      event: Set Value and Refresh # 25489990566440405
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 28595766628578211
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P41_TOTAL
+      - P41_PAID
+      - P41_UNPAID
+
+    execution: 
+      sequence: 50
+      event: Set Value and Refresh # 25489990566440405
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 28595849072578212
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Payment Table # 17472305114454415
+
+    execution: 
+      sequence: 60
+      event: Set Value and Refresh # 25489990566440405
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Cash ===========================
+  id: 38714759258254528
+  identification: 
+    name: Open Cash
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Cash # 17473614559454428
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 38714863871254529
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P41_PREPARED_URL := apex_page.get_url(
+                p_page        => 36,
+                p_items       => 'P36_UNPAID',
+                p_values      => TO_CHAR(:P41_UNPAID, 'FM9990.00'),
+                p_clear_cache => '36'
+            );
+        END;
+        
+      items-to-submit: 
+      - P41_UNPAID
+      items-to-return: 
+      - P41_PREPARED_URL
+      suppress-change-event: true
+
+    execution: 
+      sequence: 10
+      event: Open Cash # 38714759258254528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 38714956862254530
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P41_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Open Cash # 38714759258254528
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Credit ==============================
+  id: 40389665834268801
+  identification: 
+    name: Credit
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Credit # 17474138450454433
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 40389739877268802
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P41_PREPARED_URL := apex_page.get_url(
+               p_page   => 45,
+               p_items  => 'P45_AMOUNT',
+               p_values => :P41_UNPAID,
+               p_clear_cache => '45'
+             );
+        END;
+      items-to-submit: 
+      - P41_UNPAID
+      items-to-return: 
+      - P41_PREPARED_URL
+      suppress-change-event: true
+
+    execution: 
+      sequence: 10
+      event: Credit # 40389665834268801
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40389852817268803
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P41_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Credit # 40389665834268801
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Blue GCert ==========================
+  id: 40394081796268845
+  identification: 
+    name: Blue GCert
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: GBLUE # 17474017350454432
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 40394188712268846
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P41_PREPARED_URL := apex_page.get_url(
+                p_page        => 47,
+                p_items       => 'P47_AMOUNT',
+                p_values      => TO_CHAR(:P41_UNPAID, 'FM9990.00'),
+                p_clear_cache => '47'
+            );
+        END;
+        
+      items-to-submit: 
+      - P41_UNPAID
+      items-to-return: 
+      - P41_PREPARED_URL
+      suppress-change-event: true
+
+    execution: 
+      sequence: 10
+      event: Blue GCert # 40394081796268845
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40394238526268847
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P41_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Blue GCert # 40394081796268845
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Paid  ===========================
+  id: 42941901486705407
+  identification: 
+    name: 'Set Paid '
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Payment Table # 17472305114454415
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 42942062325705408
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT TO_CHAR(NVL(SUM(n001), 0), 'FM9990.00') 
+          FROM apex_collections
+         WHERE collection_name = 'PAYMENT'
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P41_PAID
+
+    execution: 
+      sequence: 10
+      event: 'Set Paid ' # 42941901486705407
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 42942179533705409
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        TO_CHAR(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')) - TO_NUMBER(REPLACE(REPLACE(:P41_PAID, '$', ''), ',', '')), 'FM9990.00' )
+        
+      items-to-submit: 
+      - P41_TOTAL
+      - P41_PAID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P41_UNPAID
+
+    execution: 
+      sequence: 20
+      event: 'Set Paid ' # 42941901486705407
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Yellow GCert ========================
+  id: 44272554758177709
+  identification: 
+    name: Yellow GCert
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: GYELLOW # 17473904124454431
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 44272696967177710
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P41_PREPARED_URL := apex_page.get_url(
+                p_page        => 49,
+                p_items       => 'P49_AMOUNT',
+                p_values      => TO_CHAR(:P41_UNPAID, 'FM9990.00'),
+                p_clear_cache => '49'
+            );
+        END;
+        
+      items-to-submit: 
+      - P41_UNPAID
+      items-to-return: 
+      - P41_PREPARED_URL
+      suppress-change-event: true
+
+    execution: 
+      sequence: 10
+      event: Yellow GCert # 44272554758177709
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44272748698177711
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P41_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Yellow GCert # 44272554758177709
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Dialog Closed =======================
+  id: 44273552947177719
+  identification: 
+    name: Dialog Closed
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 44273822796177722
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Payment Table # 17472305114454415
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed # 44273552947177719
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable =====================================
+    id: 44274627132177730
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: GYELLOW # 17473904124454431
+
+    execution: 
+      sequence: 20
+      event: Dialog Closed # 44273552947177719
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable =====================================
+    id: 44275112412177735
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: CHECK # 17473794572454429
+
+    execution: 
+      sequence: 50
+      event: Dialog Closed # 44273552947177719
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable =====================================
+    id: 44275290842177736
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: GBLUE # 17474017350454432
+
+    execution: 
+      sequence: 30
+      event: Dialog Closed # 44273552947177719
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Disable =====================================
+    id: 44275307055177737
+    identification: 
+      action: Disable
+
+    affected-elements: 
+      selection-type: Button
+      button: MEMO # 17473897163454430
+
+    execution: 
+      sequence: 40
+      event: Dialog Closed # 44273552947177719
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Focus ===================================
+    id: 44276019373177744
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P41_UNPAID
+
+    execution: 
+      sequence: 60
+      event: Dialog Closed # 44273552947177719
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Credit Memo =========================
+  id: 44522886198129215
+  identification: 
+    name: Credit Memo
+
+  execution: 
+    sequence: 150
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: MEMO # 17473897163454430
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 44522932330129216
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P41_PREPARED_URL := apex_page.get_url(
+                p_page        => 61,
+                p_items       => 'P61_AMOUNT',
+                p_values      => TO_CHAR(:P41_UNPAID, 'FM9990.00'),
+                p_clear_cache => '61'
+            );
+        END;
+        
+      items-to-submit: 
+      - P41_UNPAID
+      items-to-return: 
+      - P41_PREPARED_URL
+      suppress-change-event: true
+
+    execution: 
+      sequence: 10
+      event: Credit Memo # 44522886198129215
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44523094397129217
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P41_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Credit Memo # 44522886198129215
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Company Check =======================
+  id: 44523432214129221
+  identification: 
+    name: Company Check
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: CHECK # 17473794572454429
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 44523558093129222
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P41_PREPARED_URL := apex_page.get_url(
+                p_page        => 62,
+                p_clear_cache => '62'
+            );
+        END;
+        
+      items-to-return: 
+      - P41_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Company Check # 44523432214129221
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44523615446129223
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P41_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Company Check # 44523432214129221
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P41_ITEM_DESC ==========================
+  id: 27429448563078144
+  identification: 
+    item-name: P41_ITEM_DESC
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT c003
+        FROM apex_collections
+       WHERE collection_name = 'PURCHASE'
+
+- # ====== Computation: P41_ITEM_TOTAL =========================
+  id: 27429586975078145
+  identification: 
+    item-name: P41_ITEM_TOTAL
+
+  execution: 
+    sequence: 50
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n003
+        FROM apex_collections
+       WHERE collection_name = 'PURCHASE'
+
+- # ====== Computation: P41_ITEM_PRICE =========================
+  id: 27429734410078147
+  identification: 
+    item-name: P41_ITEM_PRICE
+
+  execution: 
+    sequence: 60
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n002
+        FROM apex_collections
+       WHERE collection_name = 'PURCHASE'
+
+- # ====== Computation: P41_SUB_TOTAL ==========================
+  id: 27429896864078148
+  identification: 
+    item-name: P41_SUB_TOTAL
+
+  execution: 
+    sequence: 70
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n001
+        FROM apex_collections
+       WHERE collection_name = 'ORDERS'
+
+- # ====== Computation: P41_DISCOUNT ===========================
+  id: 27429995897078149
+  identification: 
+    item-name: P41_DISCOUNT
+
+  execution: 
+    sequence: 80
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n002
+        FROM apex_collections
+       WHERE collection_name = 'ORDERS'
+
+- # ====== Computation: P41_OVERALL_TOTAL ======================
+  id: 27430060837078150
+  identification: 
+    item-name: P41_OVERALL_TOTAL
+
+  execution: 
+    sequence: 90
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n003
+        FROM apex_collections
+       WHERE collection_name = 'ORDERS'
+
+- # ====== Computation: P41_CUSTOMER ===========================
+  id: 28594746304578201
+  identification: 
+    item-name: P41_CUSTOMER
+
+  execution: 
+    sequence: 100
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT c001
+        FROM apex_collections
+       WHERE collection_name = 'ORDERS'
+

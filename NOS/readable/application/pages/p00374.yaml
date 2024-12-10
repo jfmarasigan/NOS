@@ -1,0 +1,780 @@
+---
+# ====== Page: Reservation Search ============================
+id: 374
+identification: 
+  name: Reservation Search
+  alias: RESERVATION-SEARCH
+  title: Reservation Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 405px
+  maximum-width: 405px
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p7KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP7Keys() {
+        $(document).off('keydown.p7keyevents');
+        $(document).on('keydown.p7keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p7KeyMap[key]) {
+                ev.preventDefault();
+                p7KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP7Keys();
+    
+    
+    // MM/DD/YYYY validation
+    setInputFilter($("#P374_DAY_DATE"), function(value) {
+        return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only
+    }, "Invalid input. Date should be in MM/DD/YYYY format.");
+    
+    // MM/YYYY validation
+    setInputFilter($("#P374_MONTH_DATE"), function(value) {
+        return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,4}))$/.test(value); // numbers only
+    }, "Invalid input. Date should be in MM/YYYY format.");
+
+css: 
+  inline: |
+    .t-Dialog-header {
+        /* background-color: #056BC9; */
+        background-color: #056AC8;
+        padding: .5rem 0rem 0rem 1rem;
+    }
+    
+    .t-Dialog-body {
+        padding-block-start: var(--ut-dialog-padding-y, .5rem);
+        padding-inline-start: var(--ut-dialog-padding-x, .5rem);
+    }
+    
+    .t-Dialog-bodyWrapperIn {
+        overflow: hidden;
+        background-color: white;
+    }
+    
+    .t-Region {
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: .4rem;
+    }
+    
+    .t-Form-itemWrapper {
+        width: 62%;
+        position: absolute;
+        left: 36%;
+        bottom: 10%;
+    }
+    
+    .t-Form-itemWrapper > input {
+        background-color: #ece7e7;
+        height: 2rem;
+    }
+    
+    .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, .4rem);
+    }
+    
+    .t-Form-labelContainer {
+        padding-block-start: var(--ut-field-padding-y, .5rem);
+    }
+    
+    .t-Form-label {
+        font-size: 1.125rem;
+        font-weight: 600;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .error-msg {
+        color: red;
+        font-size: 0.75rem;
+        padding-left: 0.7rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    #P374_DAY_DATE,
+    #P374_MONTH_DATE,
+    #P374_CONTACT_PERSON {
+        font-size: 1.125rem;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Title =======================================
+  id: 59254002047293901
+  identification: 
+    name: Title
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span>
+          <text style="display: block; height: 1.6rem;">Display Records For:</text>
+      </span>
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error Display ===============================
+  id: 59254079455293902
+  identification: 
+    name: Error Display
+    type: Static Content
+
+  source: 
+    html-code: |
+      <span id="errorArea" class="hide error-msg">Please fill in at least one search field</span>
+      <span id="errorArea1" class="hide error-msg">Please input a valid date.</span>
+
+  layout: 
+    sequence: 10
+    parent-region: Gift Certificate Search # 59373346935121382
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Gift Certificate Search =====================
+  id: 59373346935121382
+  identification: 
+    name: Gift Certificate Search
+    type: Form
+
+  source: 
+    location: Local Database
+    type: Table / View
+    table-owner: Parsing Schema
+    table-name: NPT020
+    include-rowid-column: false
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+page-items: 
+- # ====== Page Item: P374_CONTACT_PERSON ======================
+  id: 40130308376188926
+  identification: 
+    name: P374_CONTACT_PERSON
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:0rem">Contact Person:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Gift Certificate Search # 59373346935121382
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Gift Certificate Search # 59373346935121382
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P374_DAY_DATE ============================
+  id: 59375202178121398
+  identification: 
+    name: P374_DAY_DATE
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:3rem">Day Date:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Gift Certificate Search # 59373346935121382
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    value-placeholder: MM / DD / YYYY
+
+  validation: 
+    value-required: false
+    maximum-length: 10
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Gift Certificate Search # 59373346935121382
+    column: GIFT_CERTIFICATE_BATCH_ID
+    data-type: NUMBER
+    query-only: true
+    primary-key: true
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P374_MONTH_DATE ==========================
+  id: 59377508606121423
+  identification: 
+    name: P374_MONTH_DATE
+    type: Text Field
+
+  label: 
+    label: '<span style="padding-left:1.5rem">Month Date:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Gift Certificate Search # 59373346935121382
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 32
+    value-placeholder: MM / YYYY
+
+  validation: 
+    value-required: false
+    maximum-length: 7
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Gift Certificate Search # 59373346935121382
+    column: DATE_CREATED
+    data-type: DATE
+    query-only: false
+    primary-key: false
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: CLOSE_BTN ===================================
+  id: 40626037428030376
+  identification: 
+    button-name: CLOSE_BTN
+    label: Close Btn
+
+  layout: 
+    sequence: 70
+    region: Gift Certificate Search # 59373346935121382
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: SEARCH_BTN ==================================
+  id: 40626425623030378
+  identification: 
+    button-name: SEARCH_BTN
+    label: Search
+
+  layout: 
+    sequence: 60
+    region: Gift Certificate Search # 59373346935121382
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Search Table ========================
+  id: 40630273744030384
+  identification: 
+    name: Search Table
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: SEARCH_BTN # 40626425623030378
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40130711585188930
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var errorArea = document.getElementById("errorArea");
+        var errorArea1 = document.getElementById("errorArea1");
+        
+        
+        var date_regex = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d$/;
+        var date_regex_1 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|2[09])[- \/.](19|20)\d\d$/;
+        var date_regex_2 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-8]|2[08])[- \/.](19|20)\d\d$/;
+        
+        if ($('#P374_DAY_DATE').val().substring(0,3) === "02/" || $('#P374_DAY_DATE').val().substring(0,2) === "2/") {
+            var year = '';
+            if ($('#P374_DAY_DATE').val().length === 10) {
+                year = $('#P374_DAY_DATE').val().substring(6, 10);
+            } else {
+                year = $('#P374_DAY_DATE').val().substring(5, 9);
+            }
+            if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+                if (date_regex_1.test($('#P374_DAY_DATE').val()) || $('#P374_DAY_DATE').val().trim().length === 0) {
+                    errorArea.style.display = "none"
+                    errorArea1.style.display = "none"
+                    return true;
+                } else {
+                    errorArea.style.display = "none"
+                    errorArea1.style.display = "block"
+                    document.getElementById("P374_DAY_DATE").focus();
+                    return false;
+                }
+            } else {
+                if (date_regex_2.test($('#P374_DAY_DATE').val()) || $('#P374_DAY_DATE').val().trim().length === 0) {
+                    errorArea.style.display = "none"
+                    errorArea1.style.display = "none"
+                    return true;
+                } else {
+                    errorArea.style.display = "none"
+                    errorArea1.style.display = "block"
+                    document.getElementById("P374_DAY_DATE").focus();
+                    return false;
+                }
+            }
+        } else {
+            if (date_regex.test($('#P374_DAY_DATE').val()) || $('#P374_DAY_DATE').val().trim().length === 0) {
+                errorArea.style.display = "none"
+                errorArea1.style.display = "none"
+                return true;
+            } else {
+                errorArea.style.display = "none"
+                errorArea1.style.display = "block"
+                document.getElementById("P374_DAY_DATE").focus();
+                return false;
+            }
+        }
+
+    execution: 
+      sequence: 20
+      event: Search Table # 40630273744030384
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40130890918188931
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var errorArea = document.getElementById("errorArea");
+        var errorArea1 = document.getElementById("errorArea1");
+        
+        var date_regex = /^(0?[1-9]|1[012])[- \/.](19|20)\d\d$/;
+        
+        if (date_regex.test($('#P374_MONTH_DATE').val()) || $('#P374_MONTH_DATE').val().trim().length === 0) {
+            errorArea.style.display = "none"
+            errorArea1.style.display = "none"
+            return true;
+        } else {
+            errorArea.style.display = "none"
+            errorArea1.style.display = "block"
+            document.getElementById("P374_MONTH_DATE").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 30
+      event: Search Table # 40630273744030384
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40630795616030385
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var dayDate = $v("P374_DAY_DATE");
+        var monthDate = $v("P374_MONTH_DATE");
+        var contactPerson = $v("P374_CONTACT_PERSON");
+        var errorArea = document.getElementById("errorArea");
+        var errorArea1 = document.getElementById("errorArea1");
+        
+        if(!dayDate && !monthDate && !contactPerson) {
+            errorArea.style.display = "block";
+            errorArea1.style.display = "none";
+            document.getElementById("P374_DAY_DATE").focus();
+            return false;
+        }
+
+    execution: 
+      sequence: 10
+      event: Search Table # 40630273744030384
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 40631232975030387
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P374_DAY_DATE
+      - P374_MONTH_DATE
+      - P374_CONTACT_PERSON
+
+    execution: 
+      sequence: 40
+      event: Search Table # 40630273744030384
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 40631656181030387
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE_BTN # 40626037428030376
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 40632193357030387
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 40631656181030387
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Initialize form Gift Certificate Search ====
+  id: 40628147167030381
+  identification: 
+    name: Initialize form Gift Certificate Search
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Gift Certificate Search # 59373346935121382
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Gift Certificate Search =======
+  id: 40628580299030382
+  identification: 
+    name: Process form Gift Certificate Search
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Gift Certificate Search # 59373346935121382
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 40629828790030384
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: CREATE,SAVE,DELETE
+

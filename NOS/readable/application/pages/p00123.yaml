@@ -1,0 +1,686 @@
+---
+# ====== Page: Credit Memo Search ============================
+id: 123
+identification: 
+  name: Credit Memo Search
+  alias: CREDIT-MEMO-SEARCH
+  title: Credit Memo Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p123KeyMap = {
+        enter : (v) => {
+            $("#next").trigger("click");
+        }
+    }
+    
+    function mapP123Keys() {
+        $(document).off('keydown.p123keyevents');
+        $(document).on('keydown.p123keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p123KeyMap[key]) {
+                ev.preventDefault();
+                p123KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP123Keys();
+
+css: 
+  inline: |
+    .format-size{
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .err{
+        color: red;
+        font-size: 1.125rem!important
+    }
+    
+    #next{
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P123_DBA =================================
+  id: 43414946599652505
+  identification: 
+    name: P123_DBA
+    type: Text Field
+
+  label: 
+    label: '<span class="format-size">Search for DBA:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P123_CM_NO ===============================
+  id: 43415044747652506
+  identification: 
+    name: P123_CM_NO
+    type: Text Field
+
+  label: 
+    label: '<span class="format-size">CM No:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P123_CM_DATE =============================
+  id: 43415178576652507
+  identification: 
+    name: P123_CM_DATE
+    type: Text Field
+
+  label: 
+    label: '<span class="format-size">CM Date:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P123_FOCUS ===============================
+  id: 43415825603652514
+  identification: 
+    name: P123_FOCUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P123_ERR =================================
+  id: 43417365905652529
+  identification: 
+    name: P123_ERR
+    type: Display Only
+
+  label: 
+    label: Focus
+    alignment: Left
+
+  settings: 
+    format: HTML
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Hidden
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    css-classes: 
+    - err
+
+  advanced: 
+    css-classes: 
+    - err
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Please fill up a field
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Next ========================================
+  id: 43415422977652510
+  identification: 
+    button-name: Next
+    label: Next
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: next
+
+dynamic-actions: 
+- # ====== Dynamic Action: Focus ===============================
+  id: 43415282525652508
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 43415371741652509
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P123_DBA
+
+    execution: 
+      sequence: 10
+      event: Focus # 43415282525652508
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 43417478402652530
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P123_ERR
+
+    execution: 
+      sequence: 20
+      event: Focus # 43415282525652508
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Go next =============================
+  id: 43415526964652511
+  identification: 
+    name: Go next
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Next # 43415422977652510
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43415797038652513
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: jQuery($v("P123_FOCUS")).trigger("focus").select();
+
+    execution: 
+      sequence: 20
+      event: Go next # 43415526964652511
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Show ========================================
+    id: 43417204070652528
+    identification: 
+      action: Show
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P123_ERR
+
+    execution: 
+      sequence: 10
+      event: Go next # 43415526964652511
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P123_FOCUS") == "#P123_DBA" && $v("P123_CM_DATE") == ''
+
+- # ====== Dynamic Action: Detect focus dba ====================
+  id: 43415930024652515
+  identification: 
+    name: Detect focus dba
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P123_DBA
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 43416024711652516
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P123_CM_NO'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P123_FOCUS
+
+    execution: 
+      sequence: 10
+      event: Detect focus dba # 43415930024652515
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Detect focus cm no ==================
+  id: 43416184670652517
+  identification: 
+    name: Detect focus cm no
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P123_CM_NO
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 43416298934652518
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P123_CM_DATE'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P123_FOCUS
+
+    execution: 
+      sequence: 10
+      event: Detect focus cm no # 43416184670652517
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Detect focus date ===================
+  id: 43416348348652519
+  identification: 
+    name: Detect focus date
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P123_CM_DATE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 43416462677652520
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P123_DBA'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P123_FOCUS
+
+    execution: 
+      sequence: 10
+      event: Detect focus date # 43416348348652519
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Close dba ===========================
+  id: 43416623178652522
+  identification: 
+    name: Close dba
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P123_DBA
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 43416734350652523
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P123_DBA
+
+    execution: 
+      sequence: 10
+      event: Close dba # 43416623178652522
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close cm no =========================
+  id: 43416814988652524
+  identification: 
+    name: Close cm no
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P123_CM_NO
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 43416917240652525
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P123_CM_NO
+
+    execution: 
+      sequence: 10
+      event: Close cm no # 43416814988652524
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close date ==========================
+  id: 43417083759652526
+  identification: 
+    name: Close date
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Item(s)
+    item(s): 
+    - P123_CM_DATE
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 43417141797652527
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P123_CM_DATE
+
+    execution: 
+      sequence: 10
+      event: Close date # 43417083759652526
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

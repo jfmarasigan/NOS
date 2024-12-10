@@ -1,0 +1,724 @@
+---
+# ====== Page: Direct Credit Memo ============================
+id: 127
+identification: 
+  name: Direct Credit Memo
+  alias: DIRECT-CREDIT-MEMO
+  title: Direct Credit Memo
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p127KeyMap = {
+    
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP127Keys() {
+        $(document).off('keydown.p127keyevents');
+        $(document).on('keydown.p127keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p127KeyMap[key]) {
+                ev.preventDefault();
+                p127KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP127Keys();
+    setInputFilter($("#P127_CM_AMOUNT"), function(value) {  return /^\d*$/.test(value);}, "Only digits are allowed");
+    
+    
+
+css: 
+  inline: |
+    .format-size{
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P127_CUSTOMER_DBA ========================
+  id: 46319005037497915
+  identification: 
+    name: P127_CUSTOMER_DBA
+    type: Text Field
+
+  label: 
+    label: '<span class="format-size">Customer DBA<span style="color: red;">*</span>:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P127_CM_AMOUNT ===========================
+  id: 46319132002497916
+  identification: 
+    name: P127_CM_AMOUNT
+    type: Text Field
+
+  label: 
+    label: '<span class="format-size">CM Amount<span style="color: red;">*</span>:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P127_NOTE ================================
+  id: 46319281835497917
+  identification: 
+    name: P127_NOTE
+    type: Text Field
+
+  label: 
+    label: '<span class="format-size">Note:</span>'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - format-size
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P127_NEXT_ITEM ===========================
+  id: 46319929510497924
+  identification: 
+    name: P127_NEXT_ITEM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P127_VALID ===============================
+  id: 46321365463497938
+  identification: 
+    name: P127_VALID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P127_SUBMITTED ===========================
+  id: 46321849636497943
+  identification: 
+    name: P127_SUBMITTED
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 46320634142497931
+  identification: 
+    button-name: Enter
+    label: Enter
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Focus ===============================
+  id: 46319384083497918
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 46319447517497919
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P127_CUSTOMER_DBA
+
+    execution: 
+      sequence: 10
+      event: Focus # 46319384083497918
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: DBA Focus ===========================
+  id: 46320032233497925
+  identification: 
+    name: DBA Focus
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P127_CUSTOMER_DBA
+
+  actions: 
+  - # ====== Action: Set next item ===============================
+    id: 46320154463497926
+    identification: 
+      name: Set next item
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P127_CM_AMOUNT'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P127_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: DBA Focus # 46320032233497925
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: CM Amount Focus =====================
+  id: 46320230086497927
+  identification: 
+    name: CM Amount Focus
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P127_CM_AMOUNT
+
+  actions: 
+  - # ====== Action: Set next item ===============================
+    id: 46320375174497928
+    identification: 
+      name: Set next item
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P127_NOTE'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P127_NEXT_ITEM
+
+    execution: 
+      sequence: 10
+      event: CM Amount Focus # 46320230086497927
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Reason Focus ========================
+  id: 46320418572497929
+  identification: 
+    name: Reason Focus
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Get Focus
+    selection-type: Item(s)
+    item(s): 
+    - P127_NOTE
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 46321569360497940
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P127_CUSTOMER_DBA'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P127_NEXT_ITEM
+
+    execution: 
+      sequence: 20
+      event: Reason Focus # 46320418572497929
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P127_CUSTOMER_DBA") == ''
+
+  - # ====== Action: Set Value ===================================
+    id: 46321663833497941
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: '#P127_CM_AMOUNT'
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P127_NEXT_ITEM
+
+    execution: 
+      sequence: 30
+      event: Reason Focus # 46320418572497929
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P127_CM_AMOUNT") == '' && $v("P127_CUSTOMER_DBA") != ''
+
+- # ====== Dynamic Action: Enter ===============================
+  id: 46320768927497932
+  identification: 
+    name: Enter
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Enter # 46320634142497931
+
+  actions: 
+  - # ====== Action: Go next =====================================
+    id: 46320800987497933
+    identification: 
+      name: Go next
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        jQuery($v("P127_NEXT_ITEM")).trigger("focus").select();
+        
+
+    execution: 
+      sequence: 20
+      event: Enter # 46320768927497932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P127_CUSTOMER_DBA") == '' || $v("P127_CM_AMOUNT") == '' || $v("P127_VALID") == 0
+
+  - # ====== Action: Submit ======================================
+    id: 46320998291497934
+    identification: 
+      name: Submit
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            l_customer_id NUMBER;
+        BEGIN
+            SELECT
+                CUSTOMER_ID
+            INTO
+                l_customer_id
+            FROM
+                NPT009
+            WHERE
+                lower(:P127_CUSTOMER_DBA) = lower(DBA);
+        
+            IF l_customer_id IS NOT NULL THEN    
+                INSERT INTO NPT015(TOTAL_AMOUNT, CURRENT_BALANCE, USER_CREATED, DATE_CREATED, PAYMENT_METHOD_ID, POSTED_DATE, CUSTOMER_ID, REASON)
+                VALUES(:P127_CM_AMOUNT, :P127_CM_AMOUNT, :APP_USER, SYSDATE(), 3, SYSDATE(), l_customer_id, :P127_NOTE);
+                :P127_SUBMITTED := 1;
+            END IF;
+        END;
+      items-to-submit: 
+      - P127_CUSTOMER_DBA
+      - P127_CM_AMOUNT
+      - P127_NOTE
+      items-to-return: 
+      - P127_SUBMITTED
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: Enter # 46320768927497932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: "!($v(\"P127_CUSTOMER_DBA\") == '' || $v(\"P127_CM_AMOUNT\") == '') && $v(\"P127_VALID\") == 1"
+
+  - # ====== Action: Set Value ===================================
+    id: 46321448531497939
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 1
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P127_VALID
+
+    execution: 
+      sequence: 50
+      event: Enter # 46320768927497932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P127_CUSTOMER_DBA") != '' && $v("P127_CM_AMOUNT") != ''
+
+  - # ====== Action: Set Value ===================================
+    id: 46321704674497942
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: 0
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P127_VALID
+
+    execution: 
+      sequence: 10
+      event: Enter # 46320768927497932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $v("P127_CUSTOMER_DBA") == '' || $v("P127_CM_AMOUNT") == ''
+
+  - # ====== Action: Close Dialog ================================
+    id: 46321906991497944
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P127_SUBMITTED
+
+    execution: 
+      sequence: 40
+      event: Enter # 46320768927497932
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P127_SUBMITTED
+      value: 1
+

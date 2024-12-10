@@ -1,0 +1,1053 @@
+---
+# ====== Page: Payables Entry/Update Main ====================
+id: 72
+identification: 
+  name: Payables Entry/Update Main
+  alias: PAYABLES-ENTRY-UPDATE-MAIN
+  title: Payables Entry/Update Main
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p72KeyMap = {
+        a : (v) => {
+            $('#a').trigger('click');
+        },
+        u : (v) => {
+            $('#u').trigger('click');
+        },
+        i : (v) => {
+            $('#i').trigger('click');
+        },
+        p : (v) => {
+            $('#p').trigger('click');
+        },
+        h : (v) => {
+            $('#h').trigger('click');
+        },
+        o : (v) => {
+            $('#o').trigger('click');
+        },
+        v : (v) => {
+            $('#v').trigger('click');
+        },
+        r : (v) => {
+            $('#r').trigger('click');
+        },
+        f : (v) => {
+            $('#f').trigger('click');
+        },
+        e : (v) => {
+            $('#e').trigger('click');
+        },
+        s : (v) => {
+            $('#s').trigger('click');
+        }
+    
+    }
+    
+    function mapP72keys(){
+        $(document).off('keydown.p72keyevents');
+        $(document).on('keydown.p72keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if(p72KeyMap[key]){
+                ev.preventDefault();
+                p72KeyMap[key]();
+            }
+        });
+    }
+    
+  execute-when-page-loads: |
+    setTitle('Payables Entry/Update');
+    mapP72keys();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #payables .a-IG {
+        height: calc(70vh + 2px) !important;
+    } 
+    
+    #payables .a-IG-contentContainer {
+        height: 70vh !important;
+    }
+    
+    #payables .a-IG-gridView.a-GV {
+        height: 70vh !important;
+    }
+    
+    #payables .a-GV-bdy {
+        height: calc(70vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+     
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #payables table,
+    #payables tr,
+    #payables td{
+        font-size: 1.125rem;
+        border: 0.0625rem solid black;
+    }
+    
+    #payables th{
+            font-size: 1rem;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: black;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .btns{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #046BC8;
+        color: white;
+    }
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    .ui-dialog-title{
+        font-size : 1.25rem;
+    }
+    .text-white{
+        color:white;
+    }
+    .text-black{
+        color: black;
+    }
+    .t-Form-labelContainer.col.col-1{
+            text-align: start;
+    }
+    .t-Form-label{
+        font-size:1.125rem;
+        color:white;
+    }
+    
+    .ui-dialog.payables-inquire{
+        left: 50% !important;
+    }
+    .t-Body-contentInner{
+        padding-top:0;
+    }
+    #reports{
+        background-color: #046BC8;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Payables Entry/Update =======================
+  id: 21253646777923121
+  identification: 
+    name: Payables Entry/Update
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: SELECT 'DUMMY' FROM DUAL;
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: payables
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 21253768879923122
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 22460876660896967
+      identification: 
+        name: Primary Report
+        alias: 224609
+
+  columns: 
+  - # ====== Column: 'DUMMY' =====================================
+    id: 21253854121923123
+    identification: 
+      column-name: "'DUMMY'"
+      type: Text Field
+
+    heading: 
+      heading: '&#x27;dummy&#x27;'
+      alignment: start
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 5
+
+    source: 
+      type: Database Column
+      database-column: "'DUMMY'"
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Page Controls ===============================
+  id: 21253984289923124
+  identification: 
+    name: Page Controls
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Report Modal ================================
+  id: 25231050160376512
+  identification: 
+    name: Report Modal
+    title: Reports Options
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: reports
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Report Buttons ==============================
+  id: 25231363787376515
+  identification: 
+    name: Report Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Report Modal # 25231050160376512
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P72_SORT_BY ==============================
+  id: 21253543720923120
+  identification: 
+    name: P72_SORT_BY
+    type: Display Only
+
+  label: 
+    label: 'Sorted By:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - text-white
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: AP No.
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD =========================================
+  id: 21254017569923125
+  identification: 
+    button-name: ADD
+    label: <u> A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:73:&SESSION.::&DEBUG.:73::'
+      page: 73 # Payables Entry/Update Add/Edit
+      clear-cache: 73
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: UPDATE ======================================
+  id: 21254147919923126
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: INQUIRE =====================================
+  id: 21254343451923128
+  identification: 
+    button-name: INQUIRE
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 30
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:74:&SESSION.::&DEBUG.:74::'
+      page: 74 # Payables Entry/Update Inquire
+      clear-cache: 74
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: POST ========================================
+  id: 21254456226923129
+  identification: 
+    button-name: POST
+    label: <u>P</u> - Post
+
+  layout: 
+    sequence: 40
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: UNPOST ======================================
+  id: 21254528837923130
+  identification: 
+    button-name: UNPOST
+    label: <u>H</u> - Unpost
+
+  layout: 
+    sequence: 50
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: h
+
+- # ====== Button: SORT ========================================
+  id: 21254621895923131
+  identification: 
+    button-name: SORT
+    label: <u>O</u> - Sort
+
+  layout: 
+    sequence: 60
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: o
+
+- # ====== Button: VOID ========================================
+  id: 21254775094923132
+  identification: 
+    button-name: VOID
+    label: <u>V</u> - Void
+
+  layout: 
+    sequence: 70
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: v
+
+- # ====== Button: REPORTS =====================================
+  id: 21254801366923133
+  identification: 
+    button-name: REPORTS
+    label: <u>R</u> - Reports
+
+  layout: 
+    sequence: 80
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: r
+
+- # ====== Button: FIXED_ASSET =================================
+  id: 21254902892923134
+  identification: 
+    button-name: FIXED_ASSET
+    label: <u>F</u> - Fixed Asset Rec
+
+  layout: 
+    sequence: 90
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: f
+
+- # ====== Button: PREPAID_ASSET ===============================
+  id: 21255083994923135
+  identification: 
+    button-name: PREPAID_ASSET
+    label: <u>E</u> - Prepaid Asset Rec
+
+  layout: 
+    sequence: 100
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: e
+
+- # ====== Button: SEARCH ======================================
+  id: 21255155531923136
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 110
+    region: Page Controls # 21253984289923124
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: PAYABLE_LISTING =============================
+  id: 25231405540376516
+  identification: 
+    button-name: PAYABLE_LISTING
+    label: <u>A</u> - Payable Listing
+
+  layout: 
+    sequence: 10
+    region: Report Buttons # 25231363787376515
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - fs-1125
+    - null
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: CONTAINER_NO_REPORTS ========================
+  id: 25231563861376517
+  identification: 
+    button-name: CONTAINER_NO_REPORTS
+    label: <u>B</u> - Check Container No. Reports
+
+  layout: 
+    sequence: 20
+    region: Report Buttons # 25231363787376515
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - fs-1125
+    - null
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+dynamic-actions: 
+- # ====== Dynamic Action: On R click ==========================
+  id: 25231176380376513
+  identification: 
+    name: On R click
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: REPORTS # 21254801366923133
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 25231207474376514
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Report Modal # 25231050160376512
+
+    execution: 
+      sequence: 10
+      event: On R click # 25231176380376513
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

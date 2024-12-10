@@ -1,0 +1,61 @@
+.t-Header .t-Header-branding {
+    background-color: white !important;
+    color: rgb(30, 58, 138) !important;
+}
+ 
+body {
+    background-color: rgb(30, 58, 138);
+}
+
+.title-header {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+    color: white;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: normal;
+    margin-block-end: 1.5rem;
+}
+
+.p-header {
+    margin-block-start: 2rem;
+}
+
+.p-header .t-Form-inputContainer {
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+
+.p-header span.display_only {
+    font-size: 3rem;
+}
+
+#menu-btns {
+    margin-top: 0.5rem;
+    background-color: rgb(30, 58, 138);
+}
+
+#menu-btns button {
+    text-align: left;
+}
+
+#menu-btns button u {
+    font-size: 2rem;
+    /* color: #056BC9; */
+    color: white;
+    font-weight: 700;
+}
+
+#menu-btns button span {
+    font-size: 1.75rem;
+    color: white;
+}
+
+.menu-instruction {
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    color: white;
+}

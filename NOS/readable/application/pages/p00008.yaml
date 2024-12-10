@@ -1,0 +1,359 @@
+---
+# ====== Page: Vendor Masterlist Search ======================
+id: 8
+identification: 
+  name: Vendor Masterlist Search
+  alias: VENDOR-MASTERLIST-SEARCH
+  title: Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p8KeyMap = {
+        escape : (v) => {
+            $(document).off('keydown.p8keyevents');
+            $.event.trigger("cancelDialog")
+        },
+        enter : (v) => {
+            $(document).off('keydown.p8keyevents');
+            apex.page.submit( "SUBMIT" );
+        }
+    }
+    
+    function mapP8Keys() {
+        $(document).off('keydown.p8keyevents');
+        $(document).on('keydown.p8keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p8KeyMap[key]) {
+                ev.preventDefault();
+                p8KeyMap[key]();
+            }
+        });
+    }
+    
+    $x('P8_SEARCH_CODE').focus();
+  execute-when-page-loads: mapP8Keys();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .t-Dialog-body label,
+    .t-Dialog-body input {
+        font-size: 1.125rem;
+    }
+    
+    .t-Region-body{
+        padding: 0.4;
+    }
+    
+    .t-Form-label{
+        white-space: nowrap;
+    }
+    
+    #search-form{
+        background-color: white;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search_Field ================================
+  id: 8967200921281306
+  identification: 
+    name: Search_Field
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P8_SEARCH_NAME ===========================
+  id: 8967356877281307
+  identification: 
+    name: P8_SEARCH_NAME
+    type: Text Field
+
+  label: 
+    label: 'Vendor Name:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 20
+    region: Search_Field # 8967200921281306
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P8_SEARCH_CODE ===========================
+  id: 8967419084281308
+  identification: 
+    name: P8_SEARCH_CODE
+    type: Text Field
+
+  label: 
+    label: 'Search For Vendor Code :'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Search_Field # 8967200921281306
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Cancel Search =======================
+  id: 8969464079281328
+  identification: 
+    name: Cancel Search
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: cancelDialog
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 8969529736281329
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 20
+      event: Cancel Search # 8969464079281328
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 8969657868281330
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p8keyevents');
+
+    execution: 
+      sequence: 10
+      event: Cancel Search # 8969464079281328
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+validations: 
+- # ====== Validation: Value must be present Code ==============
+  id: 8971064956281344
+  identification: 
+    name: Value must be present Code
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1
+      FROM DUAL
+      WHERE :P8_SEARCH_CODE IS NOT NULL OR :P8_SEARCH_NAME IS NOT NULL
+    always-execute: true
+
+  error: 
+    error-message: Please type value in the fields.
+    display-location: Inline with Field
+    associated-item: P8_SEARCH_CODE # 8967419084281308
+
+- # ====== Validation: Value must be present Name ==============
+  id: 8971392193281347
+  identification: 
+    name: Value must be present Name
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Rows returned
+    sql-query: |
+      SELECT 1
+      FROM DUAL
+      WHERE :P8_SEARCH_CODE IS NOT NULL OR :P8_SEARCH_NAME IS NOT NULL
+    always-execute: true
+
+  error: 
+    error-message: Please type value in the fields.
+    display-location: Inline with Field
+    associated-item: P8_SEARCH_NAME # 8967356877281307
+
+processes: 
+- # ====== Process: Go To Page 5 ===============================
+  id: 11482566875867001
+  identification: 
+    name: Go To Page 5
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    items-to-return-: 
+    - P8_SEARCH_CODE
+    - P8_SEARCH_NAME
+    show-success-messages: false
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

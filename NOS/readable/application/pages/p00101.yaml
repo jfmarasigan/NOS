@@ -1,0 +1,3521 @@
+---
+# ====== Page: Add/Update New Shipment =======================
+id: 101
+identification: 
+  name: Add/Update New Shipment
+  alias: ADD-UPDATE-NEW-SHIPMENT
+  title: Add/Update New Shipment
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/jquery-ui.min.js'
+  function-and-global-variable-declaration: |
+    let vendorCtr = 1;
+    let isAutoCompleteOpen = false;
+    let svp = [];
+    
+    const p101KeyMap = {
+        f8 : (v) => {
+            $("#add-vendor-btn").trigger("click");
+        },
+        escape : (v) => {
+            apex.navigation.redirect($("#P101_SRURL").val());
+        }
+    }
+    
+    function mapP101Keys() {
+        $(document).off('keydown.p101keyevents');
+        $(document).on('keydown.p101keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p101KeyMap[key]) {
+                ev.preventDefault();
+                p101KeyMap[key](ev);
+            }
+        });
+    }
+    
+    function resetValidityOnKeydown(elem) {
+        elem.on("keydown", function (ev) {
+            if (!this.checkValidity()) {
+                this.setCustomValidity("");
+            }
+        });
+    }
+    
+    function parseMDY(value) {
+        var date = value.split("/");
+        var d = parseInt(date[1], 10),
+            m = parseInt(date[0], 10),
+            y = parseInt(date[2], 10);  
+        return new Date(y, m - 1, d);
+    }
+    
+    function compareDates (d1, d2) {
+        let date1 = new Date(d1).getTime();
+        let date2 = new Date(d2).getTime();
+    
+        if (date1 < date2) {
+            return -1
+        } else if (date1 > date2) {
+            return 1;
+        } else {
+            return 0;
+        }
+    };
+    
+    function repositionDateFields() {
+        $(".shipment-dates").append('<div class="dates-label"></div><div class="dates-fields"></div>');
+        $("#P101_ETD_LABEL").appendTo(".dates-label");
+        $(".t-Form-inputContainer:has(.t-Form-itemWrapper):has(#P101_ETD)").appendTo(".dates-fields");
+        $(`<div class="dates-fields-separator">-</div>`).appendTo(".dates-fields");
+        $(".t-Form-inputContainer:has(.t-Form-itemWrapper):has(#P101_ETA)").appendTo(".dates-fields");
+        $(`<div class="dates-fields-separator">-</div>`).appendTo(".dates-fields");
+        $(".t-Form-inputContainer:has(.t-Form-itemWrapper):has(#P101_ATA)").appendTo(".dates-fields");
+        $(".dates-fields .t-Form-inputContainer").removeClass("col col-2");
+        $(".shipment-dates .etd, .shipment-dates .eta, .shipment-dates .ata").remove();
+    }
+    
+    function initialize() {
+        setTitle(`${$v("P101_LABEL")} New Shipment`);
+        repositionDateFields();
+        mapP101Keys();
+        setAutocompleteForVendorName(1);
+        setAutocompleteForVendorRefPo(1);
+        setValidationForVendor(1);
+        setValidationForVendorRefPo(1);
+        setInvNosChangeEvent(1);
+    
+        $("#P101_SVP1").addClass("svp");
+        $("#P101_VENDOR_ID1").addClass("vendor-id required");
+        $("#P101_VENDOR_REF_PO_ID1").addClass("vendor-ref-po-id required");
+        $("#P101_VENDOR_ID1").attr("vendor-seq", "1");
+        $("#P101_VENDOR_REF_PO_ID1").attr("vendor-seq", "1");
+        $("#P101_SHIPMENT_YR, #P101_SHIPMENT_NO").on("keydown", (ev) => {
+            if (ev.key?.toLowerCase() !== "tab") {
+                ev.preventDefault();
+            }
+        });
+    
+        const amountRegexFn = value => /^\d*\.?\d*$/.test(value);
+        const amountInvalidMsg = "Please enter a valid amount";
+    
+        setInputFilter($("#P101_FREIGHT_COST"), amountRegexFn, amountInvalidMsg);
+        setInputFilter($("#P101_INSURANCE_COST"), amountRegexFn, amountInvalidMsg);
+        setInputFilter($("#P101_HANDLING_COST"), amountRegexFn, amountInvalidMsg);
+        setInputFilter($("#P101_DUTIES_AND_TAXES"), amountRegexFn, amountInvalidMsg);
+        setInputFilter($("#P101_MISC_EXPENSES"), amountRegexFn, amountInvalidMsg);
+        setInputFilter($("#P101_VENDOR_CREDITS"), amountRegexFn, amountInvalidMsg);
+    
+        resetValidityOnKeydown($("#P101_ETD_input"));
+        resetValidityOnKeydown($("#P101_ETA_input"));
+        resetValidityOnKeydown($("#P101_ATA_input"));
+    
+        $("#P101_ETD").on("change", function (ev) {
+            const etd = parseMDY(apex.item("P101_ETD").getValue());
+            const eta = parseMDY(apex.item("P101_ETA").getValue());
+            const ata = parseMDY(apex.item("P101_ETA").getValue());
+            const elem = document.getElementById("P101_ETD_input");
+            let message = "";
+    
+            if (isNaN(etd)) {
+                message = "Invalid date";
+            } else if (apex.item("P101_ETA").getValue() !== "" && compareDates(etd, eta) === 1) {
+                message = "ETD should be earlier than or equal to ETA";
+            } else if (apex.item("P101_ATA").getValue() !== "" && compareDates(etd, ata) === 1) { 
+                message = "ETD should be earlier than or equal to ATA";
+            } else {
+                elem.setCustomValidity("");
+            }
+            
+            if (message !== "") {
+                elem.setCustomValidity(message);
+                elem.reportValidity();
+                $("#P101_ETD").focus();
+                $("#P101_ETD").val("");
+            }
+        });
+    
+        $("#P101_ETA").on("change", (ev) => {
+            const etd = parseMDY(apex.item("P101_ETD").getValue());
+            const eta = parseMDY(apex.item("P101_ETA").getValue());
+            const elem = document.getElementById("P101_ETA_input");
+            let message = "";
+    
+            if (isNaN(eta)) {
+                message = "Invalid date";
+            } else if (apex.item("P101_ETD").getValue() !== "" && compareDates(etd, eta) === 1) {
+                message = "ETA should be later than or equal to ETD";
+            } else {
+                elem.setCustomValidity("");
+            }
+            
+            if (message !== "") {
+                elem.setCustomValidity(message);
+                elem.reportValidity();
+                $("#P101_ETA").focus();
+                $("#P101_ETA").val("");
+            }
+        });
+    
+        $("#P101_ATA").on("change", (ev) => {
+            const etd = parseMDY(apex.item("P101_ETD").getValue());
+            const ata = parseMDY(apex.item("P101_ATA").getValue());
+            const elem = document.getElementById("P101_ATA_input");
+            let message = "";
+    
+            if (isNaN(ata)) {
+                message = "Invalid date";
+            } else if (apex.item("P101_ETD").getValue() !== "" && compareDates(etd, ata) === 1) {
+                message = "ATA should be later than or equal to ETD";
+            } else {
+                elem.setCustomValidity("");
+            }
+            
+            if (message !== "") {
+                elem.setCustomValidity(message);
+                elem.reportValidity();
+                $("#P101_ATA").focus();
+                $("#P101_ATA").val("");
+            }
+        });
+    
+        $(".required").on("keydown", (ev) => {
+            if (ev.key?.toLowerCase() === "tab" && !ev.shiftKey) {
+                const elem = ev.target;
+                if (elem.value === "") {
+                    ev.preventDefault();
+                    $(elem).focus();
+                    elem.setCustomValidity("This field is required");
+                    elem.reportValidity();
+                } else {
+                    elem.setCustomValidity("");
+                }
+            }
+        });
+    }
+    
+    function setInvNosChangeEvent(vendorCounter) {
+        $(`#P101_VENDOR_INV_NO${vendorCounter}`).on("change", function(ev) {
+            const invInputs = this.value.split(",");
+            const svpId = parseInt(this.getAttribute("svp-id"), 10);
+            const svpIndx = svp.findIndex(x => x.svpId === svpId);
+    
+            if (!isNaN(svpId) && svpIndx !== -1) {
+                for (var i = 0; i < invInputs.length && svpIndx !== -1; i++) {
+                    const inv = svp[svpIndx].invoices.findIndex(x => x.docNo?.toString() === invInputs[i]);
+                    if (inv === -1) {
+                        svp[svpIndx].invoices.push({svp: svpId, invoiceId: null, docNo: invInputs[i], status: "N"});
+                    } else {
+                        svp[svpIndx].invoices[inv].status = 'U';
+                    }
+                }
+    
+                const svpInvs = svp[svpIndx].invoices;
+                for (var j = 0; j < svpInvs.length; j++) {
+                    if (invInputs.indexOf(svpInvs[j].docNo?.toString()) === -1) {
+                        if (svp[svpIndx].invoices[j].status === "N") {
+                            svp[svpIndx].invoices.splice(j, 1);
+                        } else {
+                            svp[svpIndx].invoices[j].status = "D";
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function setAutocompleteForVendorName(vendorCounter) {    
+        $(`#P101_VENDOR_NAME${vendorCounter}`).autocomplete({
+            autoFocus: true,
+            minLength: 1,
+            delay: 250,
+            source: function (request, response) {
+                apex.server.process("SEARCH_VENDORS", {
+                    x01: request.term,
+                })
+                .done(data => {
+                    response(data);
+                });
+            },
+            open: function () {
+                isAutoCompleteOpen = true;
+            },
+            select: function(ev, ui) {
+                $(`#P101_VENDOR_ID${vendorCounter}`).val(ui?.item?.realValue);
+            },
+            close : function () {
+                isAutoCompleteOpen = false;
+            }
+        });
+        $(`#P101_VENDOR_NAME${vendorCounter}`).on("blur", () => {
+            isAutoCompleteOpen = false;
+        });
+    }
+    
+    function setAutocompleteForVendorRefPo(vendorCounter) {
+        $(`#P101_VENDOR_REF_PO${vendorCounter}`).autocomplete({
+            autoFocus: true,
+            minLength: 1,
+            delay: 100,
+            source: function (request, response) {
+                apex.server.process("SEARCH_REF_POS", {
+                    x01: request.term,
+                    x02: apex.item(`P101_VENDOR_ID${vendorCounter}`).getValue()
+                })
+                .done(data => {
+                    response(data);
+                });
+            },
+            select: function(ev, ui) {
+                $(`#P101_VENDOR_REF_PO_ID${vendorCounter}`).val(ui?.item?.realValue);
+                // set selected vendor PO
+            }
+        });
+    }
+    
+    function setValidationForVendor(vendorCounter) {
+        $(`#P101_VENDOR_NAME${vendorCounter}`).on("keydown", function(ev) {
+            if (!this.checkValidity()) {
+                this.setCustomValidity("");
+            }
+        });
+        $(`#P101_VENDOR_NAME${vendorCounter}`).on("change", function (ev) {
+            const vendorId = $(`#P101_VENDOR_ID${vendorCounter}`).val();
+            if (vendorId !== "") {
+                apex.server.process("CHECK_VENDOR", {
+                    x01: vendorId
+                })
+                .done(data => {
+                    if (data.isValid !== "Y") {
+                        $(this).focus();
+                        this.value = "";
+                        $(`#P101_VENDOR_ID${vendorCounter}`).val("");
+                        this.setCustomValidity("Invalid vendor entered");
+                        this.reportValidity();
+                    } else {
+                        this.setCustomValidity("");
+                    }
+                });
+            } else {
+                $(this).focus();
+                this.value = "";
+                $(`#P101_VENDOR_ID${vendorCounter}`).val("");
+                this.setCustomValidity("Invalid vendor entered");
+                this.reportValidity();
+            }
+        });
+    }
+    
+    function setValidationForVendorRefPo(vendorCounter) {
+        $(`#P101_VENDOR_REF_PO${vendorCounter}`).on("keydown", function(ev) {
+            if (!this.checkValidity()) {
+                this.setCustomValidity("");
+            }
+        });
+        $(`#P101_VENDOR_REF_PO${vendorCounter}`).on("change", function (ev) {
+            apex.server.process("CHECK_PO", {
+                x01: this.value,
+                x02: apex.item(`P101_VENDOR_ID${vendorCounter}`).getValue()
+            })
+            .done(data => {
+                if (data.isValid !== "Y") {
+                    $(this).focus();
+                    this.value = "";
+                    $(`#P101_VENDOR_REF_PO_ID${vendorCounter}`).val("");
+                    this.setCustomValidity("Invalid PO entered");
+                    this.reportValidity();
+                } else {
+                    this.setCustomValidity("");
+                }
+            })
+        });
+    }
+    
+    function addNewVendor(data) {
+        vendorCtr++;
+    
+        let vendorInputClone = $(".row.vendors-input:first").clone();
+        const seqNo = data?.vendorSeq || vendorCtr;
+    
+        vendorInputClone.find("input, a-autocomplete, span.display_only.apex-item-display-only, div.t-Form-fieldContainer, span.a-Form-error, div.t-Form-error div").each(function(index, elem) { 
+            let currentId = elem.id;
+            let newId = "";
+            if (currentId === "P101_VENDOR1") {
+                newId = `P101_VENDOR${seqNo || ""}`;
+            } if (currentId === "P101_VENDOR_NAME1_input") {
+                newId = `P101_VENDOR_NAME${seqNo}_input`;
+            } else if (currentId === "P101_VENDOR_NAME1") {
+                newId = `P101_VENDOR_NAME${seqNo}`;
+                elem.value = data?.vendorName || "";
+                elem.name = newId;
+                elem.disabled = (data?.vendorName || "") !== "";
+                elem.classList.remove("apex-page-item-error");
+                elem.removeAttribute("aria-describedby");
+                elem.removeAttribute("aria-invalid");
+            } else if (currentId === "P101_VENDOR_ID1") {
+                newId = `P101_VENDOR_ID${seqNo}`;
+                elem.value = data?.vendorId || "";
+                elem.name = newId;
+            } else if (currentId === "P101_VENDOR_REF_PO1") {
+                newId = `P101_VENDOR_REF_PO${seqNo}`;
+                elem.value = data?.vendorRefPo || "";
+                elem.name = newId;
+            } else if (currentId === "P101_VENDOR_REF_PO_ID1") {
+                newId = `P101_VENDOR_REF_PO_ID${seqNo}`;
+                elem.value = data?.vendorRefPo || "";
+            } else if (currentId === "P101_VENDOR_INV_NO1") {
+                newId = `P101_VENDOR_INV_NO${seqNo}`;
+                elem.value = data?.invDisplay || "";
+                elem.name = newId;
+                elem.setAttribute("svp-id", data?.svp);
+            } else if (currentId === "P101_SVP1") {
+                newId = `P101_SVP${seqNo}`;
+                elem.value = data?.svp || "";
+                elem.name = newId;
+            } else if (currentId === "P101_VENDOR_NAME1_CONTAINER") {
+                newId = `P101_VENDOR_NAME${seqNo}_CONTAINER`;
+            } else if (currentId === "P101_VENDOR_NAME1_error_placeholder") {
+                newId = `P101_VENDOR_NAME${seqNo}_error_placeholder`;
+            } else if (currentId === "P101_VENDOR_NAME1_error") {
+                newId = `P101_VENDOR_NAME${seqNo}_error`;
+                elem.innerHTML = "";
+            } else if (currentId === "P101_VENDOR_REF_PO1_CONTAINER") {
+                newId = `P101_VENDOR_REF_PO${seqNo}_CONTAINER`;
+            } else if (currentId === "P101_VENDOR_REF_PO1_error_placeholder") {
+                newId = `P101_VENDOR_REF_PO${seqNo}_error_placeholder`;
+            } else if (currentId === "P101_VENDOR_REF_PO1_error") {
+                newId = `P101_VENDOR_REF_PO${seqNo}_error`;
+                elem.innerHTML = "";
+            } else if (currentId === "P101_VENDOR_INV_NO1_CONTAINER") {
+                newId = `P101_VENDOR_INV_NO${seqNo}_CONTAINER`;
+            } else if (currentId === "P101_VENDOR_INV_NO1_error_placeholder") {
+                newId = `P101_VENDOR_INV_NO${seqNo}_error_placeholder`;
+            } else if (currentId === "P101_VENDOR_INV_NO1_error") {
+                newId = `P101_VENDOR_INV_NO${seqNo}_error`;
+                elem.innerHTML = "";
+            }
+            elem.setAttribute("vendor-seq", seqNo);
+            elem.id = newId;
+        });
+    
+        vendorInputClone.find(`#P101_VENDOR${seqNo}`).text(`Vendor ${seqNo}`);
+    
+        vendorInputClone.find(`.t-Form-labelContainer`).remove();
+    
+        vendorInputClone.insertAfter($(".row.vendors-input:last"));
+    
+        setAutocompleteForVendorName(seqNo);
+        setAutocompleteForVendorRefPo(seqNo);
+        setValidationForVendorRefPo(seqNo);
+        setValidationForVendorRefPo(seqNo);
+        setInvNosChangeEvent(seqNo);
+    
+        // $(`#P101_VENDOR_REF_PO${vendorCtr}`).on("keyup", function(ev) {
+        //     resetSelectedVendorPos(ev, $(this));
+        // });
+    }
+    
+    function getSelectedVendorPos() {
+        let vendors = { VENDORS : [] };
+        $(".row.vendors-input").each(function(index, elem) {
+            let val = $(this).find(".vendor-id").val();
+            if (val !== "") {
+                vendors.VENDORS.push(val);
+            }
+        });
+        return vendors;
+    }
+    
+    function resetSelectedVendorPos(ev, elem) {
+        if (["backspace", "delete"].indexOf(ev.key.toLowerCase()) !== -1 && elem.val() === "") {
+            $(`#P101_VENDOR_ID${elem.attr("vendor-seq")}`).val("");
+            apex.server.process("SET_SELECTED_VENDOR_POS", {
+                p_clob_01: JSON.stringify(getSelectedVendorPos()),
+            })
+            .done(data => { });
+        }
+    }
+    
+    function getBasicInfoData() {
+        let data = {
+            shipmentId: $v("P101_SHIPMENT_ID"),
+            shipmentNo: `${$v("P101_SHIPMENT_YR")}-${$v("P101_SHIPMENT_NO")}`,
+            vendors: [],
+            invoices: [],
+            vessel: $v("P101_VESSEL_NAME_BL1"),
+            vesselBlNo: $v("P101_VESSEL_NAME_BL2"),
+            barge: $v("P101_BARGE_BL1"),
+            bargeBlNo: $v("P101_BARGE_BL2"),
+            containerType: $v("P101_CONTAINER_TYPE_NO1"),
+            containerNo: $v("P101_CONTAINER_TYPE_NO2"),
+            origin: $v("P101_ORIGIN"),
+            eta: $v("P101_ETA"),
+            etd: $v("P101_ETD"),
+            ata: $v("P101_ATA"),
+            freightCost: $v("P101_FREIGHT_COST"),
+            insuranceCost: $v("P101_INSURANCE_COST"),
+            handlingCost: $v("P101_HANDLING_COST"),
+            dutiesAndTaxes: $v("P101_DUTIES_AND_TAXES"),
+            miscExpenses: $v("P101_MISC_EXPENSES"),
+            vendorCredits: $v("P101_VENDOR_CREDITS")
+        };
+    
+        $(".row.vendors-input").each(function(index, elem) {
+            const svpId = $(this).find(".svp").val();
+            const vendorId = $(this).find(".vendor-id").val();
+            const invNos = $(this).find(".vendor-inv-no").val();
+    
+            let invoices = [];
+            let svpIndx = svp.findIndex(x => x.svpId?.toString() === svpId);
+            if (svpIndx !== -1) {
+                invoices.push(...(svp[svpIndx].invoices.map(inv => { 
+                    return {
+                        invoiceId: inv.invoiceId,
+                        docNo: inv.docNo,
+                        status: inv.status
+                    }
+                })));
+            } else {
+                invoices.push(...(invNos.split(',').map(inv => {
+                    return {
+                        invoiceId: null,
+                        docNo: inv,
+                        status: 'N'
+                    }
+                })))
+            }
+    
+            data.vendors.push({
+                svpId: svpId,
+                vendorId: vendorId,
+                vendorSeq: $(this).find(".vendor-id").attr("vendor-seq"),
+                poId: $(this).find(".vendor-ref-po-id").val(),
+                invNos: $(this).find(".vendor-inv-no").val(),
+                invoices: invoices
+            });
+        });
+    
+        return data;
+    }
+    
+    function validateFields() {
+        let errors = [];
+        apex.message.clearErrors();
+        $(".required").each((index, elem) => {
+            if ($v(elem.id) === "" && elem.type !== "hidden") {
+                errors.push({
+                    type:       "error",
+                    location:   ["inline"],
+                    pageItem:   elem.id,
+                    message:    "This field is required",
+                    unsafe:     false
+                });
+            }
+        });
+    
+        const invNoLength = 10;
+        $(".row.vendors-input").each(function(index, elem) {
+            const invNos = $(this).find(".vendor-inv-no").val();
+            const xLength = invNos.split(",").find((invNo) => invNo.length > invNoLength);
+            if (xLength !== undefined) {
+                errors.push({
+                    type:       "error",
+                    location:   ["inline"],
+                    pageItem:   $(this).find(".vendor-inv-no").attr("id"),
+                    message:    "One or more invoice number/s are invalid.",
+                    unsafe:     false
+                });
+            }
+        });
+    
+        if (errors.length > 0) {
+            apex.message.showErrors(errors);
+            return false;
+        }
+        return true;
+    }
+    
+    function submitForm() {
+        apex.server.process("SAVE_SHIPMENT", {
+            pageItems : ["P101_LABEL"],
+            p_clob_01 : JSON.stringify(getBasicInfoData())
+        }, {
+            dataType: 'json'
+        })
+        .done(data => {
+            // apex.page.submit({
+            //     request: "SUBMIT",
+            //     set: { "P101_SHIPMENT_ID" : data.id },
+            //     showWait: true
+            // });
+            apex.navigation.redirect(data.u);
+        });
+    }
+    
+    function loadVendorData(vendors) {
+        // get first vendor from vendors object
+        const firstVendorIndex = vendors.findIndex(vendor => vendor.vendorSeq === 1);
+        const firstVendor = vendors[firstVendorIndex];
+        const fvinvs = firstVendor.invoices.sort((a, b) => a.invoiceId - b.invoiceId);
+        svp.push({svpId: firstVendor.svp, invoices: fvinvs});
+    
+        // set first vendor to fields
+        $("#P101_SVP1").val(firstVendor.svp);
+        $("#P101_VENDOR_NAME1").val(firstVendor.vendorName);
+        $("#P101_VENDOR_NAME1").prop("disabled", true);
+        $("#P101_VENDOR_ID1").val(firstVendor.vendorId);
+        $("#P101_VENDOR_REF_PO1").val(firstVendor.vendorRefPo);
+        $("#P101_VENDOR_REF_PO_ID1").val(firstVendor.vendorRefPo);
+        $("#P101_VENDOR_INV_NO1").val(fvinvs.map(x => x.docNo).join());
+        $("#P101_VENDOR_INV_NO1").attr("svp-id", firstVendor.svp);
+        vendorCtr = firstVendor.vendorSeq;
+    
+        // remove first vendor from vendors object
+        vendors.splice(firstVendorIndex, 1);
+    
+        // set other vendors to field in order
+        for (var i = 0; i < vendors.length; i++) {
+            let svpDatum = vendors[i];
+            const invs = svpDatum.invoices.sort((a, b) => a.invoiceId - b.invoiceId);
+            svpDatum.invDisplay = invs.map(x => x.docNo).join();
+            svp.push({svpId: svpDatum.svp, invoices: invs});
+            addNewVendor(vendors[i]);
+        }
+    }
+    
+    function getVendors1() {
+        $(".shipment-no").prop("disabled", true);
+    
+        let waitSpinner = apex.widget.waitPopup();
+        apex.server.process("GET_VENDORS", {
+            x01: $v("P101_SHIPMENT_ID")
+        })
+        .done(data => {
+    
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+            // error: An error occurred while retrieving vendor information for this shipment
+        });
+    }
+    
+    function getVendors2() {
+        $(".shipment-no").prop("disabled", true);
+    
+        let waitSpinner = apex.widget.waitPopup();
+        apex.server.process("GET_VENDORS2", {
+            x01: $v("P101_SHIPMENT_ID")
+        })
+        .done(data => { 
+    
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+            // error: An error occurred while retrieving vendor information for this shipment
+        });
+    }
+    
+    function getVendors() {
+        $(".shipment-no").prop("disabled", true);
+    
+        let waitSpinner = apex.widget.waitPopup();
+        apex.server.process("GET_VENDORS3", {
+            x01: $v("P101_SHIPMENT_ID")
+        })
+        .done(data => {
+            let vendors = JSON.parse(data.svp);
+            vendors.sort((a, b) => a.vendorSeq - b.vendorSeq);
+            loadVendorData(vendors);
+            waitSpinner.remove();
+            $("#P101_VENDOR_REF_PO1").focus();
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+            // error: An error occurred while retrieving vendor information for this shipment
+        });
+    }
+  execute-when-page-loads: |
+    initialize();
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  - '#APP_FILES#css/jquery-ui.min.css'
+  - '#APP_FILES#css/jquery-ui.structure.min.css'
+  - '#APP_FILES#css/jquery-ui.theme.min.css'
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Region-header {
+        color: white;
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Region-bodyWrap, .t-Region-body  {
+        border-radius: 0.5rem;
+        background-color: white;
+    }
+    
+    .p101-section {
+        border-radius: 0.5rem;
+    }
+    
+    .p101-section label, .p101-section input, .t-Region-title, #P101_VENDOR_NAME {
+        font-size: 1.125rem !important;
+    }
+    
+    .vendor-name:disabled,
+    .shipment-no:disabled {
+        color: black;
+        background-color: #d9d9d9;
+        opacity: unset;
+    }
+    
+    .p101-label-req {
+        color: red;
+    }
+    
+    .t-Form-labelContainer {
+        text-align: start;
+    }
+    
+    div.is-required  .t-Form-label:before { 
+        content: none !important;
+    }
+    
+    .t-Form-labelContainer {
+        display: flex;
+        align-items: center;
+    }
+    
+    .t-Form-labelContainer label {
+        align-content: center;
+    }
+    
+    #P101_CONTAINER_TYPE_NO2_CONTAINER .t-Form-labelContainer {
+        justify-content: center;
+    }
+    
+    #basic-info .t-Region-body,
+    #vessel-info .t-Region-body,
+    #cost-info .t-Region-body {
+        padding-top: 0;
+        border: var(--ut-region-border-color,var(--ut-component-border-color));
+        border-color: white;
+        border-radius: 0.5rem;
+        border-style: solid;
+        border-width: var(--ut-region-border-width,var(--ut-component-border-width,1px));
+    }
+    
+    
+    #P101_VENDOR_NAME_CONTAINER .t-Form-inputContainer,
+    #P101_VENDOR_INV_NO_CONTAINER .t-Form-inputContainer {
+        max-width: 63%;
+    }
+    
+    .t-Form-labelContainer:has(#P101_VENDOR_NAME_LABEL),
+    .t-Form-labelContainer:has(#P101_VENDOR_INV_NO_LABEL) {
+        max-width: 27%;
+    }
+    
+    #P101_SHIPMENT_NO1_CONTAINER:after,
+    #P101_SHIPMENT_YR_CONTAINER:after {
+        content: "\002D";
+        align-self: center;
+    }
+    
+    .dates-label {
+        width: 16.8%;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .dates-fields {
+        width: 35%;
+        display: flex;
+    }
+    
+    .dates-fields .t-Form-inputContainer {
+        padding-left: 0;
+        padding-right: 0;
+        width: 30%;
+    }
+    
+    .dates-fields .dates-fields-separator {
+        font-size: 1.125rem;
+        align-self: center;
+        width: 5%;
+        display: flex;
+        justify-content: center;
+    }
+    
+    #add-vendor-btn {
+        font-size: 1.125rem;
+        font-weight: 600;
+    } 
+    
+    .vendor-no {
+        margin-block-start: 0.25rem;
+        font-size: 1.125rem;
+        font-weight: normal;
+    }
+    
+    .vendor-name label,
+    .vendor-ref-po label {
+        padding-block-start: 0.25rem;
+        padding-block-end: 0.25rem;
+    }
+    
+    .no-pad-start {
+        padding-inline-start: 0;
+    }
+    
+    .ui-menu-item {
+        font-size: 1.125rem;
+        font-family: var(--ut-base-font-family,var(--a-base-font-family,sans-serif));
+    }
+    
+    /* font sizes for pop up LOV */
+    .a-IconList-item, .a-PopupLOV-search {
+        font-size: 1.125rem !important;
+    }
+    
+    /* css for popup LOV type modal dialog */
+    .ui-dialog-popuplov .ui-dialog-titlebar {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .ui-dialog-popuplov .ui-dialog-titlebar .ui-dialog-title {
+        font-size: 1.125rem;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    /* 
+    .a-PopupLOV-searchBar {
+        background-color: #046BC8;
+    } */
+    
+    .a-PopupLOV-results .a-GV-header a,
+    .a-PopupLOV-results th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .a-PopupLOV-results table,
+    .a-PopupLOV-results tr,
+    .a-PopupLOV-results td,
+    .a-PopupLOV-results th {
+        font-size: 1rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Basic Information ===========================
+  id: 15061919372627930
+  identification: 
+    name: Basic Information
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - margin-bottom-none
+    css-classes: 
+    - p101-section
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: basic-info
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Vessel Information ==========================
+  id: 15062059775627931
+  identification: 
+    name: Vessel Information
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    - margin-bottom-none
+    css-classes: 
+    - p101-section
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: vessel-info
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Cost Information ============================
+  id: 15062136902627932
+  identification: 
+    name: Cost Information
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    css-classes: 
+    - p101-section
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: cost-info
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Basic Information ===========================
+  id: 17923110332262908
+  identification: 
+    name: Basic Information
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    - margin-bottom-none
+    css-classes: 
+    - p101-section
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: basic-info
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P101_SHIPMENT_ID =========================
+  id: 15062270149627933
+  identification: 
+    name: P101_SHIPMENT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  comments: 
+    comments: PK for this shipment record
+
+- # ====== Page Item: P101_LABEL ===============================
+  id: 15062320146627934
+  identification: 
+    name: P101_LABEL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  comments: 
+    comments: Label identifying if current task is Add or Update
+
+- # ====== Page Item: P101_VENDOR_NAME =========================
+  id: 15062510938627936
+  identification: 
+    name: P101_VENDOR_NAME
+    type: Popup LOV
+
+  label: 
+    label: Vendor Name
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: false
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 10
+    region: Basic Information # 15061919372627930
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+    label-column-span: 3
+    column-css-classes: 
+    - p101-label-align
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT UPPER(vendor_name) d, vendor_id r
+        FROM nit006
+    display-extra-values: false
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+    initialization-javascript-function: |
+      function( options ) {
+          options.defaultGridColumnOptions = {
+              noHeaderActivate: true
+          };
+          options.defaultGridOptions = {
+              resizeColumns: false,
+              columnSort: false,
+              pagination : {
+                  scroll : true,
+                  loadMore : false
+              }   
+          };
+          return options;
+      }
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  comments: 
+    comments: |
+      SELECT vendor_name d, vendor_id r
+        FROM nit006
+
+- # ====== Page Item: P101_SHIPMENT_NO1 ========================
+  id: 15062638859627937
+  identification: 
+    name: P101_SHIPMENT_NO1
+    type: Number Field
+
+  label: 
+    label: Shipment Number
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 30
+    region: Basic Information # 15061919372627930
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_SHIPMENT_NO2 ========================
+  id: 15062701637627938
+  identification: 
+    name: P101_SHIPMENT_NO2
+    type: Number Field
+
+  label: 
+    label: Shipment Number
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 50
+    region: Basic Information # 15061919372627930
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 12
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_REF_PO_NO ===========================
+  id: 15062801080627939
+  identification: 
+    name: P101_REF_PO_NO
+    type: Text Field
+
+  label: 
+    label: Reference PO Number
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Basic Information # 15061919372627930
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: 3
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VENDOR_INV_NO =======================
+  id: 15062906932627940
+  identification: 
+    name: P101_VENDOR_INV_NO
+    type: Text Field
+
+  label: 
+    label: Vendor Invoice No
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Basic Information # 15061919372627930
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+    label-column-span: 3
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_LETTER_OF_CREDIT ====================
+  id: 15063020499627941
+  identification: 
+    name: P101_LETTER_OF_CREDIT
+    type: Text Field
+
+  label: 
+    label: Letter of Credit
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Basic Information # 15061919372627930
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VESSEL_NAME_BL1 =====================
+  id: 15063178565627942
+  identification: 
+    name: P101_VESSEL_NAME_BL1
+    type: Text Field
+
+  label: 
+    label: 'Vessel Name <span style="color:red;"> * </span> and B/L No'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 9
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 50
+
+  advanced: 
+    css-classes: 
+    - required
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VESSEL_NAME_BL2 =====================
+  id: 15063226190627943
+  identification: 
+    name: P101_VESSEL_NAME_BL2
+    type: Text Field
+
+  label: 
+    label: and
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 18
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_BARGE_BL1 ===========================
+  id: 15063302434627944
+  identification: 
+    name: P101_BARGE_BL1
+    type: Text Field
+
+  label: 
+    label: Barge and B/L No
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 9
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 40
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_BARGE_BL2 ===========================
+  id: 15063461484627945
+  identification: 
+    name: P101_BARGE_BL2
+    type: Text Field
+
+  label: 
+    label: and
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 70
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 18
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_CONTAINER_TYPE_NO1 ==================
+  id: 15063544890627946
+  identification: 
+    name: P101_CONTAINER_TYPE_NO1
+    type: Text Field
+
+  label: 
+    label: Container Type/No.
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 4
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_CONTAINER_TYPE_NO2 ==================
+  id: 15063678772627947
+  identification: 
+    name: P101_CONTAINER_TYPE_NO2
+    type: Text Field
+
+  label: 
+    label: and
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 100
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 5
+    new-column: true
+    column-span: 5
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 12
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_ORIGIN ==============================
+  id: 15063792923627948
+  identification: 
+    name: P101_ORIGIN
+    type: Text Field
+
+  label: 
+    label: Origin
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 110
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 10
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_ETD =================================
+  id: 15063850869627949
+  identification: 
+    name: P101_ETD
+    type: Date Picker
+
+  label: 
+    label: ETD - ETA - ATA
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 120
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - shipment-dates
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+    column-css-classes: 
+    - etd
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    value-placeholder: mm/dd/yyyy
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - required
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_ETA =================================
+  id: 15063917851627950
+  identification: 
+    name: P101_ETA
+    type: Date Picker
+
+  label: 
+    label: ETA
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 140
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+    column-css-classes: 
+    - eta
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    value-placeholder: mm/dd/yyyy
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - required
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_ATA =================================
+  id: 15653953307560901
+  identification: 
+    name: P101_ATA
+    type: Date Picker
+
+  label: 
+    label: ATA
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 150
+    region: Vessel Information # 15062059775627931
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+    column-css-classes: 
+    - ata
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+    value-placeholder: mm/dd/yyyy
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - required
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_FREIGHT_COST ========================
+  id: 15654059894560902
+  identification: 
+    name: P101_FREIGHT_COST
+    type: Number Field
+
+  label: 
+    label: Freight Cost
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 10
+    region: Cost Information # 15062136902627932
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999999999999990D00
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_INSURANCE_COST ======================
+  id: 15654182951560903
+  identification: 
+    name: P101_INSURANCE_COST
+    type: Number Field
+
+  label: 
+    label: Insurance Cost
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 20
+    region: Cost Information # 15062136902627932
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999999999999990D00
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_HANDLING_COST =======================
+  id: 15654203181560904
+  identification: 
+    name: P101_HANDLING_COST
+    type: Number Field
+
+  label: 
+    label: Handling Cost
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 30
+    region: Cost Information # 15062136902627932
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999999999999990D00
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_DUTIES_AND_TAXES ====================
+  id: 15654322444560905
+  identification: 
+    name: P101_DUTIES_AND_TAXES
+    type: Number Field
+
+  label: 
+    label: Duties And Taxes
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 40
+    region: Cost Information # 15062136902627932
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999999999999990D00
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_MISC_EXPENSES =======================
+  id: 15654477271560906
+  identification: 
+    name: P101_MISC_EXPENSES
+    type: Number Field
+
+  label: 
+    label: Misc. Expenses
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 50
+    region: Cost Information # 15062136902627932
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999999999999990D00
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VENDOR_CREDITS ======================
+  id: 15654506007560907
+  identification: 
+    name: P101_VENDOR_CREDITS
+    type: Number Field
+
+  label: 
+    label: Vendor Credits
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 60
+    region: Cost Information # 15062136902627932
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: 999999999999990D00
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_SRURL ===============================
+  id: 15655721924560919
+  identification: 
+    name: P101_SRURL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: APEX_PAGE.GET_URL(p_page => 100)
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  comments: 
+    comments: URL for when returning to main shipment screen
+
+- # ====== Page Item: P101_SHIPMENT_YR =========================
+  id: 17923213153262909
+  identification: 
+    name: P101_SHIPMENT_YR
+    type: Number Field
+
+  label: 
+    label: Shipment Number
+    alignment: Left
+
+  settings: 
+    number-alignment: Center
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 30
+    region: Basic Information # 17923110332262908
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 2
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 4
+
+  advanced: 
+    css-classes: 
+    - shipment-no
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_SHIPMENT_NO =========================
+  id: 17923304320262910
+  identification: 
+    name: P101_SHIPMENT_NO
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: Basic Information # 17923110332262908
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 1
+    label-column-span: 0
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 3
+
+  advanced: 
+    css-classes: 
+    - u-textCenter
+    - shipment-no
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VENDOR1 =============================
+  id: 17923511280262912
+  identification: 
+    name: P101_VENDOR1
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 60
+    region: Basic Information # 17923110332262908
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - vendors-input
+    column: Automatic
+    new-column: true
+    column-span: 2
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+
+  advanced: 
+    css-classes: 
+    - vendor-no
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Vendor 1
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VENDOR_NAME1 ========================
+  id: 17923620518262913
+  identification: 
+    name: P101_VENDOR_NAME1
+    type: Text Field
+
+  label: 
+    label: Vendor Name <span class="p101-label-req">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Basic Information # 17923110332262908
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+    column-css-classes: 
+    - no-pad-start
+
+  appearance: 
+    template: Required - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--indicatorAsterisk
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - required
+    - vendor-name
+    custom-attributes: 
+    - vendor-seq="1"
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VENDOR_REF_PO1 ======================
+  id: 17923768847262914
+  identification: 
+    name: P101_VENDOR_REF_PO1
+    type: Text Field
+
+  label: 
+    label: Reference PO Number
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 100
+    region: Basic Information # 17923110332262908
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - vendor-ref-po
+    custom-attributes: 
+    - vendor-seq="1"
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VENDOR_INV_NO1 ======================
+  id: 17923832489262915
+  identification: 
+    name: P101_VENDOR_INV_NO1
+    type: Text Field
+
+  label: 
+    label: Vendor Invoice Number <span class="p101-label-req">*</span>
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 120
+    region: Basic Information # 17923110332262908
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required - Above
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - fs-1125
+    - required
+    - vendor-inv-no
+    custom-attributes: 
+    - vendor-seq="1"
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VENDOR_ID1 ==========================
+  id: 17924721311262924
+  identification: 
+    name: P101_VENDOR_ID1
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 90
+    region: Basic Information # 17923110332262908
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_VENDOR_REF_PO_ID1 ===================
+  id: 17924888983262925
+  identification: 
+    name: P101_VENDOR_REF_PO_ID1
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 110
+    region: Basic Information # 17923110332262908
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P101_SVP1 ================================
+  id: 17925637624262933
+  identification: 
+    name: P101_SVP1
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 70
+    region: Basic Information # 17923110332262908
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD_VENDOR ==================================
+  id: 17924124089262918
+  identification: 
+    button-name: ADD_VENDOR
+    label: F8 - Add Another Vendor
+
+  layout: 
+    sequence: 130
+    region: Basic Information # 17923110332262908
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 11
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: add-vendor-btn
+    custom-attributes: 
+    - tabindex="-1"
+
+dynamic-actions: 
+- # ====== Dynamic Action: On vendor name change ===============
+  id: 17924398200262920
+  identification: 
+    name: On vendor name change
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: JavaScript Expression
+    javascript-expression: $(".vendor-name input")
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17924429912262921
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        console.log("changed");
+        console.log(this.triggeringElement);
+
+    execution: 
+      sequence: 10
+      event: On vendor name change # 17924398200262920
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Vendor row ======================
+  id: 17924506095262922
+  identification: 
+    name: Add Vendor row
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ADD_VENDOR # 17924124089262918
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17924694057262923
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: addNewVendor();
+
+    execution: 
+      sequence: 10
+      event: Add Vendor row # 17924506095262922
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Load Vendors for update =============
+  id: 17925464103262931
+  identification: 
+    name: Load Vendors for update
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17925511088262932
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if ($v("P101_SHIPMENT_ID") !== "") {
+            getVendors();
+        } else {
+            $("#P101_VENDOR_NAME1").focus();
+        }
+
+    execution: 
+      sequence: 10
+      event: Load Vendors for update # 17925464103262931
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On enter press ======================
+  id: 27344632004391832
+  identification: 
+    name: On enter press
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P101_VENDOR_CREDITS
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === "enter"
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 27344770395391833
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (validateFields()) {
+            submitForm();
+        }
+
+    execution: 
+      sequence: 10
+      event: On enter press # 27344632004391832
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P101_LABEL =============================
+  id: 15062405570627935
+  identification: 
+    item-name: P101_LABEL
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "CASE WHEN :P101_SHIPMENT_ID IS NULL THEN 'Add' ELSE 'Update' END"
+
+processes: 
+- # ====== Process: Initialize Form ============================
+  id: 17922705977262904
+  identification: 
+    name: Initialize Form
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare 
+          v_shipment_no           number;
+      begin
+          if :P101_SHIPMENT_ID is not null then
+              select substr(shipment_number, 0, 4), substr(shipment_number, 6, 3),
+                     vessel_name, vessel_bl_no, barge, barge_bl_no, 
+                     container_type, container_no, origin,
+                     TO_CHAR(eta, 'MM/DD/YYYY'), 
+                     TO_CHAR(etd, 'MM/DD/YYYY'),
+                     TO_CHAR(ata, 'MM/DD/YYYY')
+                into :P101_SHIPMENT_YR, :P101_SHIPMENT_NO,
+                     :P101_VESSEL_NAME_BL1, :P101_VESSEL_NAME_BL2, :P101_BARGE_BL1, :P101_BARGE_BL2,
+                     :P101_CONTAINER_TYPE_NO1, :P101_CONTAINER_TYPE_NO2, :P101_ORIGIN,
+                     :P101_ETA,
+                     :P101_ETD,
+                     :P101_ATA
+                from nit016
+               where shipment_id = :P101_SHIPMENT_ID;
+      
+              select freight_cost, insurance_cost, handling_cost,
+                     duties_and_taxes, misc_expenses, vendor_credits
+                into :P101_FREIGHT_COST, :P101_INSURANCE_COST, :P101_HANDLING_COST,
+                     :P101_DUTIES_AND_TAXES, :P101_MISC_EXPENSES, :P101_VENDOR_CREDITS
+                from nit017
+               where shipment_id = :P101_SHIPMENT_ID; 
+          else
+              :P101_SHIPMENT_YR := EXTRACT(YEAR FROM SYSDATE);
+      
+              select nvl(max(to_number(substr(shipment_number, 6, 3))), 0) + 1
+                into v_shipment_no
+                from nit016
+               where to_number(substr(shipment_number, 0, 4)) = extract(year from sysdate);
+      
+              :P101_SHIPMENT_NO := LPAD(v_shipment_no, 3, '0');
+          end if;
+      end;
+
+  execution: 
+    sequence: 20
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: SEARCH_VENDORS =============================
+  id: 17924982206262926
+  identification: 
+    name: SEARCH_VENDORS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor        sys_refcursor;
+          v_term          varchar2(300) := apex_application.g_x01;
+      begin
+          OPEN l_cursor FOR 
+              SELECT DISTINCT a.vendor_id "realValue", b.vendor_name "label", b.vendor_name "value"
+                FROM nit012 a,
+                     nit006 b
+               WHERE a.vendor_id = b.vendor_id
+                 AND UPPER(b.vendor_name) like UPPER('%' || v_term || '%')
+               ORDER BY b.vendor_name ASC;
+      
+          APEX_JSON.write(l_cursor);
+      end;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: SET_SELECTED_VENDOR_POS ====================
+  id: 17925339905262930
+  identification: 
+    name: SET_SELECTED_VENDOR_POS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_json_clob     clob := apex_application.g_clob_01;
+          l_json          json_object_t;
+          lt_vendors      json_array_t;
+          l_vendor        number;
+      begin
+          l_json := json_object_t.parse(l_json_clob);
+          lt_vendors := l_json.get_Array('vendorPos');
+      
+          APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION (
+              p_collection_name => 'VENDOR_POS'
+          );
+      
+          for idx in 0 .. lt_vendors.get_size - 1
+          loop
+              APEX_COLLECTION.ADD_MEMBER(
+                  p_collection_name => 'VENDOR_POS',
+                  p_c001 => lt_vendors.get_number(idx), -- get PO num
+                  p_n001 => lt_vendors.get_number(idx)  -- get vendor id
+              );
+          end loop;
+      
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.close_object;
+      end;
+      
+
+  execution: 
+    sequence: 30
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Reset Selected PO ==========================
+  id: 17925748590262934
+  identification: 
+    name: Reset Selected PO
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION (
+          p_collection_name => 'VENDOR_POS'
+      );
+
+  execution: 
+    sequence: 30
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: SAVE_SHIPMENT ==============================
+  id: 27346051282391846
+  identification: 
+    name: SAVE_SHIPMENT
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          s_json_clob             clob;
+          v_shipment_id           nit016.shipment_id%TYPE;
+          v_url                   varchar2(200);
+      begin
+          --Get the clob passed in from the Ajax process
+          s_json_clob := apex_application.g_clob_01;
+          v_shipment_id := shipment_records_pkg.save_shipment(s_json_clob);
+      
+          v_url := apex_page.get_url(
+              p_page   => 102,
+              p_items  => 'P102_SHIPMENT_ID,P102_LABEL',
+              p_values => v_shipment_id || ',' || :P101_LABEL
+          );
+      
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.write('id', v_shipment_id);
+          apex_json.write('u', v_url);
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 60
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: SEARCH_REF_POS =============================
+  id: 27346142211391847
+  identification: 
+    name: SEARCH_REF_POS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor        sys_refcursor;
+          v_term          varchar2(300) := apex_application.g_x01;
+          v_vendor_id     nit012.vendor_id%TYPE := TO_NUMBER(apex_application.g_x02);
+      begin
+          OPEN l_cursor FOR 
+              SELECT a.po_id "realValue", a.po_id "label", a.po_id "value", a.etd_date etd, a.eta_date eta 
+                FROM nit012 a               
+               WHERE UPPER(a.po_id) like UPPER('%' || v_term || '%')
+                 AND a.is_posted = 'N'
+                 AND a.vendor_id = v_vendor_id
+               ORDER BY a.po_id ASC;
+      
+          APEX_JSON.write(l_cursor);
+      end;
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_VENDORS ================================
+  id: 31307207161578704
+  identification: 
+    name: GET_VENDORS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor        sys_refcursor;
+          v_shipment_id   nit016.shipment_id%TYPE;
+      begin
+          v_shipment_id := TO_NUMBER(apex_application.g_x01);
+      
+          OPEN l_cursor FOR 
+              SELECT svp_id "svp", vendor_id "vendorId", vendor_name "vendorName", 
+                     vendor_sequence "vendorSeq", po_id "vendorRefPo", invoices "invoices"
+                FROM TABLE (shipment_records_pkg.get_shipment_vendor_basic_info(p_shipment_id => v_shipment_id));
+      
+          APEX_JSON.write(l_cursor);
+      end;
+
+  execution: 
+    sequence: 70
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  comments: 
+    comments: for loading vendors for update
+
+- # ====== Process: CHECK_PO ===================================
+  id: 32275762513470405
+  identification: 
+    name: CHECK_PO
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_po_id         nit015.po_id%TYPE := apex_application.g_x01;
+          v_vendor_id     nit015.vendor_id%TYPE := apex_application.g_x02;
+          v_valid         varchar2(1) := 'N';
+      begin
+          SELECT CASE WHEN EXISTS (SELECT null
+                                     FROM nit012 a
+                                    WHERE a.is_posted = 'N'
+                                      AND a.vendor_id = v_vendor_id
+                                      AND a.po_id = v_po_id)
+                      THEN 'Y'
+                      ELSE 'N'
+                      END
+            INTO v_valid
+            FROM dual;
+      
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.write('isValid', v_valid);
+          apex_json.close_object;
+      end;
+      
+
+  execution: 
+    sequence: 40
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CHECK_VENDOR ===============================
+  id: 32275859577470406
+  identification: 
+    name: CHECK_VENDOR
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_vendor_id     nit015.vendor_id%TYPE := apex_application.g_x01;
+          v_valid         varchar2(1) := 'N';
+      begin
+          SELECT CASE WHEN EXISTS (SELECT null
+                                     FROM nit012 a,
+                                          nit006 b
+                                    WHERE a.vendor_id = b.vendor_id
+                                      AND a.vendor_id = v_vendor_id)
+                      THEN 'Y'
+                      ELSE 'N'
+                      END
+            INTO v_valid
+            FROM dual;
+      
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.write('isValid', v_valid);
+          apex_json.close_object;
+      end;
+      
+
+  execution: 
+    sequence: 50
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_VENDORS2 ===============================
+  id: 32277844218470426
+  identification: 
+    name: GET_VENDORS2
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor        sys_refcursor;
+          v_shipment_id   nit016.shipment_id%TYPE;
+      begin
+          v_shipment_id := TO_NUMBER(apex_application.g_x01);
+      
+          OPEN l_cursor FOR 
+              select a.svp_id "svp", a.vendor_id "vendorId", b.vendor_name "vendorName", 
+                     a.vendor_sequence "vendorSeq", a.po_id "vendorRefPo",
+                     cursor(select x.svp_id "svp", x.invoice_id "invoiceId", y.document_number "docNo", 'U' status
+                              from nit035 x,
+                                   nit036 y
+                             where x.invoice_id = y.invoice_id
+                               and x.svp_id = a.svp_id) "invoices"
+                from nit015 a,
+                     nit006 b
+               where a.vendor_id = b.vendor_id
+                 and a.shipment_id = v_shipment_id
+               order by a.vendor_sequence ASC;
+      
+          APEX_JSON.open_object;
+          APEX_JSON.write('svp', l_cursor);
+          APEX_JSON.close_object;
+      end;
+      
+
+  execution: 
+    sequence: 80
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  comments: 
+    comments: for loading vendors for update
+
+- # ====== Process: GET_VENDORS3 ===============================
+  id: 32277937457470427
+  identification: 
+    name: GET_VENDORS3
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          l_cursor        sys_refcursor;
+          v_shipment_id   nit016.shipment_id%TYPE;
+          l_json          clob;
+      begin
+          v_shipment_id := TO_NUMBER(apex_application.g_x01);
+      
+          select json_arrayagg(json_object (
+                      KEY 'svp' VALUE a.svp_id,
+                      KEY 'vendorId' VALUE a.vendor_id,
+                      KEY 'vendorName' VALUE b.vendor_name,
+                      KEY 'vendorSeq' VALUE a.vendor_sequence,
+                      KEY 'vendorRefPo' VALUE a.po_id,
+                      KEY 'invoices' VALUE (
+                          select json_arrayagg(json_object(
+                                      KEY 'svp' VALUE x.svp_id,
+                                      KEY 'invoiceId' VALUE x.invoice_id,
+                                      KEY 'docNo' VALUE y.document_number,
+                                      KEY 'status' VALUE 'U'
+                                 ))
+                            from nit035 x,
+                                 nit036 y
+                           where x.invoice_id = y.invoice_id
+                             and x.svp_id = a.svp_id
+                      )
+                 ))
+            into l_json
+            from nit015 a,
+                 nit006 b
+           where a.vendor_id = b.vendor_id
+             and a.shipment_id = v_shipment_id
+           order by a.vendor_sequence ASC;
+      
+          APEX_JSON.open_object;
+          APEX_JSON.write('svp', l_json);
+          APEX_JSON.close_object;
+      end;
+      
+
+  execution: 
+    sequence: 90
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+  comments: 
+    comments: for loading vendors for update
+
+branches: 
+- # ====== Branch: Redirect to shipment line items =============
+  id: 17926020669262937
+  identification: 
+    name: Redirect to shipment line items
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:102:&SESSION.::&DEBUG.:102:P102_SHIPMENT_ID,P102_LABEL:&P101_SHIPMENT_ID.,&P101_LABEL.'
+      page: 102 # Shipment Line Items
+      clear-cache: 102
+      values: 
+        p102_shipment_id: '&P101_SHIPMENT_ID.'
+        p102_label: '&P101_LABEL.'
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: SUBMIT
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+

@@ -1,0 +1,1647 @@
+---
+# ====== Page: POS Cashiering - Closing Balance ==============
+id: 65
+identification: 
+  name: POS Cashiering - Closing Balance
+  alias: POS-CASHIERING-CLOSING-BALANCE
+  title: CLOSING BALANCE
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Wizard Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    
+    const p64KeyMap = {
+        enter : (v) => {
+            if (!$('#closing-balance').is(':visible')) {
+                $("#submit").trigger("click");
+            } else {
+                $("#insert").trigger("click");
+            }
+        },
+    
+        escape: (v) => {
+            console.log("to-top");
+            $("#esc").trigger("click");
+        },
+    
+    
+    }
+    
+    function mapP64Keys() {
+        $(document).off('keydown.p64keyevents');
+        $(document).on('keydown.p64keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p64KeyMap[key]) {
+                ev.preventDefault();
+                p64KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP64Keys();
+    }
+  execute-when-page-loads: mapP64Keys();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .t-Dialog-body label{
+        font-size: 1.125rem;
+        background-color: #056AC8;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .t-Dialog-body input{
+        font-size: 1.125rem;
+        background-color: #056AC8;
+        color: black;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+       // white-space: nowrap;
+        font-weight: 100;
+        color: white;
+    }
+    
+    .t-Form-label {
+        line-height: 1.5rem;
+        white-space: nowrap;
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    #closing-balance {
+        font-size: 1.125rem;
+        font-family: Arial;
+        white-space: nowrap;
+        font-weight: 100;
+        color: white;
+        background-color: #056AC8;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar{
+        background-color: #056AC8;
+        color: white;
+        font-size: 1.125rem;
+        font-family: Arial;
+        text-align: left;
+        
+    }
+    
+    .ui-button {
+        display: none;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    element.style {
+        position: absolute;
+        height: auto;
+        width: 280px;
+        top: 50%;
+        left: 50%;
+        max-width: 100%;
+    }
+    
+    .apex-page-success {
+        background-color: #ffcccc !important; /* Light red background */
+        border-color: #ff0000 !important;     /* Red border */
+        color: #ff0000 !important;           /* Red text */
+    }
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Confirm Closing Balance =====================
+  id: 87920340668603880
+  identification: 
+    name: Confirm Closing Balance
+    type: Static Content
+
+  layout: 
+    sequence: 160
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - t-DialogRegion--noPadding
+    - js-modal
+    - js-draggable
+    - js-dialog-nosize
+    - t-Form--slimPadding
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: closing-balance
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P65_CASH_VALUE ===========================
+  id: 44271873440177702
+  identification: 
+    name: P65_CASH_VALUE
+    type: Display Only
+
+  label: 
+    label: 'Cash Value:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 140
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_001 ==================================
+  id: 62939949761834658
+  identification: 
+    name: P65_001
+    type: Number Field
+
+  label: 
+    label: 0.01
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_1 ====================================
+  id: 62940097711834659
+  identification: 
+    name: P65_1
+    type: Number Field
+
+  label: 
+    label: 1
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_50 ===================================
+  id: 62940196939834660
+  identification: 
+    name: P65_50
+    type: Number Field
+
+  label: 
+    label: 50
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_005 ==================================
+  id: 62940339688834661
+  identification: 
+    name: P65_005
+    type: Number Field
+
+  label: 
+    label: 0.05
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_5 ====================================
+  id: 62940388894834662
+  identification: 
+    name: P65_5
+    type: Number Field
+
+  label: 
+    label: 5
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_100 ==================================
+  id: 62940533643834663
+  identification: 
+    name: P65_100
+    type: Number Field
+
+  label: 
+    label: 100
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_010 ==================================
+  id: 62940600001834664
+  identification: 
+    name: P65_010
+    type: Number Field
+
+  label: 
+    label: 0.10
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_10 ===================================
+  id: 62940653905834665
+  identification: 
+    name: P65_10
+    type: Number Field
+
+  label: 
+    label: 10
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_025 ==================================
+  id: 63878815477725816
+  identification: 
+    name: P65_025
+    type: Number Field
+
+  label: 
+    label: 0.25
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 120
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_20 ===================================
+  id: 63878841632725817
+  identification: 
+    name: P65_20
+    type: Number Field
+
+  label: 
+    label: 20
+    alignment: Left
+
+  settings: 
+    minimum-value: 1
+    maximum-value: 999999999
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 130
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_TOTAL ================================
+  id: 63879204661725820
+  identification: 
+    name: P65_TOTAL
+    type: Display Only
+
+  label: 
+    label: 'Total:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P65_BALANCE ==============================
+  id: 87922158740603927
+  identification: 
+    name: P65_BALANCE
+    type: Display Only
+
+  label: 
+    label: 'Balance:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Confirm Closing Balance # 87920340668603880
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 7
+    label-column-span: 4
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Confirm =====================================
+  id: 44225510767030385
+  identification: 
+    button-name: Confirm
+    label: Confirm
+
+  layout: 
+    sequence: 150
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: submit
+
+- # ====== Button: Insert ======================================
+  id: 44226234175030395
+  identification: 
+    button-name: Insert
+    label: Insert
+
+  layout: 
+    sequence: 20
+    region: Confirm Closing Balance # 87920340668603880
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: insert
+
+dynamic-actions: 
+- # ====== Dynamic Action: Validate & Open Region ==============
+  id: 44234770517030432
+  identification: 
+    name: Validate & Open Region
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Confirm # 44225510767030385
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44235258956030435
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var field1 = $v('P65_001');  
+        var field2 = $v('P65_005');
+        var field3 = $v('P65_010');
+        var field4 = $v('P65_025');
+        var field5 = $v('P65_1');
+        var field6 = $v('P65_10');
+        var field7 = $v('P65_100');
+        var field8 = $v('P65_20');
+        var field9 = $v('P65_5');
+        var field10 = $v('P65_50');
+        
+        if (field1.trim() === '' && field2.trim() === '' && field3.trim() === '' &&
+            field4.trim() === '' && field5.trim() === '' && field6.trim() === '' &&
+            field7.trim() === '' && field8.trim() === '' && field9.trim() === '' &&
+            field10.trim() === '') {
+            
+            apex.message.clearErrors(); 
+            apex.message.showErrors([{
+                type: 'error',
+                location: ['P65_001', 'P65_005', 'P65_010', 'P65_025', 'P65_1', 'P65_10', 'P65_100', 'P65_20', 'P65_5', 'P65_50'],
+                message: 'Please fill in at least one text field.'
+            }]);
+        
+            return false;
+        } else {
+        
+            return true;
+        }
+        
+
+    execution: 
+      sequence: 10
+      event: Validate & Open Region # 44234770517030432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 44235711251030437
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Confirm Closing Balance # 87920340668603880
+
+    execution: 
+      sequence: 20
+      event: Validate & Open Region # 44234770517030432
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Balance =========================
+  id: 44236175657030437
+  identification: 
+    name: Set Balance
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P65_001
+    - P65_1
+    - P65_50
+    - P65_005
+    - P65_5
+    - P65_100
+    - P65_010
+    - P65_10
+    - P65_025
+    - P65_20
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 44236638191030439
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        TO_CHAR(
+            NVL(:P65_001, 0) * 0.01 +
+            NVL(:P65_1, 0) * 1 +
+            NVL(:P65_50, 0) * 50 +
+            NVL(:P65_005, 0) * 0.05 +
+            NVL(:P65_5, 0) * 5 +
+            NVL(:P65_100, 0) * 100 +
+            NVL(:P65_010, 0) * 0.10 +
+            NVL(:P65_10, 0) * 10 +
+            NVL(:P65_025, 0) * 0.25 +
+            NVL(:P65_20, 0) * 20,
+            '99990.00'
+        )
+        
+      items-to-submit: 
+      - P65_001
+      - P65_1
+      - P65_50
+      - P65_005
+      - P65_5
+      - P65_100
+      - P65_010
+      - P65_10
+      - P65_025
+      - P65_20
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P65_BALANCE
+
+    execution: 
+      sequence: 10
+      event: Set Balance # 44236175657030437
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 44237185908030439
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Confirm Closing Balance # 87920340668603880
+
+    execution: 
+      sequence: 20
+      event: Set Balance # 44236175657030437
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Focus ===============================
+  id: 44237572855030440
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 44238090964030440
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P65_001
+
+    execution: 
+      sequence: 10
+      event: Focus # 44237572855030440
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Insert ==============================
+  id: 44240851808030446
+  identification: 
+    name: Insert
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Insert # 44226234175030395
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 44241323951030446
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (1, NVL(:P65_001, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (2, NVL(:P65_005, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (3, NVL(:P65_010, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (4, NVL(:P65_025, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (5, NVL(:P65_1, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (6, NVL(:P65_5, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (7, NVL(:P65_10, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (8, NVL(:P65_20, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (9, NVL(:P65_50, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER, USER_CREATED, DATE_CREATED)
+        VALUES (10, NVL(:P65_100, 0), :P65_TOTAL, :app_user, SYSDATE);
+        
+        
+        INSERT INTO NPT023 (CLOSING_CASH_AMOUNT, USER_CREATED, DATE_CREATED)
+        VALUES (:P65_BALANCE, :app_user, SYSDATE);
+      items-to-submit: 
+      - P65_BALANCE
+      - P65_001
+      - P65_1
+      - P65_50
+      - P65_005
+      - P65_5
+      - P65_100
+      - P65_010
+      - P65_10
+      - P65_025
+      - P65_20
+      - P65_TOTAL
+
+    execution: 
+      sequence: 10
+      event: Insert # 44240851808030446
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Close Dialog ================================
+    id: 44241827784030448
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 20
+      event: Insert # 44240851808030446
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Total ===========================
+  id: 44242219550030448
+  identification: 
+    name: Set Total
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P65_001
+    - P65_1
+    - P65_50
+    - P65_005
+    - P65_5
+    - P65_100
+    - P65_010
+    - P65_10
+    - P65_025
+    - P65_20
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 44242754154030448
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        TO_CHAR(
+            NVL(:P65_001, 0) * 0.01 +
+            NVL(:P65_1, 0) * 1 +
+            NVL(:P65_50, 0) * 50 +
+            NVL(:P65_005, 0) * 0.05 +
+            NVL(:P65_5, 0) * 5 +
+            NVL(:P65_100, 0) * 100 +
+            NVL(:P65_010, 0) * 0.10 +
+            NVL(:P65_10, 0) * 10 +
+            NVL(:P65_025, 0) * 0.25 +
+            NVL(:P65_20, 0) * 20,
+            '99990.00'
+        )
+        
+      items-to-submit: 
+      - P65_001
+      - P65_1
+      - P65_50
+      - P65_005
+      - P65_5
+      - P65_100
+      - P65_010
+      - P65_10
+      - P65_025
+      - P65_20
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P65_TOTAL
+
+    execution: 
+      sequence: 10
+      event: Set Total # 44242219550030448
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+validations: 
+- # ====== Validation: 0.01 ====================================
+  id: 44230449433030426
+  identification: 
+    name: 0.01
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Item is numeric
+    item: P65_001
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 1 =======================================
+  id: 44230852487030428
+  identification: 
+    name: 1
+
+  execution: 
+    sequence: 20
+
+  validation: 
+    type: Item is numeric
+    item: P65_1
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 50 ======================================
+  id: 44231207232030428
+  identification: 
+    name: 50
+
+  execution: 
+    sequence: 30
+
+  validation: 
+    type: Item is numeric
+    item: P65_50
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 0.05 ====================================
+  id: 44231690688030428
+  identification: 
+    name: 0.05
+
+  execution: 
+    sequence: 40
+
+  validation: 
+    type: Item is numeric
+    item: P65_005
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 10 ======================================
+  id: 44232022389030429
+  identification: 
+    name: 10
+
+  execution: 
+    sequence: 80
+
+  validation: 
+    type: Item is numeric
+    item: P65_10
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 5 =======================================
+  id: 44232410342030429
+  identification: 
+    name: 5
+
+  execution: 
+    sequence: 50
+
+  validation: 
+    type: Item is numeric
+    item: P65_5
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 100 =====================================
+  id: 44232899395030429
+  identification: 
+    name: 100
+
+  execution: 
+    sequence: 60
+
+  validation: 
+    type: Item is numeric
+    item: P65_100
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 0.10 ====================================
+  id: 44233270970030429
+  identification: 
+    name: 0.10
+
+  execution: 
+    sequence: 70
+
+  validation: 
+    type: Item is numeric
+    item: P65_010
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 0.25 ====================================
+  id: 44233675948030431
+  identification: 
+    name: 0.25
+
+  execution: 
+    sequence: 90
+
+  validation: 
+    type: Item is numeric
+    item: P65_025
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Validation: 20 ======================================
+  id: 44234041435030431
+  identification: 
+    name: 20
+
+  execution: 
+    sequence: 100
+
+  validation: 
+    type: Item is numeric
+    item: P65_20
+    always-execute: true
+
+  error: 
+    error-message: |
+      No letters allowed.
+      
+    display-location: Inline with Field and in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+processes: 
+- # ====== Process: INSERT INTO NPT024 =========================
+  id: 44234343997030431
+  identification: 
+    name: INSERT INTO NPT024
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (0.01, NVL(:P65_001, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (0.05, NVL(:P65_005, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (0.10, NVL(:P65_010, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (0.25, NVL(:P65_025, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (1, NVL(:P65_1, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (10, NVL(:P65_10, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (100, NVL(:P65_100, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (20, NVL(:P65_20, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (5, NVL(:P65_5, 0), :P65_TOTAL);
+      
+      INSERT INTO NPT024 (DENOMINATION_ID, QUANTITY, TOTAL_NUMBER)
+      VALUES (50, NVL(:P65_50, 0), :P65_TOTAL);
+      
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+

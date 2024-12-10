@@ -1,0 +1,121 @@
+:root {
+    --tg-height : 73vh;
+    --def-font-size: 1.125rem;
+}
+
+/* View height dependent table and buttons - START */
+.buttons-row {
+    position: absolute;
+    width: 98vw;
+    bottom: 1.75rem;
+}
+
+#shipment-expenses .a-IG {
+    height: calc(var(--tg-height) + 2px) !important;
+} 
+
+#shipment-expenses .a-IG-contentContainer {
+    height: var(--tg-height) !important;
+}
+
+#shipment-expenses .a-IG-gridView.a-GV {
+    height: var(--tg-height) !important;
+}
+
+#shipment-expenses .a-GV-bdy {
+    height: calc(var(--tg-height) - 2.5625rem) !important;
+}
+
+/* View height dependent table and buttons - END */
+
+.t-Header .t-Header-branding {
+    background-color: white !important;
+    color: rgb(30, 58, 138) !important;
+}
+
+body {
+    background-color: rgb(30, 58, 138);
+}
+
+.ui-widget-overlay {
+    background: none;
+}
+
+.menu-buttons button {
+    font-size: var(--def-font-size);
+    color: white;
+    text-align: left;
+}
+
+.menu-buttons button:hover {
+    color: white;
+}
+
+.a-GV-header {
+    cursor: none;
+}
+
+.p110-header label, 
+.p110-header span {
+    font-size: var(--def-font-size);
+    color: white;
+}
+
+#shipment-expenses table,
+#shipment-expenses tr,
+#shipment-expenses td,
+#shipment-expenses th {
+    font-size: 1rem;
+}
+
+.a-GV-hdr .a-GV-table {
+    width: 100% !important;
+}
+
+
+#shipment-expenses .a-GV-header a, 
+#shipment-expenses th.a-GV-header,
+#vp-grid .a-GV-header a, 
+#vp-grid th.a-GV-header {
+    background-color: #046BC8;
+    color: white;
+}
+
+#shipment-expenses .a-GV-table .a-GV-cell, 
+#shipment-expenses th.a-GV-header {
+    border-color: rgba(0, 0, 0, 0.8);
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    background-color: #046BC8;
+    color: white;
+}
+
+.ui-dialog-titlebar-close{
+    display: none;
+}
+
+div.ui-dialog .ui-dialog-titlebar h1 {
+    font-size: var(--def-font-size);
+}
+
+div.ui-dialog:has(#search-bar) .t-Form-labelContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: end;
+}
+
+div.ui-dialog:has(#search-bar) #search-field label, 
+div.ui-dialog:has(#search-bar) #search-field input {
+    font-size: var(--def-font-size);
+}
+
+/* font sizes for pop up LOV */
+.a-IconList-item, .a-PopupLOV-search {
+    font-size: var(--def-font-size) !important;
+}
+
+.a-GV-loadMore {
+    display: none;
+}

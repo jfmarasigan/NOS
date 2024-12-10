@@ -1,0 +1,2142 @@
+---
+# ====== Page: Collection & Outstanding Creation =============
+id: 77
+identification: 
+  name: Collection & Outstanding Creation
+  alias: COLLECTION-OUTSTANDING-CREATION
+  title: Collection & Outstanding Creation
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    function isDateValid(dateString) {
+        var datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+        if (!dateString.match(datePattern)) {
+            return false;
+        }
+        var parts = dateString.split("/");
+        var month = parseInt(parts[0], 10);
+        var day = parseInt(parts[1], 10);
+        var year = parseInt(parts[2], 10);
+        var date = new Date(year, month - 1, day);
+        return (
+            date.getFullYear() === year &&
+            date.getMonth() === (month - 1) &&
+            date.getDate() === day
+        );
+    }
+    
+    function parseDate(dateString) {
+        var parts = dateString.split("/");
+        return new Date(parts[2], parts[0] - 1, parts[1]);
+    }
+    
+    function getBankCode(check) {
+        const regex = /^([A-Z]{1,5})#\d{7}$/;
+        return regex.test(check);
+    }
+    
+    function extractBankCode(check) {
+        const regex = /^([A-Z]{1,5})#/;
+        const match = regex.exec(check);
+        return match ? match[1] : null;
+    }
+    
+    function validateCMEMO(cMemo) {
+        const regex = /^CMEMO#\d{1,9}$/;
+        return regex.test(cMemo);
+    }
+    
+    function extractCMEMOId(cMemo) {
+        const regex = /^CMEMO#0*(\d{1,9})$/;
+        const match = regex.exec(cMemo);
+        return match ? match[1] : null;
+    }
+    
+    async function doesBankExist(checkNo) {
+        const response = await apex.server.process('CHECK_BANK_EXISTS', {
+            x01: checkNo
+        }, {
+            dataType: 'json'
+        });
+        if (response.success) {
+            return true;
+        } else {
+            throw 'Bank does not exist.';
+        }
+    }
+    
+    async function validatateCMemoId(checkNo, dbaId) {
+        const response = await apex.server.process('VALIDATE_CMEMO', {
+            x01: checkNo,
+            x02: dbaId
+        }, {
+            dataType: 'json'
+        });
+        if (response.success) {
+            return true;
+        } else {
+            throw response.errorMessage;
+        }
+    }
+    
+    function toggleRequired(isRequired) {
+        const dateFieldLabel = document.querySelector("#P77_CHECK_DATE_CONTAINER span div div:nth-child(1)");
+        const dateFieldLabel2 = document.querySelector("#P77_CHECK_DATE_CONTAINER span div:nth-child(1)");
+        const dateField = document.querySelector("#P77_CHECK_DATE")
+    
+        if(isRequired) {
+            dateFieldLabel.classList.add("required");
+            dateField.setAttribute("aria-required", "true");
+            dateField.removeAttribute("disabled");
+            dateFieldLabel2.style.marginRight = "2.1rem";
+        } else {
+            dateFieldLabel.classList.remove("required");
+            dateField.setAttribute("aria-required", "false");
+            dateField.setAttribute("disabled", true);
+            dateFieldLabel2.style.marginRight = "2.6rem";
+            apex.item("P77_CHECK_DATE").setValue(null);
+        }
+    }
+    
+  execute-when-page-loads: |
+    setTitle("Collection & Outstanding");
+    
+    const dateFields = ['P77_DATE_PAID', 'P77_CHECK_DATE'];
+    
+    dateFields.forEach((fieldId) => {
+      const dateField = document.getElementById(fieldId);
+    
+      dateField.addEventListener('input', function () {
+        let value = dateField.value.replace(/\D/g, '');
+    
+        if (value.length > 2) {
+          value = value.substring(0, 2) + '/' + value.substring(2);
+        }
+        if (value.length > 5) {
+          value = value.substring(0, 5) + '/' + value.substring(5, 9);
+        }
+    
+        if (value.length > 10) {
+          value = value.substring(0, 10);
+        }
+    
+        dateField.value = value;
+      });
+    });
+    
+    $(document).ready(function() {
+        $('#P77_COLLECTION_TYPE, #P77_DATE_PAID, #P77_AMOUNT_PAID, #P77_CHECK_NO, #P77_CHECK_DATE, #P77_OR_NO').on('keydown', function(event) {
+            if(event.key === 'Enter' || event.keyCode === 13) {
+                $.event.trigger("validateFields");
+                event.preventDefault();
+            }
+        })
+    });
+    
+    var grid = apex.region("outstandingGrid").widget().interactiveGrid("getViews", "grid");
+    
+    grid.view$.on("change", "input[type=checkbox]", function(event) {
+        var checkbox = $(this);
+        var recordId = checkbox.closest("tr").data("id");
+        var isChecked = checkbox.prop("checked");
+        var model = grid.model;
+        var row = model.getRecord(recordId);
+        var rowAmount = parseFloat(model.getValue(row, "AMOUNT")) || 0;
+    
+        var availableFunds = parseFloat($v("P77_AVAILABLE_FUNDS")) || 0;
+        var totalTagged = parseFloat($v("P77_TOTAL_TAGGED")) || 0;
+    
+        if (isChecked) {
+            totalTagged += rowAmount;
+        } else {
+            totalTagged -= rowAmount;
+        }
+    
+        availableFunds = parseFloat($v("P77_ORIGINAL_FUNDS")) - totalTagged;
+    
+        $s("P77_TOTAL_TAGGED", totalTagged.toFixed(2));
+        $s("P77_AVAILABLE_FUNDS", availableFunds.toFixed(2));
+    
+        console.log("availableFunds", availableFunds);
+        console.log("rowAmount", rowAmount)
+    });
+    
+    var ig$ = apex.region("outstandingGrid").widget().interactiveGrid("getViews", "grid").model;
+    
+    apex.jQuery("#outstandingGrid").on("keydown", function (event) {
+        var grid = apex.region("outstandingGrid").widget().interactiveGrid("getViews", "grid");
+        var activeCell = grid.getActiveCell();
+        var model = grid.model;
+        var record = model.getRecord(activeCell[0]);
+    
+        if (!record) return;
+    
+        if (event.key === "ArrowUp") {
+            grid.navigate(-1, 0);
+            event.preventDefault();
+        }
+        else if (event.key === "ArrowDown") {
+            grid.navigate(1, 0);
+            event.preventDefault();
+        }
+        else if (event.key === "Enter" && activeCell[1] === 0) {
+            var isChecked = model.getValue(record, "TAG");
+            model.setValue(record, "TAG", !isChecked);
+            event.preventDefault();
+        }
+    });
+    
+
+css: 
+  inline: |
+    /* .t-Region {
+        margin-block-end: var(--ut-region-margin, 0) !important;
+    } */
+    
+    /* .col.col-12:has(.outstanding-header) {
+        display: none;
+    } */
+    
+    /* 
+    #outstandingGrid {
+        display: none;
+    } */
+    
+    .mr-1 {
+        margin-right: 1rem;
+    }
+    
+    .t-Body {
+        width: 93%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    #readonly-form label,
+    #readonly-form span:not(.t-Form-error),
+    #P77_AVAILABLE_FUNDS_CONTAINER span,
+    #P77_TOTAL_TAGGED_CONTAINER span {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .t-Form-error {
+        color: #FFD700 !important;
+        margin-left: 8.5rem;
+    }
+    
+    #P77_COLLECTION_TYPE_lov_btn span {
+        color: black !important;
+    }
+    
+    #readonly-form .t-Form-inputContainer {
+        padding-block-end: var(--ut-field-padding-y, 0) !important;
+    }
+    
+    .required::after {
+        content: "*";
+        color: red;
+    }
+    
+    #P77_AVAILABLE_FUNDS_DISPLAY,
+    #P77_TOTAL_TAGGED_DISPLAY {
+        text-align: right;
+        width: 8rem;
+    }
+    
+    .border {
+        margin-top: 5rem;
+        border-left: 2px solid white;
+    }
+    
+    .border.col-1 {
+        max-width: 3% !important;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+        text-align: left;
+    }
+    
+    #outstandingGrid .a-GV-header a, #outstandingGrid th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    #outstandingGrid table,
+    #outstandingGrid tr,
+    #outstandingGrid th {
+        font-size: 1rem;
+    }
+    
+    #outstandingGrid td {
+        font-size: 1.125rem;
+    }
+    
+    #outstandingGrid .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .button {
+        position: fixed;
+        bottom: 0;
+        margin-bottom: 4rem;
+    }
+    
+    #outstandingGrid .a-GV-table {
+        width: 100%;
+    }
+    
+    #outstandingGrid .a-GV-table colgroup col:nth-child(1) {
+        width: 3rem;
+    }
+    
+    #outstandingGrid .a-GV-table colgroup col:nth-child(2) {
+        width: 8rem;
+    }
+    
+    #outstandingGrid .a-GV-table colgroup col:nth-child(3),
+    #outstandingGrid .a-GV-table colgroup col:nth-child(4) {
+        width: 7rem;
+    }
+    
+    /* ----------------------- */
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    #esc, #enter {
+        display: none;
+    }
+    
+    #readonly-form {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .outstanding-header {
+        font-size: 1.125rem;
+        color: white;
+    }
+    #header-wrapper {
+        background-color: rgb(30, 58, 138);;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Left Form ===================================
+  id: 24859739172616231
+  identification: 
+    name: Left Form
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: readonly-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Right Form ==================================
+  id: 24860355480616237
+  identification: 
+    name: Right Form
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 5
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: collection-form
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Outstanding Invoice Header ==================
+  id: 24861442374616248
+  identification: 
+    name: Outstanding Invoice Header
+    type: Static Content
+
+  source: 
+    html-code: <div role="region" id="header-wrapper"><h3 class="outstanding-header">Outstanding Invoice</h3></div>
+
+  layout: 
+    sequence: 30
+    parent-region: Right Form # 24860355480616237
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: header-wrapper
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Outstanding Invoice Grid ====================
+  id: 24861559994616249
+  identification: 
+    name: Outstanding Invoice Grid
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          'N' AS "TAG",
+          npt001.date_created AS INVOICE_DATE,
+          npt001.invoice_id AS INVOICE_NUMBER,
+          npt001.outstanding_balance AS AMOUNT
+      FROM 
+          NPT001 npt001
+      WHERE
+          npt001.customer_id = :P77_DBA_ID
+          AND (npt001.outstanding_balance IS NOT NULL OR npt001.outstanding_balance != 0)
+    page-items-to-submit: 
+    - P77_DBA_ID
+
+  layout: 
+    sequence: 40
+    parent-region: Right Form # 24860355480616237
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: outstandingGrid
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 24861621919616250
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Update Row
+      lost-update-type: Row Values
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 400
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 25320652834944776
+      identification: 
+        name: Primary Report
+        alias: 253207
+
+  columns: 
+  - # ====== Column: TAG =========================================
+    id: 45376971673832331
+    identification: 
+      column-name: TAG
+      type: Checkbox
+
+    heading: 
+      heading: Tag
+      alignment: center
+
+    settings: 
+      use-defaults: false
+      checked-value: Y
+      unchecked-value: N
+
+    layout: 
+      sequence: 10
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TAG
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: INVOICE_DATE ================================
+    id: 45377030349832332
+    identification: 
+      column-name: INVOICE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Invoice Date
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: INVOICE_NUMBER ==============================
+    id: 45377105162832333
+    identification: 
+      column-name: INVOICE_NUMBER
+      type: Number Field
+
+    heading: 
+      heading: Invoice Number
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_NUMBER
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: AMOUNT ======================================
+    id: 45377295395832334
+    identification: 
+      column-name: AMOUNT
+      type: Number Field
+
+    heading: 
+      heading: Amount
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Border ======================================
+  id: 43603804748093338
+  identification: 
+    name: Border
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - border
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    static-id: border
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Button ======================================
+  id: 43604331877093343
+  identification: 
+    name: Button
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 6
+    column-css-classes: 
+    - button
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P77_LEGAL_NAME ===========================
+  id: 24859868106616232
+  identification: 
+    name: P77_LEGAL_NAME
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - t-Form-fieldContainer--normalDisplay
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    pre-text: '<div style="margin-right: 2.4rem;">Legal Name:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_DBA ==================================
+  id: 24859919831616233
+  identification: 
+    name: P77_DBA
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    pre-text: '<div style="margin-right: 6.2rem;">DBA:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_COLLECTION_DATE ======================
+  id: 24860062919616234
+  identification: 
+    name: P77_COLLECTION_DATE
+    type: Display Only
+
+  label: 
+    label: New
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - margin-bottom-sm
+    - t-Form-fieldContainer--normalDisplay
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    pre-text: '<div style="margin-right: .7rem;">Collection Date:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_AVAILABLE_FUNDS ======================
+  id: 24860161944616235
+  identification: 
+    name: P77_AVAILABLE_FUNDS
+    type: Display Only
+
+  label: 
+    label: New
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Right Form # 24860355480616237
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    css-classes: 
+    - u-textEnd
+    pre-text: '<div>Available Funds:&nbsp;</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0.00
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_TOTAL_TAGGED =========================
+  id: 35236314657472429
+  identification: 
+    name: P77_TOTAL_TAGGED
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Right Form # 24860355480616237
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+
+  advanced: 
+    pre-text: '<div>Total Tagged:&nbsp;</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: 0.00
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_COLLECTION_TYPE ======================
+  id: 43603050452093330
+  identification: 
+    name: P77_COLLECTION_TYPE
+    type: Popup LOV
+
+  label: 
+    label: New
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic with Current Value
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 50
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    - margin-bottom-lg
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT collection_type_name AS d, COLLECTION_TYPE_ID AS r
+      FROM NPM015
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    pre-text: '<div style="margin-right: .2rem; display: flex;"><div class="required">Collection Type</div>:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_DATE_PAID ============================
+  id: 43603137905093331
+  identification: 
+    name: P77_DATE_PAID
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="margin-right: 3.05rem; display: flex;"><div class="required">Date Paid</div>:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_AMOUNT_PAID ==========================
+  id: 43603211513093332
+  identification: 
+    name: P77_AMOUNT_PAID
+    type: Number Field
+
+  label: 
+    label: Amount Paid
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Decimal
+
+  layout: 
+    sequence: 70
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-sm
+    format-mask: 999G999G999G999G990D00
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="margin-right: 1.40rem; display: flex;"><div class="required">Amount Paid</div>:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_CHECK_NO =============================
+  id: 43603345164093333
+  identification: 
+    name: P77_CHECK_NO
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="margin-right: 2.95rem; display: flex;"><div class="required">Check No</div>:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_CHECK_DATE ===========================
+  id: 43603434023093334
+  identification: 
+    name: P77_CHECK_DATE
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="margin-right: 2.6rem; display: flex;"><div>Check Date</div>:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_OR_NO ================================
+  id: 43603501652093335
+  identification: 
+    name: P77_OR_NO
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 100
+    region: Left Form # 24859739172616231
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 7
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div style="margin-right: 4.9rem;">OR No:</div>'
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_DBA_ID ===============================
+  id: 44254942823146512
+  identification: 
+    name: P77_DBA_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Left Form # 24859739172616231
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_ORIGINAL_FUNDS =======================
+  id: 45376739465832329
+  identification: 
+    name: P77_ORIGINAL_FUNDS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Right Form # 24860355480616237
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P77_CURRENT_TARGET =======================
+  id: 45378094942832342
+  identification: 
+    name: P77_CURRENT_TARGET
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Navigate ====================================
+  id: 43604454508093344
+  identification: 
+    button-name: Navigate
+    label: <u>N</u> - Navigate
+
+  layout: 
+    sequence: 10
+    region: Button # 43604331877093343
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: Exit ========================================
+  id: 44255017515146513
+  identification: 
+    button-name: Exit
+    label: Exit
+
+  layout: 
+    sequence: 20
+    region: Button # 43604331877093343
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:75:&SESSION.::&DEBUG.:::'
+      page: 75 # Collections Entry
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+- # ====== Button: TEST ========================================
+  id: 45377746729832339
+  identification: 
+    button-name: TEST
+    label: Test
+
+  layout: 
+    sequence: 30
+    region: Button # 43604331877093343
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: Set Read Only =======================
+  id: 35236196139472427
+  identification: 
+    name: Set Read Only
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 35236200276472428
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_legal_name NPT009.legal_name%TYPE;
+            v_collection_date DATE;
+            v_customer_id NPT009.customer_id%TYPE;
+        BEGIN
+            SELECT legal_name, customer_id
+            INTO v_legal_name, v_customer_id
+            FROM NPT009
+            WHERE "DBA" = :P77_DBA;
+        
+            v_collection_date := SYSDATE;
+        
+            :P77_LEGAL_NAME := v_legal_name;
+            :P77_COLLECTION_DATE := TO_CHAR(v_collection_date, 'MM/DD/YYYY');
+            :P77_DBA_ID := v_customer_id;
+        END;
+      items-to-submit: 
+      - P77_DBA
+      items-to-return: 
+      - P77_COLLECTION_DATE
+      - P77_LEGAL_NAME
+      - P77_DBA_ID
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Set Read Only # 35236196139472427
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Validate Fields =====================
+  id: 44256236052146525
+  identification: 
+    name: Validate Fields
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: validateFields
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44256341217146526
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var amountPaid;
+        async function validateForm() {
+            var collectionType = $v("P77_COLLECTION_TYPE");
+            var datePaid = $v("P77_DATE_PAID");
+            amountPaid = $v("P77_AMOUNT_PAID");
+            var checkNo = $v("P77_CHECK_NO");
+            var dbaId = $v("P77_DBA_ID");
+            var checkDate = $v("P77_CHECK_DATE");
+            var orNo = $v("P77_OR_NO");
+            var currentDate = new Date()
+        
+            var datePaidParsed = parseDate(datePaid);
+        
+            function showError(item, errorMessage) {
+                apex.message.showErrors([{
+                    type: "error",
+                    location: ["inline"],
+                    pageItem: item,
+                    message: errorMessage,
+                    unsafe: false
+                }]);
+                hasErrors = true;
+            }
+        
+            apex.message.clearErrors();
+        
+            var hasErrors = false;
+        
+            if (collectionType == "") {
+                showError("P77_COLLECTION_TYPE", "Collection Type cannot be empty");
+            }
+        
+            if (datePaid == "") {
+                showError("P77_DATE_PAID", "Date Paid cannot be empty");
+            } else if (!isDateValid(datePaid)) {
+                showError("P77_DATE_PAID", "Please enter a valid date");
+            } else if (datePaidParsed > currentDate) {
+                showError("P77_DATE_PAID", "Date Paid cannot be greater than the current date");
+            }
+        
+            if (amountPaid == "") {
+                showError("P77_AMOUNT_PAID", "Amount Paid cannot be empty");
+            } else if (amountPaid.replace(/,/g, '').length > 12) {
+                showError("P77_AMOUNT_PAID", "Amount Paid cannot exceed 9 digits");
+            }
+        
+            if (checkNo == "") {
+                showError("P77_CHECK_NO", "Check No cannot be empty");
+                toggleRequired(false);
+            } else if (checkNo !== "CASH" && checkNo !== "OFFSET" && checkNo !== "WRITEOFF" && !getBankCode(checkNo) && !validateCMEMO(checkNo)) {
+                showError("P77_CHECK_NO", "Check No must follow the allowed values");
+                toggleRequired(false);
+            } else if (getBankCode(checkNo)) {
+                let bankCode = extractBankCode(checkNo);
+                try {
+                    await doesBankExist(bankCode);
+                    toggleRequired(true);
+                } catch (error) {
+                    toggleRequired(false);
+                    showError("P77_CHECK_NO", error);
+                }
+            } else if (validateCMEMO(checkNo)) {
+                let cMemoId = extractCMEMOId(checkNo);
+                try {
+                    await validatateCMemoId(cMemoId, dbaId);
+                    toggleRequired(false);
+                } catch (error) {
+                    showError("P77_CHECK_NO", error);
+                    toggleRequired(false);
+                }
+            } else {
+                toggleRequired(false);
+            }
+        
+            const checkDateLabel = document.querySelector("#P77_CHECK_DATE_CONTAINER span div div:nth-child(1)");
+            const isCheckDateRequired = checkDateLabel.classList.contains("required");
+            if(isCheckDateRequired && !checkDate) {
+                if(isCheckDateRequired) {
+                    showError("P77_CHECK_DATE", "Check Date is required");
+                }
+            } else if (checkDate && !isDateValid(checkDate)) {
+                if(isCheckDateRequired) {
+                    showError("P77_CHECK_DATE", "Please enter a valid date");
+                }
+            }
+        
+            if(orNo && orNo.length > 12) {
+                showError("P77_OR_NO", "OR No cannot exceed 12 characters");
+            }
+        
+            return hasErrors;
+        }
+        
+        async function hasError() {
+            const hasErrors = await validateForm();
+            if(!hasErrors) {
+                $("#header-wrapper").show();
+                $("#outstandingGrid").show();
+                apex.region("outstandingGrid").refresh();
+                apex.item("P77_AVAILABLE_FUNDS").setValue(amountPaid);
+                apex.item("P77_ORIGINAL_FUNDS").setValue(amountPaid);
+            }
+        }
+        
+        hasError()
+
+    execution: 
+      sequence: 10
+      event: Validate Fields # 44256236052146525
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Check Date Disable ==============
+  id: 44256982910146532
+  identification: 
+    name: Set Check Date Disable
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44257074926146533
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const checkDate = document.querySelector("#P77_CHECK_DATE");
+        
+        checkDate.setAttribute("disabled", true);
+
+    execution: 
+      sequence: 10
+      event: Set Check Date Disable # 44256982910146532
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Hide Table ==========================
+  id: 44258200779146545
+  identification: 
+    name: Hide Table
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Hide ========================================
+    id: 44258378583146546
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Region
+      region: Outstanding Invoice Grid # 24861559994616249
+
+    execution: 
+      sequence: 20
+      event: Hide Table # 44258200779146545
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+  - # ====== Action: Hide ========================================
+    id: 45377621191832338
+    identification: 
+      action: Hide
+
+    affected-elements: 
+      selection-type: Region
+      region: Outstanding Invoice Header # 24861442374616248
+
+    execution: 
+      sequence: 10
+      event: Hide Table # 44258200779146545
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+
+- # ====== Dynamic Action: Select Grid =========================
+  id: 45377335790832335
+  identification: 
+    name: Select Grid
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|gridpagechange
+    selection-type: Region
+    region: Outstanding Invoice Grid # 24861559994616249
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45377448212832336
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("dblclick");
+            apex.item("P77_CURRENT_TARGET").setValue("IG");
+         });
+
+    execution: 
+      sequence: 10
+      event: Select Grid # 45377335790832335
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New =================================
+  id: 45377864183832340
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: TEST # 45377746729832339
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 45377951104832341
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var currentTarget = $v("P77_CURRENT_TARGET");
+        
+        if (currentTarget === "FIELD") {
+            apex.region("outstandingGrid").widget().interactiveGrid("getViews", "grid").focus();
+            apex.item("P77_CURRENT_TARGET").setValue("IG");
+        } else if (currentTarget === "IG") {
+            $("#P77_COLLECTION_TYPE").focus();
+            $(".a-GV-cell").first().trigger("dblclick");
+            apex.item("P77_CURRENT_TARGET").setValue("FIELD");
+        }
+
+    execution: 
+      sequence: 10
+      event: New # 45377864183832340
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: CHECK_BANK_EXISTS ==========================
+  id: 44256468516146527
+  identification: 
+    name: CHECK_BANK_EXISTS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          v_exists NUMBER;
+      BEGIN
+          SELECT COUNT(*)
+          INTO v_exists
+          FROM NPM007
+          WHERE bank_code = apex_application.g_x01;
+      
+          IF v_exists = 0 THEN
+              HTP.P('{"success": false}');
+          ELSE
+              HTP.P('{"success": true}');
+          END IF;
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: VALIDATE_CMEMO =============================
+  id: 44256626902146529
+  identification: 
+    name: VALIDATE_CMEMO
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          v_exists NUMBER;
+          v_customer_id NPT009.customer_id%TYPE;
+          v_balance NUMBER;
+      BEGIN
+          SELECT COUNT(*)
+          INTO v_exists
+          FROM NPT015
+          WHERE credit_memo_id = apex_application.g_x01;
+      
+          IF v_exists = 0 THEN
+              HTP.P('{"success":false, "errorMessage": "Credit Memo does not exist"}');
+              RETURN;
+          END IF;
+      
+          SELECT customer_id
+          INTO v_customer_id
+          FROM NPT015
+          WHERE credit_memo_id = apex_application.g_x01;
+      
+          IF v_customer_id != apex_application.g_x02 THEN
+              HTP.P('{"success":false, "errorMessage": "Credit Memo is from a different customer"}');
+              RETURN;
+          END IF;
+      
+          SELECT current_balance
+          INTO v_balance
+          FROM NPT015
+          WHERE credit_memo_id = apex_application.g_x01;
+      
+          IF v_balance = 0 THEN
+              HTP.P('{"success":false, "errorMessage": "Credit Memo has 0 balance"}');
+              RETURN;
+          END IF;
+      
+          HTP.P('{"success": true}');
+      END;
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Outstanding Invoice Grid - Save Interactive 
+  id: 45376554315832327
+  identification: 
+    name: Outstanding Invoice Grid - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Outstanding Invoice Grid # 24861559994616249
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+

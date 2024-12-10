@@ -1,0 +1,1872 @@
+---
+# ====== Page: Item Masterfile UOM Utilities =================
+id: 171
+identification: 
+  name: Item Masterfile UOM Utilities
+  alias: ITEM-MASTERFILE-UOM-UTILITIES
+  title: Item Masterfile UOM Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p171KeyMap = {
+        a : (v) => {
+            $("#a").click();
+        },
+        p : (v) => {
+            $("#print").click();
+        },
+        escape : (v) => {
+            $("#to-main-menu").click();
+        },
+        h : (v) => {
+            $("#export").click();
+        },
+        s : (v) => {
+            $("#s").click();
+        },
+        u : (v) => {
+            $("#u").click();
+        },
+        home: (v) => {
+            $("#to-top").trigger("click");
+        },
+        end: (v) => {
+            $("#to-bottom").trigger("click");
+        }
+    
+    
+    }
+    
+    
+    function mapP171Keys() {
+        $(document).off('keydown.p171keyevents');
+        $(document).on('keydown.p171keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p171KeyMap[key]) {
+                ev.preventDefault();
+                p171KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP171Keys();
+    }
+  execute-when-page-loads: |
+    mapP171Keys();
+    //$("#s").trigger("click");
+    setTitle("Item Masterfile UOM Utilities")
+    
+     $( document ).ready(function() {
+      $(".a-GV-cell").first().trigger("click");
+     });
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/items_masterfile_css#MIN#.css'
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #uom_list table, #uom_list tr, #uom_list td, #uom_list th {
+         font-size: 1.125rem;
+    }
+    
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+        border: none;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+        padding-bottom: 0.2rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    #uom_list .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #uom_list .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #uom_list .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #uom_list .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: UOM_LIST ====================================
+  id: 37728377227533419
+  identification: 
+    name: UOM_LIST
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT UOM_ID,
+             UPPER(UOM_CODE),
+             UOM_NAME,
+             CREATE_USER,
+             CREATE_DATE,
+             UPDATE_USER,
+             UPDATE_DATE
+      FROM NIM026
+      WHERE 
+          ( :P171_UOM_CODE IS NOT NULL AND UPPER(NIM026.UOM_CODE) LIKE UPPER('%' || :P171_UOM_CODE || '%') )
+          OR
+          ( :P171_UOM_CODE IS NULL AND :P171_UOM_NAME IS NOT NULL AND UPPER(NIM026.UOM_NAME) LIKE UPPER('%' || :P171_UOM_NAME || '%') )
+          OR
+          ( :P171_UOM_CODE IS NULL AND :P171_UOM_NAME IS NULL );
+      
+    page-items-to-submit: 
+    - P171_UOM_CODE
+    - P171_UOM_NAME
+
+  layout: 
+    sequence: 150
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form--stretchInputs
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: uom_list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 37728426352533420
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 38046109317785300
+      identification: 
+        name: Primary Report
+        alias: 380462
+
+  columns: 
+  - # ====== Column: UOM_ID ======================================
+    id: 37728573748533421
+    identification: 
+      column-name: UOM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: UOM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: UPPER(UOM_CODE) =============================
+    id: 37728673314533422
+    identification: 
+      column-name: UPPER(UOM_CODE)
+      type: Text Field
+
+    heading: 
+      heading: UOM Code
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 16
+
+    source: 
+      type: Database Column
+      database-column: UPPER(UOM_CODE)
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UOM_NAME ====================================
+    id: 37728745455533423
+    identification: 
+      column-name: UOM_NAME
+      type: Text Field
+
+    heading: 
+      heading: UOM Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 80
+
+    source: 
+      type: Database Column
+      database-column: UOM_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CREATE_USER =================================
+    id: 37728829016533424
+    identification: 
+      column-name: CREATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Created User
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: CREATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CREATE_DATE =================================
+    id: 37728971456533425
+    identification: 
+      column-name: CREATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Date Created
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 50
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CREATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATE_USER =================================
+    id: 37729017895533426
+    identification: 
+      column-name: UPDATE_USER
+      type: Text Field
+
+    heading: 
+      heading: Last Updated By
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_USER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPDATE_DATE =================================
+    id: 37729114384533427
+    identification: 
+      column-name: UPDATE_DATE
+      type: Date Picker
+
+    heading: 
+      heading: Date Updated
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 70
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: UPDATE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Buttons =====================================
+  id: 150301110536089909
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 160
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: button-region
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P171_UOM_ID ==============================
+  id: 152505716186226092
+  identification: 
+    name: P171_UOM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P171_UOM_CODE ============================
+  id: 152505756835226093
+  identification: 
+    name: P171_UOM_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P171_UOM_NAME ============================
+  id: 152505903827226094
+  identification: 
+    name: P171_UOM_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P171_SELECTED_UOM_ID =====================
+  id: 152507794955226113
+  identification: 
+    name: P171_SELECTED_UOM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P171_SELECTED_UOM_CODE ===================
+  id: 153435199912154286
+  identification: 
+    name: P171_SELECTED_UOM_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P171_PREPARED_URL ========================
+  id: 153435591473154290
+  identification: 
+    name: P171_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P171_SELECTED_UOM_NAME ===================
+  id: 158194766904253819
+  identification: 
+    name: P171_SELECTED_UOM_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Add =========================================
+  id: 37695133962457060
+  identification: 
+    button-name: Add
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 150301110536089909
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:172:&SESSION.::&DEBUG.:::'
+      page: 172 # UOM Utility Add
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 1) = 'Y'"
+
+- # ====== Button: Update ======================================
+  id: 37695554334457062
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 30
+    region: Buttons # 150301110536089909
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 4
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 1, 3) = 'Y'"
+
+- # ====== Button: Print =======================================
+  id: 37695935478457062
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 40
+    region: Buttons # 150301110536089909
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 6
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: print
+
+- # ====== Button: Top =========================================
+  id: 37696340974457062
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 70
+    region: Buttons # 150301110536089909
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-top
+
+- # ====== Button: Bottom ======================================
+  id: 37696781601457064
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 80
+    region: Buttons # 150301110536089909
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-bottom
+
+- # ====== Button: To_Exit =====================================
+  id: 37697166292457064
+  identification: 
+    button-name: To_Exit
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 100
+    region: Buttons # 150301110536089909
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:160:&SESSION.::&DEBUG.:::'
+      page: 160 # Utilities
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: to-main-menu
+
+- # ====== Button: Search ======================================
+  id: 37697597437457064
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 60
+    region: Buttons # 150301110536089909
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:162:&SESSION.::&DEBUG.:171::'
+      page: 162 # Utility Search
+      clear-cache: 171
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Export ======================================
+  id: 37697955698457065
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 50
+    region: Buttons # 150301110536089909
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: export
+
+dynamic-actions: 
+- # ====== Dynamic Action: Close Add or Update =================
+  id: 37701837065457075
+  identification: 
+    name: Close Add or Update
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37702329770457076
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".t-Button--closeAlert").trigger("click");
+                        }, 3000);
+        
+                    }
+                }
+            });
+        
+        
+        
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        }, "300");
+        
+
+    execution: 
+      sequence: 20
+      event: Close Add or Update # 37701837065457075
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 37729430817533430
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: UOM_LIST # 37728377227533419
+
+    execution: 
+      sequence: 10
+      event: Close Add or Update # 37701837065457075
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: End click ===========================
+  id: 37703246854457079
+  identification: 
+    name: End click
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 37696781601457064
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37703746947457079
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: '$(".a-GV-table tr:last .a-GV-cell:first").trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: End click # 37703246854457079
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Dialog Closed or Canceled ===========
+  id: 37704161160457079
+  identification: 
+    name: Dialog Closed or Canceled
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Search # 37697597437457064
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37704629846457081
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP171Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Dialog Closed or Canceled # 37704161160457079
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Home click ==========================
+  id: 37705066508457081
+  identification: 
+    name: Home click
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 37696340974457062
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37705576768457081
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: ' $(".a-GV-cell").first().trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: Home click # 37705066508457081
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Update Clicked ======================
+  id: 37705978840457082
+  identification: 
+    name: Update Clicked
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 37695554334457062
+
+  client-side-condition: 
+    type: Item is not null
+    item: P171_SELECTED_UOM_ID
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 37706453680457082
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P171_PREPARED_URL := apex_page.get_url(
+               p_page   => 173,
+               p_items  => 'P173_UOM_ID,P173_UOM_CODE,P173_UOM_NAME',
+               p_values => :P171_SELECTED_UOM_ID ||','|| :P171_SELECTED_UOM_CODE ||','|| :P171_SELECTED_UOM_NAME, 
+               p_clear_cache => '173'
+             );
+        END;
+      items-to-submit: 
+      - P171_SELECTED_UOM_CODE
+      - P171_SELECTED_UOM_ID
+      items-to-return: 
+      - P171_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Update Clicked # 37705978840457082
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37706959541457084
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P171_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Update Clicked # 37705978840457082
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is not null
+      item: P171_PREPARED_URL
+
+- # ====== Dynamic Action: Search_Modal ========================
+  id: 37707397972457084
+  identification: 
+    name: Search_Modal
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 37697597437457064
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 37707882050457084
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P162_CODE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P171_UOM_CODE
+
+    execution: 
+      sequence: 20
+      event: Search_Modal # 37707397972457084
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37708348823457085
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        
+        
+        }, "300");
+
+    execution: 
+      sequence: 50
+      event: Search_Modal # 37707397972457084
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 37708819680457085
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P162_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P171_UOM_NAME
+
+    execution: 
+      sequence: 30
+      event: Search_Modal # 37707397972457084
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Click ===============================
+  id: 37709224720457085
+  identification: 
+    name: Click
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 37697597437457064
+
+  actions: 
+  - # ====== Action: Reset Keys ==================================
+    id: 37710292226457087
+    identification: 
+      name: Reset Keys
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p171keyevents');
+
+    execution: 
+      sequence: 20
+      event: Click # 37709224720457085
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Closed or Canceled ==================
+  id: 37710633001457087
+  identification: 
+    name: Closed or Canceled
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Add # 37695133962457060
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37711193336457089
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        mapP171Keys();
+        
+
+    execution: 
+      sequence: 10
+      event: Closed or Canceled # 37710633001457087
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Clicked =========================
+  id: 37711570847457089
+  identification: 
+    name: Add Clicked
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Add # 37695133962457060
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37712052587457089
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p171keyevents');
+
+    execution: 
+      sequence: 10
+      event: Add Clicked # 37711570847457089
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection Change ====================
+  id: 37729257814533428
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: UOM_LIST # 37728377227533419
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37712964893457090
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let selectedRecords = this.data.selectedRecords;
+        
+        
+        if (selectedRecords.length > 0) {
+        
+            let uomIDSelected = selectedRecords[0][0];
+            let uomCodeSelected = selectedRecords[0][1];
+            let uomNameSelected = selectedRecords[0][2];
+        
+            $("#P171_SELECTED_UOM_ID").val(uomIDSelected);
+            $("#P171_SELECTED_UOM_CODE").val(uomCodeSelected);
+            $("#P171_SELECTED_UOM_NAME").val(uomNameSelected);
+        
+        
+            console.log("Selected item: " + uomIDSelected + " & " + uomCodeSelected + " & " + uomNameSelected) 
+        } 
+        
+        
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 37729257814533428
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Print =========================
+  id: 38763680620655626
+  identification: 
+    name: Click Print
+
+  execution: 
+    sequence: 250
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 37695935478457062
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 38763773598655627
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        generateReport("UOM_UTIL_PDF_COURIER_NEW", "pdf", { 
+            fileName: `ItemMasterfileUOMUtilities_${formattedDate}.pdf`,
+            mode : "print",
+            parameters : {
+                P_UOM_CODE : $v("P171_UOM_CODE"),
+                P_UOM_NAME : $v("P171_UOM_NAME"),
+                P_UOM_ID : $v("P171_UOM_ID")
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Click Print # 38763680620655626
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Click Export ========================
+  id: 38763858397655628
+  identification: 
+    name: Click Export
+
+  execution: 
+    sequence: 260
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 37697955698457065
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 38763906201655629
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        generateReport("UOM_UTIL_XLSX", "xlsx", { 
+            fileName: `ItemMasterfileUOMUtilities_${formattedDate}.xlsx`,
+            mode : "print",
+            parameters : {
+                P_UOM_CODE : $v("P171_UOM_CODE"),
+                P_UOM_NAME : $v("P171_UOM_NAME"),
+                P_UOM_ID : $v("P171_UOM_ID")
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Click Export # 38763858397655628
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: Clear Session ==============================
+  id: 37700666784457071
+  identification: 
+    name: Clear Session
+    type: Clear Session State
+    execution-chain: None
+
+  settings: 
+    type: Clear Items
+    item(s): 
+    - P171_UOM_ID
+    - P171_UOM_CODE
+    - P171_UOM_NAME
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: CLEAR_SUCCESS_MSG ==========================
+  id: 37701008310457073
+  identification: 
+    name: CLEAR_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      BEGIN
+      	apex_util.set_session_state('SUCCESS_MSG', null);
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: GET_SUCCESS_MSG ============================
+  id: 37701480673457073
+  identification: 
+    name: GET_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+         l_msg VARCHAR2(200);
+      BEGIN
+         -- Get the value of the SUCCESS_MSG application item
+         l_msg := apex_util.get_session_state('SUCCESS_MSG');
+         
+         -- Return it as a JSON object
+         apex_json.open_object;
+         apex_json.write('success_msg', l_msg);
+         apex_json.close_object;
+      
+         -- Clear the SUCCESS_MSG after displaying it
+         apex_util.set_session_state('SUCCESS_MSG', NULL);
+      END;
+      
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

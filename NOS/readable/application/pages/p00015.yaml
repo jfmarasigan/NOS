@@ -1,0 +1,2021 @@
+---
+# ====== Page: Item Transaction Map ==========================
+id: 15
+identification: 
+  name: Item Transaction Map
+  alias: ITEM-TRANSACTION-MAP
+  title: Item Transaction Map
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p15KeyMap = {
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        h : (v) => {
+            $("#h").trigger("click");
+        },
+        escape : (v) => {
+            apex.navigation.redirect($('#P15_EXIT_URL').val());
+        },
+        s : (v) => {
+            $("#s").trigger("click");
+        },
+        home : (v) => {
+            $('#to-top').trigger("click");
+        },
+        end : (v) => {
+            $('#to-bottom').trigger("click");
+        }
+    }
+    
+    function mapP15Keys() {
+        $(document).off('keydown.p15keyevents');
+        $(document).on('keydown.p15keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p15KeyMap[key]) {
+                ev.preventDefault();
+                p15KeyMap[key]();
+            }
+        });
+        console.log('done mapping');
+    }
+    
+    function convertDate(pDate){
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+        const date = new Date(pDate);
+    
+        const newDate = `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
+    
+        return newDate; 
+    }
+    
+  execute-when-page-loads: |
+    mapP15Keys();
+    setTitle("Item Transaction Map");
+    $('#s').trigger('click');
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .buttons-row {
+        position: absolute;
+        width: 90vw;
+        bottom: 1.75rem;
+    }
+    
+    #itm-list .a-IG {
+        height: calc(60vh + 2px) !important;
+    } 
+    
+    #itm-list .a-IG-contentContainer {
+        height: 60vh !important;
+    }
+    
+    #itm-list .a-IG-gridView.a-GV {
+        height: 60vh !important;
+    }
+    
+    #itm-list .a-GV-bdy {
+        height: calc(60vh - 2.5625rem) !important;
+    }
+    
+    
+    #itm-list table, 
+    #itm-list tr, 
+    #item-list td{
+        font-size: 1.125rem;
+        border: 0.0625rem solid black;
+    }
+        
+    #itm-list th{
+        font-size: 1rem;
+    }
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: black;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .btns{
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        /* color: #056BC9; */
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+     
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #226597;
+        color: white;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    #search-dialog{
+        background-color: #056BC9;
+    }
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    .ui-dialog-title{
+        font-size : 1.5rem;
+        padding-top: .2rem;
+        padding-bottom: .2rem;
+    }
+    .text-general{
+        font-size: 1.125rem;
+        color:white;
+    }
+    .t-Form-labelContainer.col.col-1{
+        /* #P15_ITEM_NUM_LABEL{ */
+            text-align: start;
+        /* } */
+    }
+    .t-Form-label{
+        font-size:1.125rem;
+        color:white;
+    }
+    
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Item Transaction Map ========================
+  id: 10497244830417919
+  identification: 
+    name: Item Transaction Map
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT ROWNUM,
+          IO,
+          INV_SHP_NO,
+          INV_DATE_ETA,
+          QTY_CS,
+          QTY_UNITS,
+          BALANCE,
+          TO_CHAR(COSTS, '999,999,999.00')  || '/ea' as COSTS,
+          WHSE
+      FROM (item_trans_pkg.get_table(:P15_ITEM_ID))
+      WHERE INV_DATE_ETA BETWEEN :P15_MONTH_FROM AND :P15_MONTH_TO;
+    page-items-to-submit: 
+    - P15_ITEM_ID
+    - P15_MONTH_FROM
+    - P15_MONTH_TO
+
+  layout: 
+    sequence: 110
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: itm-list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 10497354213417920
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                // stickyFooter: true
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 11650312869426934
+      identification: 
+        name: Primary Report
+        alias: 116504
+
+  columns: 
+  - # ====== Column: ROWNUM ======================================
+    id: 14279728327795925
+    identification: 
+      column-name: ROWNUM
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: true
+
+    source: 
+      type: Database Column
+      database-column: ROWNUM
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+  - # ====== Column: IO ==========================================
+    id: 14279866742795926
+    identification: 
+      column-name: IO
+      type: Text Field
+
+    heading: 
+      heading: I/O
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 1
+
+    source: 
+      type: Database Column
+      database-column: IO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                width: 100
+            }
+            return options;
+        }
+
+  - # ====== Column: INV_SHP_NO ==================================
+    id: 14279924982795927
+    identification: 
+      column-name: INV_SHP_NO
+      type: Text Field
+
+    heading: 
+      heading: Invoice/Shipment No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 15
+
+    source: 
+      type: Database Column
+      database-column: INV_SHP_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+  - # ====== Column: INV_DATE_ETA ================================
+    id: 14280089312795928
+    identification: 
+      column-name: INV_DATE_ETA
+      type: Date Picker
+
+    heading: 
+      heading: Invoice Date/ETA
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: INV_DATE_ETA
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+  - # ====== Column: QTY_CS ======================================
+    id: 14280113249795929
+    identification: 
+      column-name: QTY_CS
+      type: Number Field
+
+    heading: 
+      heading: Qty (in Cs)
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: QTY_CS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+  - # ====== Column: QTY_UNITS ===================================
+    id: 14280248600795930
+    identification: 
+      column-name: QTY_UNITS
+      type: Number Field
+
+    heading: 
+      heading: Qty (in units)
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 60
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: QTY_UNITS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+  - # ====== Column: BALANCE =====================================
+    id: 14280394967795931
+    identification: 
+      column-name: BALANCE
+      type: Number Field
+
+    heading: 
+      heading: Balance (in units)
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: BALANCE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+  - # ====== Column: COSTS =======================================
+    id: 14280439085795932
+    identification: 
+      column-name: COSTS
+      type: Number Field
+
+    heading: 
+      heading: Cost/UOM
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 80
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999G999G999G999G990D00
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: COSTS
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+  - # ====== Column: WHSE ========================================
+    id: 14280570295795933
+    identification: 
+      column-name: WHSE
+      type: Number Field
+
+    heading: 
+      heading: Whse
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: WHSE
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                width: 100
+            }
+            return options;
+        }
+
+- # ====== Region: Page Controls ===============================
+  id: 10497569521417922
+  identification: 
+    name: Page Controls
+    type: Static Content
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P15_ITEM_NUM =============================
+  id: 10498827233417935
+  identification: 
+    name: P15_ITEM_NUM
+    type: Display Only
+
+  label: 
+    label: 'Item Number:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: 'SELECT ITEM_NUM FROM NIT001 WHERE ITEM_ID =:P15_ITEM_ID;'
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P15_UPC ==================================
+  id: 10498948935417936
+  identification: 
+    name: P15_UPC
+    type: Display Only
+
+  label: 
+    label: 'UPC:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: 'SELECT UPC FROM NIT002 WHERE ITEM_ID = :P15_ITEM_ID;'
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P15_ITEM_DESC ============================
+  id: 10499053075417937
+  identification: 
+    name: P15_ITEM_DESC
+    type: Display Only
+
+  label: 
+    label: 'Item Description:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: 'SELECT ITEM_DESC FROM NIT001 WHERE ITEM_ID = :P15_ITEM_ID;'
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P15_ITEM_ID ==============================
+  id: 10499239348417939
+  identification: 
+    name: P15_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P15_MONTH_FROM ===========================
+  id: 16110289110770130
+  identification: 
+    name: P15_MONTH_FROM
+    type: Display Only
+
+  label: 
+    label: 'Month From:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): SELECT SYSDATE FROM DUAL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P15_MONTH_TO =============================
+  id: 16110381557770131
+  identification: 
+    name: P15_MONTH_TO
+    type: Display Only
+
+  label: 
+    label: 'Month To:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: SQL Query (return single value)
+    sql-query-(return-single-value): SELECT SYSDATE FROM DUAL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P15_EXIT_URL =============================
+  id: 16110467742770132
+  identification: 
+    name: P15_EXIT_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: APEX_PAGE.GET_URL(p_page => 3)
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: PRINT =======================================
+  id: 10497673043417923
+  identification: 
+    button-name: PRINT
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 40
+    region: Page Controls # 10497569521417922
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 4, 14) = 'Y'"
+
+- # ====== Button: Export ======================================
+  id: 10497716274417924
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 50
+    region: Page Controls # 10497569521417922
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: h
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 4, 15) = 'Y'"
+
+- # ====== Button: SEARCH ======================================
+  id: 10497816331417925
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 60
+    region: Page Controls # 10497569521417922
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:40:&SESSION.::&DEBUG.:40::'
+      page: 40 # ITM Search
+      clear-cache: 40
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: TOP =========================================
+  id: 10497906003417926
+  identification: 
+    button-name: TOP
+    label: <u>Home</u> - To Top
+
+  layout: 
+    sequence: 70
+    region: Page Controls # 10497569521417922
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-top
+
+- # ====== Button: BOTTOM ======================================
+  id: 10498091162417927
+  identification: 
+    button-name: BOTTOM
+    label: <u>End</u> - To Bottom
+
+  layout: 
+    sequence: 80
+    region: Page Controls # 10497569521417922
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-bottom
+
+dynamic-actions: 
+- # ====== Dynamic Action: On Search Dialog Close ==============
+  id: 10500091561417947
+  identification: 
+    name: On Search Dialog Close
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: SEARCH # 10497816331417925
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 10500197469417948
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Transaction Map # 10497244830417919
+
+    execution: 
+      sequence: 130
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Finalize Item Num ===========================
+    id: 10500351369417950
+    identification: 
+      name: Finalize Item Num
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT return_item FROM (item_trans_pkg.set_item_no(:P15_ITEM_ID))'
+      items-to-submit: 
+      - P15_ITEM_ID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_ITEM_NUM
+
+    execution: 
+      sequence: 100
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P15_ITEM_ID
+
+  - # ====== Action: Finalize UPC ================================
+    id: 12390042647815814
+    identification: 
+      name: Finalize UPC
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT return_item FROM (item_trans_pkg.set_upc(:P15_ITEM_ID))'
+      items-to-submit: 
+      - P15_ITEM_ID
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_UPC
+
+    execution: 
+      sequence: 110
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P15_ITEM_ID
+
+  - # ====== Action: Finalize Item Desc ==========================
+    id: 12390152506815815
+    identification: 
+      name: Finalize Item Desc
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT return_item FROM (item_trans_pkg.set_item_desc(:P15_ITEM_ID))'
+      items-to-submit: 
+      - P15_ITEM_ID
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_ITEM_DESC
+
+    execution: 
+      sequence: 120
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P15_ITEM_ID
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14277495108795902
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        },"500");
+
+    execution: 
+      sequence: 140
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Item Num ================================
+    id: 14281465355795942
+    identification: 
+      name: Set Item Num
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P40_ITEM_NUM
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_ITEM_NUM
+
+    execution: 
+      sequence: 20
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set UPC =====================================
+    id: 14281541608795943
+    identification: 
+      name: Set UPC
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P40_UPC
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_UPC
+
+    execution: 
+      sequence: 30
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Item Desc ===============================
+    id: 14281643743795944
+    identification: 
+      name: Set Item Desc
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P40_ITEM_DESC
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_ITEM_DESC
+
+    execution: 
+      sequence: 40
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Item ID using Item Num ==================
+    id: 16107437597770102
+    identification: 
+      name: Set Item ID using Item Num
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT ITEM_ID FROM NIT001 WHERE UPPER(ITEM_NUM) = UPPER(:P15_ITEM_NUM)'
+      items-to-submit: 
+      - P15_ITEM_NUM
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_ITEM_ID
+
+    execution: 
+      sequence: 70
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P15_ITEM_NUM
+
+  - # ====== Action: Set ID Using UPC ============================
+    id: 16107535132770103
+    identification: 
+      name: Set ID Using UPC
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT ITEM_ID FROM NIT002 WHERE UPC = :P15_UPC AND UOM_ID = 4'
+      items-to-submit: 
+      - P15_UPC
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_ITEM_ID
+
+    execution: 
+      sequence: 80
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P15_UPC
+
+  - # ====== Action: Set ID Using Item Desc ======================
+    id: 16107679570770104
+    identification: 
+      name: Set ID Using Item Desc
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: 'SELECT ITEM_ID FROM NIT001 WHERE UPPER(ITEM_DESC) = UPPER(:P15_ITEM_DESC)'
+      items-to-submit: 
+      - P15_ITEM_DESC
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_ITEM_ID
+
+    execution: 
+      sequence: 90
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P15_ITEM_DESC
+
+  - # ====== Action: Set Month From ==============================
+    id: 16111211974770140
+    identification: 
+      name: Set Month From
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P40_MONTH_FROM
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_MONTH_FROM
+
+    execution: 
+      sequence: 50
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Month To ================================
+    id: 16111399465770141
+    identification: 
+      name: Set Month To
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P40_MONTH_TO
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P15_MONTH_TO
+
+    execution: 
+      sequence: 60
+      event: On Search Dialog Close # 10500091561417947
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On P Press ==========================
+  id: 12389069533815804
+  identification: 
+    name: On P Press
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: PRINT # 10497673043417923
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16110668540770134
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("ITM_PDF", "pdf", { 
+            fileName: "ItemTransactionMap_" + datestamp + ".pdf",
+            mode : "print",
+            parameters : {
+                P_ITEM_ID : $v("P15_ITEM_ID"),
+                P_ITEM_NO : $v("P15_ITEM_NUM"),
+                P_UPC : $v("P15_UPC"),
+                P_ITEM_DESC : $v("P15_ITEM_DESC"),
+                P_MONTH_FROM : convertDate($v("P15_MONTH_FROM")),
+                P_MONTH_TO: convertDate($v("P15_MONTH_TO"))
+            }
+        });
+
+    execution: 
+      sequence: 30
+      event: On P Press # 12389069533815804
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Home Click =======================
+  id: 12390996554815823
+  identification: 
+    name: On Home Click
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: TOP # 10497906003417926
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12391006324815824
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        focusOnIGFirstRecordFirstCell('itm-list', 'IO');
+        var ig = apex.region('itm-list').widget().interactiveGrid("getViews","grid");
+            var rec = ig.model.recordAt(0);
+            console.log(ig);
+            console.log(rec[0]);
+
+    execution: 
+      sequence: 20
+      event: On Home Click # 12390996554815823
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On End Click ========================
+  id: 12391176716815825
+  identification: 
+    name: On End Click
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: BOTTOM # 10498091162417927
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12391268239815826
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGLastRecordFirstCell('itm-list');
+
+    execution: 
+      sequence: 10
+      event: On End Click # 12391176716815825
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On H click ==========================
+  id: 12391387376815827
+  identification: 
+    name: On H click
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 10497716274417924
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 12391453793815828
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("ITM_EXCEL", "xlsx", { 
+            fileName: "ItemTransactionMap_" + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                P_ITEM_ID : $v("P15_ITEM_ID"),
+                P_ITEM_NO : $v("P15_ITEM_NUM"),
+                P_UPC : $v("P15_UPC"),
+                P_ITEM_DESC : $v("P15_ITEM_DESC"),
+                P_MONTH_FROM : convertDate($v("P15_MONTH_FROM")),
+                P_MONTH_TO: convertDate($v("P15_MONTH_TO"))
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: On H click # 12391387376815827
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P15_ITEM_ID ============================
+  id: 12390206129815816
+  identification: 
+    item-name: P15_ITEM_ID
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Function Body
+    language: PL/SQL
+    pl/sql-function-body: RETURN NULL;
+
+- # ====== Computation: P15_ITEM_NUM ===========================
+  id: 14282099180795948
+  identification: 
+    item-name: P15_ITEM_NUM
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P15_UPC ================================
+  id: 14282188972795949
+  identification: 
+    item-name: P15_UPC
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P15_ITEM_DESC ==========================
+  id: 14282204844795950
+  identification: 
+    item-name: P15_ITEM_DESC
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P15_MONTH_FROM =========================
+  id: 16111075610770138
+  identification: 
+    item-name: P15_MONTH_FROM
+
+  execution: 
+    sequence: 50
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P15_MONTH_TO ===========================
+  id: 16111187798770139
+  identification: 
+    item-name: P15_MONTH_TO
+
+  execution: 
+    sequence: 60
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+

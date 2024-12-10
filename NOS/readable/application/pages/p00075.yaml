@@ -1,0 +1,2433 @@
+---
+# ====== Page: Collections Entry =============================
+id: 75
+identification: 
+  name: Collections Entry
+  alias: COLLECTIONS-ENTRY
+  title: Collections Entry
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p75KeyMap = {
+        c : (v) => {
+            $("#c").trigger("click");
+        },
+        i : (v) => {
+            $("#i").trigger("click");
+        },
+        a : (v) => {
+            $("#a").trigger("click");
+        },
+        escape : (v) => {
+            if($("#makeCollection").is(":visible")) {
+                $("#close-collection").trigger("click");
+            } else if($("#inquire").is(":visible")) {
+                $("#close-inquire").trigger("click");
+            } else {
+                $("#exit").trigger("click");
+            }
+        }
+    }
+    
+    function mapP75Keys() {
+        $(document).off('keydown.p75keyevents');
+        $(document).on('keydown.p75keyevents', (ev) => {
+    
+            const focusedElement = document.activeElement;
+            if (focusedElement.tagName === "INPUT" || focusedElement.tagName === "TEXTAREA") {
+                return;
+            }
+    
+            var key = ev.key?.toLowerCase();
+            if (p75KeyMap[key]) {
+                ev.preventDefault();
+                p75KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP75Keys();
+    }
+  execute-when-page-loads: |
+    mapP75Keys();
+    setTitle("Collections Entry");
+    // $("#s").trigger("click");
+    // setTimeout(() => {
+    //     $( document ).ready(function() {
+    //         $(".t-Button--closeAlert").trigger("click");
+    //     });
+    // }, "5000");
+    
+    const dateFields = ['P75_COLLECT_DATE_FROM', 'P75_COLLECT_DATE_TO'];
+    
+    dateFields.forEach((fieldId) => {
+      const dateField = document.getElementById(fieldId);
+    
+      dateField.addEventListener('input', function () {
+        let value = dateField.value.replace(/\D/g, '');
+    
+        if (value.length > 2) {
+          value = value.substring(0, 2) + '/' + value.substring(2);
+        }
+        if (value.length > 5) {
+          value = value.substring(0, 5) + '/' + value.substring(5, 9);
+        }
+    
+        if (value.length > 10) {
+          value = value.substring(0, 10);
+        }
+    
+        dateField.value = value;
+      });
+    });
+    
+    $(document).ready(function() { 
+        $("#P75_COLLECT_DATE_FROM, #P75_COLLECT_DATE_TO").on("keydown", function(event) {
+            if (event.key === "Enter" || event.keyCode === 13) {
+                console.log("CLICKED")
+                $.event.trigger('validateDates');
+                event.preventDefault();
+            }
+        });
+    });
+
+css: 
+  inline: |
+    #filter span.t-Form-itemText,
+    #filter span.display_only {
+        font-size: 1.125rem !important;
+        color: white !important;
+    }
+    
+    .t-Region#filter {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .formLabel::after {
+        content: "*" !important;
+        color: red;
+    }
+    
+    #P75_SEARCH_DBA_CONTAINER .t-Form-itemText {
+        background-color: transparent;
+        border: none;
+        font-size: 1.125rem;
+        margin-left: 2.5rem;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .t-Region#add-header {
+        background-color: #056AC8;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    #makeCollection .t-Region-body {
+        border-radius: 12px;
+    }
+    
+    #makeCollection.t-DialogRegion {
+        min-height: auto !important;
+        background-color: white;
+        border-radius: 12px;
+    }
+    
+    .ui-dialog:not(.ui-dialog-autocomplete) {
+        background-color: #056AC8;
+    }
+    
+    .t-DialogRegion-bodyWrapperOut {
+        overflow: hidden !important;
+    }
+    
+    #inquire .a-GV-cell,
+    #inquire .a-GV-header {
+        pointer-events: none;
+    }
+    
+    .text-red {
+        color: red;
+    }
+    
+    #filter span div#P75_COLLECT_DATE_FROM_error {
+        margin-left: 15.3rem;
+    }
+    #filter span div#P75_COLLECT_DATE_TO_error {
+        margin-left: 2.1rem;
+    }
+    
+    .t-Form-error {
+        color: #FFD700 !important;
+    }
+    /*----------------*/
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    #table .a-IG {
+        height: calc(70vh + 2px) !important;
+    } 
+    
+    #table .a-IG-contentContainer {
+        height: 705vh !important;
+    }
+    
+    #table .a-IG-gridView.a-GV {
+        height: 70vh !important;
+    }
+    
+    #table .a-GV-bdy {
+        height: calc(70vh - 2.5625rem) !important;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    #table table, #inquire table,
+    #table tr, #inquire tr,
+    #table th, #inquire th {
+        font-size: 1rem;
+    }
+    
+    
+    #table td, #table td {
+        font-size: 1.125rem;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    #table .a-GV-header a, #table th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    html::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    html {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    } 
+    
+     /* Hide scrollbar for Chrome, Safari and Opera */
+    .a-GV-w-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .a-GV-w-scroll {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    
+    #table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(1),
+    #table .a-GV-table colgroup col:nth-child(8) {
+        width: 3rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(3) {
+        width: 17rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(2),
+    #table .a-GV-table colgroup col:nth-child(5),
+    #table .a-GV-table colgroup col:nth-child(6),
+    #table .a-GV-table colgroup col:nth-child(7) {
+        width: 8rem;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(4) {
+        width: 7rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Collection Grid =============================
+  id: 22495299283163640
+  identification: 
+    name: Collection Grid
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          CASE WHEN npt005.posted = 'Y' THEN 'P' ELSE NULL END AS "POST",
+          npt005.collection_id AS "COLLECTION_ID",
+          npt009."DBA" AS "DBA",
+          npt005.amount AS "AMOUNT",
+          npt005.cashcheck AS "CHECK_NO",
+          npt022.check_date AS "CHECK_DATE",
+          npt005.or_no AS "OR_NO",
+          npm015.collection_type_code AS "TYPE"
+      FROM
+          NPT005 npt005
+      JOIN
+          NPT038 npt038 ON NPT005.collection_id = npt038.collection_id
+      JOIN
+          NPT001 npt001 ON npt038.invoice_id = npt001.invoice_id
+      JOIN
+          NPT009 npt009 ON npt001.customer_id = npt009.customer_id
+      LEFT JOIN
+          NPT022 npt022 ON npt009.customer_id = npt022.customer_id
+      LEFT JOIN
+          NPM015 npm015 ON npt005.collection_type_id = npm015.collection_type_id
+      WHERE
+          (
+              (:P75_COLLECT_DATE_FROM IS NOT NULL AND :P75_COLLECT_DATE_TO IS NULL AND npt005.date_created = :P75_COLLECT_DATE_FROM)
+              OR
+              (:P75_COLLECT_DATE_FROM IS NOT NULL AND :P75_COLLECT_DATE_TO IS NOT NULL AND npt005.date_created BETWEEN :P75_COLLECT_DATE_FROM AND :P75_COLLECT_DATE_TO)
+          )
+          AND (:P75_COLLECT_DATE_FROM IS NOT NULL OR :P75_COLLECT_DATE_TO IS NOT NULL)
+    page-items-to-submit: 
+    - P75_COLLECT_DATE_FROM
+    - P75_COLLECT_DATE_TO
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 22495460824163642
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 600
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 24829357872558904
+      identification: 
+        name: Primary Report
+        alias: 248294
+
+  columns: 
+  - # ====== Column: POST ========================================
+    id: 43600379563093303
+    identification: 
+      column-name: POST
+      type: Text Field
+
+    heading: 
+      heading: Post
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: POST
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: COLLECTION_ID ===============================
+    id: 43600452086093304
+    identification: 
+      column-name: COLLECTION_ID
+      type: Text Field
+
+    heading: 
+      heading: Collection ID
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: COLLECTION_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: DBA =========================================
+    id: 43600537368093305
+    identification: 
+      column-name: DBA
+      type: Text Field
+
+    heading: 
+      heading: Customer Name (DBA)
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: DBA
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: AMOUNT ======================================
+    id: 43600649001093306
+    identification: 
+      column-name: AMOUNT
+      type: Text Field
+
+    heading: 
+      heading: Paid Amount
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CHECK_NO ====================================
+    id: 43600794344093307
+    identification: 
+      column-name: CHECK_NO
+      type: Text Field
+
+    heading: 
+      heading: Check No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CHECK_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: CHECK_DATE ==================================
+    id: 43600821922093308
+    identification: 
+      column-name: CHECK_DATE
+      type: Text Field
+
+    heading: 
+      heading: Check Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CHECK_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: OR_NO =======================================
+    id: 43600922692093309
+    identification: 
+      column-name: OR_NO
+      type: Text Field
+
+    heading: 
+      heading: OR No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 70
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: OR_NO
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  - # ====== Column: TYPE ========================================
+    id: 43601082890093310
+    identification: 
+      column-name: TYPE
+      type: Text Field
+
+    heading: 
+      heading: Type
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: TYPE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+- # ====== Region: Make Collection =============================
+  id: 24859249164616226
+  identification: 
+    name: Make Collection
+    type: Static Content
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - t-DialogRegion--noPadding
+    - js-dialog-nosize
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: makeCollection
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 38695553248196554
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Filter ======================================
+  id: 43600247903093302
+  identification: 
+    name: Filter
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-bottom-md
+    - margin-left-md
+    - margin-right-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: filter
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Inquire =====================================
+  id: 43601244102093312
+  identification: 
+    name: Inquire
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          NULL AS "INVOICE_NO",
+          NULL AS "P_AMOUNT",
+          NULL AS "INVOICE_DATE"
+      FROM
+          DUAL
+
+  layout: 
+    sequence: 90
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size600x400
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: inquire
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: |
+      <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: white;">
+          Collection ID: SAMPLE-321
+      </div>
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 43601361016093313
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: false
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 200
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 43726938186678412
+      identification: 
+        name: Primary Report
+        alias: 437270
+
+  columns: 
+  - # ====== Column: INVOICE_NO ==================================
+    id: 43601482406093314
+    identification: 
+      column-name: INVOICE_NO
+      type: Text Field
+
+    heading: 
+      heading: Invoice Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: P_AMOUNT ====================================
+    id: 43601593229093315
+    identification: 
+      column-name: P_AMOUNT
+      type: Text Field
+
+    heading: 
+      heading: Paid Amount
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: P_AMOUNT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: INVOICE_DATE ================================
+    id: 43601698257093316
+    identification: 
+      column-name: INVOICE_DATE
+      type: Text Field
+
+    heading: 
+      heading: Invoice Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: INVOICE_DATE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Header ======================================
+  id: 43601921230093319
+  identification: 
+    name: Header
+    type: Static Content
+
+  source: 
+    html-code: |
+      <div style="background-color: #056AC8; font-size: 1.5rem; color: white; padding: .50rem 0 .50rem 0; margin-left: 1rem;"
+           id="add-header">
+          Add Collection Entry
+      </div>
+
+  layout: 
+    sequence: 20
+    parent-region: Make Collection # 24859249164616226
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: add-header
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: errorArea ===================================
+  id: 44254389736146506
+  identification: 
+    name: errorArea
+    type: Static Content
+
+  source: 
+    html-code: '<span id="errorArea" class="hide text-red" style="margin-left: 3rem;"></span>'
+
+  layout: 
+    sequence: 30
+    parent-region: Make Collection # 24859249164616226
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P75_COLLECT_DATE_FROM ====================
+  id: 22495308494163641
+  identification: 
+    name: P75_COLLECT_DATE_FROM
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Filter # 43600247903093302
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+    value-placeholder: MM/DD/YYYY
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: '<div class="formLabel" style="margin-left: 5.5rem;">Collection Date</div>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P75_SEARCH_DBA ===========================
+  id: 24859492356616228
+  identification: 
+    name: P75_SEARCH_DBA
+    type: Text Field with autocomplete
+
+  label: 
+    alignment: Left
+
+  settings: 
+    fetch-on-type: true
+    use-cache: true
+    maximum-values-in-list: 7
+
+  search: 
+    match-type: Contains & Ignore Case
+    minimum-characters: 1
+
+  layout: 
+    sequence: 40
+    region: Make Collection # 24859249164616226
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 12
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-bottom-md
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: SELECT DBA FROM NPT009
+    display-extra-values: true
+
+  advanced: 
+    pre-text: '<div id="dba">DBA:&nbsp;&nbsp;&nbsp;</div>'
+    post-text-: '<div style="margin-right: .1rem;"></div>'
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P75_PREPARED_URL =========================
+  id: 35235968182472425
+  identification: 
+    name: P75_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P75_COLLECT_DATE_TO ======================
+  id: 43600182907093301
+  identification: 
+    name: P75_COLLECT_DATE_TO
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Filter # 43600247903093302
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--large
+    width: 30
+    value-placeholder: MM/DD/YYYY
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    pre-text: To&nbsp;&nbsp;&nbsp;
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P75_COLLECTION_ID ========================
+  id: 44255537365146518
+  identification: 
+    name: P75_COLLECTION_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: MAKE_COLLECTION =============================
+  id: 24837174509564057
+  identification: 
+    button-name: MAKE_COLLECTION
+    label: <u>A</u> - Make Collection
+
+  layout: 
+    sequence: 30
+    region: Buttons # 38695553248196554
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: INQUIRE =====================================
+  id: 24838386068564060
+  identification: 
+    button-name: INQUIRE
+    label: <u>I</u> - Inquire
+
+  layout: 
+    sequence: 50
+    region: Buttons # 38695553248196554
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: CHANGE_DATE =================================
+  id: 35235292010472418
+  identification: 
+    button-name: CHANGE_DATE
+    label: <u>C</u> - Change Collection Date
+
+  layout: 
+    sequence: 20
+    region: Buttons # 38695553248196554
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: c
+
+- # ====== Button: UPDATE ======================================
+  id: 35235637111472422
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 40
+    region: Buttons # 38695553248196554
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: POST ========================================
+  id: 43601171438093311
+  identification: 
+    button-name: POST
+    label: <u>P</u> -Post
+
+  layout: 
+    sequence: 60
+    region: Buttons # 38695553248196554
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+- # ====== Button: Exit ========================================
+  id: 43602218630093322
+  identification: 
+    button-name: Exit
+    label: Exit
+
+  layout: 
+    sequence: 70
+    region: Buttons # 38695553248196554
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:306:&SESSION.::&DEBUG.:::'
+      page: 306 # Collection and Outstanding
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+- # ====== Button: CLOSE_COLLECTION ============================
+  id: 43602340685093323
+  identification: 
+    button-name: CLOSE_COLLECTION
+    label: Close Collection
+
+  layout: 
+    sequence: 50
+    region: Make Collection # 24859249164616226
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close-collection
+
+- # ====== Button: CLOSE_INQUIRE ===============================
+  id: 43602729860093327
+  identification: 
+    button-name: CLOSE_INQUIRE
+    label: Close Inquire
+
+  layout: 
+    sequence: 10
+    region: Inquire # 43601244102093312
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close-inquire
+
+dynamic-actions: 
+- # ====== Dynamic Action: Open Make Collection ================
+  id: 24859590679616229
+  identification: 
+    name: Open Make Collection
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: MAKE_COLLECTION # 24837174509564057
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 24859644009616230
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Make Collection # 24859249164616226
+
+    execution: 
+      sequence: 30
+      event: Open Make Collection # 24859590679616229
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43602178804093321
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $("#makeCollection").dialog("option", "width", 600);
+
+    execution: 
+      sequence: 10
+      event: Open Make Collection # 24859590679616229
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: ON C press ==========================
+  id: 35235303327472419
+  identification: 
+    name: ON C press
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CHANGE_DATE # 35235292010472418
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 35235451033472420
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P75_COLLECT_DATE_FROM
+
+    execution: 
+      sequence: 10
+      event: ON C press # 35235303327472419
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Create Collection =============
+  id: 35235763219472423
+  identification: 
+    name: Go to Create Collection
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Release
+    selection-type: Item(s)
+    item(s): 
+    - P75_SEARCH_DBA
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter';
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 35235830618472424
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        :P75_PREPARED_URL := apex_page.get_url(
+            p_clear_cache => 77,
+            p_page => 77,
+            p_items => 'P77_DBA',
+            p_values => :P75_SEARCH_DBA
+        );
+      items-to-submit: 
+      - P75_SEARCH_DBA
+      items-to-return: 
+      - P75_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Go to Create Collection # 35235763219472423
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44254469108146507
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        async function searchDBA() {
+            const searchDBA = $v("P75_SEARCH_DBA");
+        
+            try {
+                await doesDBAExists(searchDBA);
+        
+                let url = $v("P75_PREPARED_URL");
+                apex.navigation.redirect(url);
+            } catch (error) {
+                errorArea.style.display = "block";
+                errorArea.innerText = error;
+                document.getElementById("P75_SEARCH_DBA").focus();
+            }
+        }
+        
+        async function doesDBAExists(searchDBA) {
+            const response = await apex.server.process('DBA_EXISTS', {
+                pageItems: '#P75_SEARCH_DBA',
+                x01: searchDBA
+            }, {
+                dataType: 'json'
+            });
+            if (response.success) {
+                return true;
+            } else {
+                throw 'The entered DBA does not exist.'
+            }
+        }
+        
+        searchDBA();
+
+    execution: 
+      sequence: 30
+      event: Go to Create Collection # 35235763219472423
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Inquire ========================
+  id: 43601725347093317
+  identification: 
+    name: Open Inquire
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: INQUIRE # 24838386068564060
+
+  client-side-condition: 
+    type: Item is not null
+    item: P75_COLLECTION_ID
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 43601843240093318
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Inquire # 43601244102093312
+
+    execution: 
+      sequence: 20
+      event: Open Inquire # 43601725347093317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43602677114093326
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#inquire").dialog({
+          width: 600,
+          position: { my: "right", at: "right-140", of: window }
+        });
+
+    execution: 
+      sequence: 10
+      event: Open Inquire # 43601725347093317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44255914566146522
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p75keyevents');
+        $(document).on('keydown.p75keyevents', (ev) => {
+            $('#inquire').dialog("close")
+        });
+        
+        $("#inquire").on("dialogbeforeclose", function(event, ui) {
+            setTimeout(mapP75Keys, 0);
+        });
+
+    execution: 
+      sequence: 30
+      event: Open Inquire # 43601725347093317
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Make Collection ===============
+  id: 43602444578093324
+  identification: 
+    name: Close Make Collection
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE_COLLECTION # 43602340685093323
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 43602552474093325
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Make Collection # 24859249164616226
+
+    execution: 
+      sequence: 10
+      event: Close Make Collection # 43602444578093324
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Inquire =======================
+  id: 43602802142093328
+  identification: 
+    name: Close Inquire
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CLOSE_INQUIRE # 43602729860093327
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 43602974386093329
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Inquire # 43601244102093312
+
+    execution: 
+      sequence: 10
+      event: Close Inquire # 43602802142093328
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Validate Dates ======================
+  id: 44254640401146509
+  identification: 
+    name: Validate Dates
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: validateDates
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44254705361146510
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var dateFrom = $v('P75_COLLECT_DATE_FROM');
+        var dateTo = $v('P75_COLLECT_DATE_TO');
+        var currentDate = new Date();
+        
+        apex.message.clearErrors();
+        
+        var hasErrors = false;
+        
+        function isDateValid(dateString) {
+            var datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+        
+            if (!dateString.match(datePattern)) {
+                return false;
+            }
+        
+            var parts = dateString.split("/");
+            var month = parseInt(parts[0], 10);
+            var day = parseInt(parts[1], 10);
+            var year = parseInt(parts[2], 10);
+        
+            var date = new Date(year, month - 1, day);
+            return (date.getFullYear() === year && date.getMonth() === (month - 1) && date.getDate() === day);
+        }
+        
+        function parseDate(dateString) {
+            var parts = dateString.split("/");
+            return new Date(parts[2], parts[0] - 1, parts[1]);
+        }
+        
+        var dateFromParsed = parseDate(dateFrom);
+        var dateToParsed = parseDate(dateTo);
+        
+        if (dateFrom == "") {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P75_COLLECT_DATE_FROM",
+                message: "Collection Date is required",
+                unsafe: false
+            }])
+            hasErrors = true;
+        } else if (!isDateValid(dateFrom)) {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P75_COLLECT_DATE_FROM",
+                message: "Please Enter a valid date",
+                unsafe: false
+            }])
+            hasErrors = true;
+        } else if (dateTo !== "" && dateFromParsed > dateToParsed) {
+            apex.message.showErrors([{
+                type: "error",
+                location: ["inline"],
+                pageItem: "P75_COLLECT_DATE_FROM",
+                message: "Date must be earlier than Date To",
+                unsafe: false
+            }]);
+            hasErrors = true;
+        }
+        
+        if (!isDateValid(dateTo) && dateTo !== "") {
+            apex.message.showErrors([{
+                type: "error",location: ["inline"],
+                pageItem: "P75_COLLECT_DATE_TO",
+                message: "Please Enter a valid date",
+                unsafe: false
+            }])
+            hasErrors = true;
+        } else if (dateToParsed > currentDate) {
+            apex.message.showErrors([{
+                type: "error",
+                location: ["inline"],
+                pageItem: "P75_COLLECT_DATE_TO",
+                message: "Date cannot exceed today's date",
+                unsafe: false
+            }]);
+            hasErrors = true;
+        }
+        
+        if (hasErrors) {
+            return false;
+        }
+        
+        apex.message.clearErrors();
+
+    execution: 
+      sequence: 10
+      event: Validate Dates # 44254640401146509
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 44254879911146511
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Collection Grid # 22495299283163640
+
+    execution: 
+      sequence: 20
+      event: Validate Dates # 44254640401146509
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44255661027146519
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        // setTimeout(function() {
+        //     $(".a-GV-cell").first().trigger("click");
+        // }, 500);
+        
+        // var igStaticId = "table";
+        
+        // var igRegion = apex.region(igStaticId);
+        
+        // if (igRegion) {
+        //     var igView = igRegion.widget().interactiveGrid("getViews", "grid");
+        //     var igModel = igView.model;
+        
+        //     igModel.subscribe({
+        //         onDataChange: function() {
+        //             console.log("Interactive Grid data refreshed.");
+        
+        //             $(".a-GV-cell").first().trigger("click");
+        //         }
+        //     });
+        // }
+
+    execution: 
+      sequence: 30
+      event: Validate Dates # 44254640401146509
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection Change ====================
+  id: 44255309866146516
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Collection Grid # 22495299283163640
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44255426957146517
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.selectedRecords && this.data.selectedRecords.length > 0) {
+            let collectionIdSelected = this.data.selectedRecords[0][1];
+            apex.item("P75_COLLECTION_ID").setValue(collectionIdSelected);
+        }
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 44255309866146516
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Select First Cell ===================
+  id: 44256052353146523
+  identification: 
+    name: Select First Cell
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|gridpagechange
+    selection-type: Region
+    region: Collection Grid # 22495299283163640
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44256144525146524
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(".a-GV-cell").first().trigger("click");
+
+    execution: 
+      sequence: 10
+      event: Select First Cell # 44256052353146523
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: DBA_EXISTS =================================
+  id: 44254568427146508
+  identification: 
+    name: DBA_EXISTS
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+          v_exists NUMBER;
+      BEGIN
+          SELECT COUNT(*)
+          INTO v_exists
+          FROM NPT009
+          WHERE "DBA" = apex_application.g_x01;
+      
+          IF v_exists = 0 THEN
+              HTP.P('{"success": false}');
+          ELSE
+              HTP.P('{"success": true}');
+          END IF;
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

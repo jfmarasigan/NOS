@@ -1,0 +1,465 @@
+---
+# ====== Page: OTAS Search ===================================
+id: 34
+identification: 
+  name: OTAS Search
+  alias: OTAS-SEARCH
+  title: Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+css: 
+  inline: |
+    .bgblue{
+        background-color: #056BC9;
+    }
+    .white-text{
+        color:white;
+    }
+    .nop-right {
+        padding-right: 0;
+    }
+    
+    .nop-left {
+        padding-left: 0;
+    }
+    .search-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .text-general {
+        font-size: 1.125rem;
+    }
+    .t-Form-label{
+        font-size:1.125rem;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P34_CODE_SEARCH ==========================
+  id: 9768536540817007
+  identification: 
+    name: P34_CODE_SEARCH
+    type: Text Field
+
+  label: 
+    label: 'Search for Code: '
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+    column-css-classes: 
+    - nop-right
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-top-sm
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P34_NAME_SEARCH ==========================
+  id: 9768685643817008
+  identification: 
+    name: P34_NAME_SEARCH
+    type: Text Field
+
+  label: 
+    label: 'Name:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--large
+    - margin-top-sm
+    - margin-bottom-sm
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    css-classes: 
+    - text-general
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P34_SEARCH_KEY ===========================
+  id: 9769776585817019
+  identification: 
+    name: P34_SEARCH_KEY
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P34_SEARCH_VALUE =========================
+  id: 9770999399817031
+  identification: 
+    name: P34_SEARCH_VALUE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Code Search - On press Enter ========
+  id: 9772770691817049
+  identification: 
+    name: Code Search - On press Enter
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P34_CODE_SEARCH
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter'
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14278376701795911
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p34keyevents');
+
+    execution: 
+      sequence: 10
+      event: Code Search - On press Enter # 9772770691817049
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Submit Page =================================
+    id: 14278561023795913
+    identification: 
+      action: Submit Page
+
+    settings: 
+      show-processing: true
+
+    execution: 
+      sequence: 50
+      event: Code Search - On press Enter # 9772770691817049
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16109163871770119
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P34_CODE_SEARCH IS NULL AND :P34_NAME_SEARCH IS NOT NULL 
+        THEN BEGIN :P34_SEARCH_KEY := 'name'; :P34_SEARCH_VALUE := :P34_NAME_SEARCH; END;
+        ELSE BEGIN :P34_SEARCH_KEY := 'code'; :P34_SEARCH_VALUE := :P34_CODE_SEARCH; END;
+        END IF;
+        END;
+      items-to-submit: 
+      - P34_CODE_SEARCH
+      - P34_NAME_SEARCH
+      items-to-return: 
+      - P34_SEARCH_KEY
+      - P34_SEARCH_VALUE
+      suppress-change-event: false
+
+    execution: 
+      sequence: 40
+      event: Code Search - On press Enter # 9772770691817049
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Name Search - On press Enter ========
+  id: 10495487641417901
+  identification: 
+    name: Name Search - On press Enter
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Item(s)
+    item(s): 
+    - P34_NAME_SEARCH
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === 'enter'
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14278614832795914
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: $(document).off('keydown.p34keyevents');
+
+    execution: 
+      sequence: 10
+      event: Name Search - On press Enter # 10495487641417901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Submit Page =================================
+    id: 14278833399795916
+    identification: 
+      action: Submit Page
+
+    settings: 
+      show-processing: true
+
+    execution: 
+      sequence: 40
+      event: Name Search - On press Enter # 10495487641417901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16109234327770120
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P34_CODE_SEARCH IS NULL AND :P34_NAME_SEARCH IS NOT NULL 
+        THEN BEGIN :P34_SEARCH_KEY := 'name'; :P34_SEARCH_VALUE := :P34_NAME_SEARCH; END;
+        ELSE BEGIN :P34_SEARCH_KEY := 'code'; :P34_SEARCH_VALUE := :P34_CODE_SEARCH; END;
+        END IF;
+        END;
+      items-to-submit: 
+      - P34_CODE_SEARCH
+      - P34_NAME_SEARCH
+      items-to-return: 
+      - P34_SEARCH_KEY
+      - P34_SEARCH_VALUE
+      suppress-change-event: false
+
+    execution: 
+      sequence: 30
+      event: Name Search - On press Enter # 10495487641417901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+validations: 
+- # ====== Validation: No blank fields =========================
+  id: 10497081634417917
+  identification: 
+    name: No blank fields
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: ':P34_CODE_SEARCH IS NOT NULL OR :P34_NAME_SEARCH IS NOT NULL'
+    always-execute: false
+
+  error: 
+    error-message: Fill up at least one field
+    display-location: Inline with Field
+    associated-item: P34_CODE_SEARCH # 9768536540817007
+
+processes: 
+- # ====== Process: Close Dialog ===============================
+  id: 9771025003817032
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    items-to-return-: 
+    - P34_SEARCH_KEY
+    - P34_SEARCH_VALUE
+    show-success-messages: false
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+

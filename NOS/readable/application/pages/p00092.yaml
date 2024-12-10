@@ -1,0 +1,1549 @@
+---
+# ====== Page: POS Cashiering Main Screen - 2nd Payment ======
+id: 92
+identification: 
+  name: POS Cashiering Main Screen - 2nd Payment
+  alias: POS-CASHIERING-MAIN-SCREEN-2ND-PAYMENT
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Modal Dialog
+  template-options: 
+  - '#DEFAULT#'
+  - t-Dialog--noPadding
+  - t-DeferredRendering
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p92KeyMap = {
+        1: (v) => {
+            $("#1").trigger("click");
+        },
+    
+        2: (v) => {
+            $("#2").trigger("click");
+        },
+        escape: (v) => {
+            //
+        }
+    }
+    
+    function mapP92Keys() {
+        $(document).off('keydown.p92keyevents');
+        $(document).on('keydown.p92keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p92KeyMap[key]) {
+                ev.preventDefault();
+                p92KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP92Keys();
+    
+
+css: 
+  inline: |
+    #payment table, 
+    #payment tr,
+    #payment td,
+    #payment th {
+        font-size: 1.125rem;
+        font-family: Arial;
+        color: black;
+        background-color: white;
+    }
+    
+    /* .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    } */
+    
+    #P41_TOTAL_CONTAINER {
+        --a-field-input-flex-grow: 0.915;
+    }
+    
+    #P41_PAID_CONTAINER {
+        --a-field-input-flex-grow: 0.915;
+    }
+    #P41_UNPAID_CONTAINER {
+        --a-field-input-flex-grow: 0.915;
+    }
+    
+    .a-GV-headerLabel a, th.a-GV-header {
+        background-color: #056AC8;
+        color: white;
+        text-align: center;
+    }
+    
+    .t-Dialog-body{
+        background-color: #056AC8;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .t-Dialog-body label,
+    .t-Dialog-body input{
+        font-size: 1.125rem;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .t-Region-body{
+       padding-bottom: 0;
+       padding-left: 0;
+       background-color: #056AC8;
+       color: white;
+    }
+    .t-Form-label {
+        line-height: 1.5rem;
+        white-space: nowrap;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        text-align: left;
+    }
+    
+    .btns2 {
+        font-size: 1.125rem;
+        text-align: left;
+        color: black;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+        white-space: nowrap;
+    }
+    
+    .t-Region-title {
+        font-size: 1.125rem;
+        font-family: Arial;
+        font-weight: 700;
+        text-align: left;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .t-Region-header{
+        background-color: #056AC8;
+         color: white;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Payment Table ===============================
+  id: 57467319808753033
+  identification: 
+    name: Payment Table
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT c001 Payment_Method, n001 Amount
+        FROM apex_collections
+       WHERE collection_name = 'PAYMENT'
+         AND n001 IS NOT NULL;
+
+  layout: 
+    sequence: 30
+    parent-region: Payment # 63632172148544950
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-lg
+    - margin-right-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: payment
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 57467716730753037
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Page
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 57859683009148347
+      identification: 
+        name: Primary Report
+        alias: 178647
+
+  columns: 
+  - # ====== Column: PAYMENT_METHOD ==============================
+    id: 57467908345753038
+    identification: 
+      column-name: PAYMENT_METHOD
+      type: Textarea
+
+    heading: 
+      heading: Payment Method
+      alignment: start
+
+    settings: 
+      resizable: true
+      auto-height: false
+      character-counter: false
+      trim-spaces: Leading and Trailing
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: PAYMENT_METHOD
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: true
+
+  - # ====== Column: AMOUNT ======================================
+    id: 65484911471739022
+    identification: 
+      column-name: AMOUNT
+      type: Number Field
+
+    heading: 
+      heading: Amount
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 20
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: FML999G999G999G999G990D00
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Payment Methods =============================
+  id: 57468532657753045
+  identification: 
+    name: Payment Methods
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: Payment # 63632172148544950
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--noBorder
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: New =========================================
+  id: 63632088891544949
+  identification: 
+    name: New
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Payment =====================================
+  id: 63632172148544950
+  identification: 
+    name: Payment
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    - margin-top-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P92_TOTAL ================================
+  id: 57467759937753080
+  identification: 
+    name: P92_TOTAL
+    type: Display Only
+
+  label: 
+    label: '<b> Total Amount: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Payment # 63632172148544950
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_PAID =================================
+  id: 57469291745753095
+  identification: 
+    name: P92_PAID
+    type: Display Only
+
+  label: 
+    label: '<b>Amount Paid: </b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 40
+    region: Payment # 63632172148544950
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    - t-Form-fieldContainer--boldDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_UNPAID ===============================
+  id: 57469399536753096
+  identification: 
+    name: P92_UNPAID
+    type: Display Only
+
+  label: 
+    label: '<b>Unpaid Amount:</b>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 50
+    region: Payment # 63632172148544950
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 3
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--postTextBlock
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_URL ==================================
+  id: 58715560519102938
+  identification: 
+    name: P92_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Page Item: P92_ITEM_DESC ============================
+  id: 67424464941376805
+  identification: 
+    name: P92_ITEM_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Payment # 63632172148544950
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_ITEM_TOTAL ===========================
+  id: 67424569626376806
+  identification: 
+    name: P92_ITEM_TOTAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: Payment # 63632172148544950
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_SUB_TOTAL ============================
+  id: 67424640930376807
+  identification: 
+    name: P92_SUB_TOTAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: Payment # 63632172148544950
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_DISCOUNT =============================
+  id: 67424802244376808
+  identification: 
+    name: P92_DISCOUNT
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 110
+    region: Payment # 63632172148544950
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_OVERALL_TOTAL ========================
+  id: 67424857570376809
+  identification: 
+    name: P92_OVERALL_TOTAL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 120
+    region: Payment # 63632172148544950
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_CUSTOMER =============================
+  id: 67425173559376812
+  identification: 
+    name: P92_CUSTOMER
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 150
+    region: Payment # 63632172148544950
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P92_ITEM_PRICE ===========================
+  id: 67425622912376816
+  identification: 
+    name: P92_ITEM_PRICE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Payment # 63632172148544950
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Cash ========================================
+  id: 40001254025298695
+  identification: 
+    button-name: Cash
+    label: 1 - CASH
+
+  layout: 
+    sequence: 10
+    region: Payment Methods # 57468532657753045
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:36:&SESSION.::&DEBUG.:36::'
+      page: 36 # POS Cashiering - Cash Payment
+      clear-cache: 36
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: 1
+
+- # ====== Button: CHECK =======================================
+  id: 40001696961298696
+  identification: 
+    button-name: CHECK
+    label: 6 - COMPANY CHECK
+
+  layout: 
+    sequence: 60
+    region: Payment Methods # 57468532657753045
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns2
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 6
+
+- # ====== Button: MEMO ========================================
+  id: 40002033243298696
+  identification: 
+    button-name: MEMO
+    label: 5 - CREDIT MEMO
+
+  layout: 
+    sequence: 50
+    region: Payment Methods # 57468532657753045
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns2
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 5
+
+- # ====== Button: GYELLOW =====================================
+  id: 40002493186298698
+  identification: 
+    button-name: GYELLOW
+    label: 4 - GIFT CERT YELLOW
+
+  layout: 
+    sequence: 40
+    region: Payment Methods # 57468532657753045
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns2
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 4
+
+- # ====== Button: GBLUE =======================================
+  id: 40002862835298698
+  identification: 
+    button-name: GBLUE
+    label: 3 - GIFT CARD BLUE
+
+  layout: 
+    sequence: 30
+    region: Payment Methods # 57468532657753045
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns2
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: 3
+
+- # ====== Button: Credit ======================================
+  id: 40003251481298698
+  identification: 
+    button-name: Credit
+    label: 2 - CREDIT CARD
+
+  layout: 
+    sequence: 20
+    region: Payment Methods # 57468532657753045
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:45:&SESSION.::&DEBUG.:::'
+      page: 45 # POS Cashiering - Credit Card Payment
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: 2
+
+- # ====== Button: Submit ======================================
+  id: 40003688596298698
+  identification: 
+    button-name: Submit
+    label: Submit
+
+  layout: 
+    sequence: 70
+    region: Payment Methods # 57468532657753045
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:::'
+      page: 43 # POS Cashiering - Payment Summary
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: submit
+
+- # ====== Button: Escape ======================================
+  id: 40004001792298700
+  identification: 
+    button-name: Escape
+    label: Escape
+
+  layout: 
+    sequence: 80
+    region: Payment Methods # 57468532657753045
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: escape
+
+dynamic-actions: 
+- # ====== Dynamic Action: Close Dialog ========================
+  id: 40008195757298721
+  identification: 
+    name: Close Dialog
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Escape # 40004001792298700
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 40008697249298725
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 20
+      event: Close Dialog # 40008195757298721
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Refresh Items =======================
+  id: 40010980082298728
+  identification: 
+    name: Refresh Items
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 40011479271298729
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P92_TOTAL
+      - P92_PAID
+      - P92_UNPAID
+
+    execution: 
+      sequence: 10
+      event: Refresh Items # 40010980082298728
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 40011901068298729
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Payment Table # 57467319808753033
+
+    execution: 
+      sequence: 20
+      event: Refresh Items # 40010980082298728
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set Value and Refresh ===============
+  id: 40012303739298729
+  identification: 
+    name: Set Value and Refresh
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Total =======================================
+    id: 40012802337298731
+    identification: 
+      name: Total
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT TO_CHAR( NVL(n003, 0),'L999G999G990D99' ) 
+          FROM apex_collections
+         WHERE collection_name = 'ORDERS'
+           AND seq_id = (SELECT MAX(seq_id)
+                             FROM APEX_COLLECTIONS
+                             WHERE collection_name = 'ORDERS')
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P92_TOTAL
+
+    execution: 
+      sequence: 10
+      event: Set Value and Refresh # 40012303739298729
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Unpaid ======================================
+    id: 40013332138298731
+    identification: 
+      name: Unpaid
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: |
+        TO_CHAR(TO_NUMBER(REPLACE(REPLACE(NVL(:P92_TOTAL, 0), '$', ''), ',', '')) - TO_NUMBER(REPLACE(REPLACE(NVL(:P92_PAID, 0), '$', ''), ',', '')), 'L999G999G990D99' )
+        
+      items-to-submit: 
+      - P92_TOTAL
+      - P92_PAID
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P92_UNPAID
+
+    execution: 
+      sequence: 30
+      event: Set Value and Refresh # 40012303739298729
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Paid ========================================
+    id: 40013823905298731
+    identification: 
+      name: Paid
+      action: Set Value
+
+    settings: 
+      set-type: SQL Statement
+      sql-statement: |
+        SELECT TO_CHAR(NVL(SUM(n001), 0), 'L999G999G990D99' ) 
+          FROM apex_collections
+         WHERE collection_name = 'PAYMENT'
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P92_PAID
+
+    execution: 
+      sequence: 20
+      event: Set Value and Refresh # 40012303739298729
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+validations: 
+- # ====== Validation: Validate ================================
+  id: 40007856772298721
+  identification: 
+    name: Validate
+
+  execution: 
+    sequence: 10
+
+  validation: 
+    type: PL/SQL Error
+    pl/sql-code-raising-error: |
+      DECLARE
+          v_unpaid NUMBER;
+      BEGIN
+          SELECT TO_NUMBER(REPLACE(REPLACE(:P92_UNPAID, '$', ''), ',', '')) INTO v_unpaid
+            FROM DUAL;
+      
+          IF v_unpaid > 0 THEN 
+              RAISE_APPLICATION_ERROR(-20001, 'Unpaid Amount not yet Paid.');
+          END IF;
+      
+      EXCEPTION
+          WHEN OTHERS THEN
+              RAISE_APPLICATION_ERROR(-20002, 'An unexpected error occurred: ' || SQLERRM);
+      END;
+    always-execute: true
+
+  error: 
+    error-message: Unpaid Amount not yet Paid.
+    display-location: On Error Page
+    associated-item: P92_UNPAID # 57469399536753096
+
+  server-side-condition: 
+    when-button-pressed: Submit # 40003688596298698
+
+computations: 
+- # ====== Computation: P92_ITEM_DESC ==========================
+  id: 40005057774298718
+  identification: 
+    item-name: P92_ITEM_DESC
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT c003
+        FROM apex_collections
+       WHERE collection_name = 'PURCHASE'
+
+- # ====== Computation: P92_ITEM_TOTAL =========================
+  id: 40005443448298718
+  identification: 
+    item-name: P92_ITEM_TOTAL
+
+  execution: 
+    sequence: 50
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n003
+        FROM apex_collections
+       WHERE collection_name = 'PURCHASE'
+
+- # ====== Computation: P92_ITEM_PRICE =========================
+  id: 40005819746298720
+  identification: 
+    item-name: P92_ITEM_PRICE
+
+  execution: 
+    sequence: 60
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n002
+        FROM apex_collections
+       WHERE collection_name = 'PURCHASE'
+
+- # ====== Computation: P92_SUB_TOTAL ==========================
+  id: 40006267306298720
+  identification: 
+    item-name: P92_SUB_TOTAL
+
+  execution: 
+    sequence: 70
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n001
+        FROM apex_collections
+       WHERE collection_name = 'ORDERS'
+
+- # ====== Computation: P92_DISCOUNT ===========================
+  id: 40006651245298720
+  identification: 
+    item-name: P92_DISCOUNT
+
+  execution: 
+    sequence: 80
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n002
+        FROM apex_collections
+       WHERE collection_name = 'ORDERS'
+
+- # ====== Computation: P92_OVERALL_TOTAL ======================
+  id: 40007073922298720
+  identification: 
+    item-name: P92_OVERALL_TOTAL
+
+  execution: 
+    sequence: 90
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT n003
+        FROM apex_collections
+       WHERE collection_name = 'ORDERS'
+
+- # ====== Computation: P92_CUSTOMER ===========================
+  id: 40007409718298721
+  identification: 
+    item-name: P92_CUSTOMER
+
+  execution: 
+    sequence: 100
+    point: Before Regions
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      SELECT c001
+        FROM apex_collections
+       WHERE collection_name = 'ORDERS'
+
+branches: 
+- # ====== Branch: Redirect to Payment Summary =================
+  id: 40014310966298734
+  identification: 
+    name: Redirect to Payment Summary
+
+  execution: 
+    sequence: 10
+    point: Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:43:&SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+      page: 43 # POS Cashiering - Payment Summary
+

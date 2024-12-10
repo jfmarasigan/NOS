@@ -1,0 +1,1956 @@
+---
+# ====== Page: Customer Payment Terms Utilities ==============
+id: 213
+identification: 
+  name: Customer Payment Terms Utilities
+  alias: CUSTOMER-PAYMENT-TERMS-UTILITIES
+  title: Customer Payment Terms Utilities
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p213KeyMap = {
+        a : (v) => {
+            $("#a").click();
+        },
+        p : (v) => {
+            $("#p").click();
+        },
+        escape : (v) => {
+            $("#to-main-menu").click();
+        },
+        s : (v) => {
+            $("#s").click();
+        },
+        u : (v) => {
+            $("#u").click();
+        },
+        h : (v) => {
+            $("#h").click();
+        },
+        home: (v) => {
+            $("#to-top").trigger("click");
+        },
+        end: (v) => {
+            $("#to-bottom").trigger("click");
+        }
+    }
+    
+    function mapP213Keys() {
+        $(document).off('keydown.p213keyevents');
+        $(document).on('keydown.p213keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p213KeyMap[key]) {
+                ev.preventDefault();
+                p213KeyMap[key]();
+            }
+        });
+    }
+    
+    const p213KeyMapPrint = {
+        a : (v) => {
+            $("#dot").click();
+        },
+        b : (v) => {
+            $("#graphic").click();
+        },
+        escape : (v) => {
+            mapP213Keys();
+        }
+    }
+    
+    function mapP213KeysPrint() {
+        $(document).off('keydown.p213keyevents');
+        $(document).on('keydown.p213keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p213KeyMapPrint[key]) {
+                ev.preventDefault();
+                p213KeyMapPrint[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP213Keys();
+    }
+  execute-when-page-loads: |
+    mapP213Keys();
+    
+    setTitle("Customer - Payment Terms Utilities")
+    
+    $( document ).ready(function() {
+        $(".a-GV-cell").first().trigger("click");
+    });
+
+css: 
+  inline: |
+    body, #button-region {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    #list table, #list tr, #list td, #list th {
+         font-size: 1.125rem;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #056AC8;
+        color: white;
+        border: none;
+    }
+    
+    .ui-dialog-title{
+        font-size: 1.5rem;
+        padding-bottom: 0.2rem;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    
+    
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1rem;
+    }
+    
+    #list .a-IG {
+        height: calc(75vh + 2px) !important;
+    } 
+    
+    #list .a-IG-contentContainer {
+        height: 75vh !important;
+    }
+    
+    #list .a-IG-gridView.a-GV {
+        height: 75vh !important;
+    }
+    
+    #list .a-GV-bdy {
+        height: calc(75vh - 2.5625rem) !important;
+    }
+    
+    #printing-options .t-DialogRegion-body{
+        background-color: #056AC8;
+    }
+    
+    .ui-resizable-s{
+        background-color: #056AC8;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: List ========================================
+  id: 43432285874832002
+  identification: 
+    name: List
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          PAYMENT_TERMS_ID,
+          PAYMENT_TERMS_NAME,
+          AMOUNT,
+          SPLIT_COUNT,
+          DAYS,
+          USER_CREATED,
+          DATE_CREATED,
+          USER_UPDATE,
+          DATE_UPDATED
+      FROM NPM006
+      WHERE 
+          ( :P213_NAME_SEARCH IS NOT NULL AND UPPER(PAYMENT_TERMS_NAME) LIKE UPPER('%' || :P213_NAME_SEARCH || '%') )
+          OR
+          ( :P213_NAME_SEARCH IS NULL );
+    page-items-to-submit: 
+    - P213_NAME_SEARCH
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 43432313217832003
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 360
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 43439350595886223
+      identification: 
+        name: Primary Report
+        alias: 434394
+
+  columns: 
+  - # ====== Column: PAYMENT_TERMS_ID ============================
+    id: 43432463741832004
+    identification: 
+      column-name: PAYMENT_TERMS_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: PAYMENT_TERMS_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: PAYMENT_TERMS_NAME ==========================
+    id: 43432578100832005
+    identification: 
+      column-name: PAYMENT_TERMS_NAME
+      type: Text Field
+
+    heading: 
+      heading: Payment Terms Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: PAYMENT_TERMS_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: AMOUNT ======================================
+    id: 43432650537832006
+    identification: 
+      column-name: AMOUNT
+      type: Number Field
+
+    heading: 
+      heading: Amount
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: SPLIT_COUNT =================================
+    id: 43432716679832007
+    identification: 
+      column-name: SPLIT_COUNT
+      type: Number Field
+
+    heading: 
+      heading: Split Count
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 40
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: SPLIT_COUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: DAYS ========================================
+    id: 43432883405832008
+    identification: 
+      column-name: DAYS
+      type: Number Field
+
+    heading: 
+      heading: Days
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: DAYS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: USER_CREATED ================================
+    id: 43432983981832009
+    identification: 
+      column-name: USER_CREATED
+      type: Text Field
+
+    heading: 
+      heading: Created User
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: USER_CREATED
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: DATE_CREATED ================================
+    id: 43433022457832010
+    identification: 
+      column-name: DATE_CREATED
+      type: Date Picker
+
+    heading: 
+      heading: Date Created
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 70
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: DATE_CREATED
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: USER_UPDATE =================================
+    id: 43433137209832011
+    identification: 
+      column-name: USER_UPDATE
+      type: Text Field
+
+    heading: 
+      heading: Last Updated By
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: USER_UPDATE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: DATE_UPDATED ================================
+    id: 43433274736832012
+    identification: 
+      column-name: DATE_UPDATED
+      type: Date Picker
+
+    heading: 
+      heading: Date Updated
+      alignment: center
+
+    settings: 
+      show-time: false
+      display-as: Popup
+      minimum-date: None
+      maximum-date: None
+      multiple-months: No
+      use-defaults: true
+
+    layout: 
+      sequence: 90
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: DATE_UPDATED
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Buttons =====================================
+  id: 86191578984007355
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: button-region
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Printing Options ============================
+  id: 88363203348677795
+  identification: 
+    name: Printing Options
+    title: Printing Options
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-autoheight
+    - js-dialog-size480x320
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: printing-options
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P213_NAME_SEARCH =========================
+  id: 43091427810119049
+  identification: 
+    name: P213_NAME_SEARCH
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P213_SELECTED_ID =========================
+  id: 43091532268119050
+  identification: 
+    name: P213_SELECTED_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P213_PREPARED_URL ========================
+  id: 43432187856832001
+  identification: 
+    name: P213_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Search ======================================
+  id: 43449579726895964
+  identification: 
+    button-name: Search
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 50
+    region: Buttons # 86191578984007355
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:214:&SESSION.::&DEBUG.:::'
+      page: 214 # Customer Payment Terms Utilities Search
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Add =========================================
+  id: 43449918218895965
+  identification: 
+    button-name: Add
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Buttons # 86191578984007355
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:215:&SESSION.::&DEBUG.:::'
+      page: 215 # Customer Payment Terms Utilities Add
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+- # ====== Button: Update ======================================
+  id: 43450317864895965
+  identification: 
+    button-name: Update
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Buttons # 86191578984007355
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+- # ====== Button: Print =======================================
+  id: 43450795266895967
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 30
+    region: Buttons # 86191578984007355
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: Export ======================================
+  id: 43451100000895967
+  identification: 
+    button-name: Export
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 40
+    region: Buttons # 86191578984007355
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: h
+
+- # ====== Button: Top =========================================
+  id: 43451577938895967
+  identification: 
+    button-name: Top
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 60
+    region: Buttons # 86191578984007355
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: home
+
+- # ====== Button: Bottom ======================================
+  id: 43451940182895967
+  identification: 
+    button-name: Bottom
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 70
+    region: Buttons # 86191578984007355
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: end
+
+- # ====== Button: To_Exit =====================================
+  id: 43452329139895968
+  identification: 
+    button-name: To_Exit
+    label: '-'
+
+  layout: 
+    sequence: 80
+    region: Buttons # 86191578984007355
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: escape
+
+- # ====== Button: Graphic =====================================
+  id: 44884469861504968
+  identification: 
+    button-name: Graphic
+    label: B - Graphic Printer
+
+  layout: 
+    sequence: 40
+    region: Printing Options # 88363203348677795
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: graphic
+
+- # ====== Button: Dotmatrix ===================================
+  id: 44884849528504968
+  identification: 
+    button-name: Dotmatrix
+    label: A - Dotmatrix
+
+  layout: 
+    sequence: 30
+    region: Printing Options # 88363203348677795
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: dot
+
+dynamic-actions: 
+- # ====== Dynamic Action: Close Add or Update =================
+  id: 43433420465832014
+  identification: 
+    name: Close Add or Update
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43433547069832015
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.server.process('GET_SUCCESS_MSG', {}, {
+                success: function(data) {
+                    if (data.success_msg) {
+        
+                        apex.message.showPageSuccess(data.success_msg);
+        
+                        setTimeout(function() {
+                            $(".t-Button--closeAlert").trigger("click");
+                        }, 3000);
+        
+                    }
+                }
+            });
+        
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        }, "300");
+        
+
+    execution: 
+      sequence: 10
+      event: Close Add or Update # 43433420465832014
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Search Closed =======================
+  id: 43434516422832025
+  identification: 
+    name: Search Closed
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 43449579726895964
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 43434612175832026
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: List # 43432285874832002
+
+    execution: 
+      sequence: 20
+      event: Search Closed # 43434516422832025
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 43434712832832027
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P214_NAME
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P213_NAME_SEARCH
+
+    execution: 
+      sequence: 10
+      event: Search Closed # 43434516422832025
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43434899244832028
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        }, "300");
+
+    execution: 
+      sequence: 30
+      event: Search Closed # 43434516422832025
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add Closed ==========================
+  id: 43436565557832045
+  identification: 
+    name: Add Closed
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed or Canceled
+    selection-type: Button
+    button: Add # 43449918218895965
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43436680549832046
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP213Keys();
+
+    execution: 
+      sequence: 10
+      event: Add Closed # 43436565557832045
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Update Clicked ======================
+  id: 43477593840172813
+  identification: 
+    name: Update Clicked
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Update # 43450317864895965
+
+  client-side-condition: 
+    type: Item is not null
+    item: P213_SELECTED_ID
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 43477637567172814
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P213_PREPARED_URL := apex_page.get_url(
+               p_page   => 216,
+               p_items  => 'P216_PAYMENT_TERMS_ID',
+               p_values => :P213_SELECTED_ID, 
+               p_clear_cache => '216'
+             );
+        END;
+      items-to-submit: 
+      - P213_SELECTED_ID
+      items-to-return: 
+      - P213_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Update Clicked # 43477593840172813
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43477709337172815
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P213_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Update Clicked # 43477593840172813
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection Change ====================
+  id: 43477826057172816
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: List # 43432285874832002
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43477934029172817
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let selectedRecords = this.data.selectedRecords;
+        
+        if (selectedRecords.length > 0) {
+        
+            let typeIDSelected = selectedRecords[0][0];
+        
+            $("#P213_SELECTED_ID").val(typeIDSelected);
+        
+        } 
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 43477826057172816
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Home Click ==========================
+  id: 43478011503172818
+  identification: 
+    name: Home Click
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Top # 43451577938895967
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43478128845172819
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: ' $(".a-GV-cell").first().trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: Home Click # 43478011503172818
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: End Click ===========================
+  id: 43478225253172820
+  identification: 
+    name: End Click
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Bottom # 43451940182895967
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 43478371714172821
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: '$(".a-GV-table tr:last .a-GV-cell:first").trigger("click");'
+
+    execution: 
+      sequence: 10
+      event: End Click # 43478225253172820
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Courier New =========================
+  id: 44874632707477208
+  identification: 
+    name: Courier New
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Dotmatrix # 44884849528504968
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44874797832477209
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        var searchContext;
+        var searchVal;
+        if($v("P213_NAME_SEARCH").length > 0){
+            searchContext = "SEARCH";
+            searchVal = $v("P213_NAME_SEARCH");
+        } else {
+            searchContext = "ALL";
+        }
+        
+        generateReport("CUSTOMER_PAYMENT_TERMS_UTILITIES_COURIER_NEW_PDF", "pdf", { 
+            fileName: `CustomerMasterfilePaymentTermsUtilities_${formattedDate}.pdf`,
+            mode : "print",
+            parameters : {
+                P_SEARCH_CONTEXT : searchContext,
+                P_SEARCH_VALUE : searchVal,
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Courier New # 44874632707477208
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 44874871765477210
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 88363203348677795
+
+    execution: 
+      sequence: 20
+      event: Courier New # 44874632707477208
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44874920721477211
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP213Keys();
+
+    execution: 
+      sequence: 30
+      event: Courier New # 44874632707477208
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Print Options ==================
+  id: 44875065036477212
+  identification: 
+    name: Open Print Options
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 43450795266895967
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 44875133410477213
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 88363203348677795
+
+    execution: 
+      sequence: 10
+      event: Open Print Options # 44875065036477212
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44875244059477214
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP213KeysPrint();
+
+    execution: 
+      sequence: 20
+      event: Open Print Options # 44875065036477212
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Arial ===============================
+  id: 44875360670477215
+  identification: 
+    name: Arial
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Graphic # 44884469861504968
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44875400140477216
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        var searchContext;
+        var searchVal;
+        if($v("P213_NAME_SEARCH").length > 0){
+            searchContext = "SEARCH";
+            searchVal = $v("P213_NAME_SEARCH");
+        } else {
+            searchContext = "ALL";
+        }
+        
+        generateReport("CUSTOMER_PAYMENT_TERMS_UTILITIES_ARIAL_PDF", "pdf", { 
+            fileName: `CustomerMasterfilePaymentTermsUtilities_${formattedDate}.pdf`,
+            mode : "print",
+            parameters : {
+                P_SEARCH_CONTEXT : searchContext,
+                P_SEARCH_VALUE : searchVal,
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Arial # 44875360670477215
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 44875505762477217
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Printing Options # 88363203348677795
+
+    execution: 
+      sequence: 20
+      event: Arial # 44875360670477215
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44875669237477218
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: mapP213Keys();
+
+    execution: 
+      sequence: 30
+      event: Arial # 44875360670477215
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export Excel ========================
+  id: 44875841690477220
+  identification: 
+    name: Export Excel
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 43451100000895967
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 44875936570477221
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");
+        
+        var searchContext;
+        var searchVal;
+        if($v("P213_NAME_SEARCH").length > 0){
+            searchContext = "SEARCH";
+            searchVal = $v("P213_NAME_SEARCH");
+        } else {
+            searchContext = "ALL";
+        }
+        
+        generateReport("CUSTOMER_PAYMENT_TERMS_UTILITIES_XLSX", "xlsx", { 
+            fileName: `CustomerMasterfilePaymentTermsUtilities_${formattedDate}.xlsx`,
+            mode : "export",
+            parameters : {
+                P_SEARCH_CONTEXT : searchContext,
+                P_SEARCH_VALUE : searchVal,
+            },
+            spinnerEnabled : true
+        });
+
+    execution: 
+      sequence: 10
+      event: Export Excel # 44875841690477220
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+processes: 
+- # ====== Process: GET_SUCCESS_MSG ============================
+  id: 43433315759832013
+  identification: 
+    name: GET_SUCCESS_MSG
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      DECLARE
+         l_msg VARCHAR2(200);
+      BEGIN
+      
+         l_msg := apex_util.get_session_state('SUCCESS_MSG');
+      
+         apex_json.open_object;
+         apex_json.write('success_msg', l_msg);
+         apex_json.close_object;
+      
+         apex_util.set_session_state('SUCCESS_MSG', NULL);
+      END;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+

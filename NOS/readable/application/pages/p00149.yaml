@@ -1,0 +1,459 @@
+---
+# ====== Page: Collection and Outstanding Reports Print ======
+id: 149
+identification: 
+  name: Collection and Outstanding Reports Print
+  alias: COLLECTION-AND-OUTSTANDING-REPORTS-PRINT
+  title: Collection and Outstanding Reports Print
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 500
+  height: 75
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p149KeyMap = {
+        e : (v) => {
+            $("#e").trigger("click");
+        },
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+    
+        // escape : (v) => {
+        //     $.event.trigger("exit");
+        // }
+    }
+    
+    function map149Keys() {
+        $(document).off('keydown.p149keyevents');
+        $(document).on('keydown.p149keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p149KeyMap[key]) {
+                ev.preventDefault();
+                p149KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: map149Keys();
+
+css: 
+  inline: |
+    #p, #e {
+        font-size: 1.125rem;
+    }
+    
+    #p:hover, #e:hover{
+        border: 0;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P149_PRINT_TYPE ==========================
+  id: 39230783255531924
+  identification: 
+    name: P149_PRINT_TYPE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P149_CUSTOMER_ID =========================
+  id: 39232630083531943
+  identification: 
+    name: P149_CUSTOMER_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P149_LEGAL_NAME ==========================
+  id: 39831096343742301
+  identification: 
+    name: P149_LEGAL_NAME
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Print =======================================
+  id: 39230372579531920
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 8
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: Export ======================================
+  id: 39230459380531921
+  identification: 
+    button-name: Export
+    label: <u>E</u> - Export
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 4
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: e
+
+dynamic-actions: 
+- # ====== Dynamic Action: Export ==============================
+  id: 39232781474531944
+  identification: 
+    name: Export
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Export # 39230459380531921
+
+  actions: 
+  - # ====== Action: Export Main =================================
+    id: 39232825797531945
+    identification: 
+      name: Export Main
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_MAIN_XLS", "xlsx", { 
+            fileName: $v("P149_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P149_CUSTOMER_ID")
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Export # 39232781474531944
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P149_PRINT_TYPE
+      value: main
+
+  - # ====== Action: Export Ageing ===============================
+    id: 39831147231742302
+    identification: 
+      name: Export Ageing
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_CUSTOMERS_XLS", "xlsx", { 
+            fileName: $v("P149_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P149_CUSTOMER_ID")
+            }
+        });
+
+    execution: 
+      sequence: 30
+      event: Export # 39232781474531944
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P149_PRINT_TYPE
+      value: ageing
+
+- # ====== Dynamic Action: Print ===============================
+  id: 39232985668531946
+  identification: 
+    name: Print
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 39230372579531920
+
+  actions: 
+  - # ====== Action: Print Main ==================================
+    id: 39831222710742303
+    identification: 
+      name: Print Main
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_MAIN", "pdf", { 
+            fileName: $v("P149_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P149_CUSTOMER_ID")
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print # 39232985668531946
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P149_PRINT_TYPE
+      value: main
+
+  - # ====== Action: Print Ageing ================================
+    id: 39831382263742304
+    identification: 
+      name: Print Ageing
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("SOA_EOM_CUSTOMERS", "pdf", { 
+            fileName: $v("P149_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".pdf",
+            mode : "export",
+            parameters : {
+                P_CUSTOMER_ID : $v("P149_CUSTOMER_ID")
+            }
+        });
+
+    execution: 
+      sequence: 20
+      event: Print # 39232985668531946
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P149_PRINT_TYPE
+      value: ageing
+
+- # ====== Dynamic Action: Focus ===============================
+  id: 39233111042531948
+  identification: 
+    name: Focus
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Set Focus ===================================
+    id: 39233201965531949
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Button
+      button: Export # 39230459380531921
+
+    execution: 
+      sequence: 10
+      event: Focus # 39233111042531948
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+

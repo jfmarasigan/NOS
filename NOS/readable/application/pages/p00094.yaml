@@ -1,0 +1,2663 @@
+---
+# ====== Page: Add/Update Convert Item A to Item B ===========
+id: 94
+identification: 
+  name: Add/Update Convert Item A to Item B
+  alias: ADD-UPDATE-CONVERT-ITEM-A-TO-ITEM-B
+  title: Add/Update Convert Item A to Item B
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p94KeyMap = {
+        escape: (v) => {
+            if($("#item-table").is(":visible")) {
+                if($v("P94_ITEM") === "FROM") {
+                    $.event.trigger("closeItemMasterfile");
+                    apex.item("P94_FROM_NUM_UNITS").setFocus();
+                } else if($v("P94_ITEM") === "TO") {
+                    $.event.trigger("closeItemMasterfile");
+                    apex.item("P94_TO_NUM_UNITS").setFocus();
+                }
+            } else {
+                $("#exit").trigger("click");
+            }
+            
+    
+        },
+        enter: (v) => {
+            if($("#item-table").is(':visible')) {
+                $.event.trigger("passvalue")
+            }
+        },
+        home: (v) => {
+            if($("#item-table").is(':visible')) {
+                $("#home").trigger("click");
+            }
+        },
+    
+        end: (v) => {
+            if($("#item-table").is(':visible')) {
+                $("#end").trigger("click");
+            }
+        }
+    }
+    
+    function mapP94Keys() {
+        $(document).off('keydown.p94keyevents');
+        $(document).on('keydown.p94keyevents', (ev) => {
+            
+            var key = ev.key?.toLowerCase();
+            if (p94KeyMap[key]) {
+                ev.preventDefault();
+                p94KeyMap[key]();
+            }
+        });
+    }
+    
+    function selectFirstRow() {
+        let region = apex.region("item-table")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        let rec = model.recordAt(0);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+    
+    function selectLastRow() {
+        let region = apex.region("item-table")
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$;
+        
+        let totalRec = model.getTotalRecords();
+        let rec = model.recordAt(totalRec - 1);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+  execute-when-page-loads: |
+    mapP94Keys();
+    
+    let fromValue = $v("P94_FROM");
+    setTitle(`${fromValue === "A" ? "Add Convert Item A to Item B" : "Update Convert Item A to Item B"}`);
+    
+    let isDialogOpen = false;
+    
+    document.addEventListener('focusin', function (event) {
+        let popupLovDialog = event.target.closest('.ui-dialog.ui-dialog-popuplov');
+        if (popupLovDialog && getComputedStyle(popupLovDialog).display !== 'none') {
+            isDialogOpen = true;
+        }
+    });
+    
+    document.addEventListener('focusout', function (event) {
+        let allDialogs = document.querySelectorAll('.ui-dialog.ui-dialog-popuplov');
+        let anyDialogOpen = Array.from(allDialogs).some(dialog => getComputedStyle(dialog).display !== 'none');
+    
+        isDialogOpen = anyDialogOpen;
+    });
+    
+    $(document).ready(function() { 
+        $("#P94_TO_UOM, #P94_NOTE").on("keydown", function(event) {
+            if($v("P94_FROM") === "A") {
+                if (event.key === "Enter" || event.keyCode === 13) {
+                    if(isDialogOpen) {
+                        event.preventDefault();
+                        return;
+                    }
+                    $.event.trigger('submit');
+                }
+            }
+        });
+    
+        $(document).on("keydown", function(event) {
+            if($v("P94_FROM") === "U") {
+                if (event.key === "Enter" || event.keyCode === 13) {
+                    if(isDialogOpen) {
+                        event.preventDefault();
+                        return;
+                    }
+                    $.event.trigger('submit');
+                }
+            }
+        });
+    
+        $("#P94_ITEM_FROM").on("keydown", function(event) {
+            if (event.key === "Tab") {
+                if(!event.shiftKey) {
+                    $.event.trigger('item-from');
+                    event.preventDefault();
+                }
+            }
+        });
+    
+        $("#P94_ITEM_TO").on("keydown", function(event) {
+            if (event.key === "Tab") {
+                if(!event.shiftKey) {
+                    $.event.trigger('item-to');
+                    event.preventDefault();
+                }
+            }
+        });
+    });
+
+css: 
+  inline: |
+    .hide {
+        display: none;
+    }
+    
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    .form-container label,
+    .form-container input,
+    .t-Region-title {
+        font-size: 1.125rem;
+    }
+    
+    .t-Form-labelContainer #P94_RECORD_NUM_LABEL,
+    .t-Form-labelContainer #P94_WHS_LOCATION_LABEL, 
+    .t-Form-labelContainer #P94_ITEM_FROM_LABEL, 
+    .t-Form-labelContainer #P94_ITEM_TO_LABEL,
+    .t-Form-labelContainer #P94_NOTE_LABEL,
+    .t-Form-labelContainer #P94_INVOICE_NO_LABEL,
+    .t-Form-labelContainer #P94_CUSTOMER_NAME_LABEL  {
+        display: flex;
+        align-items: start;
+    }
+    
+    .t-Form-labelContainer .t-Form-label::before {
+        content: "" !important;
+    }
+    
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .ui-dialog-content {
+        overflow: hidden;
+    }
+    
+    .ui-dialog.ui-corner-all:has(#item-table) {
+        height: 37rem !important;
+        width: 50rem !important;
+    }
+    
+    .ui-dialog:not(.ui-corner-all) {
+        border-radius: 0 !important;
+    }
+    
+    .space-between {
+        justify-content: space-between;
+    }
+    
+    .d-flex {
+        display: flex;
+    }
+    
+    .align-center {
+        align-items: center;
+    }
+    
+    .ml-1 {
+        margin-left: 3rem;
+    }
+    
+    #item-table {
+        border-radius: 12px;
+        background-color: #056AC8 !important;
+    }
+    
+    #item-table table,
+    #item-table tr,
+    #item-table th {
+        font-size: 1rem;
+    }
+    
+    #item-table td {
+        font-size: 1.125rem;
+    }
+    
+    #item-table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #item-table .a-GV-table colgroup col:nth-child(1) {
+        width: 7rem;
+    }
+    
+    #item-table .a-GV-table colgroup col:nth-child(2) {
+        width: 15rem;
+    }
+    
+    #item-table .a-GV-table colgroup col:nth-child(3) {
+        width: 6rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Conversion Form =============================
+  id: 32049483135460431
+  identification: 
+    name: Conversion Form
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    - margin-top-lg
+    - margin-bottom-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Help on Item Masterfile =====================
+  id: 37837261168283646
+  identification: 
+    name: Help on Item Masterfile
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          nit001.item_num,
+          nit001.item_id,
+          nit001.item_desc,
+          nim022.brand_name
+      FROM
+          NIT001 nit001
+      JOIN
+          NIM022 nim022 ON nit001.brand_id = nim022.brand_id
+      WHERE
+          (:P94_ITEM = 'FROM' AND UPPER(nit001.item_num) LIKE '%' || UPPER(:P94_ITEM_FROM) || '%')
+          OR
+          (:P94_ITEM = 'TO' AND UPPER(nit001.item_num) LIKE '%' || UPPER(:P94_ITEM_TO) || '%');
+    page-items-to-submit: 
+    - P94_ITEM
+    - P94_ITEM_FROM
+    - P94_ITEM_TO
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-nosize
+    css-classes: 
+    - item-table
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: item-table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: |
+      <div class="d-flex space-between align-center" style="color: white;">
+          <div>
+              <h5>Help on Item Masterfile</h5>
+          </div>
+          <div class="d-flex">
+              <div><u>Home</u> - Top</div>
+              <div class="ml-1"><u>End</u>  Bottom</div>
+          </div>
+      </div>
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 39852701820059204
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 500
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 39869432598186893
+      identification: 
+        name: Primary Report
+        alias: 398695
+
+  columns: 
+  - # ====== Column: ITEM_NUM ====================================
+    id: 40828734324330223
+    identification: 
+      column-name: ITEM_NUM
+      type: Text Field
+
+    heading: 
+      heading: Item Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 10
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: ITEM_NUM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_ID =====================================
+    id: 40828877105330224
+    identification: 
+      column-name: ITEM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 20
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_DESC ===================================
+    id: 40828960694330225
+    identification: 
+      column-name: ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: BRAND_NAME ==================================
+    id: 40829007431330226
+    identification: 
+      column-name: BRAND_NAME
+      type: Text Field
+
+    heading: 
+      heading: Brand Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: BRAND_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+page-items: 
+- # ====== Page Item: P94_RECORD_NUM ===========================
+  id: 32049563732460432
+  identification: 
+    name: P94_RECORD_NUM
+    type: Display Only
+
+  label: 
+    label: 'Conversion Record Number:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    - margin-top-md
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_PROCESS_DATE =========================
+  id: 32049636610460433
+  identification: 
+    name: P94_PROCESS_DATE
+    type: Date Picker
+
+  label: 
+    label: Processing Date
+    alignment: Left
+
+  settings: 
+    show-time: false
+    display-as: Popup
+    minimum-date: None
+    maximum-date: None
+    multiple-months: No
+    use-defaults: true
+
+  layout: 
+    sequence: 30
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    - margin-top-md
+    width: 30
+    value-placeholder: MM/DD/YYYY
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_WHS_LOCATION =========================
+  id: 32049702474460434
+  identification: 
+    name: P94_WHS_LOCATION
+    type: Popup LOV
+
+  label: 
+    label: Warehouse Location
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 40
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: SELECT warehouse_location as d, warehouse_id as r FROM NIM027
+    display-extra-values: true
+    display-null-value: true
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_ITEM_FROM ============================
+  id: 32049888398460435
+  identification: 
+    name: P94_ITEM_FROM
+    type: Text Field
+
+  label: 
+    label: Item From
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_FROM_NUM_UNITS =======================
+  id: 32049909095460436
+  identification: 
+    name: P94_FROM_NUM_UNITS
+    type: Text Field
+
+  label: 
+    label: Number of Units
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 60
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_FROM_UOM =============================
+  id: 32050005461460437
+  identification: 
+    name: P94_FROM_UOM
+    type: Popup LOV
+
+  label: 
+    label: UOM
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 70
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT
+          uom_code as d, uom_id as r
+      FROM
+          NIM026
+      WHERE
+          uom_id IN (SELECT nit002.uom_id FROM NIT002 nit002 WHERE nit002.item_id = :P94_ITEM_FROM_ID)
+    display-extra-values: true
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P94_ITEM_FROM_ID
+    items-to-submit: 
+    - P94_ITEM_FROM_ID
+    parent-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_ITEM_TO ==============================
+  id: 32050161677460438
+  identification: 
+    name: P94_ITEM_TO
+    type: Text Field
+
+  label: 
+    label: Item To
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 80
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_TO_NUM_UNITS =========================
+  id: 32050273095460439
+  identification: 
+    name: P94_TO_NUM_UNITS
+    type: Text Field
+
+  label: 
+    label: Number of Units
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 90
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_TO_UOM ===============================
+  id: 32050343213460440
+  identification: 
+    name: P94_TO_UOM
+    type: Popup LOV
+
+  label: 
+    label: UOM
+    alignment: Left
+
+  settings: 
+    display-as: Inline Popup
+    initial-fetch: Automatic
+    manual-entry: false
+    search-as-you-type: true
+    minimum-characters: No minimum (0)
+
+  multiple-values: 
+    type: No
+
+  layout: 
+    sequence: 100
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Required 2
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  list-of-values: 
+    type: SQL Query
+    sql-query: |
+      SELECT
+          uom_code as d, uom_id as r
+      FROM
+          NIM026
+      WHERE
+          uom_id IN (SELECT nit002.uom_id FROM NIT002 nit002 WHERE nit002.item_id = :P94_ITEM_TO_ID)
+    display-extra-values: true
+    display-null-value: true
+
+  cascading-list-of-values: 
+    parent-item(s): 
+    - P94_ITEM_TO_ID
+    items-to-submit: 
+    - P94_ITEM_TO_ID
+    parent-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_NOTE =================================
+  id: 32050436983460441
+  identification: 
+    name: P94_NOTE
+    type: Text Field
+
+  label: 
+    label: Note
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 110
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_ITEM =================================
+  id: 39852406525059201
+  identification: 
+    name: P94_ITEM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Help on Item Masterfile # 37837261168283646
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_ITEM_ID ==============================
+  id: 39853960216059216
+  identification: 
+    name: P94_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Help on Item Masterfile # 37837261168283646
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_ITEM_NUM =============================
+  id: 39855310392059230
+  identification: 
+    name: P94_ITEM_NUM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Help on Item Masterfile # 37837261168283646
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_ITEM_FROM_ID =========================
+  id: 39855472609059231
+  identification: 
+    name: P94_ITEM_FROM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 150
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_ITEM_TO_ID ===========================
+  id: 39855560896059232
+  identification: 
+    name: P94_ITEM_TO_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 160
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_FROM =================================
+  id: 39856064364059237
+  identification: 
+    name: P94_FROM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 170
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_URL ==================================
+  id: 40137698730196249
+  identification: 
+    name: P94_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 180
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_INVOICE_NO ===========================
+  id: 42173839128532438
+  identification: 
+    name: P94_INVOICE_NO
+    type: Text Field
+
+  label: 
+    label: Invoice Number
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 120
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Item = Value
+    item: P94_FROM
+    value: U
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_INVOICE_DATE =========================
+  id: 42173980057532439
+  identification: 
+    name: P94_INVOICE_DATE
+    type: Text Field
+
+  label: 
+    label: Invoice Date
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 130
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 4
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Item = Value
+    item: P94_FROM
+    value: U
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P94_CUSTOMER_NAME ========================
+  id: 42174078328532440
+  identification: 
+    name: P94_CUSTOMER_NAME
+    type: Text Field
+
+  label: 
+    label: Customer Name
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 140
+    region: Conversion Form # 32049483135460431
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 8
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--xlarge
+    - margin-bottom-md
+    width: 30
+
+  validation: 
+    value-required: false
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Request (Memory Only)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  server-side-condition: 
+    type: Item = Value
+    item: P94_FROM
+    value: U
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: EXIT ========================================
+  id: 33270295960145350
+  identification: 
+    button-name: EXIT
+    label: Exit
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:91:&SESSION.::&DEBUG.:::'
+      page: 91 # Convert Item A to Item B
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+- # ====== Button: Home ========================================
+  id: 40134549348196218
+  identification: 
+    button-name: Home
+    label: Home
+
+  layout: 
+    sequence: 40
+    region: Help on Item Masterfile # 37837261168283646
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: home
+
+- # ====== Button: End =========================================
+  id: 40134648035196219
+  identification: 
+    button-name: End
+    label: End
+
+  layout: 
+    sequence: 50
+    region: Help on Item Masterfile # 37837261168283646
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    css-classes: 
+    - hide
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: end
+
+dynamic-actions: 
+- # ====== Dynamic Action: Open Item Masterfile - From =========
+  id: 37837318874283647
+  identification: 
+    name: Open Item Masterfile - From
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: item-from
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  client-side-condition: 
+    type: Item is not null
+    item: P94_ITEM_FROM
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 37837495124283648
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Help on Item Masterfile # 37837261168283646
+
+    execution: 
+      sequence: 50
+      event: Open Item Masterfile - From # 37837318874283647
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 39852536351059202
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: FROM
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P94_ITEM
+
+    execution: 
+      sequence: 20
+      event: Open Item Masterfile - From # 37837318874283647
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 39853150351059208
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Help on Item Masterfile # 37837261168283646
+
+    execution: 
+      sequence: 60
+      event: Open Item Masterfile - From # 37837318874283647
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39853316935059210
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#item-table").dialog({
+          position: { my: "right top", at: "right-40 top+90", of: window }
+        });
+
+    execution: 
+      sequence: 30
+      event: Open Item Masterfile - From # 37837318874283647
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39853567499059212
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $("#item-table .a-GV-cell").first().trigger("click");
+            });
+        }, 500);
+
+    execution: 
+      sequence: 70
+      event: Open Item Masterfile - From # 37837318874283647
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open Item Masterfile - To ===========
+  id: 37837512465283649
+  identification: 
+    name: Open Item Masterfile - To
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: item-to
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  client-side-condition: 
+    type: Item is not null
+    item: P94_ITEM_TO
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 37837687714283650
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Help on Item Masterfile # 37837261168283646
+
+    execution: 
+      sequence: 30
+      event: Open Item Masterfile - To # 37837512465283649
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 39852664984059203
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: TO
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P94_ITEM
+
+    execution: 
+      sequence: 10
+      event: Open Item Masterfile - To # 37837512465283649
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 39853255474059209
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Help on Item Masterfile # 37837261168283646
+
+    execution: 
+      sequence: 40
+      event: Open Item Masterfile - To # 37837512465283649
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39853484869059211
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $("#item-table").dialog({
+          position: { my: "right", at: "right-20", of: window }
+        });
+
+    execution: 
+      sequence: 20
+      event: Open Item Masterfile - To # 37837512465283649
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39854347051059220
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $("#item-table .a-GV-cell").first().trigger("click");
+            });
+        }, 500);
+
+    execution: 
+      sequence: 50
+      event: Open Item Masterfile - To # 37837512465283649
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection Change ====================
+  id: 39853673532059213
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Help on Item Masterfile # 37837261168283646
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39853720890059214
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var itemIdSelected;
+        var itemNumSelected;
+        if(this.data != null){
+            if(this.data.selectedRecords[0] != null){
+                itemIdSelected = this.data.model.getValue(this.data.selectedRecords[0], "ITEM_ID");
+                itemNumSelected = this.data.model.getValue(this.data.selectedRecords[0], "ITEM_NUM");
+            }
+        }
+        apex.item("P94_ITEM_ID").setValue(itemIdSelected);
+        apex.item("P94_ITEM_NUM").setValue(itemNumSelected);
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 39853673532059213
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Pass Value ==========================
+  id: 39854003214059217
+  identification: 
+    name: Pass Value
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: passvalue
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39854142192059218
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if($v("P94_ITEM") === "FROM") {
+            apex.item("P94_ITEM_FROM").setValue($v("P94_ITEM_NUM"));
+            apex.item("P94_ITEM_FROM_ID").setValue($v("P94_ITEM_ID"));
+        } else if($v("P94_ITEM") === "TO") {
+            apex.item("P94_ITEM_TO").setValue($v("P94_ITEM_NUM"));
+            apex.item("P94_ITEM_TO_ID").setValue($v("P94_ITEM_ID"));
+        }
+
+    execution: 
+      sequence: 10
+      event: Pass Value # 39854003214059217
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 39854247359059219
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Help on Item Masterfile # 37837261168283646
+
+    execution: 
+      sequence: 20
+      event: Pass Value # 39854003214059217
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Focus ===================================
+    id: 39854452640059221
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P94_FROM_NUM_UNITS
+
+    execution: 
+      sequence: 30
+      event: Pass Value # 39854003214059217
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P94_ITEM
+      value: FROM
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Set Focus ===================================
+    id: 39854570867059222
+    identification: 
+      action: Set Focus
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P94_TO_NUM_UNITS
+
+    execution: 
+      sequence: 40
+      event: Pass Value # 39854003214059217
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item = Value
+      item: P94_ITEM
+      value: TO
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39856486683059241
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if($v("P94_ITEM") === "FROM") {
+            apex.item("P94_FROM_NUM_UNITS").setFocus();
+        } else if($v("P94_ITEM") === "TO") {
+            apex.item("P94_TO_NUM_UNITS").setFocus();
+        }
+
+    execution: 
+      sequence: 50
+      event: Pass Value # 39854003214059217
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Item Masterfile ===============
+  id: 39854644087059223
+  identification: 
+    name: Close Item Masterfile
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: closeItemMasterfile
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 39854749756059224
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Help on Item Masterfile # 37837261168283646
+
+    execution: 
+      sequence: 10
+      event: Close Item Masterfile # 39854644087059223
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Submit ==============================
+  id: 39854836416059225
+  identification: 
+    name: Submit
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: submit
+    selection-type: JavaScript Expression
+    javascript-expression: |
+      document
+      
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 39855061536059227
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var processDate = $v('P94_PROCESS_DATE');
+        var whsLoc = $v('P94_WHS_LOCATION');
+        var itemFrom = $v('P94_ITEM_FROM');
+        var fromNoUnits = $v('P94_FROM_NUM_UNITS');
+        var fromUOM = $v('P94_FROM_UOM');
+        var itemTo = $v('P94_ITEM_TO');
+        var toNoUnits = $v('P94_TO_NUM_UNITS');
+        var toUOM = $v('P94_TO_UOM');
+        var note = $v('P94_NOTE');
+        var invoiceNo = $v('P94_INVOICE_NO');
+        var invoiceDate = $v('P94_INVOICE_DATE');
+        var customerName = $v('P94_CUSTOMER_NAME');
+        apex.message.clearErrors();
+        var hasErrors = false;
+        var numRegex = /^[0-9]+$/;
+        function isDateValid(dateString) {
+            var datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+            if (!dateString.match(datePattern)) {
+                return false;
+            }
+            var parts = dateString.split("/");
+            var month = parseInt(parts[0], 10);
+            var day = parseInt(parts[1], 10);
+            var year = parseInt(parts[2], 10);
+            var date = new Date(year, month - 1, day);
+            return (date.getFullYear() === year && date.getMonth() === (month - 1) && date.getDate() === day);
+        }
+        if (processDate == "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_PROCESS_DATE",message: "Processing Date cannot be empty",unsafe: false}])
+            hasErrors = true;
+        } else if (!isDateValid(processDate)) {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_PROCESS_DATE",message: "Please Enter a valid date",unsafe: false}])
+            hasErrors = true;
+        }
+        if (whsLoc == "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_WHS_LOCATION",message: "Warehouse Location cannot be empty",unsafe: false}])
+            hasErrors = true;
+        }
+        if (itemFrom == "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_ITEM_FROM",message: "Item From cannot be empty",unsafe: false}])
+            hasErrors = true;
+        }
+        if (fromNoUnits == "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_FROM_NUM_UNITS",message: "Number of units cannot be empty",unsafe: false}])
+            hasErrors = true;
+        } else if (!numRegex.test(fromNoUnits)) {
+            apex.message.showErrors([{type: "error",location: ["inline"], pageItem: "P94_FROM_NUM_UNITS", message: "Number of units must be a number",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (fromUOM == "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_FROM_UOM",message: "UOM cannot be empty",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (itemTo == "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_ITEM_TO",message: "Item To cannot be empty",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (toNoUnits == "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_TO_NUM_UNITS",message: "Number of units cannot be empty",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (toUOM == "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_TO_UOM",message: "UOM cannot be empty",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (note.length > 40) {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_NOTE",message: "Note cannot exceed 40 characters",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (invoiceNo.length > 9) {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_INVOICE_NO",message: "Invoice Number cannot exceed 9 characters",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (!isDateValid(invoiceDate) && invoiceDate !== "") {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_INVOICE_DATE",message: "Please enter a valid date",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (customerName.length > 40) {
+            apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_CUSTOMER_NAME",message: "Customer Name cannot exceed 40 characters",unsafe: false
+            }])
+            hasErrors = true;
+        }
+        if (hasErrors) {
+            return false;
+        }
+        
+        apex.message.clearErrors();
+        
+
+    execution: 
+      sequence: 10
+      event: Submit # 39854836416059225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39856339582059240
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            IF :P94_FROM = 'A' THEN
+                INSERT INTO NIT020(convert_id, processing_date, warehouse_id, from_item_id, from_no_of_units, from_uom_id,
+                                   to_item_id, to_no_of_units, to_uom_id, notes, create_user, create_date)
+                            VALUES(:P94_RECORD_NUM, :P94_PROCESS_DATE, :P94_WHS_LOCATION, :P94_ITEM_FROM_ID, :P94_FROM_NUM_UNITS,
+                                   :P94_FROM_UOM, :P94_ITEM_TO_ID, :P94_TO_NUM_UNITS, :P94_TO_UOM, :P94_NOTE,
+                                   V('APP_USER'), SYSDATE);
+                :P94_URL := apex_page.get_url(
+                   p_page   => 91,
+                   p_items  => 'P91_CONVERT_ID_F,P91_FROM',
+                   p_values => :P94_RECORD_NUM || ',' || :P94_FROM
+                );
+            ELSIF :P94_FROM = 'U' THEN
+                UPDATE
+                    NIT020
+                SET
+                    processing_date = :P94_PROCESS_DATE,
+                    warehouse_id = :P94_WHS_LOCATION,
+                    from_item_id = :P94_ITEM_FROM_ID,
+                    from_no_of_units = :P94_FROM_NUM_UNITS,
+                    from_uom_id = :P94_FROM_UOM,
+                    to_item_id = :P94_ITEM_TO_ID,
+                    to_no_of_units = :P94_TO_NUM_UNITS,
+                    to_uom_id = :P94_TO_UOM,
+                    notes = :P94_NOTE,
+                    update_user = V('APP_USER'),
+                    update_date = SYSDATE,
+                    invoice_number = :P94_INVOICE_NO,
+                    invoice_date = :P94_INVOICE_DATE,
+                    customer_name = :P94_CUSTOMER_NAME
+                WHERE
+                    CONVERT_ID = :P94_RECORD_NUM;
+                :P94_URL := apex_page.get_url(
+                   p_page   => 91,
+                   p_items  => 'P91_CONVERT_ID_F,P91_FROM',
+                   p_values => :P94_RECORD_NUM || ',' || :P94_FROM
+                );
+            END IF;
+        END;
+      items-to-submit: 
+      - P94_RECORD_NUM
+      - P94_FROM
+      - P94_PROCESS_DATE
+      - P94_WHS_LOCATION
+      - P94_ITEM_FROM_ID
+      - P94_FROM_NUM_UNITS
+      - P94_FROM_UOM
+      - P94_ITEM_TO_ID
+      - P94_TO_NUM_UNITS
+      - P94_TO_UOM
+      - P94_NOTE
+      - P94_INVOICE_NO
+      - P94_INVOICE_DATE
+      - P94_CUSTOMER_NAME
+      items-to-return: 
+      - P94_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Submit # 39854836416059225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40137789807196250
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P94_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Submit # 39854836416059225
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set CRN =============================
+  id: 39856161078059238
+  identification: 
+    name: Set CRN
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  client-side-condition: 
+    type: Item = Value
+    item: P94_FROM
+    value: A
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 39856200418059239
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_current_year VARCHAR2(4);
+            v_sequence VARCHAR2(3);
+        BEGIN
+            v_current_year := TO_CHAR(SYSDATE, 'YYYY');
+        
+            SELECT LPAD(NVL(MAX(TO_NUMBER(SUBSTR(convert_id, 6, 3))), 0) + 1, 3, '0')
+            INTO v_sequence
+            FROM NIT020
+            WHERE SUBSTR(convert_id, 1, 4) = v_current_year;
+        
+            :P94_RECORD_NUM := v_current_year || '-' || v_sequence;
+        END;
+      items-to-return: 
+      - P94_RECORD_NUM
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Set CRN # 39856161078059238
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Set Update Values ===================
+  id: 40133757935196210
+  identification: 
+    name: Set Update Values
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  client-side-condition: 
+    type: Item = Value
+    item: P94_FROM
+    value: U
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 40133891797196211
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_convert_id NIT020.convert_id%TYPE;
+            v_process_date NIT020.processing_date%TYPE;
+            v_whs_location NIT020.warehouse_id%TYPE;
+            v_item_from_id NIT020.from_item_id%TYPE;
+            v_from_num_of_units NIT020.from_no_of_units%TYPE;
+            v_from_uom_id NIT020.from_uom_id%TYPE;
+            v_item_to_id NIT020.to_item_id%TYPE;
+            v_to_num_of_units NIT020.to_no_of_units%TYPE;
+            v_to_uom_id NIT020.to_uom_id%TYPE;
+            v_note NIT020.notes%TYPE;
+            v_item_from NIT001.item_num%TYPE;
+            v_item_to NIT001.item_num%TYPE;
+            v_from_uom NIM026.uom_code%TYPE;
+            v_to_uom NIM026.uom_code%TYPE;
+            v_invoice_number NIT020.invoice_number%TYPE;
+            v_invoice_date NIT020.invoice_date%TYPE;
+            v_customer_name NIT020.customer_name%TYPE;
+        BEGIN
+            SELECT processing_date, warehouse_id, from_item_id, from_no_of_units, from_uom_id, to_item_id, to_no_of_units,
+                   to_uom_id, notes, invoice_number, invoice_date, customer_name
+            INTO v_process_date, v_whs_location, v_item_from_id, v_from_num_of_units, v_from_uom_id, v_item_to_id, v_to_num_of_units,
+                 v_to_uom_id, v_note, v_invoice_number, v_invoice_date, v_customer_name
+            FROM NIT020
+            WHERE convert_id = :P94_RECORD_NUM;
+        
+            :P94_PROCESS_DATE := TO_CHAR(v_process_date, 'MM/DD/YYYY');
+            :P94_WHS_LOCATION := v_whs_location;
+            :P94_ITEM_FROM_ID := v_item_from_id;
+            :P94_FROM_NUM_UNITS := v_from_num_of_units;
+            :P94_FROM_UOM := v_from_uom_id;
+            :P94_ITEM_TO_ID := v_item_to_id;
+            :P94_TO_NUM_UNITS := v_to_num_of_units;
+            :P94_TO_UOM := v_to_uom_id;
+            :P94_NOTE := v_note;
+            :P94_INVOICE_NO := v_invoice_number;
+            :P94_INVOICE_DATE := v_invoice_date;
+            :P94_CUSTOMER_NAME := v_customer_name;
+        
+            SELECT item_num
+            INTO v_item_from
+            FROM NIT001
+            WHERE item_id = :P94_ITEM_FROM_ID;
+        
+            :P94_ITEM_FROM := v_item_from;
+        
+            SELECT item_num
+            INTO v_item_to
+            FROM NIT001
+            WHERE item_id = :P94_ITEM_TO_ID;
+        
+            :P94_ITEM_TO := v_item_to;
+        END;
+      items-to-submit: 
+      - P94_ITEM_FROM_ID
+      - P94_ITEM_TO_ID
+      - P94_RECORD_NUM
+      items-to-return: 
+      - P94_PROCESS_DATE
+      - P94_WHS_LOCATION
+      - P94_ITEM_FROM_ID
+      - P94_ITEM_FROM
+      - P94_FROM_NUM_UNITS
+      - P94_FROM_UOM
+      - P94_ITEM_TO_ID
+      - P94_ITEM_TO
+      - P94_TO_NUM_UNITS
+      - P94_TO_UOM
+      - P94_NOTE
+      - P94_INVOICE_NO
+      - P94_INVOICE_DATE
+      - P94_CUSTOMER_NAME
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Set Update Values # 40133757935196210
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Go to Top ===========================
+  id: 40134766308196220
+  identification: 
+    name: Go to Top
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Home # 40134549348196218
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40134821653196221
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectFirstRow();
+
+    execution: 
+      sequence: 10
+      event: Go to Top # 40134766308196220
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Go to Bottom ========================
+  id: 40134913298196222
+  identification: 
+    name: Go to Bottom
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: End # 40134648035196219
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 40135015215196223
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: selectLastRow();
+
+    execution: 
+      sequence: 10
+      event: Go to Bottom # 40134913298196222
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

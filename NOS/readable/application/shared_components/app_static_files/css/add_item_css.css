@@ -1,0 +1,23 @@
+.t-Form-label {
+    min-width: 3rem;
+    max-width: fit-content;
+    font-weight: bold;
+}
+
+.t-Form-labelContainer {
+    text-align: left !important;
+}
+
+.t-Form-inputContainer {
+    max-width: fit-content;
+}
+
+.t-Form-labelContainer .t-Form-label::before {
+    content: '' !important; /* Remove the asterisk before the label */
+}
+
+
+
+.test {
+    margin: 0;
+}

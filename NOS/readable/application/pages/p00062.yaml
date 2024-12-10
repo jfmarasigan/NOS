@@ -1,0 +1,437 @@
+---
+# ====== Page: POS Cashiering - Company Check Payment ========
+id: 62
+identification: 
+  name: POS Cashiering - Company Check Payment
+  alias: POS-CASHIERING-COMPANY-CHECK-PAYMENT
+  title: POS Cashiering - Company Check Payment
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: false
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p62KeyMap = {
+        home: (v) => {
+            console.log("to-top");
+            $("#to-top").trigger("click");
+        },
+        end: (v) => {
+            console.log("to bottom");
+            $("#to-bottom").trigger("click");
+        }
+    }
+    
+    function mapP62Keys() {
+        $(document).off('keydown.p62keyevents');
+        $(document).on('keydown.p62keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p62KeyMap[key]) {
+                ev.preventDefault();
+                p62KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: mapP62Keys();
+
+css: 
+  inline: |
+    .t-Dialog-body{
+        label, input {
+            font-size: 1.125rem;
+        }
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+page-items: 
+- # ====== Page Item: P62_EXISTS ===============================
+  id: 44523113611129218
+  identification: 
+    name: P62_EXISTS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P62_URL ==================================
+  id: 44523285272129219
+  identification: 
+    name: P62_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P62_AMOUNT ===============================
+  id: 76815269259661425
+  identification: 
+    name: P62_AMOUNT
+    type: Number Field
+
+  label: 
+    label: 'Amount:'
+    alignment: Left
+
+  settings: 
+    number-alignment: End
+    virtual-keyboard: Numeric
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    format-mask: FML999G999G999G999G990D00
+    width: 12
+
+  validation: 
+    value-required: true
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P62_CHECK ================================
+  id: 76815434818661427
+  identification: 
+    name: P62_CHECK
+    type: Text Field
+
+  label: 
+    label: 'Check #:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    width: 12
+
+  validation: 
+    value-required: true
+
+  advanced: 
+    custom-attributes: 
+    - oninput="this.value
+    - =
+    - this.value.replace(/[^0-9]/g,
+    - "'');\""
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Enter =======================================
+  id: 44523304058129220
+  identification: 
+    button-name: Enter
+    label: Enter
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+dynamic-actions: 
+- # ====== Dynamic Action: Click Enter =========================
+  id: 44523729961129224
+  identification: 
+    name: Click Enter
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Enter # 44523304058129220
+
+  actions: 
+  - # ====== Action: Validate ====================================
+    id: 44523880523129225
+    identification: 
+      name: Validate
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var amount = $v('P62_AMOUNT'); 
+        var regex = /^\d{1,9}(\.\d{2})?$/; 
+        
+        if (!regex.test(amount)) {
+            apex.message.clearErrors(); 
+            apex.message.showErrors([
+                {
+                    type: 'error',
+                    location: 'inline',
+                    pageItem: 'P62_AMOUNT', 
+                    message: 'Amount must be numeric'
+                }
+            ]);
+        
+            return false;
+        } else {
+            apex.message.clearErrors(); 
+            return true;
+        }
+        
+
+    execution: 
+      sequence: 10
+      event: Click Enter # 44523729961129224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Insert into Table ===========================
+    id: 44524036987129227
+    identification: 
+      name: Insert into Table
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+            v_unpaid NUMBER;
+            v_amount  NUMBER;
+        BEGIN
+            v_amount := TO_NUMBER(REPLACE(REPLACE(:P62_AMOUNT, '$', ''), ',', ''));
+            v_unpaid := TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', ''));
+        
+            IF v_amount >= v_unpaid THEN
+                apex_collection.add_member(
+                    p_collection_name => 'PAYMENT',
+                    p_c001            => 'Company Check',
+                    p_n001            => v_amount, 
+                    p_n002            => v_amount, 
+                    p_n003            => v_amount, 
+                    p_n004            => TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, '$', ''), ',', '')) 
+                ); 
+        
+                INSERT INTO NPT014 
+                             (PAYMENT_METHOD_ID, AMOUNT, USER_CREATED, DATE_CREATED)
+                      VALUES (2, v_amount, :apex_user, SYSDATE);
+        
+                :P62_URL := apex_page.get_url(
+                    p_page        => 43,
+                    p_clear_cache => '43'
+                );
+            ELSE
+                apex_collection.add_member(
+                    p_collection_name => 'PAYMENT',
+                    p_c001            => 'Company Check',
+                    p_n001            => v_amount 
+                );
+        
+                INSERT INTO NPT014 
+                             (PAYMENT_METHOD_ID, AMOUNT, USER_CREATED, DATE_CREATED)
+                      VALUES (2, v_amount, :apex_user, SYSDATE);
+            END IF;
+        
+        END;
+        
+        
+        
+      items-to-submit: 
+      - P62_AMOUNT
+      - P41_TOTAL
+      items-to-return: 
+      - P62_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Click Enter # 44523729961129224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Redirect ====================================
+    id: 44524154535129228
+    identification: 
+      name: Redirect
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P62_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Click Enter # 44523729961129224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Dialog ================================
+    id: 44524253891129229
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 40
+      event: Click Enter # 44523729961129224
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

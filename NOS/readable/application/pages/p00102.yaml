@@ -1,0 +1,4021 @@
+---
+# ====== Page: Shipment Line Items ===========================
+id: 102
+identification: 
+  name: Shipment Line Items
+  alias: SHIPMENT-LINE-ITEMS
+  title: Shipment Line Items
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: false
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/shipment-line-items#MIN#.js'
+  execute-when-page-loads: initialize();
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/shipment-line-items#MIN#.css'
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Shipment Info ===============================
+  id: 15657200642560934
+  identification: 
+    name: Shipment Info
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: shipment-info
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Shipment Line Items =========================
+  id: 15657359821560935
+  identification: 
+    name: Shipment Line Items
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT a.po_id ref_po_no, a.shipment_id, b.item_num item_number, b.item_desc,
+             a.qty cs, (a.qty * d.quantity) total_units, a.cost, UPPER(c.uom_code) uom, 
+             a.product_date, a.encoded, d.quantity mastercase_quantity, a.item_id,
+             a.item_id old_item_id, c.uom_id, 'N' sn_edit, a.shipment_items_id,  TO_CHAR(a.shipment_items_id) spid
+        FROM nit018 a,
+             nit001 b,
+             nim026 c,
+             (select w.item_id, w.quantity
+                from nit002 w 
+               where w."LEVEL" = 4) d
+       WHERE a.item_id = b.item_id
+         AND a.uom_id = c.uom_id
+         AND a.item_id = d.item_id
+         AND a.shipment_id = :P102_SHIPMENT_ID
+    page-items-to-submit: 
+    - P102_SHIPMENT_ID
+
+  layout: 
+    sequence: 80
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    - margin-left-md
+    - margin-right-md
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: shipment-line-items
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 15657430859560936
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 600
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            // options.editable = false;
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false,
+                hideDeletedRows: true
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 16250943680362073
+      identification: 
+        name: Primary Report
+        alias: 162510
+
+  columns: 
+  - # ====== Column: ITEM_DESC ===================================
+    id: 15657675614560938
+    identification: 
+      column-name: ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 100
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 30
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: item-desc
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: CS ==========================================
+    id: 15657720452560939
+    identification: 
+      column-name: CS
+      type: Number Field
+
+    heading: 
+      heading: '# / CS'
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 110
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999999999999990
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: cs
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: TOTAL_UNITS =================================
+    id: 15657850723560940
+    identification: 
+      column-name: TOTAL_UNITS
+      type: Number Field
+
+    heading: 
+      heading: Total Units
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 120
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999999999999990D00
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: TOTAL_UNITS
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: total-units
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+    comments: 
+      comments: total units = cs * (nit002.quantity where item's nit002.level = 4)
+
+  - # ====== Column: COST ========================================
+    id: 15657958245560941
+    identification: 
+      column-name: COST
+      type: Number Field
+
+    heading: 
+      heading: Cost
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 130
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    appearance: 
+      format-mask: 999999999999990D00
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: COST
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: cost
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UOM =========================================
+    id: 15658065235560942
+    identification: 
+      column-name: UOM
+      type: Text Field
+
+    heading: 
+      heading: UOM
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 140
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: UOM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: uom
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: PRODUCT_DATE ================================
+    id: 15658139270560943
+    identification: 
+      column-name: PRODUCT_DATE
+      type: Text Field
+
+    heading: 
+      heading: Product Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 150
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 13
+
+    source: 
+      type: Database Column
+      database-column: PRODUCT_DATE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: product-date
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ENCODED =====================================
+    id: 15658280705560944
+    identification: 
+      column-name: ENCODED
+      type: Text Field
+
+    heading: 
+      heading: Encoded
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 160
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: ENCODED
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: encoded
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: SHIPMENT_ID =================================
+    id: 16266178567399122
+    identification: 
+      column-name: SHIPMENT_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 40
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SHIPMENT_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      type: Item
+      item: P102_SHIPMENT_ID
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      static-id: shipment-id
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 16266223617399123
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 16266366804399124
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: true
+      show-select-all: true
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Column: REF_PO_NO ===================================
+    id: 17926198668262938
+    identification: 
+      column-name: REF_PO_NO
+      type: Popup LOV
+
+    heading: 
+      heading: Reference PO No.
+      alignment: center
+
+    settings: 
+      display-as: Inline Popup
+      initial-fetch: Automatic
+      manual-entry: false
+      search-as-you-type: true
+      minimum-characters: No minimum (0)
+
+    multiple-values: 
+      type: No
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: SQL Query
+      sql-query: |
+        SELECT a.po_id d, a.po_id r
+          FROM nit015 a
+         WHERE shipment_id = :P102_SHIPMENT_ID
+      display-extra-values: false
+      display-null-value: true
+      null-display-value: '-'
+
+    source: 
+      type: Database Column
+      database-column: REF_PO_NO
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: ref-po-no
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            options.defaultGridOptions = {
+                resizeColumns: false,
+                columnSort: false,
+                pagination : {
+                    scroll : true,
+                    loadMore : false
+                }   
+            };
+            return options;
+        }
+
+    read-only: 
+      type: Always
+      execute: For Each Row
+
+  - # ====== Column: ITEM_NUMBER =================================
+    id: 21857347592134123
+    identification: 
+      column-name: ITEM_NUMBER
+      type: Text Field
+
+    heading: 
+      heading: Item Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 90
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 10
+
+    source: 
+      type: Database Column
+      database-column: ITEM_NUMBER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: item-number
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_ID =====================================
+    id: 27346480519391850
+    identification: 
+      column-name: ITEM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      static-id: item-id
+
+  - # ====== Column: OLD_ITEM_ID =================================
+    id: 29345847105183347
+    identification: 
+      column-name: OLD_ITEM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 170
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: OLD_ITEM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: UOM_ID ======================================
+    id: 29345957733183348
+    identification: 
+      column-name: UOM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 180
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: UOM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: MASTERCASE_QUANTITY =========================
+    id: 31309320302578725
+    identification: 
+      column-name: MASTERCASE_QUANTITY
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 190
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: MASTERCASE_QUANTITY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: SN_EDIT =====================================
+    id: 31311624310578748
+    identification: 
+      column-name: SN_EDIT
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 200
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SN_EDIT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      static-id: sn-edit
+
+  - # ====== Column: SHIPMENT_ITEMS_ID ===========================
+    id: 32278534145470433
+    identification: 
+      column-name: SHIPMENT_ITEMS_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 50
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SHIPMENT_ITEMS_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+    advanced: 
+      static-id: shipment-items-id
+
+  - # ====== Column: SPID ========================================
+    id: 35157638022966948
+    identification: 
+      column-name: SPID
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 70
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SPID
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+- # ====== Region: Item POs ====================================
+  id: 15658430953560946
+  identification: 
+    name: Item POs
+    type: Static Content
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-modal
+    - js-draggable
+    - js-dialog-size600x400
+    css-classes: 
+    - js-dialog-size700x810
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: item-po-dialog
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Item PO List ================================
+  id: 15658573022560947
+  identification: 
+    name: Item PO List
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      WITH s_items AS (
+          select a.item_id,
+                 a.item_num item_number,
+                 a.item_desc item_description,
+                 b.brand_name,
+                 UPPER(c.uom_code) uom_code,
+                 c.uom_id,
+                 d.quantity
+            from nit001 a,
+                 nim022 b,
+                 (select x.item_id, x.uom_id, y.uom_code
+                    from nit002 x,
+                         nim026 y
+                   where x."LEVEL" = 1
+                     and x.uom_id = y.uom_id) c,
+                 (select w.item_id, w.quantity
+                    from nit002 w
+                   where w."LEVEL" = 4) d
+           where a.brand_id = b.brand_id
+             and a.item_id = c.item_id
+             and a.item_id = d.item_id
+             and ( (UPPER(a.item_num) like UPPER('%' || :P102_ITEM_SEARCH_V || '%') and :P102_ITEM_SEARCH_F = 1) or
+                   (UPPER(a.item_desc) like UPPER('%' || :P102_ITEM_SEARCH_V || '%') and :P102_ITEM_SEARCH_F = 2) )
+             and not exists (select null
+                               from apex_collections x
+                              where x.collection_name = 'NOS_SHIP_SEL_ITEMS'
+                                and NVL(x.c001, 'null') || '-' || x.n001 = NVL(:P102_REF_PO_NO, 'null') || '-' || a.item_id
+                                and x.c002 != :P102_SHIPMENT_ITEMS_ID)
+           order by a.item_num
+      )
+      select item_id, item_number, item_description, brand_name, uom_code, uom_id, quantity 
+        from s_items
+    page-items-to-submit: 
+    - P102_REF_PO_NO
+    - P102_ITEM_SEARCH_F
+    - P102_ITEM_SEARCH_V
+    - P102_SHIPMENT_ITEMS_ID
+
+  layout: 
+    sequence: 20
+    parent-region: Item POs # 15658430953560946
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: item-po-list
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 15658640272560948
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: true
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 700
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 100000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 16271440597417662
+      identification: 
+        name: Primary Report
+        alias: 162715
+
+  columns: 
+  - # ====== Column: ITEM_NUMBER =================================
+    id: 15658716967560949
+    identification: 
+      column-name: ITEM_NUMBER
+      type: Number Field
+
+    heading: 
+      heading: Item Number
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: ITEM_NUMBER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_DESCRIPTION ============================
+    id: 16264070373399101
+    identification: 
+      column-name: ITEM_DESCRIPTION
+      type: Number Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESCRIPTION
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: BRAND_NAME ==================================
+    id: 29341565813183304
+    identification: 
+      column-name: BRAND_NAME
+      type: Text Field
+
+    heading: 
+      heading: Brand Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 200
+
+    source: 
+      type: Database Column
+      database-column: BRAND_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_ID =====================================
+    id: 29341974267183308
+    identification: 
+      column-name: ITEM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: UOM_CODE ====================================
+    id: 29345029340183339
+    identification: 
+      column-name: UOM_CODE
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 50
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: UOM_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: QUANTITY ====================================
+    id: 29345242297183341
+    identification: 
+      column-name: QUANTITY
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 60
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: QUANTITY
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: UOM_ID ======================================
+    id: 29346053935183349
+    identification: 
+      column-name: UOM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 70
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: UOM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+- # ====== Region: Info Header =================================
+  id: 16264120356399102
+  identification: 
+    name: Info Header
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Item POs # 15658430953560946
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Serial Numbers ==============================
+  id: 27342612101391812
+  identification: 
+    name: Serial Numbers
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - js-modal
+    - js-draggable
+    - js-dialog-size480x320
+    css-classes: 
+    - js-dialog-size370x600
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: serial-nums
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: SN IG =======================================
+  id: 27342723071391813
+  identification: 
+    name: SN IG
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT seq_id case, c001 serial_number, n001 shipment_id, n003 sn_id, c002 shipment_items_id
+        FROM apex_collections
+       WHERE collection_name = 'NOS_SHIP_SN_' || :P102_SHIPMENT_ID || '_' || UPPER(:P102_SHIPMENT_ITEMS_ID)
+    page-items-to-submit: 
+    - P102_SHIPMENT_ITEMS_ID
+    - P102_SHIPMENT_ID
+
+  layout: 
+    sequence: 10
+    parent-region: Serial Numbers # 27342612101391812
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: serial-nos-ig
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 27342885121391814
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 560
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 100000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 27622490137068750
+      identification: 
+        name: Primary Report
+        alias: 276225
+
+  columns: 
+  - # ====== Column: CASE ========================================
+    id: 27342956845391815
+    identification: 
+      column-name: CASE
+      type: Number Field
+
+    heading: 
+      heading: Case
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: CASE
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+    read-only: 
+      type: Always
+      execute: For Each Row
+
+  - # ====== Column: SERIAL_NUMBER ===============================
+    id: 27343020254391816
+    identification: 
+      column-name: SERIAL_NUMBER
+      type: Text Field
+
+    heading: 
+      heading: Serial Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 80
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 20
+
+    source: 
+      type: Database Column
+      database-column: SERIAL_NUMBER
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: false
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      static-id: serial-no
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: APEX$ROW_ACTION =============================
+    id: 27343217480391818
+    identification: 
+      column-name: APEX$ROW_ACTION
+      type: Actions Menu
+
+    layout: 
+      sequence: 20
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Column: APEX$ROW_SELECTOR ===========================
+    id: 27343337201391819
+    identification: 
+      column-name: APEX$ROW_SELECTOR
+      type: Row Selector
+
+    settings: 
+      enable-multi-select: false
+      hide-control: false
+
+    layout: 
+      sequence: 10
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Column: SHIPMENT_ID =================================
+    id: 29344448551183333
+    identification: 
+      column-name: SHIPMENT_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 30
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SHIPMENT_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: SN_ID =======================================
+    id: 31307629553578708
+    identification: 
+      column-name: SN_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 50
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SN_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: SHIPMENT_ITEMS_ID ===========================
+    id: 35155866372966930
+    identification: 
+      column-name: SHIPMENT_ITEMS_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 60
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SHIPMENT_ITEMS_ID
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+page-items: 
+- # ====== Page Item: P102_SHIPMENT_ID =========================
+  id: 15658300394560945
+  identification: 
+    name: P102_SHIPMENT_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+  comments: 
+    comments: shipment ID used for updating
+
+- # ====== Page Item: P102_ITEM_MODAL_HEADER ===================
+  id: 16264241644399103
+  identification: 
+    name: P102_ITEM_MODAL_HEADER
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 10
+    region: Info Header # 16264120356399102
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 5
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    css-classes: 
+    - item-po-header-text
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Help on Item Masterfile
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_SHIPMENT_NO =========================
+  id: 16264507589399106
+  identification: 
+    name: P102_SHIPMENT_NO
+    type: Display Only
+
+  label: 
+    label: 'Shipment No: '
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 10
+    region: Shipment Info # 15657200642560934
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: SP1 2004-99999
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_CS_TOTAL_QTY ========================
+  id: 16264626647399107
+  identification: 
+    name: P102_CS_TOTAL_QTY
+    type: Display Only
+
+  label: 
+    label: 'Total Qty (in Cs): '
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 20
+    region: Shipment Info # 15657200642560934
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_PO_VALUE ============================
+  id: 16264747066399108
+  identification: 
+    name: P102_PO_VALUE
+    type: Display Only
+
+  label: 
+    label: 'Shipment Value: $'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: false
+    send-on-page-submit: false
+
+  layout: 
+    sequence: 30
+    region: Shipment Info # 15657200642560934
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 2
+    column-css-classes: 
+    - shipment-value-col
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_SHIPMENT_ITEMS_ID ===================
+  id: 27343147267391817
+  identification: 
+    name: P102_SHIPMENT_ITEMS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_LABEL ===============================
+  id: 29342582678183314
+  identification: 
+    name: P102_LABEL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_SURL ================================
+  id: 32277695407470424
+  identification: 
+    name: P102_SURL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: apex_page.get_url(p_page => 100)
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_REF_PO_NO ===========================
+  id: 32279198971470439
+  identification: 
+    name: P102_REF_PO_NO
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_ITEM_SEARCH_F =======================
+  id: 35154259401966914
+  identification: 
+    name: P102_ITEM_SEARCH_F
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 10
+    region: Item POs # 15658430953560946
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P102_ITEM_SEARCH_V =======================
+  id: 35154372863966915
+  identification: 
+    name: P102_ITEM_SEARCH_V
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 20
+    region: Item POs # 15658430953560946
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: TOP =========================================
+  id: 16264430029399105
+  identification: 
+    button-name: TOP
+    label: <u>Home</u> - Top
+
+  layout: 
+    sequence: 20
+    region: Info Header # 16264120356399102
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 7
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--stretch
+    css-classes: 
+    - item-modal-btns
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: item-modal-top
+
+- # ====== Button: BOTTOM ======================================
+  id: 16264896871399109
+  identification: 
+    button-name: BOTTOM
+    label: <u>End</u> - Bottom
+
+  layout: 
+    sequence: 30
+    region: Info Header # 16264120356399102
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 10
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--stretch
+    css-classes: 
+    - item-modal-btns
+
+  behavior: 
+    action: Submit Page
+    execute-validations: true
+    show-processing: false
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: item-modal-bottom
+
+- # ====== Button: ADD_LINE_ITEM ===============================
+  id: 29341267281183301
+  identification: 
+    button-name: ADD_LINE_ITEM
+    label: <u>F2</u> - Add Items
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--link
+    - t-Button--stretch
+    - t-Button--padLeft
+    css-classes: 
+    - line-item-btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: add-line-item
+
+- # ====== Button: ADD_SERIAL_NOS ==============================
+  id: 29342608771183315
+  identification: 
+    button-name: ADD_SERIAL_NOS
+    label: <u>F7</u> - Add Serial Numbers
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: true
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--large
+    - t-Button--link
+    - t-Button--stretch
+    - t-Button--padLeft
+    css-classes: 
+    - line-item-btns
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: add-serial-nos
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "UPPER(:P102_LABEL) = 'UPDATE'"
+
+dynamic-actions: 
+- # ====== Dynamic Action: Refocus =============================
+  id: 17926254952262939
+  identification: 
+    name: Refocus
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Shipment Line Items # 15657359821560935
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17926338760262940
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.selectedRecords?.length > 0) {
+            const model = this.data.model;
+            const rec = this.data.selectedRecords[0];
+            lineRec = rec;
+            apex.item("P102_SHIPMENT_ITEMS_ID").setValue(model.getValue(rec, "SHIPMENT_ITEMS_ID"));
+        }
+
+    execution: 
+      sequence: 10
+      event: Refocus # 17926254952262939
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Edit IG on load =====================
+  id: 17926471718262941
+  identification: 
+    name: Edit IG on load
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 17926529840262942
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: // focusEditOnCell(LINE_IG, "ITEM_NUMBER", getIGGridViewModel(LINE_IG).recordAt(0));
+
+    execution: 
+      sequence: 10
+      event: Edit IG on load # 17926471718262941
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Item PO selection change ============
+  id: 29342094616183309
+  identification: 
+    name: Item PO selection change
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Item PO List # 15658573022560947
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 29342158088183310
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data?.selectedRecords.length > 0) {
+            if (itemPODdialogFocus) {
+                focusOnIGFirstRecordFirstCell("item-po-list", "ITEM_NUMBER");
+                itemPODdialogFocus = false;
+            }
+        }
+
+    execution: 
+      sequence: 10
+      event: Item PO selection change # 29342094616183309
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Add New Item ========================
+  id: 29342308187183312
+  identification: 
+    name: Add New Item
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ADD_LINE_ITEM # 29341267281183301
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 29342420126183313
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        focusOnIGLastRecordFirstCell(LINE_IG);
+        apex.region(LINE_IG).widget().interactiveGrid("getActions").invoke("selection-add-row");
+
+    execution: 
+      sequence: 10
+      event: Add New Item # 29342308187183312
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Set SN collection ===================
+  id: 29342952481183318
+  identification: 
+    name: Set SN collection
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - TOTAL_UNITS
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 29343231884183321
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const model = getIGGridViewModel(LINE_IG);
+        const selRec = model.getSelectedRecords()[0];
+        const shipmentItemId = model.getValue(selRec, "SHIPMENT_ITEMS_ID");
+        const totalUnits = this.triggeringElement.value;
+        const shipmentId = $v("P102_SHIPMENT_ID");
+        
+        apex.server.process("SET_SN_COLLECTION", {
+            x01: shipmentItemId,
+            x02: totalUnits,
+            x03: shipmentId
+        })
+        .done(data => { });
+
+    execution: 
+      sequence: 10
+      event: Set SN collection # 29342952481183318
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Load SN modal =======================
+  id: 29343437665183323
+  identification: 
+    name: Load SN modal
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: ADD_SERIAL_NOS # 29342608771183315
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 29343563879183324
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: SN IG # 27342723071391813
+
+    execution: 
+      sequence: 20
+      event: Load SN modal # 29343437665183323
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 29343654525183325
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Serial Numbers # 27342612101391812
+
+    execution: 
+      sequence: 30
+      event: Load SN modal # 29343437665183323
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30556749024940748
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        snIGLoaded = true;
+        apex.region(SERIAL_NO_IG).call("getActions").set("edit", true);
+
+    execution: 
+      sequence: 40
+      event: Load SN modal # 29343437665183323
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On key down ITEM NO and ITEM DESC ===
+  id: 29344613979183335
+  identification: 
+    name: On key down ITEM NO and ITEM DESC
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - ITEM_NUMBER
+    - ITEM_DESC
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: |
+      (function (ev, tr){
+          const value = tr.value;
+          const key = ev.key?.toLowerCase();
+          const extraKeys = ev.ctrlKey || ev.altKey || ev.shiftKey;
+      
+          return (key.length === 1 || (key === "tab" && value === "")) && !extraKeys;
+      })(this.browserEvent, this.triggeringElement);
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 29344873514183337
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item POs # 15658430953560946
+
+    execution: 
+      sequence: 30
+      event: On key down ITEM NO and ITEM DESC # 29344613979183335
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 29346151426183350
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Item PO List # 15658573022560947
+
+    execution: 
+      sequence: 20
+      event: On key down ITEM NO and ITEM DESC # 29344613979183335
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32279088208470438
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const model = getIGGridViewModel(LINE_IG);
+        const rec = model.getSelectedRecords()[0];
+        apex.item("P102_REF_PO_NO").setValue(model.getValue(rec, "REF_PO_NO").v);
+
+    execution: 
+      sequence: 10
+      event: On key down ITEM NO and ITEM DESC # 29344613979183335
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Compute total units =================
+  id: 29345317741183342
+  identification: 
+    name: Compute total units
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - CS
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 29345483774183343
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const cs = parseInt(this.triggeringElement.value, 10);
+        const model = getIGGridViewModel(LINE_IG);
+        const selRec = model.getSelectedRecords()[0];
+        
+        if (!isNaN(cs)) {
+            if (cs > 0) {
+                const masterCaseQuantity = model.getValue(selRec, "MASTERCASE_QUANTITY");
+                const totalunits = parseInt(cs, 10) * parseInt(masterCaseQuantity);
+                model.setValue(selRec, "TOTAL_UNITS", totalunits);
+            } else if (cs === 0) {
+                apex.region(LINE_IG).call("getActions").set("edit", false);
+                apex.region(LINE_IG).call("getActions").invoke("selection-delete");
+                apex.region(LINE_IG).call("getActions").set("edit", true);
+        
+                // const totalRec = model.getTotalRecords(true);
+                // const recIndex = model.indexOf(selRec);
+                // console.log(`totalRecords: ${totalRec}, recIndex: ${recIndex}`);
+        
+        
+            }
+        }
+
+    execution: 
+      sequence: 10
+      event: Compute total units # 29345317741183342
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On CS tab - validation ==============
+  id: 30204840912428901
+  identification: 
+    name: On CS tab - validation
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - CS
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: |
+      this.browserEvent.key?.toLowerCase() === "tab" && 
+      !this.browserEvent.shiftKey && 
+      this.triggeringElement.value === ""
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30204993483428902
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.browserEvent.preventDefault();
+        
+        this.triggeringElement.setCustomValidity("Please input CS quantity");
+        this.triggeringElement.reportValidity();
+
+    execution: 
+      sequence: 10
+      event: On CS tab - validation # 30204840912428901
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30205003011428903
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.triggeringElement.setCustomValidity("");
+        if (this.browserEvent.key?.toLowerCase() === "enter") {
+            this.browserEvent.preventDefault();
+            this.browserEvent.stopPropagation();
+        }
+
+    execution: 
+      sequence: 10
+      event: On CS tab - validation # 30204840912428901
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On TOTAL_UNITS tab ==================
+  id: 30205397182428906
+  identification: 
+    name: On TOTAL_UNITS tab
+
+  execution: 
+    sequence: 160
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - TOTAL_UNITS
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: |
+      this.browserEvent.key?.toLowerCase() === "tab" && 
+      !this.browserEvent.shiftKey && 
+      this.triggeringElement.value === ""
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30205424510428907
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.browserEvent.preventDefault();
+        this.triggeringElement.setCustomValidity("Please input Total Units");
+        this.triggeringElement.reportValidity();
+
+    execution: 
+      sequence: 10
+      event: On TOTAL_UNITS tab # 30205397182428906
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30205575037428908
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: this.triggeringElement.setCustomValidity("");
+
+    execution: 
+      sequence: 10
+      event: On TOTAL_UNITS tab # 30205397182428906
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On COST tab =========================
+  id: 30205604926428909
+  identification: 
+    name: On COST tab
+
+  execution: 
+    sequence: 170
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - COST
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: |
+      this.browserEvent.key?.toLowerCase() === "tab" && 
+      !this.browserEvent.shiftKey && 
+      this.triggeringElement.value === ""
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30205732432428910
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.browserEvent.preventDefault();
+        this.triggeringElement.setCustomValidity("Please input Cost value");
+        this.triggeringElement.reportValidity();
+
+    execution: 
+      sequence: 10
+      event: On COST tab # 30205604926428909
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30205838197428911
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: this.triggeringElement.setCustomValidity("");
+
+    execution: 
+      sequence: 10
+      event: On COST tab # 30205604926428909
+      fire-when-event-result-is: False
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On SN IG select =====================
+  id: 30556812770940749
+  identification: 
+    name: On SN IG select
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: SN IG # 27342723071391813
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30556995858940750
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data?.selectedRecords.length > 0) {
+            if (snIGLoaded) {
+                focusEditOnCell(SERIAL_NO_IG, "SERIAL_NUMBER", this.data.model.recordAt(0));
+                snIGLoaded = false;
+            }
+        }
+
+    execution: 
+      sequence: 10
+      event: On SN IG select # 30556812770940749
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On SN esc ===========================
+  id: 31306969419578701
+  identification: 
+    name: On SN esc
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: JavaScript Expression
+    javascript-expression: document.getElementById("serial-no")
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: this.browserEvent.key?.toLowerCase() === "escape"
+
+  actions: 
+  - # ====== Action: Save serial numbers =========================
+    id: 31307085842578702
+    identification: 
+      name: Save serial numbers
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.browserEvent.preventDefault();
+        apex.region(SERIAL_NO_IG).widget().interactiveGrid("getActions").invoke("save");
+        apex.message.hidePageSuccess();
+
+    execution: 
+      sequence: 10
+      event: On SN esc # 31306969419578701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Close Region ================================
+    id: 31307190054578703
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Serial Numbers # 27342612101391812
+
+    execution: 
+      sequence: 20
+      event: On SN esc # 31306969419578701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refocus on Line IG ==========================
+    id: 31309013572578722
+    identification: 
+      name: Refocus on Line IG
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusEditOnCell(LINE_IG, "ITEM_NUMBER", lineRec);
+
+    execution: 
+      sequence: 30
+      event: On SN esc # 31306969419578701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Close Item PO =======================
+  id: 31308643921578718
+  identification: 
+    name: Close Item PO
+
+  execution: 
+    sequence: 190
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: CLOSE_ITEM_PO
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Close Region ================================
+    id: 31308731805578719
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item POs # 15658430953560946
+
+    execution: 
+      sequence: 10
+      event: Close Item PO # 31308643921578718
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On esc ==============================
+  id: 31308850823578720
+  identification: 
+    name: On esc
+
+  execution: 
+    sequence: 200
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: |
+      this.browserEvent.key?.toLowerCase() === "escape" &&
+      document.activeElement.classList.contains("a-GV-cell")
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 31308961476578721
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.browserEvent.preventDefault();
+        saveLineIG();
+
+    execution: 
+      sequence: 20
+      event: On esc # 31308850823578720
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On SN change ========================
+  id: 31311211082578744
+  identification: 
+    name: On SN change
+
+  execution: 
+    sequence: 210
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: SN IG # 27342723071391813
+    column(s): 
+    - SERIAL_NUMBER
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 31311321929578745
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const model = getIGGridViewModel(LINE_IG);
+        model.setValue(lineRec, "SN_EDIT", "Y");
+
+    execution: 
+      sequence: 10
+      event: On SN change # 31311211082578744
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On save =============================
+  id: 32277444725470422
+  identification: 
+    name: On save
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridsave
+    selection-type: Region
+    region: Shipment Line Items # 15657359821560935
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32277594819470423
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.status === "success") {
+            apex.page.submit({
+                request: "SUBMIT",
+                showWait: true
+            });
+        }
+
+    execution: 
+      sequence: 10
+      event: On save # 32277444725470422
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On tab - ITEM DESC 1 ================
+  id: 35154466177966916
+  identification: 
+    name: On tab - ITEM DESC 1
+
+  execution: 
+    sequence: 110
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Key Down
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - ITEM_DESC
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: |
+      (function (ev, tr) {
+          const model = getIGGridViewModel(LINE_IG);
+          const rec = model.getSelectedRecords()[0];
+          const itemId = model.getValue(rec, "ITEM_ID");
+          return ev.key?.toLowerCase() === "tab" && (itemId === "" || itemId === null);
+      })(this.browserEvent, this.triggeringElement);
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35154538742966917
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.browserEvent.preventDefault();
+        const model = getIGGridViewModel(LINE_IG);
+        const rec = model.getSelectedRecords()[0];
+        apex.item("P102_REF_PO_NO").setValue(model.getValue(rec, "REF_PO_NO").v);
+        const id = this.triggeringElement.id;
+        apex.item("P102_ITEM_SEARCH_F").setValue(id === "item-number" ? 1 : 2);
+        apex.item("P102_ITEM_SEARCH_V").setValue(this.triggeringElement.value);
+        
+        const itemId = model.getValue(rec, "ITEM_ID");
+        if (itemId === null || itemId === "") {
+            focusEditOnCell(LINE_IG, "ITEM_NUMBER", rec);
+        }
+
+    execution: 
+      sequence: 10
+      event: On tab - ITEM DESC 1 # 35154466177966916
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 35154671216966918
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Item PO List # 15658573022560947
+
+    execution: 
+      sequence: 20
+      event: On tab - ITEM DESC 1 # 35154466177966916
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 35154702894966919
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item POs # 15658430953560946
+
+    execution: 
+      sequence: 30
+      event: On tab - ITEM DESC 1 # 35154466177966916
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On change ITEM NO and ITEM DESC =====
+  id: 35154898797966920
+  identification: 
+    name: On change ITEM NO and ITEM DESC
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - ITEM_NUMBER
+    - ITEM_DESC
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35154937162966921
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const model = getIGGridViewModel(LINE_IG);
+        model.setValue(lineRec, "ITEM_ID", "");
+        
+        const rec = model.getSelectedRecords()[0];
+        apex.item("P102_REF_PO_NO").setValue(model.getValue(rec, "REF_PO_NO").v);
+        const id = this.triggeringElement.id;
+        apex.item("P102_ITEM_SEARCH_F").setValue(id === "item-number" ? 1 : 2);
+        apex.item("P102_ITEM_SEARCH_V").setValue(this.triggeringElement.value);
+
+    execution: 
+      sequence: 10
+      event: On change ITEM NO and ITEM DESC # 35154898797966920
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 35155077591966922
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Item PO List # 15658573022560947
+
+    execution: 
+      sequence: 20
+      event: On change ITEM NO and ITEM DESC # 35154898797966920
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Open Region =================================
+    id: 35155183953966923
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item POs # 15658430953560946
+
+    execution: 
+      sequence: 30
+      event: On change ITEM NO and ITEM DESC # 35154898797966920
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On tab - ITEM DESC ==================
+  id: 35155257993966924
+  identification: 
+    name: On tab - ITEM DESC
+
+  execution: 
+    sequence: 230
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Shipment Line Items # 15657359821560935
+    column(s): 
+    - ITEM_DESC
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 35155304549966925
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        const model = getIGGridViewModel(LINE_IG);
+        const selRec = model.getSelectedRecords()[0];
+        const itemId = model.getValue(selRec, "ITEM_ID");
+        if (itemId === null || itemId === "") {
+            focusEditOnCell(LINE_IG, "ITEM_NUMBER", selRec);
+        }
+
+    execution: 
+      sequence: 10
+      event: On tab - ITEM DESC # 35155257993966924
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P102_SHIPMENT_NO =======================
+  id: 29342722130183316
+  identification: 
+    item-name: P102_SHIPMENT_NO
+
+  execution: 
+    sequence: 10
+    point: After Header
+
+  computation: 
+    type: SQL Query (return single value)
+    sql-query: |
+      select shipment_number
+        from nit016
+       where shipment_id = :P102_SHIPMENT_ID
+
+processes: 
+- # ====== Process: Shipment Line Items - Save Interactive Grid 
+  id: 16266447234399125
+  identification: 
+    name: Shipment Line Items - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: Shipment Line Items # 15657359821560935
+
+  settings: 
+    target-type: PL/SQL Code
+    pl/sql-code-to-insert/update/delete: |
+      declare
+          v_cs                nit018.qty%TYPE := TO_NUMBER(TRIM(:CS));
+          v_cost              nit018.cost%TYPE := TO_NUMBER(TRIM(:COST));
+          v_next_sitem_id     nit018.shipment_items_id%TYPE;
+          v_col_name          varchar2(100) := 'NOS_SHIP_SN_' || :P102_SHIPMENT_ID || '_' || UPPER(:SPID);
+      begin
+          case :APEX$ROW_STATUS
+          when 'C' then
+              v_next_sitem_id := shipment_records_pkg.get_next_shipment_item_id(:P102_SHIPMENT_ID);
+      
+              insert into nit018 ( shipment_id, shipment_items_id, po_id, item_id, qty, cost, uom_id, product_date, encoded)
+              values (:P102_SHIPMENT_ID, v_next_sitem_id, :REF_PO_NO, :ITEM_ID, :CS, :COST, :UOM_ID, :PRODUCT_DATE, :ENCODED);
+              
+              shipment_records_pkg.save_serial_numbers(:P102_SHIPMENT_ID, v_next_sitem_id, v_col_name);
+          when 'U' then
+              if :OLD_ITEM_ID != :ITEM_ID then
+                  delete nit026
+                   where shipment_id = :P102_SHIPMENT_ID
+                     and shipment_items_id = :SHIPMENT_ITEMS_ID;
+              end if;
+      
+              update nit018
+                 set item_id = :ITEM_ID,
+                     qty = :CS,
+                     cost = :COST,
+                     uom_id = :UOM_ID,
+                     product_date = :PRODUCT_DATE,
+                     encoded = :ENCODED
+               where shipment_id = :P102_SHIPMENT_ID
+                 and shipment_items_id = :SHIPMENT_ITEMS_ID
+                 and item_id = :OLD_ITEM_ID;
+      
+              shipment_records_pkg.save_serial_numbers(:P102_SHIPMENT_ID, :SHIPMENT_ITEMS_ID, v_col_name);
+          when 'D' then
+              delete nit026
+               where shipment_id = :P102_SHIPMENT_ID
+                 and shipment_items_id = :SHIPMENT_ITEMS_ID;
+      
+              delete nit018
+               where shipment_id = :P102_SHIPMENT_ID
+                 and shipment_items_id = :SHIPMENT_ITEMS_ID;
+          end case;
+      exception
+          when others then
+              raise_application_error(-20001, :APEX$ROW_STATUS || '-' || v_next_sitem_id || '-' || :P102_SHIPMENT_ID || '-' || :SHIPMENT_ID || '-' || SQLERRM);
+      end;
+    prevent-lost-updates: true
+    lock-row: Yes
+
+  execution: 
+    sequence: 10
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+- # ====== Process: SN IG - Save Interactive Grid Data =========
+  id: 27343489658391820
+  identification: 
+    name: SN IG - Save Interactive Grid Data
+    type: Interactive Grid - Automatic Row Processing (DML)
+    execution-chain: None
+    editable-region: SN IG # 27342723071391813
+
+  settings: 
+    target-type: PL/SQL Code
+    pl/sql-code-to-insert/update/delete: |
+      begin
+          case :APEX$ROW_STATUS
+          when 'C' then
+              null;
+          when 'U' then
+              apex_collection.update_member_attribute(
+                  p_collection_name => 'NOS_SHIP_SN_' || :SHIPMENT_ID || '_' || :SHIPMENT_ITEMS_ID,
+                  p_seq => :CASE,
+                  p_attr_number => 1,
+                  p_attr_value => :SERIAL_NUMBER
+              );
+          when 'D' then
+              null;
+          end case;
+      end;
+    prevent-lost-updates: false
+    lock-row: No
+
+  execution: 
+    sequence: 20
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: Serial numbers added
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    execution-scope: For Created and Modified Rows
+
+- # ====== Process: SET_SN_COLLECTION ==========================
+  id: 29343300380183322
+  identification: 
+    name: SET_SN_COLLECTION
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_sitem_id         VARCHAR2(40) := apex_application.g_x01;
+          v_total_units      NUMBER := apex_application.g_x02;
+          v_shipment_id      NUMBER := apex_application.g_x03;
+      
+          v_coll_name        VARCHAR2(40);
+          v_col_mem_ct       NUMBER;
+          v_ct_diff          NUMBER;
+      begin
+          v_coll_name := 'NOS_SHIP_SN_' || v_shipment_id || '_' || UPPER(v_sitem_id);
+      
+          if apex_collection.collection_exists(p_collection_name => v_coll_name) then
+              v_col_mem_ct := apex_collection.collection_member_count(p_collection_name => v_coll_name);
+              v_ct_diff := v_col_mem_ct - v_total_units;
+      
+              if v_ct_diff > 0 then
+                  for ctr in (v_total_units + 1) .. v_col_mem_ct
+                  loop
+                      apex_collection.delete_member(p_collection_name => v_coll_name, p_seq => ctr);
+                  end loop;
+              elsif v_ct_diff < 0 then 
+                  for ctr in 1 .. (v_total_units - v_col_mem_ct)
+                  loop
+                      apex_collection.add_member(p_collection_name => v_coll_name, p_n001 => v_shipment_id, p_c002 => v_sitem_id);
+                  end loop;
+              end if;
+          else
+              apex_collection.create_collection(p_collection_name => v_coll_name);
+              for ctr in 1 .. v_total_units
+              loop
+                  apex_collection.add_member(p_collection_name => v_coll_name, p_n001 => v_shipment_id, p_c002 => v_sitem_id);
+              end loop;
+          end if;
+      
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.write('cn', v_coll_name);
+          apex_json.write('cnct', apex_collection.collection_member_count(p_collection_name => v_coll_name));
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 10
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Create collections for SN ==================
+  id: 31307536063578707
+  identification: 
+    name: Create collections for SN
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          TYPE coll_metadata_r IS RECORD (
+              ct                      number,
+              shipment_items_id       nit018.shipment_items_id%TYPE,
+              total_units             number
+          );
+      
+          TYPE coll_metadata_t IS TABLE OF coll_metadata_r;
+      
+          TYPE coll_data_r IS RECORD (
+              sn_id               nit026.serial_number_id%TYPE,
+              shipment_id         nit026.shipment_id%TYPE,
+              shipment_items_id   nit026.shipment_items_id%TYPE,
+              serial_number       nit026.serial_number%TYPE
+          );
+      
+          TYPE coll_data_t IS TABLE OF coll_data_r;
+      
+          v_tab               coll_metadata_t;
+          v_d_tab             coll_data_t;
+          v_rem               number;
+          v_coll_name         varchar2(30);
+      begin
+          for col in (select collection_name cn
+                        from apex_collections
+                       where collection_name like 'NOS_SHIP_SN%')
+          loop
+              if apex_collection.collection_exists(p_collection_name => col.cn) then
+                  apex_collection.delete_collection(p_collection_name => col.cn);
+              end if;
+          end loop;
+      
+          --create collection for each item
+          select count(b.serial_number) ct, a.shipment_items_id, (a.qty * c.quantity) total_units
+            bulk collect into v_tab
+            from nit018 a,
+                 nit026 b,
+                 (select w.item_id, w.quantity
+                    from nit002 w
+                   where w."LEVEL" = 4) c
+           where a.shipment_id = :P102_SHIPMENT_ID
+             and a.item_id = c.item_id
+             and a.shipment_id = b.shipment_id (+)
+             and a.shipment_items_id = b.shipment_items_id (+)
+           group by a.shipment_items_id, (a.qty * c.quantity);
+      
+          if v_tab.COUNT > 0 THEN
+              for i in v_tab.FIRST .. v_tab.LAST
+              loop
+                  v_rem := v_tab(i).total_units - v_tab(i).ct;
+                  v_coll_name := 'NOS_SHIP_SN_' || :P102_SHIPMENT_ID || '_' || UPPER(v_tab(i).shipment_items_id);
+      
+                  apex_collection.create_or_truncate_collection(p_collection_name => v_coll_name);
+      
+                  select serial_number_id sn_id, shipment_id, shipment_items_id, serial_number
+                    bulk collect into v_d_tab
+                    from nit026
+                   where shipment_id = :P102_SHIPMENT_ID
+                     and shipment_items_id = v_tab(i).shipment_items_id
+                  union all
+                  select *
+                    from (select null sn_id, null shipment_id, null shipment_items_id, null serial_number
+                            from dual
+                          connect by level <= v_rem)
+                   where v_rem > 0
+                  order by sn_id;
+      
+                  for i2 in v_d_tab.FIRST .. v_d_tab.LAST 
+                  loop
+                      apex_collection.add_member(
+                          p_collection_name => v_coll_name,
+                          p_n001 => NVL(v_d_tab(i2).shipment_id, :P102_SHIPMENT_ID), 
+                          p_c002 => NVL(v_d_tab(i2).shipment_items_id, v_tab(i).shipment_items_id),
+                          p_n003 => v_d_tab(i2).sn_id,
+                          p_c001 => v_d_tab(i2).serial_number
+                      );
+                  end loop;
+              end loop;
+          end if;
+      exception
+          when no_data_found then
+              null;
+      end;
+
+  execution: 
+    sequence: 50
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Create item filter collection ==============
+  id: 32278952357470437
+  identification: 
+    name: Create item filter collection
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          TYPE po_items_r IS RECORD (
+              po_id                   nit018.po_id%TYPE,
+              item_id                 nit018.item_id%TYPE,
+              shipment_items_id       nit018.shipment_items_id%TYPE
+          );
+      
+          TYPE po_items_t IS TABLE OF po_items_r;
+      
+          v_tab               po_items_t;
+          v_coll_name         varchar2(30) := 'NOS_SHIP_SEL_ITEMS';
+      begin
+          select po_id, item_id, shipment_items_id
+            bulk collect into v_tab
+            from nit018 a
+           where a.shipment_id = :P102_SHIPMENT_ID;
+      
+          if v_tab.COUNT > 0 THEN
+              apex_collection.create_or_truncate_collection(p_collection_name => v_coll_name);
+      
+              for i in v_tab.FIRST .. v_tab.LAST
+              loop
+                  apex_collection.add_member(
+                      p_collection_name => v_coll_name,
+                      p_n001 => v_tab(i).item_id,
+                      p_c001 => v_tab(i).po_id,
+                      p_c002 => v_tab(i).shipment_items_id
+                  );
+              end loop;
+          end if;
+      exception
+          when no_data_found then
+              null;
+      end;
+
+  execution: 
+    sequence: 60
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Process: SET_ITEM_FILTER ============================
+  id: 32279297242470440
+  identification: 
+    name: SET_ITEM_FILTER
+    type: Execute Code
+    execution-chain: None
+
+  source: 
+    location: Local Database
+    language: PL/SQL
+    pl/sql-code: |
+      declare
+          v_po_id            nit018.po_id%TYPE := apex_application.g_x01;
+          v_item_id          nit018.item_id%TYPE := apex_application.g_x02;
+          v_sitems_id        VARCHAR2(40) := apex_application.g_x03;
+      
+          v_coll_name        VARCHAR2(20) := 'NOS_SHIP_SEL_ITEMS';
+          v_seq              apex_collections.seq_id%TYPE;
+      begin
+          begin
+              select seq_id
+                into v_seq
+                from apex_collections
+               where collection_name = v_coll_name
+                 and c002 = v_sitems_id;
+      
+              apex_collection.update_member (
+                  p_collection_name => v_coll_name,
+                  p_seq => v_seq,
+                  p_n001 => v_item_id,
+                  p_c001 => v_po_id,
+                  p_c002 => v_sitems_id
+              );   
+          exception
+              when no_data_found then
+                  apex_collection.add_member(
+                      p_collection_name => v_coll_name,
+                      p_n001 => v_item_id,
+                      p_c001 => v_po_id,
+                      p_c002 => v_sitems_id
+                  );
+          end;
+      
+          apex_json.open_object;
+          apex_json.write('message', 'Success');
+          apex_json.close_object;
+      end;
+
+  execution: 
+    sequence: 20
+    point: Ajax Callback
+    run-process: Once Per Page Visit (default)
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+branches: 
+- # ====== Branch: Redirect to basic info ======================
+  id: 29342879698183317
+  identification: 
+    name: Redirect to basic info
+
+  execution: 
+    sequence: 10
+    point: Before Header
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:101:&SESSION.::&DEBUG.:101::&success_msg=#SUCCESS_MSG#'
+      page: 101 # Add/Update New Shipment
+      clear-cache: 101
+
+  server-side-condition: 
+    type: Item is NULL
+    item: P102_SHIPMENT_ID
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Branch: Redirect back to shipment listing ===========
+  id: 31311819462578750
+  identification: 
+    name: Redirect back to shipment listing
+
+  execution: 
+    sequence: 10
+    point: After Processing
+
+  behavior: 
+    type: Page or URL (Redirect)
+    target: 
+      url: 'f?p=&APP_ID.:100:&SESSION.::&DEBUG.:102,101::&success_msg=#SUCCESS_MSG#'
+      page: 100 # Review Shipment Orders
+      clear-cache: 102,101
+
+  server-side-condition: 
+    type: Request is contained in Value
+    value: SUBMIT
+

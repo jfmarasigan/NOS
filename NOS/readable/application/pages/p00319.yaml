@@ -1,0 +1,1812 @@
+---
+# ====== Page: Gift Certificate Donation =====================
+id: 319
+identification: 
+  name: Gift Certificate Donation
+  alias: GIFT-CERTIFICATE-DONATION
+  title: Gift Certificate Donation
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p6KeyMap = {
+        s : (v) => {
+            $("#s").trigger("click");
+        },
+        i : (v) => {
+            $("#i").trigger("click");
+        },
+        t : (v) => {
+            $("#t").trigger("click");
+        },
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        escape : (v) => {
+            $("#exit").trigger("click");
+        },
+    }
+    
+    function mapP6Keys() {
+        $(document).off('keydown.p6keyevents');
+        $(document).on('keydown.p6keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p6KeyMap[key]) {
+                ev.preventDefault();
+                p6KeyMap[key]();
+            }
+        });
+    }
+    
+    function customEvent(event, data){
+        mapP6Keys();
+    }
+  execute-when-page-loads: |
+    mapP6Keys();
+    setTitle("Donation")
+    $("#s").trigger("click");
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .t-Form-labelContainer, .t-Form-inputContainer {
+        padding-block-end: 0;
+        padding-block-start: 0;
+    }
+    
+    /* add margin to interactive grid table start */
+    .t-Body-contentInner {
+        padding-inline-end: var(--ut-body-content-padding-x, 2.5rem);
+        padding-inline-start: var(--ut-body-content-padding-x, 2.5rem);
+    }
+    /* end */
+    
+    body {
+        background-color: rgb(30, 58, 138);
+    }
+    
+    /* style returned values */
+    .apex-item-display-only {
+        font-size: 1.125rem;
+        font-weight: 400;
+        color: white;
+    }
+    
+    #table > table, tr, th {
+        font-size: 1.125rem;
+    }
+    
+    #table > td {
+        font-size: 1.125rem;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .margin-right {
+        margin-right: 3rem;
+    }
+    
+    .mt-3 {
+        margin-top: 3rem;
+    }
+    
+    .mt-2 {
+        margin-top: 2rem;
+    }
+    
+    .ms-1 {
+        margin-left: .5rem;
+    }
+    
+    .ml-2 {
+        margin-left: 2rem;
+    }
+    
+    .ml-3 {
+        margin-left: 3rem;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+        pointer-events: none;
+    }
+    
+    .a-IG,
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: 	black !important;
+    }
+    
+    /* css for modal 311 start */
+    .ui-dialog-titlebar {
+        display: none !important;
+    }
+    
+    .ui-dialog.pr-li {
+       left: 80% !important;
+    }
+    
+    .ui-dialog.inv-bby-w {
+        left: 78% !important;
+    }
+    
+    .ui-dialog.ship-his {
+        left: 50% !important;
+    }
+    
+    .ui-dialog.pur-order,
+    .ui-dialog.inc-ship {
+        left: 45% !important;
+    }
+    
+    .ui-dialog.res {
+        left: 32% !important;
+    }
+    
+    .ui-widget-overlay.ui-front {
+        background-color: transparent !important;
+        opacity: 0 !important;
+    }
+    /* modal 311 end */
+    
+    /* modify position of inquire modal 314 sstart */
+    .inquire-dialog {
+        left: 53% !important;
+    }
+    /* modal 314 end */
+    
+    /* View height dependent table and buttons - START */
+    .buttons-row {
+        position: absolute;
+        width: 90vw;
+        /* bottom: 1.75rem; */
+        bottom: 1rem;
+    }
+    
+    #table .a-IG {
+        height: calc(73vh + 2px) !important;
+    } 
+    
+    #table .a-IG-contentContainer {
+        height: 73vh !important;
+    }
+    
+    #table .a-IG-gridView.a-GV {
+        height: 73vh !important;
+    }
+    
+    #table .a-GV-bdy {
+        height: calc(73vh - 2.5625rem) !important;
+    }
+    
+    /* View height dependent table and buttons - END */
+    
+    
+    
+    #table .a-GV-table {
+        width: 100% !important;
+    }
+    
+    #table .a-GV-table colgroup col:nth-child(4),
+    #table .a-GV-table colgroup col:nth-child(5) {
+        width: 25%;
+    }
+    
+    .a-GV-header-sort {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search Input ================================
+  id: 27796680230719108
+  identification: 
+    name: Search Input
+    type: Static Content
+
+  layout: 
+    sequence: 50
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    - t-Form--leftLabels
+    - margin-top-sm
+    - margin-left-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Gift Certificate Donation List ==============
+  id: 74132683114713923
+  identification: 
+    name: Gift Certificate Donation List
+    title: Gift Certificate Donation List
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT 
+          ROWNUM AS "Primary Key",
+          npt020.GIFT_CERTIFICATE_ID AS "GC_NO",
+          npt020.ISSUE_DATE AS "ISSUE_DATE",
+          npt020.EXPIRY_DATE AS "EXPIRY_DATE",
+          npt020.RECIPIENT AS "RECIPIENT",
+          npt020.EVENT AS "EVENT",
+          npt020.AMOUNT AS "AMOUNT"
+      FROM
+          NPT020 npt020
+      WHERE 
+      
+          -- SEARCH BY YEAR, RECIPIENT, AND EVENT
+             ((:P319_ISSUE_YR IS NOT NULL OR :P319_ISSUE_YR != '') AND (:P319_RECIPIENT IS NOT NULL OR :P319_RECIPIENT != '') AND (:P319_EVENT IS NOT NULL OR :P319_EVENT != '')) AND
+              (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND 
+              npt020.RECIPIENT = :P319_RECIPIENT AND
+              npt020.EVENT = :P319_EVENT)
+      
+          OR
+      
+          -- SEARCH BY YEAR and RECIPIENT
+             ((:P319_ISSUE_YR IS NOT NULL OR :P319_ISSUE_YR != '') AND (:P319_RECIPIENT IS NOT NULL OR :P319_RECIPIENT != '') AND (:P319_EVENT IS NULL OR :P319_EVENT = '')) AND
+              (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND 
+              npt020.RECIPIENT = :P319_RECIPIENT)
+      
+          OR
+      
+          -- SEARCH BY YEAR and EVENT
+             ((:P319_ISSUE_YR IS NOT NULL OR :P319_ISSUE_YR != '') AND (:P319_RECIPIENT IS NULL OR :P319_RECIPIENT = '') AND (:P319_EVENT IS NOT NULL OR :P319_EVENT != '')) AND
+              (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND 
+              npt020.EVENT = :P319_EVENT)
+          
+          OR
+      
+          -- else, check if SEARCH BY ISSUE YEAR
+          ((:P319_ISSUE_YR IS NOT NULL OR :P319_ISSUE_YR != '')  AND (:P319_RECIPIENT IS NULL OR :P319_RECIPIENT = '') AND (:P319_EVENT IS NULL OR :P319_EVENT = '')) AND
+              extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR;
+    page-items-to-submit: 
+    - P319_ISSUE_YR
+    - P319_RECIPIENT
+    - P319_EVENT
+
+  layout: 
+    sequence: 60
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: table
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 74328319265561186
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 300
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 74391747630044270
+      identification: 
+        name: Primary Report
+        alias: 186900
+
+  columns: 
+  - # ====== Column: EVENT =======================================
+    id: 27797502951719117
+    identification: 
+      column-name: EVENT
+      type: Text Field
+
+    heading: 
+      heading: Event
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: EVENT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: Primary Key =================================
+    id: 32481758719104125
+    identification: 
+      column-name: Primary Key
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: Primary Key
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: RECIPIENT ===================================
+    id: 54382464015833253
+    identification: 
+      column-name: RECIPIENT
+      type: Text Field
+
+    heading: 
+      heading: Recipient
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 50
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: RECIPIENT
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: AMOUNT ======================================
+    id: 74328841127561191
+    identification: 
+      column-name: AMOUNT
+      type: Number Field
+
+    heading: 
+      heading: Amount
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 70
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: AMOUNT
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: EXPIRY_DATE =================================
+    id: 74329105766561194
+    identification: 
+      column-name: EXPIRY_DATE
+      type: Text Field
+
+    heading: 
+      heading: Expiry Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: EXPIRY_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: GC_NO =======================================
+    id: 82014675769514183
+    identification: 
+      column-name: GC_NO
+      type: Text Field
+
+    heading: 
+      heading: GC No
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: GC_NO
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ISSUE_DATE ==================================
+    id: 82014986408514187
+    identification: 
+      column-name: ISSUE_DATE
+      type: Text Field
+
+    heading: 
+      heading: Issue Date
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: center
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+
+    source: 
+      type: Database Column
+      database-column: ISSUE_DATE
+      data-type: DATE
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: Distinct Column
+      date-ranges: All
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: true
+      control-break/aggregate: true
+      hide: true
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+- # ====== Region: Buttons =====================================
+  id: 74327371703561176
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    - ml-3
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: None
+    render-components: Above Content
+
+  advanced: 
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P319_ISSUE_YR ============================
+  id: 27796739074719109
+  identification: 
+    name: P319_ISSUE_YR
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Issue Year:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 10
+    region: Search Input # 27796680230719108
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P319_EVENT ===============================
+  id: 27796862208719110
+  identification: 
+    name: P319_EVENT
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Event:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 30
+    region: Search Input # 27796680230719108
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P319_RECIPIENT ===========================
+  id: 27796934938719111
+  identification: 
+    name: P319_RECIPIENT
+    type: Display Only
+
+  label: 
+    label: '<span class="btns">Recipient:</span>'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Search Input # 27796680230719108
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+    label-column-span: 1
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P319_SELECTED_GC_NO ======================
+  id: 32481819680104126
+  identification: 
+    name: P319_SELECTED_GC_NO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P319_PREPARED_URL ========================
+  id: 32482764083104135
+  identification: 
+    name: P319_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P319_SELECTED_GC_STATUS ==================
+  id: 37007544572700412
+  identification: 
+    name: P319_SELECTED_GC_STATUS
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Print =======================================
+  id: 27796537200719107
+  identification: 
+    button-name: Print
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 100
+    region: Buttons # 74327371703561176
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+- # ====== Button: Search ======================================
+  id: 28072548798616812
+  identification: 
+    button-name: Search
+    label: <u>S </u>- Search
+
+  layout: 
+    sequence: 10
+    region: Buttons # 74327371703561176
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ml-2
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:309:&SESSION.::&DEBUG.:::'
+      page: 309 # GC Donation Search
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: Inquire =====================================
+  id: 28072980720616814
+  identification: 
+    button-name: Inquire
+    label: <u>I </u>- Inquire
+
+  layout: 
+    sequence: 70
+    region: Buttons # 74327371703561176
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: i
+
+- # ====== Button: Statistics ==================================
+  id: 28073317124616815
+  identification: 
+    button-name: Statistics
+    label: <u>T</u>- Statistics
+
+  layout: 
+    sequence: 90
+    region: Buttons # 74327371703561176
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: t
+
+- # ====== Button: Back ========================================
+  id: 28430457875015708
+  identification: 
+    button-name: Back
+    label: Back
+
+  layout: 
+    sequence: 110
+    region: Buttons # 74327371703561176
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: 9
+    new-column: true
+    column-span: 2
+    column-css-classes: 
+    - ms-1
+    - mt-3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    css-classes: 
+    - btns
+    - text-left
+    - hide
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:304:&SESSION.::&DEBUG.:::'
+      page: 304 # Gift Certificate Submenu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: exit
+
+dynamic-actions: 
+- # ====== Dynamic Action: On Search Dialog Close ==============
+  id: 27797033566719112
+  identification: 
+    name: On Search Dialog Close
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Search # 28072548798616812
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 27797103966719113
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Gift Certificate Donation List # 74132683114713923
+
+    execution: 
+      sequence: 70
+      event: On Search Dialog Close # 27797033566719112
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Issue Year ==============================
+    id: 27797266491719114
+    identification: 
+      name: Set Issue Year
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P309_SEARCH_BY_ISSUE_YR
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P319_ISSUE_YR
+
+    execution: 
+      sequence: 10
+      event: On Search Dialog Close # 27797033566719112
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Recipient ===============================
+    id: 27797385537719115
+    identification: 
+      name: Set Recipient
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P309_RECIPIENT
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P319_RECIPIENT
+
+    execution: 
+      sequence: 30
+      event: On Search Dialog Close # 27797033566719112
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Event ===================================
+    id: 27797485237719116
+    identification: 
+      name: Set Event
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P309_EVENT
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P319_EVENT
+
+    execution: 
+      sequence: 40
+      event: On Search Dialog Close # 27797033566719112
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: To select 1st cell of the table =============
+    id: 32482132915104129
+    identification: 
+      name: To select 1st cell of the table
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("click");
+         });
+        }, "1000");
+
+    execution: 
+      sequence: 80
+      event: On Search Dialog Close # 27797033566719112
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Selection Change ====================
+  id: 32482396908104131
+  identification: 
+    name: Selection Change
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Gift Certificate Donation List # 74132683114713923
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32482409693104132
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if (this.data.selectedRecords.length > 0) {
+            let itemNoSelected = this.data.selectedRecords[0][1];
+            apex.item("P319_SELECTED_GC_NO").setValue(itemNoSelected);
+        }
+
+    execution: 
+      sequence: 10
+      event: Selection Change # 32482396908104131
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open inquire popup ==================
+  id: 32482596338104133
+  identification: 
+    name: Open inquire popup
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Inquire # 28072980720616814
+
+  client-side-condition: 
+    type: Item is not null
+    item: P319_SELECTED_GC_NO
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 32482679315104134
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P319_PREPARED_URL := apex_page.get_url(
+               p_page   => 314,
+               p_items  => 'P314_GET_SELECTED_GC_NO',
+               p_values => :P319_SELECTED_GC_NO
+             );
+        END;
+      items-to-submit: 
+      - P319_SELECTED_GC_NO
+      items-to-return: 
+      - P319_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Open inquire popup # 32482596338104133
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 32482958561104137
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P319_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Open inquire popup # 32482596338104133
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Reset keys ==========================
+  id: 34714192901647701
+  identification: 
+    name: Reset keys
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: Statistics # 28073317124616815
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34714229798647702
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        $(document).off('keydown.p4keyevents');
+        
+        $(document).on('keydown.p4keyevents', (ev) => {
+            apex.navigation.dialog.close(true);
+        });
+
+    execution: 
+      sequence: 10
+      event: Reset keys # 34714192901647701
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open date range popup ===============
+  id: 34714359634647703
+  identification: 
+    name: Open date range popup
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Statistics # 28073317124616815
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 34714482002647704
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P319_PREPARED_URL := apex_page.get_url(
+               p_page   => 318
+            --    p_items  => 'P314_GET_SELECTED_GC_NO',
+            --    p_values => :P316_SELECTED_GC_NO
+             );
+        END;
+      items-to-return: 
+      - P319_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Open date range popup # 34714359634647703
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 34714586876647705
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P319_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Open date range popup # 34714359634647703
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Open copies popup ===================
+  id: 37007355007700410
+  identification: 
+    name: Open copies popup
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Print # 27796537200719107
+
+  client-side-condition: 
+    type: Item is not null
+    item: P319_SELECTED_GC_NO
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 37007417782700411
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Function Body
+      pl/sql-function-body: |
+        DECLARE
+        
+        l_return_value  VARCHAR(1) := NULL;
+        
+        BEGIN
+        
+            IF LENGTH(:P319_SELECTED_GC_NO) > 0 THEN
+            
+                SELECT GC_STATUS_ID INTO l_return_value
+                FROM NPT020
+                WHERE GIFT_CERTIFICATE_ID = :P319_SELECTED_GC_NO;
+        
+            END IF;
+        
+            RETURN l_return_value;
+        
+        END;
+      items-to-submit: 
+      - P319_SELECTED_GC_NO
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P319_SELECTED_GC_STATUS
+
+    execution: 
+      sequence: 10
+      event: Open copies popup # 37007355007700410
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 37007779555700414
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        -- redirect and pass value to url (which is the copies dialog modal)
+        BEGIN
+            :P319_PREPARED_URL := apex_page.get_url(
+               p_page   => 313,
+               p_items  => 'P313_SELECTED_GC_NO',
+               p_values => :P319_SELECTED_GC_NO
+             );
+        END;
+      items-to-submit: 
+      - P319_SELECTED_GC_NO
+      items-to-return: 
+      - P319_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Open copies popup # 37007355007700410
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P319_SELECTED_GC_STATUS").val() !== "4" && $("#P319_SELECTED_GC_STATUS").val() !== "5"
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 37007879448700415
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P319_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 30
+      event: Open copies popup # 37007355007700410
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P319_SELECTED_GC_STATUS").val() !== "4" && $("#P319_SELECTED_GC_STATUS").val() !== "5"
+
+computations: 
+- # ====== Computation: P319_SELECTED_GC_NO ====================
+  id: 32482288693104130
+  identification: 
+    item-name: P319_SELECTED_GC_NO
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P319_PREPARED_URL ======================
+  id: 32482868253104136
+  identification: 
+    item-name: P319_PREPARED_URL
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P319_ISSUE_YR ==========================
+  id: 34714711448647707
+  identification: 
+    item-name: P319_ISSUE_YR
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P319_RECIPIENT =========================
+  id: 34714823245647708
+  identification: 
+    item-name: P319_RECIPIENT
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P319_EVENT =============================
+  id: 34714942129647709
+  identification: 
+    item-name: P319_EVENT
+
+  execution: 
+    sequence: 50
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P319_SELECTED_GC_STATUS ================
+  id: 37007669896700413
+  identification: 
+    item-name: P319_SELECTED_GC_STATUS
+
+  execution: 
+    sequence: 60
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+

@@ -1,0 +1,973 @@
+---
+# ====== Page: Release Gift Certificate ======================
+id: 315
+identification: 
+  name: Release Gift Certificate
+  alias: RELEASE-GIFT-CERTIFICATE
+  title: Release Gift Certificate
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  width: 340
+  height: 150
+  maximum-width: 340
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: First item on page
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/gift-certificate-validations#MIN#.js'
+  function-and-global-variable-declaration: |
+    const p7KeyMap = {
+        enter: (v) => {
+            $("#enter").trigger("click");
+        }
+    }
+    
+    function mapP7Keys() {
+        $(document).off('keydown.p7keyevents');
+        $(document).on('keydown.p7keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p7KeyMap[key]) {
+                ev.preventDefault();
+                p7KeyMap[key]();
+            }
+        });
+    }
+  execute-when-page-loads: |
+    mapP7Keys();
+    
+    
+    // MM validation
+    setInputFilter($("#P315_MM"), function(value) {
+        return /^([1-9]|1[012]|^$)$/.test(value); // accepts empty string
+        // return /^([1-9]|1[012])$/.test(value); // not accepting empty string
+    }, "Invalid input. Values should only be numbers from 1 to 12.");
+    
+    
+    // DD validation
+    setInputFilter($("#P315_DD"), function(value) {
+        return (/^([1-9]$|^[1-2][0-9]$|^3[0-1]|^$)$/.test(value));
+    }, "Invalid input. Values should only be numbers from 1 to 31.")
+    
+    
+    // accept numbers only for YYYY
+    setInputFilter($("#P315_YYYY"), function(value) {
+        return /^\d*$/.test(value); // numbers only
+    }, "Invalid input. Values should be numbers only.");
+    
+    
+    
+    // MM/DD/YYYY validation
+    setInputFilter($("#P315_INPUT_RELEASE_DATE"), function(value) {
+        return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only
+    }, "Invalid input. Date should be in MM/DD/YYYY format.");
+
+css: 
+  inline: |
+    .t-Dialog-header {
+        background-color: #056AC8;
+        padding: .5rem 0rem 0rem 1rem;
+    }
+    
+    .t-Dialog-body {
+        padding-block-start: 0;
+        padding-block-end: 0;
+        padding-inline-end: var(--ut-dialog-padding-x, 1.4rem);
+        padding-inline-start: var(--ut-dialog-padding-x, 1.4rem);
+    }
+    
+    .t-Dialog-bodyWrapperIn {
+        overflow: hidden;
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    .t-Region {
+        margin-block-end: .1rem;
+        color: white;
+        font-size: 1.125rem;
+    }
+    
+    .row {
+        flex-wrap: initial;
+    }
+    
+    .t-Form-label {
+        color: white;
+        font-size: 1.125rem;
+        padding-block-start: 0;
+    }
+    
+    .t-Form-labelContainer:has(#P315_SLASH_LABEL), .t-Form-labelContainer:has(#P315_SLASH_1_LABEL) {
+        padding-block-start: var(--ut-field-padding-y, .1rem);
+        padding-inline-end: var(--ut-field-padding-x, .3rem);
+    }
+    
+    .t-Form-itemWrapper:has(#P315_RELEASE_DATE) {
+        min-height: 0;
+    }
+    
+    .t-Form-itemWrapper:has(#P315_MM) {
+        margin-left: .6rem;
+    }
+    
+    .t-Form-itemWrapper:has(#P315_YYYY) {
+        margin-right: .6rem;
+    }
+    
+    
+    /* -------------------------------------------------- */
+    
+    .t-Form-labelContainer:has(#P315_INPUT_RELEASE_DATE_LABEL) {
+        display: none;
+    }
+    
+    .t-Form-inputContainer:has(#P315_INPUT_RELEASE_DATE) {
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    #P315_INPUT_RELEASE_DATE {
+        height: 2.3rem;
+        text-align: center;
+    }
+    
+    .hide {
+        display: none;
+    }
+    
+    .error-msg {
+        color: red;
+        font-size: 0.8rem;
+        padding-left: 0.7rem;
+        padding-bottom: 0.2rem;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Date_Input_Fields ===========================
+  id: 26314295585216522
+  identification: 
+    name: Date_Input_Fields
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: Release Gift Certificate # 46689143600253171
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: New Field ===================================
+  id: 30478055086245235
+  identification: 
+    name: New Field
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: Date_Input_Fields # 26314295585216522
+    slot: SUB_REGIONS
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Error display ===============================
+  id: 30915274446029519
+  identification: 
+    name: Error display
+    type: Static Content
+
+  source: 
+    html-code: <span id="errorArea" class="hide error-msg">Please input a valid date.</span>
+
+  layout: 
+    sequence: 30
+    parent-region: Date_Input_Fields # 26314295585216522
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: false
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--noPadding
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--textContent
+    - t-Region--hiddenOverflow
+    - margin-top-none
+    - margin-bottom-none
+    - margin-left-none
+    - margin-right-none
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Title =======================================
+  id: 45854356337755467
+  identification: 
+    name: Title
+    type: Static Content
+
+  source: 
+    html-code: Gift Certificate Release
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: REGION_POSITION_01
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--accent1
+    - t-Region--noUI
+    - t-Region--hiddenOverflow
+    - margin-top-sm
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Release Gift Certificate ====================
+  id: 46689143600253171
+  identification: 
+    name: Release Gift Certificate
+    type: Form
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          NULL AS "COPIES"
+      FROM
+          DUAL
+
+  layout: 
+    sequence: 70
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Blank with Attributes
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+
+page-items: 
+- # ====== Page Item: P315_RELEASE_DATE ========================
+  id: 26314918193216529
+  identification: 
+    name: P315_RELEASE_DATE
+    type: Display Only
+
+  label: 
+    label: 'Release Date:'
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 20
+    region: Date_Input_Fields # 26314295585216522
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P315_INPUT_RELEASE_DATE ==================
+  id: 30478150394245236
+  identification: 
+    name: P315_INPUT_RELEASE_DATE
+    type: Text Field
+
+  label: 
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: New Field # 30478055086245235
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    value-placeholder: MM / DD / YYYY
+
+  validation: 
+    value-required: false
+    maximum-length: 10
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P315_GET_SELECTED_GC_NO ==================
+  id: 30913900640029406
+  identification: 
+    name: P315_GET_SELECTED_GC_NO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P315_GET_SEARCHED_YEAR ===================
+  id: 30916715865029534
+  identification: 
+    name: P315_GET_SEARCHED_YEAR
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P315_GET_SEARCHED_GC_NO ==================
+  id: 30916881611029535
+  identification: 
+    name: P315_GET_SEARCHED_GC_NO
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P315_SUCCESS_MSG =========================
+  id: 30917001875029537
+  identification: 
+    name: P315_SUCCESS_MSG
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  default: 
+    type: Static
+    static-value: Test from release success
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P315_COPIES ==============================
+  id: 46692427336253229
+  identification: 
+    name: P315_COPIES
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Release Gift Certificate # 46689143600253171
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    form-region: Release Gift Certificate # 46689143600253171
+    column: COPIES
+    data-type: VARCHAR2
+    query-only: false
+    primary-key: true
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Checksum Required - Session Level
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Close =======================================
+  id: 30914339459029410
+  identification: 
+    button-name: Close
+    label: Close
+
+  layout: 
+    sequence: 40
+    region: Release Gift Certificate # 46689143600253171
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+- # ====== Button: Submit ======================================
+  id: 30914688084029513
+  identification: 
+    button-name: Submit
+    label: Submit
+
+  layout: 
+    sequence: 30
+    region: Release Gift Certificate # 46689143600253171
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    column-css-classes: 
+    - hide
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: enter
+
+dynamic-actions: 
+- # ====== Dynamic Action: Close dialog ========================
+  id: 30914418439029411
+  identification: 
+    name: Close dialog
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 30914339459029410
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 30914510772029512
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 10
+      event: Close dialog # 30914418439029411
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Enter ===============================
+  id: 30914702104029514
+  identification: 
+    name: Enter
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Submit # 30914688084029513
+
+  actions: 
+  - # ====== Action: Close Dialog ================================
+    id: 30914898415029515
+    identification: 
+      action: Close Dialog
+
+    execution: 
+      sequence: 40
+      event: Enter # 30914702104029514
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P315_GET_SELECTED_GC_NO").val() !== null && $("#P315_GET_SELECTED_GC_NO").val() !== '' && $("#P315_GET_SELECTED_GC_NO").val() !== undefined
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 30915024005029517
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        
+        var errorArea = document.getElementById("errorArea")
+        
+        var date_regex = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d$/;
+        var date_regex_1 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|2[09])[- \/.](19|20)\d\d$/;
+        var date_regex_2 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-8]|2[08])[- \/.](19|20)\d\d$/;
+        
+        if ($('#P315_INPUT_RELEASE_DATE').val().substring(0,3) === "02/" || $('#P315_INPUT_RELEASE_DATE').val().substring(0,2) === "2/") {
+            var year = '';
+            if ($('#P315_INPUT_RELEASE_DATE').val().length === 10) {
+                year = $('#P315_INPUT_RELEASE_DATE').val().substring(6, 10);
+            } else {
+                year = $('#P315_INPUT_RELEASE_DATE').val().substring(5, 9);
+            }
+            if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+                if (date_regex_1.test($('#P315_INPUT_RELEASE_DATE').val()) || $('#P315_INPUT_RELEASE_DATE').val().trim().length === 0) {
+                    errorArea.style.display = "none"
+                    return true;
+                } else {
+                    errorArea.style.display = "block"
+                    document.getElementById("P315_INPUT_RELEASE_DATE").focus();
+                    return false;
+                }
+            } else {
+                if (date_regex_2.test($('#P315_INPUT_RELEASE_DATE').val()) || $('#P315_INPUT_RELEASE_DATE').val().trim().length === 0) {
+                    errorArea.style.display = "none"
+                    return true;
+                } else {
+                    errorArea.style.display = "block"
+                    document.getElementById("P315_INPUT_RELEASE_DATE").focus();
+                    return false;
+                }
+            }
+        } else {
+            if (date_regex.test($('#P315_INPUT_RELEASE_DATE').val()) || $('#P315_INPUT_RELEASE_DATE').val().trim().length === 0) {
+                errorArea.style.display = "none"
+                return true;
+            } else {
+                errorArea.style.display = "block"
+                document.getElementById("P315_INPUT_RELEASE_DATE").focus();
+                return false;
+            }
+        }
+
+    execution: 
+      sequence: 10
+      event: Enter # 30914702104029514
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 30915563498029522
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        DECLARE
+        BEGIN
+            UPDATE NPT020
+                SET RELEASE_DATE = :P315_INPUT_RELEASE_DATE,
+                    GC_STATUS_ID = 2,
+                    USER_UPDATE = :app_user, 
+                    DATE_UPDATED = SYSDATE
+                WHERE GIFT_CERTIFICATE_ID = :P315_GET_SELECTED_GC_NO;
+        
+            
+            apex_util.set_session_state('SUCCESS_MSG', 'Successfully released gift certificate');
+        END;
+        
+      items-to-submit: 
+      - P315_INPUT_RELEASE_DATE
+
+    execution: 
+      sequence: 20
+      event: Enter # 30914702104029514
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: JavaScript expression
+      javascript-expression: $("#P315_GET_SELECTED_GC_NO").val() !== null && $("#P315_GET_SELECTED_GC_NO").val() !== '' && $("#P315_GET_SELECTED_GC_NO").val() !== undefined
+
+computations: 
+- # ====== Computation: P315_INPUT_RELEASE_DATE ================
+  id: 30916928411029536
+  identification: 
+    item-name: P315_INPUT_RELEASE_DATE
+
+  execution: 
+    sequence: 10
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+- # ====== Computation: P315_SUCCESS_MSG =======================
+  id: 30917708182029544
+  identification: 
+    item-name: P315_SUCCESS_MSG
+
+  execution: 
+    sequence: 20
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: Null
+
+processes: 
+- # ====== Process: Initialize form Print Gift Certificate =====
+  id: 27227646355491976
+  identification: 
+    name: Initialize form Print Gift Certificate
+    type: Form - Initialization
+    execution-chain: None
+    form-region: Release Gift Certificate # 46689143600253171
+
+  execution: 
+    sequence: 10
+    point: Before Header
+    run-process: Once Per Page Visit (default)
+
+- # ====== Process: Process form Print Gift Certificate ========
+  id: 27228071521491979
+  identification: 
+    name: Process form Print Gift Certificate
+    type: Form - Automatic Row Processing (DML)
+    execution-chain: None
+    form-region: Release Gift Certificate # 46689143600253171
+
+  settings: 
+    target-type: Region Source
+    prevent-lost-updates: true
+    lock-row: Yes
+    return-primary-key(s)-after-insert: true
+
+  execution: 
+    sequence: 60
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: dito
+
+  error: 
+    display-location: Inline in Notification
+
+- # ====== Process: Close Dialog ===============================
+  id: 27228514255492003
+  identification: 
+    name: Close Dialog
+    type: Close Dialog
+    execution-chain: None
+
+  settings: 
+    show-success-messages: true
+
+  execution: 
+    sequence: 50
+    point: Processing
+    run-process: Once Per Page Visit (default)
+
+  success-message: 
+    success-message: test test test
+
+  error: 
+    display-location: Inline in Notification
+
+  server-side-condition: 
+    when-button-pressed: Submit # 30914688084029513
+

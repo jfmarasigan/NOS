@@ -1,0 +1,424 @@
+---
+# ====== Page: PO Notes Utility Search =======================
+id: 187
+identification: 
+  name: PO Notes Utility Search
+  alias: PO-NOTES-UTILITY-SEARCH
+  title: Search
+
+appearance: 
+  page-mode: Modal Dialog
+  dialog-template: Theme Default
+  template-options: 
+  - '#DEFAULT#'
+
+dialog: 
+  chained: true
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  function-and-global-variable-declaration: |
+    const p187KeyMap = {
+        escape : (v) => {
+            $("#close").click();
+        },
+        enter: (v) => {
+            $("#search").trigger("click");
+        }
+    
+    }
+    
+    
+    function mapP187Keys() {
+        $(document).off('keydown.p187keyevents');
+        $(document).on('keydown.p187keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p187KeyMap[key]) {
+                ev.preventDefault();
+                p187KeyMap[key]();
+            }
+        });
+    }
+    
+    $x('P187_TEXT').focus();
+    
+    
+  execute-when-page-loads: |
+    mapP187Keys();
+    
+    
+    
+
+css: 
+  inline: |
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+        background-color: #046BC8;
+    }
+    
+    .t-Dialog-body{
+        label, input {
+            font-size: 1.125rem;
+        }
+    //    background-color: #046BC8;
+        padding-bottom: 0;
+        padding-left: 0;
+    }
+    
+    .t-Region-body{
+       padding-bottom: 0;
+       padding-left: 0;
+    }
+    
+    #search-form{
+        background-color: white;
+        margin-bottom: 0;
+        margin-left: 0;
+    }
+    
+    
+    .hiddenbtn {
+        display: none;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Search ======================================
+  id: 84184490027234852
+  identification: 
+    name: Search
+    type: Static Content
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: search-form
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Buttons =====================================
+  id: 87845348903070712
+  identification: 
+    name: Buttons
+    type: Static Content
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noBorder
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P187_TEXT ================================
+  id: 84185896292234954
+  identification: 
+    name: P187_TEXT
+    type: Text Field
+
+  label: 
+    label: 'Contains:'
+    alignment: Left
+
+  settings: 
+    subtype: Text
+    trim-spaces: Leading and Trailing
+    text-case: NO CHANGE
+    submit-when-enter-pressed: false
+    disabled: false
+
+  layout: 
+    sequence: 10
+    region: Search # 84184490027234852
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: Page Template Default
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--stretchInputs
+    - t-Form-fieldContainer--postTextBlock
+    - margin-right-sm
+    width: 30
+
+  validation: 
+    value-required: false
+    maximum-length: 10
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    storage: Per Session (Persistent)
+
+  quick-picks: 
+    show-quick-picks: false
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: Search ======================================
+  id: 42279992603508260
+  identification: 
+    button-name: Search
+    label: Enter - Search
+
+  layout: 
+    sequence: 10
+    region: Buttons # 87845348903070712
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: search
+
+- # ====== Button: Close =======================================
+  id: 42280304635508262
+  identification: 
+    button-name: Close
+    label: Esc - Close
+
+  layout: 
+    sequence: 20
+    region: Buttons # 87845348903070712
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--stretch
+    css-classes: 
+    - hiddenbtn
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: close
+
+dynamic-actions: 
+- # ====== Dynamic Action: Cancel Dialog =======================
+  id: 42280960909508289
+  identification: 
+    name: Cancel Dialog
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Close # 42280304635508262
+
+  actions: 
+  - # ====== Action: Cancel Dialog ===============================
+    id: 42281442223508290
+    identification: 
+      action: Cancel Dialog
+
+    execution: 
+      sequence: 10
+      event: Cancel Dialog # 42280960909508289
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Search Enter ========================
+  id: 42281881716508290
+  identification: 
+    name: Search Enter
+
+  execution: 
+    sequence: 40
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: Search # 42279992603508260
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 42282314130508292
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let field1 = $v("P187_CODE");
+        let field2 = $v("P187_NAME");
+        
+        
+        if (!field1 && !field2) {
+            apex.message.showErrors({
+                type: "error",
+                location: "inline",
+                pageItem: "P187_CODE",
+                message: "Please fill in at least one field."
+            });
+            
+            apex.message.showErrors({
+                type: "error",
+                location: "inline",
+                pageItem: "P187_NAME",
+                message: "Please fill in at least one field."
+            });
+        
+        
+            if (!field1) {
+                $("#P187_CODE").addClass("error-highlight");
+            }
+            if (!field2) {
+                $("#P187_NAME").addClass("error-highlight");
+            }
+        
+        }
+        
+
+    execution: 
+      sequence: 10
+      event: Search Enter # 42281881716508290
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    configuration: 
+      build-option: Commented Out # 4207224469083906
+
+  - # ====== Action: Close Dialog ================================
+    id: 42282888468508292
+    identification: 
+      action: Close Dialog
+
+    settings: 
+      items-to-return: 
+      - P187_TEXT
+
+    execution: 
+      sequence: 20
+      event: Search Enter # 42281881716508290
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+

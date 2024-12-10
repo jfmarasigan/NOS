@@ -1,0 +1,3040 @@
+---
+# ====== Page: Item Line =====================================
+id: 56
+identification: 
+  name: Item Line
+  alias: ITEM-LINE
+  title: Item Line
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    let lastSelected = null;
+    const p56KeyMap = {
+    
+        escape : (v) => {
+            if(!($('#itemMasterfile').is(':visible'))){
+                $.event.trigger("exit");
+            }
+            
+        },
+    
+        enter : (v) => {
+            if($('#itemMasterfile').is(':visible')){
+                $.event.trigger("addItem");
+            }
+        },
+    
+        home : (v) => {
+            if($('#itemMasterfile').is(':visible')){
+                selectFirstRow("itemMasterfile");
+            } else {
+                selectFirstRow("lineItem");
+            }
+            
+        },
+    
+        end : (v) => {
+            if($('#itemMasterfile').is(':visible')){
+                selectLastRow("itemMasterfile");
+            } else {
+                selectLastRow("lineItem");
+            }
+        }
+    }
+    
+    function mapP56Keys() {
+        $(document).off('keydown.p56keyevents');
+        $(document).on('keydown.p56keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p56KeyMap[key]) {
+                ev.preventDefault();
+                p56KeyMap[key]();
+            }
+        });
+    }
+    
+    function selectFirstRow(gridName) {
+        let region = apex.region(gridName)
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$; 
+        
+        let rec = model.recordAt(0);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+    
+    function selectLastRow(gridName) {
+        let region = apex.region(gridName)
+        let view = region.call("getCurrentView"),
+        model = view.model,
+        view$ = view.view$; 
+        
+        let totalRec = model.getTotalRecords();
+        let rec = model.recordAt(totalRec - 1);
+        if ( rec ) {
+            let offset,
+                pi = view$.grid("getPageInfo"),
+                index = model.indexOf(rec);
+    
+            offset = index * pi.rowHeight;
+            $(".a-GV-w-scroll").scrollTop( offset );
+    
+            view$.grid("setSelectedRecords", [rec], true);
+        }
+    }
+  execute-when-page-loads: |
+    mapP56Keys();
+    setTitle("Item Line");
+
+css: 
+  inline: |
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+    
+    .ui-dialog-popuplov{
+        left: 90% !important;
+    }
+    
+    .ui-dialog-titlebar{
+        display: none;
+    }
+    
+    table, tr, td, th {
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        /* color: #056BC9; */
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+    
+    body, #lineItems{
+        background-color: rgb(30, 58, 138);
+    }
+    
+    #itemMasterfile {
+        background-color: #056AC8;
+    }
+    
+    
+    .ui-dialog{
+        left: 50%!important;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #056BC9;
+        color: white;
+    }
+    
+    .ui-dialog.a-GV-header a, .ui-dialog th.a-GV-header {
+        background-color: #056AC8;
+        color: white;
+    }
+    
+    
+    #exit{
+        color: black;
+        font-size: 1.125rem;
+        font-family: Arial;
+    }
+    
+    .format-size{
+        font-size: 1.125rem;
+        font-family: Arial;
+        color: white;
+    }
+    
+    .ui-dialog.inv-qby-w {
+       left: 50% !important; 
+    }
+    
+    .ui-dialog.modal-dialog--pullout{
+        left: 50% !important;
+    }
+    
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Line Items ==================================
+  id: 14514614085354942
+  identification: 
+    name: Line Items
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          seq_id,
+          c001,
+          c004,
+          c002,
+          n002,
+          c003,
+          n003,
+          n004
+      FROM
+          APEX_COLLECTIONS
+      WHERE
+          COLLECTION_NAME = 'ITEM LINE';
+
+  layout: 
+    sequence: 40
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: lineItem
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 14514770340354943
+    edit: 
+      enabled: true
+      allowed-operations: 
+      - Add Row
+      - Update Row
+      - Delete Row
+      lost-update-type: Row Values
+      add-row-if-empty: true
+
+    edit-authorization: 
+      update: MODEL.LOV.MUST_NOT_BE_PUBLIC_USER
+
+    performance: 
+      lazy-loading: true
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                // stickyFooter: true
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 15252099844371198
+      identification: 
+        name: Primary Report
+        alias: 152521
+
+  columns: 
+  - # ====== Column: SEQ_ID ======================================
+    id: 14514851836354944
+    identification: 
+      column-name: SEQ_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: SEQ_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: C001 ========================================
+    id: 14514936538354945
+    identification: 
+      column-name: C001
+      type: Text Field
+
+    heading: 
+      heading: Item Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: C001
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: C002 ========================================
+    id: 14515166688354947
+    identification: 
+      column-name: C002
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: C002
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      performance-impacting-operators: 
+      - Contains
+      - Starts With
+      - Case Insensitive
+      - Regular Expression
+      text-case: Mixed
+      lov-type: Distinct Column
+      exact-match: true
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: N002 ========================================
+    id: 14515264480354948
+    identification: 
+      column-name: N002
+      type: Number Field
+
+    heading: 
+      heading: Qty
+      alignment: center
+
+    settings: 
+      number-alignment: Start
+      virtual-keyboard: Decimal
+
+    layout: 
+      sequence: 50
+      column-alignment: end
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: N002
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: true
+      lov-type: None
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: C003 ========================================
+    id: 14515317963354949
+    identification: 
+      column-name: C003
+      type: Popup LOV
+
+    heading: 
+      heading: UOM
+      alignment: start
+
+    settings: 
+      display-as: Inline Popup
+      initial-fetch: Automatic with Current Value
+      manual-entry: false
+      search-as-you-type: true
+      minimum-characters: No minimum (0)
+
+    multiple-values: 
+      type: No
+
+    layout: 
+      sequence: 60
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    list-of-values: 
+      type: SQL Query
+      sql-query: |
+        SELECT
+            UOM_CODE as d,
+            UOM_CODE AS r
+        FROM
+            NIM026
+        WHERE
+            UOM_ID IN (SELECT UOM_ID FROM NIT002 WHERE ITEM_ID = :P56_ITEM_ID)
+            
+      display-extra-values: true
+      display-null-value: true
+
+    cascading-list-of-values: 
+      parent-column(s): 
+      - N003
+      items-to-submit: 
+      - P56_ITEM_ID
+      parent-required: true
+
+    source: 
+      type: Database Column
+      database-column: C003
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: N003 ========================================
+    id: 14515434231354950
+    identification: 
+      column-name: N003
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 70
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: N003
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: N004 ========================================
+    id: 15246459314369601
+    identification: 
+      column-name: N004
+      type: Hidden
+
+    settings: 
+      value-protected: false
+
+    layout: 
+      sequence: 80
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: N004
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: C004 ========================================
+    id: 22248066518888825
+    identification: 
+      column-name: C004
+      type: Text Field
+
+    heading: 
+      heading: UPC
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+      maximum-length: 4000
+
+    source: 
+      type: Database Column
+      database-column: C004
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+- # ====== Region: Title =======================================
+  id: 20614487229146664
+  identification: 
+    name: Title
+    type: Static Content
+
+  layout: 
+    sequence: 10
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--textContent
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: lineItems
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+- # ====== Region: Item Masterfile =============================
+  id: 20629835810030312
+  identification: 
+    name: Item Masterfile
+    title: Help on Item Masterfile
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: |
+      SELECT
+          row_number() OVER (ORDER BY nit1.item_num, nit2.upc),
+          nit1.item_num,
+          nit2.upc,
+          nit1.item_desc,
+          nit2.uom_id,
+          nit1.item_id,
+          nim26.uom_code
+      FROM
+          NIT001 nit1,
+          NIT002 nit2,
+          NIM026 nim26
+      WHERE
+          nit1.item_id = nit2.item_id AND
+          nit2.uom_id = nim26.uom_id AND
+          nit2.uom_id = (SELECT MAX(uom_id) FROM NIT002 WHERE item_id = nit2.item_id) AND
+          (
+              (:P56_UPC IS NOT NULL AND :P56_NUM IS NULL AND :P56_DESC IS NULL AND LOWER(nit2.upc) LIKE LOWER(:P56_UPC) || '%') OR
+              (:P56_UPC IS NULL AND :P56_NUM IS NOT NULL AND :P56_DESC IS NULL AND LOWER(nit1.item_num) LIKE LOWER(:P56_NUM) || '%') OR
+              (:P56_UPC IS NULL AND :P56_NUM IS NULL AND :P56_DESC IS NOT NULL AND LOWER(nit1.item_desc) LIKE '%' || LOWER(:P56_DESC) || '%') OR
+              (:P56_UPC IS NULL AND :P56_NUM IS NULL AND :P56_DESC IS NULL)
+          )
+    page-items-to-submit: 
+    - P56_NUM
+    - P56_UPC
+    - P56_DESC
+    - P56_TRANSFER_ID
+
+  layout: 
+    sequence: 30
+    parent-region: No Parent
+    slot: REGION_POSITION_04
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+
+  appearance: 
+    template: Inline Dialog
+    template-options: 
+    - '#DEFAULT#'
+    - js-dialog-size720x480
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: itemMasterfile
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  header-and-footer: 
+    header-text: <p class="format-size">Help on Item Masterfile</p>
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 20629950311030313
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: false
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: true
+      define-chart-view: true
+      download: true
+
+    download: 
+      formats: 
+      - CSV
+      - HTML
+      - Excel
+      - PDF
+      send-as-email: true
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 400
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                // stickyFooter: true
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 20883881456531712
+      identification: 
+        name: Primary Report
+        alias: 208839
+
+  columns: 
+  - # ====== Column: ROW_NUMBER()OVER(ORDERBYNIT1.ITEM_NUM,NIT2.UP
+    id: 20630095355030314
+    identification: 
+      column-name: ROW_NUMBER()OVER(ORDERBYNIT1.ITEM_NUM,NIT2.UPC)
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ROW_NUMBER()OVER(ORDERBYNIT1.ITEM_NUM,NIT2.UPC)
+      data-type: NUMBER
+      query-only: false
+      primary-key: true
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: ITEM_NUM ====================================
+    id: 20630107213030315
+    identification: 
+      column-name: ITEM_NUM
+      type: Text Field
+
+    heading: 
+      heading: Item Number
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 40
+
+    source: 
+      type: Database Column
+      database-column: ITEM_NUM
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UPC =========================================
+    id: 20630246649030316
+    identification: 
+      column-name: UPC
+      type: Text Field
+
+    heading: 
+      heading: UPC
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 56
+
+    source: 
+      type: Database Column
+      database-column: UPC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: ITEM_DESC ===================================
+    id: 20630341434030317
+    identification: 
+      column-name: ITEM_DESC
+      type: Text Field
+
+    heading: 
+      heading: Item Description
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 40
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 120
+
+    source: 
+      type: Database Column
+      database-column: ITEM_DESC
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: UOM_ID ======================================
+    id: 20630418278030318
+    identification: 
+      column-name: UOM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 50
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: UOM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: ITEM_ID =====================================
+    id: 20630571368030319
+    identification: 
+      column-name: ITEM_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 60
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: ITEM_ID
+      data-type: NUMBER
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  - # ====== Column: UOM_CODE ====================================
+    id: 22246713877888812
+    identification: 
+      column-name: UOM_CODE
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 70
+
+    accessibility: 
+      value-identifies-row: false
+
+    source: 
+      type: Database Column
+      database-column: UOM_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+  printing: 
+    page: 
+      size: Letter
+      orientation: Landscape
+      units: Inches
+      width: 11
+      height: 8.5
+      border-width: 0.5
+      border-color: '#666666'
+
+    page-header: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+      page-header-text: Help on Item Masterfile
+
+    column-headings: 
+      font: Helvetica
+      font-weight: Bold
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#EEEEEE'
+
+    columns: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 10
+      font-color: '#000000'
+      background-color: '#FFFFFF'
+
+    page-footer: 
+      font: Helvetica
+      font-weight: Normal
+      font-size: 12
+      font-color: '#000000'
+      alignment: center
+
+page-items: 
+- # ====== Page Item: P56_TRANSFER_ID ==========================
+  id: 13412835074070304
+  identification: 
+    name: P56_TRANSFER_ID
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 90
+    region: Title # 20614487229146664
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    pre-text: '<p class="format-size">Transfer ID:</p>'
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_FROMWAREHOUSE ========================
+  id: 13414286825070318
+  identification: 
+    name: P56_FROMWAREHOUSE
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 100
+    region: Title # 20614487229146664
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    pre-text: '<p class="format-size">Transfer From Location:</p>'
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_TOWAREHOUSE ==========================
+  id: 13414301641070319
+  identification: 
+    name: P56_TOWAREHOUSE
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 130
+    region: Title # 20614487229146664
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    pre-text: '<p class="format-size">Transfer Destination Location:</p>'
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_DELIVERYMAN ==========================
+  id: 13414476068070320
+  identification: 
+    name: P56_DELIVERYMAN
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 110
+    region: Title # 20614487229146664
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    pre-text: '<p class="format-size">Delivery Man:</p>'
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_DATE =================================
+  id: 13414544836070321
+  identification: 
+    name: P56_DATE
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 120
+    region: Title # 20614487229146664
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    pre-text: '<p class="format-size">Date:</p>'
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_RECEIVER =============================
+  id: 13414668158070322
+  identification: 
+    name: P56_RECEIVER
+    type: Display Only
+
+  label: 
+    alignment: Left
+
+  settings: 
+    format: Plain Text
+    based-on: Item Value
+    show-line-breaks: true
+    send-on-page-submit: true
+
+  layout: 
+    sequence: 140
+    region: Title # 20614487229146664
+    slot: BODY
+    alignment: Left
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    label-column-span: 0
+
+  appearance: 
+    template: Optional
+    template-options: 
+    - '#DEFAULT#'
+    - t-Form-fieldContainer--preTextBlock
+    - t-Form-fieldContainer--normalDisplay
+
+  advanced: 
+    css-classes: 
+    - format-size
+    pre-text: '<p class="format-size">Receiver:</p>'
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_DESC =================================
+  id: 13778463373768142
+  identification: 
+    name: P56_DESC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 40
+    region: Title # 20614487229146664
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_NUM ==================================
+  id: 13778569069768143
+  identification: 
+    name: P56_NUM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: Title # 20614487229146664
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_UPC ==================================
+  id: 20613322067146684
+  identification: 
+    name: P56_UPC
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 30
+    region: Title # 20614487229146664
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  default: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_NEW_ITEM =============================
+  id: 20631852022030332
+  identification: 
+    name: P56_NEW_ITEM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Item Masterfile # 20629835810030312
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_NEW_UOM ==============================
+  id: 20631937773030333
+  identification: 
+    name: P56_NEW_UOM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Item Masterfile # 20629835810030312
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_ITEM_ID ==============================
+  id: 20632585489030339
+  identification: 
+    name: P56_ITEM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 60
+    region: Title # 20614487229146664
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_UOM_ID ===============================
+  id: 20632612150030340
+  identification: 
+    name: P56_UOM_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: Title # 20614487229146664
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_QTY ==================================
+  id: 20990209158487405
+  identification: 
+    name: P56_QTY
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 50
+    region: Title # 20614487229146664
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_PREPARED_URL =========================
+  id: 20990430884487407
+  identification: 
+    name: P56_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Title # 20614487229146664
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Ignore
+
+  source: 
+    type: Null
+    used: Always, replacing any existing value in session state
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P56_NEW_UOM_CODE =========================
+  id: 22246644511888811
+  identification: 
+    name: P56_NEW_UOM_CODE
+    type: Hidden
+
+  settings: 
+    value-protected: false
+
+  layout: 
+    sequence: 40
+    region: Item Masterfile # 20629835810030312
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: SQL Query (return single value)
+    sql-query: 'SELECT UOM_CODE FROM NIM026 WHERE UOM_ID = :P56_NEW_UOM'
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Request (Memory Only)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+dynamic-actions: 
+- # ====== Dynamic Action: Onload ==============================
+  id: 14055359725524217
+  identification: 
+    name: Onload
+
+  execution: 
+    sequence: 180
+    event-scope: Static
+
+  when: 
+    event: Page Load
+
+  actions: 
+  - # ====== Action: CREATE COLLECTION ===========================
+    id: 14055473321524218
+    identification: 
+      name: CREATE COLLECTION
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(p_collection_name => 'ITEM LINE');                    
+            FOR i IN (SELECT
+                            nit1.ITEM_NUM,
+                            nit2.UPC,
+                            nit1.ITEM_DESC,
+                            nit11.QTY,
+                            nim26.UOM_CODE,
+                            nit11.ITEM_ID,
+                            nit11.UOM_ID
+                        FROM
+                            NIT001 nit1,
+                            NIT002 nit2,
+                            NIT011 nit11,
+                            NIM026 nim26
+                        WHERE
+                            nit11.transfer_id = :P56_TRANSFER_ID AND
+                            (nit11.item_id = nit2.item_id AND nit2.uom_id = (SELECT MAX(uom_id) FROM NIT002 WHERE item_id = nit11.item_id)) AND
+                            nit11.item_id = nit1.item_id AND
+                            nit11.uom_id = nim26.uom_id
+                        ORDER BY
+                            nit11.CREATE_DATE
+                        )
+            LOOP
+                APEX_COLLECTION.ADD_MEMBER(
+                    p_collection_name => 'ITEM LINE',
+                    p_c001 => i.ITEM_NUM,
+                    p_c004 => i.UPC,
+                    p_c002 => i.ITEM_DESC,
+                    p_n002 => i.QTY,
+                    p_c003 => i.UOM_CODE,
+                    p_n003 => i.ITEM_ID,
+                    p_n004 => i.UOM_ID
+                );
+            END LOOP;
+        
+            APEX_COLLECTION.ADD_MEMBER(
+                p_collection_name => 'ITEM LINE',
+                p_c001 => NULL,
+                p_c004 => NULL,
+                p_c002 => NULL,
+                p_n002 => NULL,
+                p_c003 => NULL,
+                p_n003 => NULL,
+                p_n004 => NULL
+            );
+        END;
+      items-to-submit: 
+      - P56_TRANSFER_ID
+
+    execution: 
+      sequence: 20
+      event: Onload # 14055359725524217
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15250391676369640
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(function () {
+            var ig = apex.region("lineItem");
+            var view = ig.widget().interactiveGrid("getViews","grid");
+            view.model.clearChanges();
+            ig.refresh();
+        }, 100);
+
+    execution: 
+      sequence: 40
+      event: Onload # 14055359725524217
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 18922292807729240
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("dblclick");
+         });
+        }, "300");
+
+    execution: 
+      sequence: 50
+      event: Onload # 14055359725524217
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change UPC ==========================
+  id: 15246561277369602
+  identification: 
+    name: Change UPC
+
+  execution: 
+    sequence: 220
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Line Items # 14514614085354942
+    column(s): 
+    - C004
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: "!$('#itemMasterfile').is(':visible')"
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 20989829741487401
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: ':C004'
+      items-to-submit: 
+      - C004
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P56_UPC
+
+    execution: 
+      sequence: 30
+      event: Change UPC # 15246561277369602
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Open Region =================================
+    id: 20989986954487402
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Masterfile # 20629835810030312
+
+    execution: 
+      sequence: 50
+      event: Change UPC # 15246561277369602
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 20990044321487403
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Masterfile # 20629835810030312
+
+    execution: 
+      sequence: 70
+      event: Change UPC # 15246561277369602
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 20990184963487404
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if(this.data != null){
+            if(this.data.selectedRecords[0] != null){
+                refocusOnIG("itemMasterfile", "ITEM_NUM", this.data.selectedRecords[0]);
+            }
+        }
+        
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $("#itemMasterfile .a-GV-cell").first().trigger("click");
+            });
+        }, "500");
+
+    execution: 
+      sequence: 90
+      event: Change UPC # 15246561277369602
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 22246367601888808
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var ig$ = apex.region("lineItem").widget().interactiveGrid("getViews").grid.view$;
+        var activeRecordId = ig$.grid("getActiveRecordId");
+        ig$.grid("gotoCell", activeRecordId, "C004");
+
+    execution: 
+      sequence: 10
+      event: Change UPC # 15246561277369602
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change Qty ==========================
+  id: 15246804581369605
+  identification: 
+    name: Change Qty
+
+  execution: 
+    sequence: 230
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Line Items # 14514614085354942
+    column(s): 
+    - N002
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 15246934631369606
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            IF :P56_QTY = 0 THEN
+                DELETE FROM NIT011
+                WHERE 
+                    transfer_id = :P56_TRANSFER_ID AND 
+                    item_id = :P56_ITEM_ID AND
+                    uom_id = :P56_UOM_ID;
+            ELSE
+                UPDATE NIT011
+                SET QTY = :P56_QTY
+                WHERE 
+                    transfer_id = :P56_TRANSFER_ID AND 
+                    item_id = :P56_ITEM_ID AND
+                    uom_id = :P56_UOM_ID;
+            END IF;
+        END;
+      items-to-submit: 
+      - P56_TRANSFER_ID
+      - P56_ITEM_ID
+      - P56_UOM_ID
+      - P56_QTY
+
+    execution: 
+      sequence: 30
+      event: Change Qty # 15246804581369605
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 20990345577487406
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: ':N002'
+      items-to-submit: 
+      - N002
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P56_QTY
+
+    execution: 
+      sequence: 10
+      event: Change Qty # 15246804581369605
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 20990543396487408
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        this.triggeringElement.blur();
+        
+        setTimeout(function () {
+            var ig = apex.region("lineItem");
+            var view = ig.widget().interactiveGrid("getViews","grid");
+            view.model.clearChanges();
+        }, 300);
+
+    execution: 
+      sequence: 50
+      event: Change Qty # 15246804581369605
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 21416564450662239
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Column(s)
+      column(s): 
+      - N002
+
+    execution: 
+      sequence: 70
+      event: Change Qty # 15246804581369605
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change Item Num =====================
+  id: 15248006225369617
+  identification: 
+    name: Change Item Num
+
+  execution: 
+    sequence: 240
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Line Items # 14514614085354942
+    column(s): 
+    - C001
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: "!$('#itemMasterfile').is(':visible')"
+
+  actions: 
+  - # ====== Action: Open Region =================================
+    id: 20630688123030320
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Masterfile # 20629835810030312
+
+    execution: 
+      sequence: 50
+      event: Change Item Num # 15248006225369617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 20630781974030321
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: ':C001'
+      items-to-submit: 
+      - C001
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P56_NUM
+
+    execution: 
+      sequence: 30
+      event: Change Item Num # 15248006225369617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 20630911619030323
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Masterfile # 20629835810030312
+
+    execution: 
+      sequence: 70
+      event: Change Item Num # 15248006225369617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Focus on Masterfile =========================
+    id: 20631722368030331
+    identification: 
+      name: Focus on Masterfile
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if(this.data != null){
+            if(this.data.selectedRecords[0] != null){
+                refocusOnIG("itemMasterfile", "ITEM_NUM", this.data.selectedRecords[0]);
+            }
+        }
+        
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $("#itemMasterfile .a-GV-cell").first().trigger("click");
+            });
+        }, "500");
+        
+        
+
+    execution: 
+      sequence: 90
+      event: Change Item Num # 15248006225369617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Stay on Row =================================
+    id: 21417497329662248
+    identification: 
+      name: Stay on Row
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var ig$ = apex.region("lineItem").widget().interactiveGrid("getViews").grid.view$;
+        var activeRecordId = ig$.grid("getActiveRecordId");
+        ig$.grid("gotoCell", activeRecordId, "C001");
+        
+
+    execution: 
+      sequence: 10
+      event: Change Item Num # 15248006225369617
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change Desc =========================
+  id: 15248538096369622
+  identification: 
+    name: Change Desc
+
+  execution: 
+    sequence: 250
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Line Items # 14514614085354942
+    column(s): 
+    - C002
+
+  client-side-condition: 
+    type: JavaScript expression
+    javascript-expression: "!$('#itemMasterfile').is(':visible')"
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 20632901404030343
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: ':C002'
+      items-to-submit: 
+      - C002
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P56_UPC
+
+    execution: 
+      sequence: 30
+      event: Change Desc # 15248538096369622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Open Region =================================
+    id: 20633079629030344
+    identification: 
+      action: Open Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Masterfile # 20629835810030312
+
+    execution: 
+      sequence: 50
+      event: Change Desc # 15248538096369622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 20633113453030345
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Masterfile # 20629835810030312
+
+    execution: 
+      sequence: 70
+      event: Change Desc # 15248538096369622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 20633249199030346
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        if(this.data != null){
+            if(this.data.selectedRecords[0] != null){
+                refocusOnIG("itemMasterfile", "ITEM_NUM", this.data.selectedRecords[0]);
+            }
+        }
+        
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $("#itemMasterfile .a-GV-cell").first().trigger("click");
+            });
+        }, "500");
+
+    execution: 
+      sequence: 90
+      event: Change Desc # 15248538096369622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 22246434778888809
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var ig$ = apex.region("lineItem").widget().interactiveGrid("getViews").grid.view$;
+        var activeRecordId = ig$.grid("getActiveRecordId");
+        ig$.grid("gotoCell", activeRecordId, "C002");
+
+    execution: 
+      sequence: 10
+      event: Change Desc # 15248538096369622
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Select Item Num =====================
+  id: 15248927719369626
+  identification: 
+    name: Select Item Num
+
+  execution: 
+    sequence: 260
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Line Items # 14514614085354942
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15249084728369627
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var selectedItem;
+        var selectedUom;
+        model=this.data.model;
+        
+        if(this.data != null){
+            if(this.data.selectedRecords[0] != null){
+                // refocusOnIG("lineItem", "C001", this.data.selectedRecords[0]);
+                selectedItem = model.getValue(this.data.selectedRecords[0], "N003");
+                selectedUom = model.getValue(this.data.selectedRecords[0], "N004");
+            }
+        } 
+        apex.item("P56_ITEM_ID").setValue(selectedItem);
+        apex.item("P56_UOM_ID").setValue(selectedUom);
+        
+
+    execution: 
+      sequence: 10
+      event: Select Item Num # 15248927719369626
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change UOM ==========================
+  id: 15250568555369642
+  identification: 
+    name: Change UOM
+
+  execution: 
+    sequence: 270
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Change
+    selection-type: Column(s)
+    interactive-grid: Line Items # 14514614085354942
+    column(s): 
+    - C003
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 15250660626369643
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            UPDATE NIT011
+            SET UOM_ID = (SELECT UOM_ID FROM NIM026 WHERE LOWER(UOM_CODE) = LOWER(:C003))
+            WHERE 
+                transfer_id = :P56_TRANSFER_ID AND 
+                item_id = :P56_ITEM_ID AND
+                uom_id = :P56_UOM_ID;
+        END;
+      items-to-submit: 
+      - P56_TRANSFER_ID
+      - P56_ITEM_ID
+      - P56_UOM_ID
+      - C003
+
+    execution: 
+      sequence: 10
+      event: Change UOM # 15250568555369642
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 15250740008369644
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        // this.triggeringElement.blur();
+        
+        // setTimeout(function () {
+        //     var ig = apex.region("lineItem");
+        //     var view = ig.widget().interactiveGrid("getViews","grid");
+        //     view.model.clearChanges();
+        // }, 100);
+        
+        setTimeout(() => {
+          $( document ).ready(function() {
+            $(".a-GV-cell").first().trigger("dblclick");
+         });
+        }, 300);
+
+    execution: 
+      sequence: 30
+      event: Change UOM # 15250568555369642
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Exit ================================
+  id: 16030106164346130
+  identification: 
+    name: Exit
+
+  execution: 
+    sequence: 280
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: exit
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16030274118346131
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P56_PREPARED_URL := apex_page.get_url(
+               p_page   => 50,
+               p_items  => 'P50_PREVIOUS',
+               p_values => 56
+            );
+        END;
+      items-to-return: 
+      - P56_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Exit # 16030106164346130
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16030399225346132
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P56_PREPARED_URL");
+        apex.navigation.redirect(url);
+
+    execution: 
+      sequence: 20
+      event: Exit # 16030106164346130
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Change Selection ====================
+  id: 20632027030030334
+  identification: 
+    name: Change Selection
+
+  execution: 
+    sequence: 290
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Item Masterfile # 20629835810030312
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 20632140453030335
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var selectedItem;
+        var selectedUom;
+        var selectedNum;
+        var selectedUpc;
+        var selectedDesc;
+        var selectedCode;
+        model=this.data.model;
+        
+        if(this.data != null){
+            if(this.data.selectedRecords[0] != null){
+                selectedItem = model.getValue(this.data.selectedRecords[0], "ITEM_ID");
+                selectedUom = model.getValue(this.data.selectedRecords[0], "UOM_ID");
+                selectedNum = model.getValue(this.data.selectedRecords[0], "ITEM_NUM");
+                selectedUpc = model.getValue(this.data.selectedRecords[0], "UPC");
+                selectedDesc = model.getValue(this.data.selectedRecords[0], "ITEM_DESC");
+                selectedCode = model.getValue(this.data.selectedRecords[0], "UOM_CODE");
+            }
+        }
+        apex.item("P56_NEW_ITEM").setValue(selectedItem);
+        apex.item("P56_NEW_UOM").setValue(selectedUom);
+        apex.item("P56_NUM").setValue(selectedNum);
+        apex.item("P56_UPC").setValue(selectedUpc);
+        apex.item("P56_DESC").setValue(selectedDesc);
+        apex.item("P56_NEW_UOM_CODE").setValue(selectedCode);
+
+    execution: 
+      sequence: 10
+      event: Change Selection # 20632027030030334
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Field Changed =======================
+  id: 20632222941030336
+  identification: 
+    name: Field Changed
+
+  execution: 
+    sequence: 300
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Custom
+    custom-event: addItem
+    selection-type: JavaScript Expression
+    javascript-expression: document
+
+  actions: 
+  - # ====== Action: Update Table ================================
+    id: 20632310359030337
+    identification: 
+      name: Update Table
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN    
+            UPDATE NIT011
+            SET ITEM_ID = :P56_NEW_ITEM, UOM_ID = :P56_NEW_UOM, UPDATE_USER = :APP_USER, UPDATE_DATE = SYSDATE()
+            WHERE TRANSFER_ID = :P56_TRANSFER_ID AND
+                  ITEM_ID = :P56_ITEM_ID AND
+                  UOM_ID = :P56_UOM_ID;
+        END;
+      items-to-submit: 
+      - P56_ITEM_ID
+      - P56_UOM_ID
+      - P56_TRANSFER_ID
+      - P56_NEW_ITEM
+      - P56_NEW_UOM
+
+    execution: 
+      sequence: 30
+      event: Field Changed # 20632222941030336
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is not null
+      item: P56_ITEM_ID
+
+  - # ====== Action: Add Item ====================================
+    id: 21416781390662241
+    identification: 
+      name: Add Item
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: "INSERT INTO NIT011 VALUES (:P56_TRANSFER_ID, :P56_NEW_ITEM, 1, :APP_USER, SYSDATE(), '', '', :P56_NEW_UOM);"
+      items-to-submit: 
+      - P56_TRANSFER_ID
+      - P56_NEW_ITEM
+      - P56_NEW_UOM
+
+    execution: 
+      sequence: 60
+      event: Field Changed # 20632222941030336
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+    client-side-condition: 
+      type: Item is null
+      item: P56_ITEM_ID
+
+  - # ====== Action: Close Region ================================
+    id: 21417087637662244
+    identification: 
+      action: Close Region
+
+    affected-elements: 
+      selection-type: Region
+      region: Item Masterfile # 20629835810030312
+
+    execution: 
+      sequence: 130
+      event: Field Changed # 20632222941030336
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: GoTo QTY ====================================
+    id: 21417573612662249
+    identification: 
+      name: GoTo QTY
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var ig$ = apex.region("lineItem").widget().interactiveGrid("getViews").grid.view$;
+        var activeRecordId = ig$.grid("getActiveRecordId");
+        
+        
+        apex.item("P56_NUM").setValue(null);
+        apex.item("P56_UPC").setValue(null);
+        apex.item("P56_DESC").setValue(null);
+        apex.item("P56_ITEM_ID").setValue(apex.item( "P56_NEW_ITEM" ).getValue());
+        apex.item("P56_UOM_ID").setValue(apex.item( "P56_NEW_UOM" ).getValue());
+        
+        setTimeout(function () {
+            ig$.grid("gotoCell", activeRecordId, "C003").trigger("dblclick");
+        }, 200);
+        
+        setTimeout(function () {
+            ig$.grid("gotoCell", activeRecordId, "N002").trigger("dblclick");
+        }, 300);
+        
+        
+
+    execution: 
+      sequence: 140
+      event: Field Changed # 20632222941030336
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Change col vals =============================
+    id: 22245897033888803
+    identification: 
+      name: Change col vals
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var grid = apex.region('lineItem').widget().interactiveGrid('getViews','grid');
+        var model = grid.model;
+        var record = grid.getSelectedRecords();
+        
+        record.forEach(function(object, index){
+            rec = record[index];
+            model.setValue(rec,'C001',apex.item( "P56_NUM" ).getValue());
+            model.setValue(rec,'C004',apex.item( "P56_UPC" ).getValue());
+            model.setValue(rec,'C002',apex.item( "P56_DESC" ).getValue());
+            model.setValue(rec,'N002',1);
+            model.setValue(rec,'C003',apex.item( "P56_NEW_UOM_CODE" ).getValue());
+            model.setValue(rec,'N003',apex.item( "P56_NEW_ITEM" ).getValue());
+            model.setValue(rec,'N004',apex.item( "P56_NEW_UOM" ).getValue());
+        })
+        
+        
+        
+        
+
+    execution: 
+      sequence: 110
+      event: Field Changed # 20632222941030336
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 22246567496888810
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        apex.region("lineItem").widget().interactiveGrid("getActions").invoke("selection-add-row");
+        
+        
+
+    execution: 
+      sequence: 90
+      event: Field Changed # 20632222941030336
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+    client-side-condition: 
+      type: Item is null
+      item: P56_ITEM_ID
+
+  - # ====== Action: CREATE COLLECTION ===========================
+    id: 23972094766210943
+    identification: 
+      name: CREATE COLLECTION
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            APEX_COLLECTION.CREATE_OR_TRUNCATE_COLLECTION(p_collection_name => 'ITEM LINE');                    
+            FOR i IN (SELECT
+                            nit1.ITEM_NUM,
+                            nit2.UPC,
+                            nit1.ITEM_DESC,
+                            nit11.QTY,
+                            nim26.UOM_CODE,
+                            nit11.ITEM_ID,
+                            nit11.UOM_ID
+                        FROM
+                            NIT001 nit1,
+                            NIT002 nit2,
+                            NIT011 nit11,
+                            NIM026 nim26
+                        WHERE
+                            nit11.transfer_id = :P56_TRANSFER_ID AND
+                            (nit11.item_id = nit2.item_id AND nit2.uom_id = (SELECT MAX(uom_id) FROM NIT002 WHERE item_id = nit11.item_id)) AND
+                            nit11.item_id = nit1.item_id AND
+                            nit11.uom_id = nim26.uom_id
+                        ORDER BY
+                            nit11.CREATE_DATE
+                        )
+            LOOP
+                APEX_COLLECTION.ADD_MEMBER(
+                    p_collection_name => 'ITEM LINE',
+                    p_c001 => i.ITEM_NUM,
+                    p_c004 => i.UPC,
+                    p_c002 => i.ITEM_DESC,
+                    p_n002 => i.QTY,
+                    p_c003 => i.UOM_CODE,
+                    p_n003 => i.ITEM_ID,
+                    p_n004 => i.UOM_ID
+                );
+            END LOOP;
+        
+            APEX_COLLECTION.ADD_MEMBER(
+                p_collection_name => 'ITEM LINE',
+                p_c001 => NULL,
+                p_c004 => NULL,
+                p_c002 => NULL,
+                p_n002 => NULL,
+                p_c003 => NULL,
+                p_n003 => NULL,
+                p_n004 => NULL
+            );
+        END;
+      items-to-submit: 
+      - P56_TRANSFER_ID
+
+    execution: 
+      sequence: 120
+      event: Field Changed # 20632222941030336
+      fire-when-event-result-is: True
+      fire-on-initialization: true
+      stop-execution-on-error: true
+      wait-for-result: true
+

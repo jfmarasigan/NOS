@@ -1,0 +1,2038 @@
+---
+# ====== Page: Ordertaker and Salesman Masterfile ============
+id: 32
+identification: 
+  name: Ordertaker and Salesman Masterfile
+  alias: ORDERTAKER-AND-SALESMAN-MASTERFILE
+  title: Ordertaker and Salesman Masterfile
+
+appearance: 
+  page-mode: Normal
+  page-template: Standard - No Footer
+  template-options: 
+  - '#DEFAULT#'
+
+navigation-menu: 
+  override-user-interface-level: false
+
+navigation: 
+  cursor-focus: Do not focus cursor
+  warn-on-unsaved-changes: true
+
+javascript: 
+  file-urls: 
+  - '#APP_FILES#js/cmn#MIN#.js'
+  function-and-global-variable-declaration: |
+    function customEvent(event, data){
+    
+        apex.event.trigger( "#controls", "apexrefresh" );
+    
+    }
+    
+    let lastSelected = null;
+    const p32KeyMap = {
+        a : (v) => {
+            $("#a").trigger("click");
+        },
+        u : (v) => {
+            $("#u").trigger("click");
+        },
+        p : (v) => {
+            $("#p").trigger("click");
+        },
+        h : (v) => {
+            $("#h").trigger("click");
+        },
+        escape : (v) => {
+            apex.navigation.redirect($('#P32_EXIT_URL').val());
+        },
+        n : (v) => {
+            $("#n").trigger("click");
+        },
+        c : (v) => {
+            $("#c").trigger("click");
+        },
+        s : (v) => {
+            $("#s").trigger("click");
+        },
+        d : (v) => {
+            $("#d").trigger("click");
+        },
+        home : (v) => {
+            $('#to-top').trigger("click");
+        },
+        end : (v) => {
+            $('#to-bottom').trigger('click');
+        }
+    }
+    
+    function mapP32Keys() {
+        $(document).off('keydown.p32keyevents');
+        $(document).on('keydown.p32keyevents', (ev) => {
+            var key = ev.key?.toLowerCase();
+            if (p32KeyMap[key]) {
+                ev.preventDefault();
+                p32KeyMap[key]();
+            }
+        });
+    }
+    
+    
+  execute-when-page-loads: |
+    mapP32Keys();
+    focusOnIGFirstRecordFirstCell('otas', 'OTAS_CODE');
+    setTitle("Ordertaker and Salesman Masterfile")
+    
+
+css: 
+  file-urls: 
+  - '#APP_FILES#css/cmn#MIN#.css'
+  inline: |
+    .buttons-row {
+        position: absolute;
+        width: 98vw;
+        bottom: 1.75rem;
+    }
+    
+    #otas .a-IG {
+        height: calc(70vh + 2px) !important;
+    } 
+    
+    #otas .a-IG-contentContainer {
+        height: 70vh !important;
+    }
+    
+    #otas .a-IG-gridView.a-GV {
+        height: 70vh !important;
+    }
+    
+    #otas .a-GV-bdy {
+        height: calc(70vh - 2.5625rem) !important;
+    }
+    
+    #otas table, 
+    #otas tr, 
+    #otas td{
+        font-size: 1.125rem;
+        border: 0.0625rem solid black;
+    }
+    #otas th {
+        font-size: 1rem;
+    }
+        
+    
+    .a-GV-table .a-GV-cell, th.a-GV-header{
+        border-color: black;
+    }
+    
+    .btns {
+        font-size: 1.125rem;
+        color: white;
+    }
+    
+    .text-left {
+        text-align: left;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+    
+    .content-block {
+        font-size: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+    }
+    
+    .a-GV-header a, th.a-GV-header {
+        background-color: #046BC8;
+        color: white;
+    }
+    
+    /* set modal header to a different background and font color */
+    .ui-dialog .ui-dialog-titlebar {
+        background-color: #226597;
+        color: white;
+    }
+    
+    #search-dialog{
+        background-color: #226597;
+    }
+    .ui-dialog-titlebar-close{
+        display: none;
+    }
+    .ui-dialog-title{
+        font-size : 1.5rem;
+        padding-top: .2rem;
+        padding-bottom: .2rem;
+    }
+    .a-GV-hdr .a-GV-table {
+        width: 100% !important;
+    }
+    .t-Header .t-Header-branding {
+        background-color: white !important;
+        color: rgb(30, 58, 138) !important;
+    }
+     
+    .title-header {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        /* color: #056BC9; */
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: normal;
+    }
+     
+    body{
+        background-color: rgb(30, 58, 138);
+    }
+
+security: 
+  authentication: Page Requires Authentication
+  deep-linking: Application Default
+  page-access-protection: Arguments Must Have Checksum
+  form-auto-complete: Off
+  browser-cache: Application Default
+
+session-management: 
+  rejoin-sessions: Application Default
+
+advanced: 
+  enable-duplicate-page-submissions: Yes - Enable page to be re-posted
+  reload-on-submit: Only for Success
+
+server-cache: 
+  caching: Disabled
+
+regions: 
+- # ====== Region: Ordertaker and Salesman Masterfile ==========
+  id: 6122030364173281
+  identification: 
+    name: Ordertaker and Salesman Masterfile
+    type: Interactive Grid
+
+  source: 
+    location: Local Database
+    type: SQL Query
+    sql-query: 'SELECT * FROM (otas_sort_and_search.otas_table(:P32_SORT_BY, :P32_SORT_TYPE, :P32_SEARCH_COLUMN, :P32_SEARCH_TERM))'
+    page-items-to-submit: 
+    - P32_SORT_BY
+    - P32_SORT_TYPE
+    - P32_SEARCH_COLUMN
+    - P32_SEARCH_TERM
+
+  layout: 
+    sequence: 20
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: 3
+    new-column: true
+    column-span: 8
+
+  appearance: 
+    template: Interactive Report
+    template-options: 
+    - '#DEFAULT#'
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: otas
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    id: 6145331772307910
+    edit: 
+      enabled: false
+
+    performance: 
+      lazy-loading: false
+
+    appearance: 
+      select-first-row: true
+      fixed-row-height: true
+
+    pagination: 
+      type: Scroll
+      show-total-count: true
+
+    toolbar: 
+      show: false
+
+    enable-users-to: 
+      save-public-report: false
+      flashback: false
+      define-chart-view: false
+      download: false
+
+    heading: 
+      fixed-to: Region
+      fixed-report-height: 460
+
+    icon-view: 
+      show: false
+
+    detail-view: 
+      show: false
+
+    advanced: 
+      initialization-javascript-function: |
+        function( options ) {
+            options.defaultModelOptions = {
+                pageSize: 1000
+            };
+            options.defaultGridViewOptions = {
+                pagination: {
+                    scroll: true,
+                    virtual: true,
+                    loadMore: false
+                },
+                resizeColumns: false,
+                reorderColumns: false,
+                footer: false
+            };
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            }
+            return options;
+        }
+
+    saved-reports: 
+    - # ====== Saved Report: Primary Report ========================
+      id: 6511445080026646
+      identification: 
+        name: Primary Report
+        alias: 65115
+
+  columns: 
+  - # ====== Column: OTAS_CODE ===================================
+    id: 6145443688307911
+    identification: 
+      column-name: OTAS_CODE
+      type: Text Field
+
+    heading: 
+      heading: Code
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 20
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: false
+
+    source: 
+      type: Database Column
+      database-column: OTAS_CODE
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true,
+                noStretch : true,
+                width: 150
+            };
+            return options;
+        }
+
+  - # ====== Column: OTAS_NAME ===================================
+    id: 6145585758307912
+    identification: 
+      column-name: OTAS_NAME
+      type: Text Field
+
+    heading: 
+      heading: Name
+      alignment: center
+
+    settings: 
+      trim-spaces: Leading and Trailing
+      text-case: NO CHANGE
+
+    layout: 
+      sequence: 30
+      column-alignment: start
+      stretch: Use Report Setting
+
+    accessibility: 
+      value-identifies-row: false
+
+    validation: 
+      value-required: true
+      maximum-length: 50
+
+    source: 
+      type: Database Column
+      database-column: OTAS_NAME
+      data-type: VARCHAR2
+      query-only: false
+      primary-key: false
+
+    default: 
+      duplicate-copies-existing-value: true
+
+    column-filter: 
+      enabled: false
+
+    export-/-printing: 
+      include-in-export-/-print: true
+
+    enable-users-to: 
+      sort: false
+      hide: false
+
+    advanced: 
+      column-initialization-javascript-function: |
+        function( options ) {
+            options.defaultGridColumnOptions = {
+                noHeaderActivate: true
+            };
+            return options;
+        }
+
+  - # ====== Column: OTAS_ID =====================================
+    id: 7112027834022027
+    identification: 
+      column-name: OTAS_ID
+      type: Hidden
+
+    settings: 
+      value-protected: true
+
+    layout: 
+      sequence: 10
+
+    accessibility: 
+      value-identifies-row: true
+
+    source: 
+      type: Database Column
+      database-column: OTAS_ID
+      data-type: NUMBER
+      query-only: true
+      primary-key: true
+
+    session-state: 
+      data-type: VARCHAR2
+
+    export-/-printing: 
+      include-in-export-/-print: false
+
+    enable-users-to: 
+      sort: false
+
+- # ====== Region: Page Conrols ================================
+  id: 6144477557307901
+  identification: 
+    name: Page Conrols
+    type: Static Content
+
+  layout: 
+    sequence: 120
+    parent-region: No Parent
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    row-css-classes: 
+    - buttons-row
+    column: 2
+    new-column: true
+    column-span: 10
+
+  appearance: 
+    template: Standard
+    template-options: 
+    - '#DEFAULT#'
+    - t-Region--removeHeader js-removeLandmark
+    - t-Region--noUI
+    - t-Region--scrollBody
+    render-components: Above Content
+
+  accessibility: 
+    use-landmark: true
+    landmark-type: Template Default
+
+  advanced: 
+    static-id: controls
+    region-display-selector: false
+    exclude-title-from-translation: false
+
+  customization: 
+    customizable: Not Customizable By End Users
+
+  attributes: 
+    settings: 
+      output-as: HTML
+      expand-shortcuts: false
+
+page-items: 
+- # ====== Page Item: P32_OTAS_ID ==============================
+  id: 7109720369022004
+  identification: 
+    name: P32_OTAS_ID
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 10
+    region: Ordertaker and Salesman Masterfile # 6122030364173281
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_PREPARED_URL =========================
+  id: 7110504697022012
+  identification: 
+    name: P32_PREPARED_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 20
+    region: Ordertaker and Salesman Masterfile # 6122030364173281
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_SEARCH_COLUMN ========================
+  id: 16107984987770107
+  identification: 
+    name: P32_SEARCH_COLUMN
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 70
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_SEARCH_TERM ==========================
+  id: 16108006496770108
+  identification: 
+    name: P32_SEARCH_TERM
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 80
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_SORT_BY ==============================
+  id: 16108131184770109
+  identification: 
+    name: P32_SORT_BY
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 90
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_SORT_TYPE ============================
+  id: 16108220220770110
+  identification: 
+    name: P32_SORT_TYPE
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 100
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Null
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+- # ====== Page Item: P32_EXIT_URL =============================
+  id: 16109352557770121
+  identification: 
+    name: P32_EXIT_URL
+    type: Hidden
+
+  settings: 
+    value-protected: true
+
+  layout: 
+    sequence: 110
+    region: No Parent
+    slot: BODY
+
+  advanced: 
+    warn-on-unsaved-changes: Page Default
+
+  source: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: APEX_PAGE.GET_URL(p_page => 2)
+    used: Only when current value in session state is null
+
+  session-state: 
+    data-type: VARCHAR2
+    storage: Per Session (Persistent)
+
+  security: 
+    session-state-protection: Unrestricted
+    store-value-encrypted-in-session-state: true
+    restricted-characters: All characters can be saved.
+
+buttons: 
+- # ====== Button: ADD =========================================
+  id: 6144544581307902
+  identification: 
+    button-name: ADD
+    label: <u>A</u> - Add
+
+  layout: 
+    sequence: 10
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:33:&SESSION.:ADD:&DEBUG.:33::'
+      page: 33 # Add/Update Ordertaker and Salesman
+      request: ADD
+      clear-cache: 33
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: a
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 3, 10) = 'Y'"
+
+- # ====== Button: UPDATE ======================================
+  id: 6144624811307903
+  identification: 
+    button-name: UPDATE
+    label: <u>U</u> - Update
+
+  layout: 
+    sequence: 20
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: u
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 3, 11) = 'Y'"
+
+- # ====== Button: PRINT =======================================
+  id: 6144797753307904
+  identification: 
+    button-name: PRINT
+    label: <u>P</u> - Print
+
+  layout: 
+    sequence: 30
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: p
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 3, 12) = 'Y'"
+
+- # ====== Button: EXPORT ======================================
+  id: 6144868851307905
+  identification: 
+    button-name: EXPORT
+    label: <u>H</u> - Export
+
+  layout: 
+    sequence: 40
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: h
+
+  server-side-condition: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: "has_access(:APP_USER, 3, 13) = 'Y'"
+
+- # ====== Button: SEARCH ======================================
+  id: 6144915075307906
+  identification: 
+    button-name: SEARCH
+    label: <u>S</u> - Search
+
+  layout: 
+    sequence: 50
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:34:&SESSION.::&DEBUG.:34::'
+      page: 34 # OTAS Search
+      clear-cache: 34
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: s
+
+- # ====== Button: CODE_SORT ===================================
+  id: 6145055477307907
+  identification: 
+    button-name: CODE_SORT
+    label: <u>C</u> - Sort by Code
+
+  layout: 
+    sequence: 60
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: c
+
+- # ====== Button: NAME_SORT ===================================
+  id: 6145149491307908
+  identification: 
+    button-name: NAME_SORT
+    label: <u>N</u> - Sort by Name
+
+  layout: 
+    sequence: 70
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: n
+
+- # ====== Button: EXIT ========================================
+  id: 6145230162307909
+  identification: 
+    button-name: EXIT
+    label: <u>Esc</u> - To Exit
+
+  layout: 
+    sequence: 90
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Redirect to Page in this Application
+    target: 
+      url: 'f?p=&APP_ID.:2:&SESSION.::&DEBUG.:::'
+      page: 2 # Masterfile Maintenance Submenu
+
+    warn-on-unsaved-changes: Do Not Check
+
+  advanced: 
+    static-id: esc
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: TO_TOP ======================================
+  id: 9248625944476036
+  identification: 
+    button-name: TO_TOP
+    label: <u>Home</u> - To Top
+
+  layout: 
+    sequence: 100
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: true
+    column: Automatic
+    new-column: true
+    column-span: 3
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-top
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: TO_BOTTOM ===================================
+  id: 9248772860476037
+  identification: 
+    button-name: TO_BOTTOM
+    label: <u>End</u> - To Bottom
+
+  layout: 
+    sequence: 110
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: to-bottom
+
+  configuration: 
+    build-option: Commented Out # 4207224469083906
+
+- # ====== Button: DISPLAY_ALL =================================
+  id: 16109407960770122
+  identification: 
+    button-name: DISPLAY_ALL
+    label: <u>D</u> - Display All Records
+
+  layout: 
+    sequence: 80
+    region: Page Conrols # 6144477557307901
+    slot: BODY
+    start-new-layout: false
+    start-new-row: false
+    column: Automatic
+    new-column: true
+    column-span: Automatic
+    alignment: Left center
+
+  appearance: 
+    button-template: Text
+    hot: false
+    template-options: 
+    - '#DEFAULT#'
+    - t-Button--noUI
+    - t-Button--stretch
+    css-classes: 
+    - btns
+    - text-left
+
+  behavior: 
+    action: Defined by Dynamic Action
+    execute-validations: true
+
+  advanced: 
+    static-id: d
+
+dynamic-actions: 
+- # ====== Dynamic Action: Edit Report - Dialog Closed =========
+  id: 6125668756173292
+  identification: 
+    name: Edit Report - Dialog Closed
+
+  execution: 
+    sequence: 10
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Region
+    region: Page Conrols # 6144477557307901
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 6126141625173293
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Ordertaker and Salesman Masterfile # 6122030364173281
+
+    execution: 
+      sequence: 10
+      event: Edit Report - Dialog Closed # 6125668756173292
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 10498283155417929
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        },"500");
+
+    execution: 
+      sequence: 20
+      event: Edit Report - Dialog Closed # 6125668756173292
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14277551313795903
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $('.t-Button--closeAlert').trigger('click');
+            });
+        },"3500");
+
+    execution: 
+      sequence: 30
+      event: Edit Report - Dialog Closed # 6125668756173292
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Retrieve table data =================
+  id: 7109520421022002
+  identification: 
+    name: Retrieve table data
+
+  execution: 
+    sequence: 20
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: NATIVE_IG|REGION TYPE|interactivegridselectionchange
+    selection-type: Region
+    region: Ordertaker and Salesman Masterfile # 6122030364173281
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 7109660933022003
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var code;
+        model = this.data.model;
+        code = model.getValue(this.data.selectedRecords[0], "OTAS_ID");
+        $s('P32_OTAS_ID', code);
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_OTAS_ID
+
+    execution: 
+      sequence: 10
+      event: Retrieve table data # 7109520421022002
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Refresh =====================================
+    id: 7109863787022005
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_OTAS_ID
+
+    execution: 
+      sequence: 30
+      event: Retrieve table data # 7109520421022002
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Set Value ===================================
+    id: 7109965467022006
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: ':P32_OTAS_ID'
+      items-to-submit: 
+      - P32_OTAS_ID
+      escape-special-characters: false
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_OTAS_ID
+
+    execution: 
+      sequence: 20
+      event: Retrieve table data # 7109520421022002
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Open Update Modal ===================
+  id: 7110370918022010
+  identification: 
+    name: Open Update Modal
+
+  execution: 
+    sequence: 30
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: UPDATE # 6144624811307903
+
+  actions: 
+  - # ====== Action: Execute Server-side Code ====================
+    id: 7110488184022011
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+            :P32_PREPARED_URL := apex_page.get_url(
+               p_page   => 33,
+               p_items  => 'P33_OTAS_ID',
+               p_values => :P32_OTAS_ID
+             );
+        END;
+      items-to-submit: 
+      - P32_OTAS_ID
+      items-to-return: 
+      - P32_PREPARED_URL
+      suppress-change-event: false
+
+    execution: 
+      sequence: 10
+      event: Open Update Modal # 7110370918022010
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 7110645634022013
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        let url = $v("P32_PREPARED_URL");
+        
+        apex.navigation.redirect(url);
+         
+
+    execution: 
+      sequence: 20
+      event: Open Update Modal # 7110370918022010
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Sort Report by Code =================
+  id: 7110961055022016
+  identification: 
+    name: Sort Report by Code
+
+  execution: 
+    sequence: 50
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: CODE_SORT # 6145055477307907
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 9767984799817001
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Ordertaker and Salesman Masterfile # 6122030364173281
+
+    execution: 
+      sequence: 60
+      event: Sort Report by Code # 7110961055022016
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 10498741912417934
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        },"500");
+
+    execution: 
+      sequence: 70
+      event: Sort Report by Code # 7110961055022016
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16108727365770115
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P32_SORT_BY = 'code' AND :P32_SORT_TYPE = 'ASC' THEN :P32_SORT_TYPE := 'DESC';
+        ELSE :P32_SORT_TYPE := 'ASC';
+        END IF;
+        END;
+      items-to-submit: 
+      - P32_SORT_TYPE
+      items-to-return: 
+      - P32_SORT_TYPE
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Sort Report by Code # 7110961055022016
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 16108879925770116
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: code
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_SORT_BY
+
+    execution: 
+      sequence: 50
+      event: Sort Report by Code # 7110961055022016
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: Print ===============================
+  id: 7112754720022034
+  identification: 
+    name: Print
+
+  execution: 
+    sequence: 60
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: PRINT # 6144797753307904
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9772569253817047
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("OTAS_PDF", "pdf", { 
+            fileName: "OrdertakerandSalesman_" + datestamp + ".pdf",
+            mode : "print",
+            parameters : {
+                P_SEARCH_COLUMN : $v("P32_SEARCH_COLUMN"),
+                P_SEARCH_TERM : $v("P32_SEARCH_TERM"),
+                P_SORT_COLUMN : $v("P32_SORT_BY"),
+                P_SORT_TYPE : $v("P32_SORT_TYPE")
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Print # 7112754720022034
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Export ==============================
+  id: 7112938193022036
+  identification: 
+    name: Export
+
+  execution: 
+    sequence: 70
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: EXPORT # 6144868851307905
+
+  actions: 
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 9772642067817048
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        var d = new Date();
+        var datestamp = d.getFullYear() + "";
+        if( (d.getMonth() + 1) >= 10){
+            datestamp = datestamp + (d.getMonth() + 1) + "";
+        }
+        else{
+            datestamp = datestamp + "0" + (d.getMonth() + 1);
+        }
+        if( (d.getDate() + 1) >= 10){
+            datestamp = datestamp + d.getDate() + "";
+        }
+        else{
+            datestamp = datestamp + "0" + d.getDate();
+        }
+        generateReport("OTAS_EXCEL", "xlsx", { 
+            fileName: "OrdertakerandSalesman_" + datestamp + ".xlsx",
+            mode : "export",
+            parameters : {
+                P_SEARCH_COLUMN : $v("P32_SEARCH_COLUMN"),
+                P_SEARCH_TERM : $v("P32_SEARCH_TERM"),
+                P_SORT_COLUMN : $v("P32_SORT_BY"),
+                P_SORT_TYPE : $v("P32_SORT_TYPE")
+            }
+        });
+
+    execution: 
+      sequence: 10
+      event: Export # 7112938193022036
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On Home click =======================
+  id: 9248877184476038
+  identification: 
+    name: On Home click
+
+  execution: 
+    sequence: 80
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: TO_TOP # 9248625944476036
+
+  actions: 
+  - # ====== Action: Go to Top ===================================
+    id: 9248912047476039
+    identification: 
+      name: Go to Top
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGFirstRecordFirstCell('otas', 'OTAS_CODE')
+
+    execution: 
+      sequence: 10
+      event: On Home click # 9248877184476038
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: On End click ========================
+  id: 9249011959476040
+  identification: 
+    name: On End click
+
+  execution: 
+    sequence: 90
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: TO_BOTTOM # 9248772860476037
+
+  actions: 
+  - # ====== Action: Go to Bottom ================================
+    id: 9249116293476041
+    identification: 
+      name: Go to Bottom
+      action: Execute JavaScript Code
+
+    settings: 
+      code: focusOnIGLastRecordFirstCell('otas')
+
+    execution: 
+      sequence: 10
+      event: On End click # 9249011959476040
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: Sort Report by Name =================
+  id: 9768386914817005
+  identification: 
+    name: Sort Report by Name
+
+  execution: 
+    sequence: 100
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: NAME_SORT # 6145149491307908
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 9768278291817004
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Ordertaker and Salesman Masterfile # 6122030364173281
+
+    execution: 
+      sequence: 60
+      event: Sort Report by Name # 9768386914817005
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 10498364564417930
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        },"500");
+
+    execution: 
+      sequence: 70
+      event: Sort Report by Name # 9768386914817005
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute Server-side Code ====================
+    id: 16108982759770117
+    identification: 
+      action: Execute Server-side Code
+
+    settings: 
+      language: PE.PROPERTY.SOURCE_SNIPPET_LANG.LOV.PLSQL.D
+      pl/sql-code: |
+        BEGIN
+        IF :P32_SORT_BY = 'name' AND :P32_SORT_TYPE = 'ASC' THEN :P32_SORT_TYPE := 'DESC';
+        ELSE :P32_SORT_TYPE := 'ASC';
+        END IF;
+        END;
+      items-to-submit: 
+      - P32_SORT_TYPE
+      items-to-return: 
+      - P32_SORT_TYPE
+      suppress-change-event: false
+
+    execution: 
+      sequence: 20
+      event: Sort Report by Name # 9768386914817005
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 16109011990770118
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Static Assignment
+      value: name
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_SORT_BY
+
+    execution: 
+      sequence: 50
+      event: Sort Report by Name # 9768386914817005
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On Search Modal Close ===============
+  id: 9771620991817038
+  identification: 
+    name: On Search Modal Close
+
+  execution: 
+    sequence: 120
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: Button
+    button: SEARCH # 6144915075307906
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 16108546793770113
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P34_SEARCH_KEY
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_SEARCH_COLUMN
+
+    execution: 
+      sequence: 60
+      event: On Search Modal Close # 9771620991817038
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 16108638596770114
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: Dialog Return Item
+      return-item: P34_SEARCH_VALUE
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_SEARCH_TERM
+
+    execution: 
+      sequence: 70
+      event: On Search Modal Close # 9771620991817038
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+- # ====== Dynamic Action: On Update Dialog Close ==============
+  id: 10495808815417905
+  identification: 
+    name: On Update Dialog Close
+
+  execution: 
+    sequence: 130
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Dialog Closed
+    selection-type: JavaScript Expression
+    javascript-expression: window
+
+  actions: 
+  - # ====== Action: Refresh =====================================
+    id: 10495983208417906
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Ordertaker and Salesman Masterfile # 6122030364173281
+
+    execution: 
+      sequence: 10
+      event: On Update Dialog Close # 10495808815417905
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14277877444795906
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        },"500");
+
+    execution: 
+      sequence: 20
+      event: On Update Dialog Close # 10495808815417905
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 14277972205795907
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $('.t-Button--closeAlert').trigger('click');
+            });
+        },"3500");
+
+    execution: 
+      sequence: 30
+      event: On Update Dialog Close # 10495808815417905
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+- # ====== Dynamic Action: New =================================
+  id: 16109586675770123
+  identification: 
+    name: New
+
+  execution: 
+    sequence: 140
+    event-scope: Static
+    type: Immediate
+
+  when: 
+    event: Click
+    selection-type: Button
+    button: DISPLAY_ALL # 16109407960770122
+
+  actions: 
+  - # ====== Action: Set Value ===================================
+    id: 16109633114770124
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: NULL
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_SEARCH_COLUMN
+
+    execution: 
+      sequence: 10
+      event: New # 16109586675770123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 16109742031770125
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: NULL
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_SEARCH_TERM
+
+    execution: 
+      sequence: 20
+      event: New # 16109586675770123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 16109807969770126
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: NULL
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_SORT_BY
+
+    execution: 
+      sequence: 30
+      event: New # 16109586675770123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Set Value ===================================
+    id: 16109983350770127
+    identification: 
+      action: Set Value
+
+    settings: 
+      set-type: PL/SQL Expression
+      pl/sql-expression: NULL
+      escape-special-characters: true
+      suppress-change-event: false
+
+    affected-elements: 
+      selection-type: Item(s)
+      item(s): 
+      - P32_SORT_TYPE
+
+    execution: 
+      sequence: 40
+      event: New # 16109586675770123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+      stop-execution-on-error: true
+      wait-for-result: true
+
+  - # ====== Action: Refresh =====================================
+    id: 16110005411770128
+    identification: 
+      action: Refresh
+
+    affected-elements: 
+      selection-type: Region
+      region: Ordertaker and Salesman Masterfile # 6122030364173281
+
+    execution: 
+      sequence: 50
+      event: New # 16109586675770123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+  - # ====== Action: Execute JavaScript Code =====================
+    id: 16110146259770129
+    identification: 
+      action: Execute JavaScript Code
+
+    settings: 
+      code: |
+        setTimeout(() => {
+            $( document ).ready(function() {
+                $(".a-GV-cell").first().trigger("click");
+            });
+        },"500");
+
+    execution: 
+      sequence: 60
+      event: New # 16109586675770123
+      fire-when-event-result-is: True
+      fire-on-initialization: false
+
+computations: 
+- # ====== Computation: P32_SEARCH_COLUMN ======================
+  id: 16108391670770111
+  identification: 
+    item-name: P32_SEARCH_COLUMN
+
+  execution: 
+    sequence: 30
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
+- # ====== Computation: P32_SORT_BY ============================
+  id: 16108495171770112
+  identification: 
+    item-name: P32_SORT_BY
+
+  execution: 
+    sequence: 40
+    point: Before Regions
+
+  computation: 
+    type: Expression
+    language: PL/SQL
+    pl/sql-expression: NULL
+
