@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SHIPMENT_WITH_DUPLICATE_CONTAINER" language="groovy" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="584" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="9cf184d8-e4f4-44de-abb7-f347668a9f11">
+	<property name="ireport.zoom" value="1.7715610000000084"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="size 10" fontName="Courier New" fontSize="10">
+		<conditionalStyle>
+			<conditionExpression><![CDATA["1".equals($P{P_FONT})]]></conditionExpression>
+			<style fontName="Courier New" fontSize="10"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA["2".equals($P{P_FONT})]]></conditionExpression>
+			<style fontName="Arial" fontSize="10"/>
+		</conditionalStyle>
+	</style>
+	<style name="size 12" fontName="Courier New" fontSize="12">
+		<conditionalStyle>
+			<conditionExpression><![CDATA["1".equals($P{P_FONT})]]></conditionExpression>
+			<style fontName="Courier New" fontSize="12"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA["2".equals($P{P_FONT})]]></conditionExpression>
+			<style fontName="Arial" fontSize="12"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="P_MONTH" class="java.lang.String"/>
+	<parameter name="P_YEAR" class="java.lang.String"/>
+	<parameter name="P_SORT" class="java.lang.String"/>
+	<parameter name="P_FONT" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select *
+  from table (shipment_records_pkg.get_rep_duplicate_container_no($P{P_MONTH},$P{P_YEAR},$P{P_SORT}))]]>
+	</queryString>
+	<field name="SHIPMENT_ID" class="java.math.BigDecimal"/>
+	<field name="VENDOR" class="java.lang.String"/>
+	<field name="VENDOR_CODE" class="java.lang.String"/>
+	<field name="SHIP_NO" class="java.lang.String"/>
+	<field name="SHIPMENT_NUMBER" class="java.lang.String"/>
+	<field name="P" class="java.lang.String"/>
+	<field name="VESSEL_NAME" class="java.lang.String"/>
+	<field name="VESSEL_BL_NO" class="java.lang.String"/>
+	<field name="ETD" class="java.sql.Timestamp"/>
+	<field name="ETA" class="java.sql.Timestamp"/>
+	<field name="CONTAINER_NO" class="java.lang.String"/>
+	<field name="MONTH_S" class="java.lang.String"/>
+	<title>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement style="size 12" x="0" y="0" width="173" height="14" uuid="324166df-8405-4e8b-a12f-b9ca2634789f"/>
+				<textElement verticalAlignment="Bottom" markup="styled">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[NATIONAL OFFICE SUPPLY]]></text>
+			</staticText>
+			<textField pattern="MM/dd/yyyy">
+				<reportElement style="size 10" x="35" y="14" width="138" height="12" uuid="9571af40-807c-4666-b665-c00fcabf0551"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="size 10" x="0" y="14" width="35" height="12" uuid="02c6f89a-4b4b-4532-92c3-5b0a31e0e3e4"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="size 12" x="0" y="42" width="584" height="16" uuid="b09a9ce5-7082-43d8-be47-d6c5f88ed0ae"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SHIPMENT WITH DUPLICATE CONTAINER NO FOR THE MONTH OF " + $F{MONTH_S}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="size 10" x="0" y="58" width="584" height="13" uuid="8443bf04-e33b-4867-b233-8f6ab4c758ff"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Sorted By: " + ( "1".equals($P{P_SORT}) ? "Vendor Code" : ("2".equals($P{P_SORT}) ? "Shipment Number" : ("3".equals($P{P_SORT}) ? "ETA" : "Container Number")) )]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="29">
+			<staticText>
+				<reportElement style="size 10" x="0" y="0" width="40" height="23" uuid="8fc52730-1790-4091-af11-de6547b44444"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vendor<br>Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="size 10" x="40" y="0" width="55" height="23" uuid="876c7f78-01aa-42bd-a40c-35cc4eb980a8"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Shipment<br>No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="size 10" x="95" y="0" width="83" height="23" uuid="380b9140-df51-4add-8040-50494a60b673"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Container No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="size 10" x="178" y="0" width="201" height="23" uuid="91ec3288-1f63-44ab-8e72-bae6a2ebb255"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vessel Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="size 10" x="379" y="0" width="87" height="23" uuid="06b169aa-ed02-4722-910a-715c5c928bab"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vessel B/L No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="size 10" x="525" y="0" width="59" height="23" uuid="3138a08d-1e8e-4f92-ac22-b75954044286"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ETA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="size 10" x="466" y="0" width="59" height="23" uuid="45e885e1-bad4-4e95-a97f-8c36d82ad053"/>
+				<box>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ETD]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement style="size 10" x="0" y="0" width="40" height="12" isPrintWhenDetailOverflows="true" uuid="e4d53224-ec99-4ea0-8b71-6f78e27c0205"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENDOR_CODE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="size 10" x="40" y="0" width="55" height="12" isPrintWhenDetailOverflows="true" uuid="1614680a-ad31-4bfd-a84f-ab343286fb7d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPMENT_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="size 10" x="95" y="0" width="83" height="12" isPrintWhenDetailOverflows="true" uuid="5d607753-4816-4839-a7c9-584767282476"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONTAINER_NO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="size 10" x="178" y="0" width="201" height="12" isPrintWhenDetailOverflows="true" uuid="e5d420fb-59ad-4a7f-bbed-09fb71ad5223"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph leftIndent="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1234567890QWERTYUIOPASDFGHJKLZXCVBNM1234"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="size 10" x="379" y="0" width="87" height="12" isPrintWhenDetailOverflows="true" uuid="58f5f785-45d8-4a43-bb61-a59015eb956d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VESSEL_BL_NO}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="MM/dd/yyyy">
+				<reportElement style="size 10" x="466" y="0" width="59" height="12" isPrintWhenDetailOverflows="true" uuid="156c3eff-deb8-423d-84f2-ffaa3dcbf0d9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ETD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="MM/dd/yyyy">
+				<reportElement style="size 10" x="525" y="0" width="59" height="12" isPrintWhenDetailOverflows="true" uuid="d69acb00-9740-469d-b778-b4dbc47341dc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ETA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12">
+			<textField>
+				<reportElement style="size 10" x="466" y="0" width="78" height="12" uuid="3a07bb7b-23aa-430e-8073-52f7ffebc298"/>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="size 10" x="544" y="0" width="40" height="12" uuid="a3210e03-35b0-49cc-92aa-2e20ca9023f3"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<staticText>
+				<reportElement style="size 10" x="0" y="0" width="584" height="14" uuid="eb997977-3ea9-448a-8981-3bd4e9967ea8"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[***End Of Report***]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

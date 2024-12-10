@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SHIPMENT_RECORD_VENDOR_INV_PRINT_ITEMS_SUB" language="groovy" pageWidth="592" pageHeight="50" whenNoDataType="AllSectionsNoDetail" columnWidth="592" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="9cf184d8-e4f4-44de-abb7-f347668a9f11">
+	<property name="ireport.zoom" value="1.7715610000000075"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_SHIPMENT_ID" class="java.lang.Integer"/>
+	<parameter name="P_FONT" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select *
+  from (shipment_records_pkg.get_shipment_vendor_invoices($P{P_SHIPMENT_ID}))]]>
+	</queryString>
+	<field name="VENDOR_NO" class="java.math.BigDecimal"/>
+	<field name="VENDOR_NAME" class="java.lang.String"/>
+	<field name="REF_PO" class="java.lang.String"/>
+	<field name="INVOICES" class="java.lang.String"/>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<printWhenExpression><![CDATA[!"2".equals($P{P_FONT})]]></printWhenExpression>
+			<textField>
+				<reportElement x="0" y="0" width="40" height="12" uuid="dccb8b8d-79c2-4301-80a6-5c1902786b01"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["#" + $F{VENDOR_NO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="163" height="12" uuid="23dd62f1-219c-4f56-9fbc-9d20ab73e24c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENDOR_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="203" y="0" width="79" height="12" uuid="ba75a6dd-2647-4566-aa8a-ccd4beec48c6"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REF_PO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="282" y="0" width="310" height="12" uuid="3b3b8372-bf4f-4d56-9883-fb570de263a7"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INVOICES}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="17">
+			<printWhenExpression><![CDATA["2".equals($P{P_FONT})]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement x="203" y="0" width="79" height="12" uuid="53fcc655-be93-40c4-bbac-e3a3c0759a0a"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REF_PO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="0" width="163" height="12" uuid="735af03d-5996-4037-aa52-449b5cce522b"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VENDOR_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="282" y="0" width="310" height="12" uuid="deb37be6-c2e1-4498-b676-3a247c25bc60"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INVOICES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="40" height="12" uuid="d8f25603-a84f-4dc4-834f-b036767bcdda"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["#" + $F{VENDOR_NO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
