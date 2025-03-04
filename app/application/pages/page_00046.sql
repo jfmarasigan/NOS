@@ -41,17 +41,55 @@ wwv_flow_imp_page.create_page(
 '            p8KeyMap[key]();',
 '        }',
 '    });',
+'}',
+'',
+'function highlightValue() {',
+'    const inputFieldIds = ["P46_VESSEL_NAME", "P46_ETD", "P46_ETA", "P46_ADDED_COST_2", "P46_REMARKS",',
+'                           "P46_IMPORTANT", "P46_SUBJECT", "P46_LESS", "P46_ADD"];',
+'',
+'    inputFieldIds.forEach((fieldId) => {',
+'        $(`#${fieldId}`).on("focus", function() {',
+'            $(this).select();',
+'        });',
+'    })',
 '}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP8Keys();',
+'// autoClearInputValue();',
+'highlightValue();',
+'',
+'const dateFields = [''P46_ETD'', ''P46_ETA''];',
+'',
+'dateFields.forEach((fieldId) => {',
+'  const dateField = document.getElementById(fieldId);',
+'',
+'  dateField.addEventListener(''input'', function () {',
+'    let value = dateField.value.replace(/\D/g, '''');',
+'',
+'    if (value.length > 2) {',
+'      value = value.substring(0, 2) + ''/'' + value.substring(2);',
+'    }',
+'    if (value.length > 5) {',
+'      value = value.substring(0, 5) + ''/'' + value.substring(5, 9);',
+'    }',
+'',
+'    if (value.length > 10) {',
+'      value = value.substring(0, 10);',
+'    }',
+'',
+'    dateField.value = value;',
+'  });',
+'});',
 '',
 '$(document).ready(function() {',
-'    $("#P46_CLOSING_EMAIL_DETAIL").on("keydown", function(event) {',
+'    $("#P46_SIGNATURE_DETAIL").on("keydown", function(event) {',
 '        if($v("P46_PROCESS") === ''A'') {',
 '            if($("#add-notes-two").is(":visible")) {',
 '                if (event.key === "Enter" || event.keyCode === 13) {',
-'                    $.event.trigger(''addnotestwo'');',
-'                    event.preventDefault();',
+'                    if(!event.shiftKey) {',
+'                        $.event.trigger(''addnotestwo'');',
+'                        event.preventDefault();',
+'                    }',
 '                }',
 '            }',
 '        }',
@@ -102,6 +140,10 @@ wwv_flow_imp_page.create_page(
 '            fromValue === "C" ? "Create Child PO" :',
 '            "Add New PO using an Existing PO"}`);'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.apex-item-text, .apex-item-text.apex-item-popup-lov, .apex-item-select {',
+'    background-color: white;',
+'}',
+'',
 '.t-Header .t-Header-branding {',
 '    background-color: white !important;',
 '    color: rgb(30, 58, 138) !important;',
@@ -192,12 +234,12 @@ wwv_flow_imp_page.create_page(
 '    overflow: hidden !important;',
 '}',
 '',
-'#P46_ACCOUNT_NO_LABEL.t-Form-label::after,',
 '#P46_REMARKS_LABEL.t-Form-label::after,',
 '#P46_NOTE_LABEL.t-Form-label::after,',
 '#P46_SUBJECT_LABEL.t-Form-label::after,',
 '#P46_OPENING_EMAIL_LABEL.t-Form-label::after,',
-'#P46_CLOSING_EMAIL_LABEL.t-Form-label::after {',
+'#P46_CLOSING_EMAIL_LABEL.t-Form-label::after,',
+'#P46_SIGNATURE_LABEL.t-Form-label::after {',
 '    content: " *" !important;',
 '    color: red;',
 '}',
@@ -206,6 +248,10 @@ wwv_flow_imp_page.create_page(
 '#add-notes-two .t-Form-error {',
 '    color: #FFD700 !important;',
 '    margin-bottom: 0;',
+'}',
+'',
+'.t-Form-error {',
+'    font-weight: 700;',
 '}',
 '',
 '#add-notes .t-Form-inputContainer,',
@@ -344,7 +390,7 @@ wwv_flow_imp_page.create_page_plug(
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(33626639176196832)
-,p_button_sequence=>80
+,p_button_sequence=>100
 ,p_button_plug_id=>wwv_flow_imp.id(33626330564196829)
 ,p_button_name=>'Close'
 ,p_button_static_id=>'close'
@@ -357,22 +403,8 @@ wwv_flow_imp_page.create_page_button(
 ,p_grid_new_row=>'Y'
 );
 wwv_flow_imp_page.create_page_button(
- p_id=>wwv_flow_imp.id(37833896030283612)
-,p_button_sequence=>80
-,p_button_plug_id=>wwv_flow_imp.id(37832847550283602)
-,p_button_name=>'Close-Two'
-,p_button_static_id=>'close-two'
-,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#'
-,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
-,p_button_image_alt=>'Close-two'
-,p_warn_on_unsaved_changes=>null
-,p_button_css_classes=>'hide'
-,p_grid_new_row=>'Y'
-);
-wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(33628235807196848)
-,p_button_sequence=>90
+,p_button_sequence=>110
 ,p_button_plug_id=>wwv_flow_imp.id(33626330564196829)
 ,p_button_name=>'Next'
 ,p_button_action=>'SUBMIT'
@@ -384,6 +416,20 @@ wwv_flow_imp_page.create_page_button(
 ,p_grid_row_css_classes=>'r-margin'
 ,p_grid_column_span=>2
 ,p_grid_column=>11
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(37833896030283612)
+,p_button_sequence=>120
+,p_button_plug_id=>wwv_flow_imp.id(37832847550283602)
+,p_button_name=>'Close-Two'
+,p_button_static_id=>'close-two'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'Close-two'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'hide'
+,p_grid_new_row=>'Y'
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(16246192723344114)
@@ -570,7 +616,9 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_imp.id(16245118495344104)
 ,p_use_cache_before_default=>'NO'
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_prompt=>'New'
+,p_format_mask=>'999G999G999G999G990D000'
+,p_display_as=>'NATIVE_NUMBER_FIELD'
 ,p_cSize=>30
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>2
@@ -578,10 +626,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_field_template=>wwv_flow_imp.id(15621067564319309)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large'
 ,p_warn_on_unsaved_changes=>'I'
-,p_attribute_01=>'N'
-,p_attribute_02=>'N'
-,p_attribute_04=>'TEXT'
-,p_attribute_05=>'BOTH'
+,p_attribute_03=>'right'
+,p_attribute_04=>'decimal'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(16245555501344108)
@@ -746,6 +792,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:margin-top-sm:margin-bottom-none:margin-right-sm'
 ,p_is_persistent=>'N'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -757,22 +804,28 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_imp.id(33626330564196829)
 ,p_prompt=>'Remarks'
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_display_as=>'NATIVE_POPUP_LOV'
+,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT REMARKS as d, REMARKS_ID as r',
+'FROM NIM038'))
+,p_lov_display_null=>'YES'
 ,p_cSize=>30
 ,p_colspan=>12
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:margin-bottom-none:margin-right-md'
 ,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-,p_attribute_02=>'N'
-,p_attribute_04=>'TEXT'
-,p_attribute_05=>'BOTH'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'POPUP'
+,p_attribute_02=>'FIRST_ROWSET'
+,p_attribute_04=>'N'
+,p_attribute_05=>'Y'
+,p_attribute_06=>'0'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(33627733142196843)
 ,p_name=>'P46_NOTE'
-,p_item_sequence=>40
+,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_imp.id(33626330564196829)
 ,p_prompt=>'Note'
 ,p_display_as=>'NATIVE_POPUP_LOV'
@@ -796,25 +849,31 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(33627874067196844)
 ,p_name=>'P46_IMPORTANT'
-,p_item_sequence=>60
+,p_item_sequence=>70
 ,p_item_plug_id=>wwv_flow_imp.id(33626330564196829)
 ,p_prompt=>'Important'
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_display_as=>'NATIVE_POPUP_LOV'
+,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT important AS d, important_id AS r',
+'FROM NIM031'))
+,p_lov_display_null=>'YES'
 ,p_cSize=>30
 ,p_colspan=>12
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:margin-right-md'
 ,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-,p_attribute_02=>'N'
-,p_attribute_04=>'TEXT'
-,p_attribute_05=>'BOTH'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'POPUP'
+,p_attribute_02=>'FIRST_ROWSET'
+,p_attribute_04=>'N'
+,p_attribute_05=>'Y'
+,p_attribute_06=>'0'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(33627981762196845)
 ,p_name=>'P46_SUBJECT'
-,p_item_sequence=>70
+,p_item_sequence=>90
 ,p_item_plug_id=>wwv_flow_imp.id(33626330564196829)
 ,p_prompt=>'Subject'
 ,p_display_as=>'NATIVE_TEXTAREA'
@@ -833,7 +892,7 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(33628123176196847)
 ,p_name=>'P46_NOTE_DETAIL'
-,p_item_sequence=>50
+,p_item_sequence=>60
 ,p_item_plug_id=>wwv_flow_imp.id(33626330564196829)
 ,p_display_as=>'NATIVE_TEXTAREA'
 ,p_cSize=>30
@@ -917,7 +976,7 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(37833497994283608)
 ,p_name=>'P46_CLOSING_EMAIL_DETAIL'
-,p_item_sequence=>70
+,p_item_sequence=>80
 ,p_item_plug_id=>wwv_flow_imp.id(37832847550283602)
 ,p_display_as=>'NATIVE_TEXTAREA'
 ,p_cSize=>30
@@ -976,6 +1035,82 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(62109741453066919)
+,p_name=>'P46_IMPORTANT_DETAIL'
+,p_item_sequence=>80
+,p_item_plug_id=>wwv_flow_imp.id(33626330564196829)
+,p_display_as=>'NATIVE_TEXTAREA'
+,p_cSize=>30
+,p_cHeight=>5
+,p_colspan=>12
+,p_grid_label_column_span=>2
+,p_field_template=>wwv_flow_imp.id(4382028501084276)
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:margin-bottom-sm:margin-right-md'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_03=>'N'
+,p_attribute_04=>'BOTH'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(65874093396340906)
+,p_name=>'P46_REMARKS_DETAIL'
+,p_item_sequence=>40
+,p_item_plug_id=>wwv_flow_imp.id(33626330564196829)
+,p_display_as=>'NATIVE_TEXTAREA'
+,p_cSize=>30
+,p_cHeight=>5
+,p_colspan=>12
+,p_grid_label_column_span=>2
+,p_field_template=>wwv_flow_imp.id(4382028501084276)
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:margin-bottom-sm:margin-right-md'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_03=>'N'
+,p_attribute_04=>'BOTH'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(65874969789340915)
+,p_name=>'P46_SIGNATURE'
+,p_item_sequence=>100
+,p_item_plug_id=>wwv_flow_imp.id(37832847550283602)
+,p_prompt=>'Signature'
+,p_display_as=>'NATIVE_POPUP_LOV'
+,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT SIGNATURE as d, SIGNATURE_ID as r',
+'FROM NIM044'))
+,p_lov_display_null=>'YES'
+,p_cSize=>30
+,p_colspan=>12
+,p_grid_label_column_span=>2
+,p_field_template=>wwv_flow_imp.id(4382028501084276)
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:margin-right-md'
+,p_is_persistent=>'N'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'POPUP'
+,p_attribute_02=>'FIRST_ROWSET'
+,p_attribute_04=>'N'
+,p_attribute_05=>'Y'
+,p_attribute_06=>'0'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(65875009737340916)
+,p_name=>'P46_SIGNATURE_DETAIL'
+,p_item_sequence=>110
+,p_item_plug_id=>wwv_flow_imp.id(37832847550283602)
+,p_display_as=>'NATIVE_TEXTAREA'
+,p_cSize=>30
+,p_cHeight=>5
+,p_colspan=>12
+,p_grid_label_column_span=>2
+,p_field_template=>wwv_flow_imp.id(4382028501084276)
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:margin-bottom-md:margin-right-md'
+,p_is_persistent=>'N'
+,p_attribute_01=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_03=>'N'
+,p_attribute_04=>'BOTH'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(20868361769453207)
@@ -1245,11 +1380,11 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    IF :P46_FROM = ''A'' THEN',
 '        INSERT INTO',
-'        NIT012 (PO_ID, VENDOR_ID, IN_PO_VALUE, EX_PO_VALUE, VESSEL_NAME, ETD_DATE, ',
+'        NIT012 (PO_ID, VENDOR_ID, IN_PO_VALUE, VESSEL_NAME, ETD_DATE, ',
 '                ETA_DATE, CREATE_USER, CREATE_DATE, PRICING_TYPE_ID, ',
 '                ADDED_COST_OPERATOR, ADDED_COST_AMOUNT)',
 '        VALUES ',
-'                (:P46_PUR_ORDER_NO, :P46_VENDOR_NAME, 0, 0, :P46_VESSEL_NAME, ',
+'                (:P46_PUR_ORDER_NO, :P46_VENDOR_NAME, 0, :P46_VESSEL_NAME, ',
 '                 :P46_ETD, :P46_ETA, V(''APP_USER''), SYSDATE, :P46_PRICING_TYPE, ',
 '                 :P46_ADDED_COST_1, :P46_ADDED_COST_2);',
 '    :P46_URL := apex_page.get_url(',
@@ -1259,19 +1394,19 @@ wwv_flow_imp_page.create_page_da_action(
 '    );',
 '    ELSIF :P46_FROM = ''C'' THEN',
 '        INSERT INTO',
-'        NIT012 (PARENT_PO_ID, PO_ID, VENDOR_ID, IN_PO_VALUE, EX_PO_VALUE, VESSEL_NAME, ',
+'        NIT012 (PARENT_PO_ID, PO_ID, VENDOR_ID, IN_PO_VALUE, VESSEL_NAME, ',
 '                ETD_DATE, ETA_DATE, CREATE_USER, CREATE_DATE, PRICING_TYPE_ID, ',
 '                ADDED_COST_OPERATOR, ADDED_COST_AMOUNT)',
 '        VALUES ',
-'                (:P46_MOTHER_NO, :P46_CHILD_NO, :P46_VENDOR_ID_C, 0, 0, ',
+'                (:P46_MOTHER_NO, :P46_CHILD_NO, :P46_VENDOR_ID_C, 0, ',
 '                 :P46_VESSEL_NAME, :P46_ETD, :P46_ETA, V(''APP_USER''), SYSDATE, ',
 '                 :P46_PRICING_TYPE, :P46_ADDED_COST_1, :P46_ADDED_COST_2);',
 '        INSERT INTO ',
 '        NIT013 (PO_ID, ITEM_ID, QTY, CREATE_USER, CREATE_DATE, VENDOR_PRICE, ',
-'                INTERNAL_UOM_ID, EXTERNAL_UOM_ID, INTERNAL_PRICE, EXTERNAL_PRICE, VENDOR_ID)',
+'                INTERNAL_UOM_ID, INTERNAL_PRICE, VENDOR_ID)',
 '        SELECT ',
 '                :P46_CHILD_NO, ITEM_ID, QTY, V(''APP_USER''), SYSDATE, VENDOR_PRICE, ',
-'                INTERNAL_UOM_ID, EXTERNAL_UOM_ID, INTERNAL_PRICE, EXTERNAL_PRICE, VENDOR_ID',
+'                INTERNAL_UOM_ID, INTERNAL_PRICE, VENDOR_ID',
 '        FROM ',
 '                NIT013',
 '        WHERE ',
@@ -1283,19 +1418,19 @@ wwv_flow_imp_page.create_page_da_action(
 '    );',
 '    ELSIF :P46_FROM = ''R'' THEN',
 '        INSERT INTO',
-'        NIT012 (REFERENCE_PO_ID, PO_ID, VENDOR_ID, IN_PO_VALUE, EX_PO_VALUE, VESSEL_NAME, ',
+'        NIT012 (REFERENCE_PO_ID, PO_ID, VENDOR_ID, IN_PO_VALUE, VESSEL_NAME, ',
 '                ETD_DATE, ETA_DATE, CREATE_USER, CREATE_DATE, PRICING_TYPE_ID, ',
 '                ADDED_COST_OPERATOR, ADDED_COST_AMOUNT)',
 '        VALUES ',
-'                (:P46_REFERENCE_PO, :P46_PUR_ORDER_NO_R, :P46_VENDOR_ID_C, 0, 0,',
+'                (:P46_REFERENCE_PO, :P46_PUR_ORDER_NO_R, :P46_VENDOR_ID_C, 0,',
 '                 :P46_VESSEL_NAME, :P46_ETD, :P46_ETA, V(''APP_USER''), SYSDATE, ',
 '                 :P46_PRICING_TYPE, :P46_ADDED_COST_1, :P46_ADDED_COST_2);',
 '        INSERT INTO ',
 '        NIT013 (PO_ID, ITEM_ID, QTY, CREATE_USER, CREATE_DATE, VENDOR_PRICE, ',
-'                INTERNAL_UOM_ID, EXTERNAL_UOM_ID, INTERNAL_PRICE, EXTERNAL_PRICE, VENDOR_ID)',
+'                INTERNAL_UOM_ID, INTERNAL_PRICE, VENDOR_ID)',
 '        SELECT ',
 '                :P46_PUR_ORDER_NO_R, ITEM_ID, QTY,V(''APP_USER''), SYSDATE,',
-'                VENDOR_PRICE, INTERNAL_UOM_ID, EXTERNAL_UOM_ID, INTERNAL_PRICE, EXTERNAL_PRICE, VENDOR_ID',
+'                VENDOR_PRICE, INTERNAL_UOM_ID, INTERNAL_PRICE, VENDOR_ID',
 '        FROM ',
 '                NIT013',
 '        WHERE ',
@@ -1406,7 +1541,7 @@ wwv_flow_imp_page.create_page_da_action(
 '',
 '    :P46_VENDOR_NAME_C := v_vendor_name;',
 '',
-'    SELECT VESSEL_NAME, ETD_DATE, ETA_DATE, PRICING_TYPE_ID, ADDED_COST_OPERATOR, ADDED_COST_AMOUNT',
+'    SELECT VESSEL_NAME, TO_CHAR(ETD_DATE, ''MM/DD/YYYY''), TO_CHAR(ETA_DATE, ''MM/DD/YYYY''), PRICING_TYPE_ID, ADDED_COST_OPERATOR, ADDED_COST_AMOUNT',
 '    INTO v_vessel_name, v_etd, v_eta, v_pricing_type_id, v_cost_operator, v_cost_amount',
 '    FROM NIT012',
 '    WHERE PO_ID = v_mother_po_no;',
@@ -1504,8 +1639,9 @@ wwv_flow_imp_page.create_page_da_action(
 '    v_vendor_name    VARCHAR2(50);',
 '    po_exists        NUMBER := 1;',
 'BEGIN',
-'    v_po_prefix := SUBSTR(v_reference_po, 1, LENGTH(v_reference_po) - 3);',
-'    v_po_suffix := SUBSTR(v_reference_po, -3);',
+'    v_po_suffix := REGEXP_SUBSTR(v_reference_po, ''\d{3}'');',
+'    ',
+'    v_po_prefix := SUBSTR(v_reference_po, 1, INSTR(v_reference_po, v_po_suffix) - 1);',
 '    ',
 '    v_next_po_suffix := TO_NUMBER(v_po_suffix) + 1;',
 '    ',
@@ -1568,11 +1704,13 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DECLARE',
-'    l_accNo NIT014.account_no%TYPE;',
-'    l_remarks NIT014.remarks%TYPE;',
+'    -- l_accNo NIT014.account_no%TYPE;',
+'    l_remarks NIT014.remarks_id%TYPE;',
+'    l_remarksDetail NIT014.remarks%TYPE;',
 '    l_note NIT014.note_id%TYPE;',
 '    l_noteDetail NIT014.note%TYPE;',
-'    l_important NIT014.important%TYPE;',
+'    l_important NIT014.important_id%TYPE;',
+'    l_importantDetail NIT014.important%TYPE;',
 '    l_subject NIT014.subject%TYPE;',
 '    l_opening NIT014.opening_email_id%TYPE;',
 '    l_openingDetail NIT014.opening_email%TYPE;',
@@ -1580,19 +1718,23 @@ wwv_flow_imp_page.create_page_da_action(
 '    l_add NIT014."ADD"%TYPE;',
 '    l_close NIT014.closing_email_id%TYPE;',
 '    l_closeDetail NIT014.closing_email%TYPE;',
+'    l_signature NIT014.signature_id%TYPE;',
+'    l_signatureDetail NIT014.signature%TYPE;',
 'BEGIN',
-'    SELECT account_no,remarks,note_id,note,important,subject,opening_email_id,opening_email,',
-'           "LESS","ADD",closing_email_id,closing_email',
-'    INTO l_accNo,l_remarks,l_note,l_noteDetail,l_important,l_subject,l_opening,l_openingDetail,',
-'           l_less,l_add,l_close,l_closeDetail',
+'    SELECT remarks_id,remarks,note_id,note,important_id,important,subject,opening_email_id,opening_email,',
+'           "LESS","ADD",closing_email_id,closing_email,signature_id,signature',
+'    INTO l_remarks,l_remarksDetail,l_note,l_noteDetail,l_important,l_importantDetail,l_subject,l_opening,l_openingDetail,',
+'           l_less,l_add,l_close,l_closeDetail,l_signature,l_signatureDetail',
 '    FROM NIT014',
 '    WHERE PO_ID = :P46_PUR_ORDER_NO_U;',
 '',
-'    :P46_ACCOUNT_NO := l_accNo;',
+'    -- :P46_ACCOUNT_NO := l_accNo;',
 '    :P46_REMARKS := l_remarks;',
+'    :P46_REMARKS_DETAIL := l_remarksDetail;',
 '    :P46_NOTE := l_note;',
 '    :P46_NOTE_DETAIL := l_noteDetail;',
 '    :P46_IMPORTANT := l_important;',
+'    :P46_IMPORTANT_DETAIL := l_importantDetail;',
 '    :P46_SUBJECT := l_subject;',
 '    :P46_OPENING_EMAIL := l_opening;',
 '    :P46_OPENING_EMAIL_DETAIL := l_openingDetail;',
@@ -1600,14 +1742,18 @@ wwv_flow_imp_page.create_page_da_action(
 '    :P46_ADD := l_add;',
 '    :P46_CLOSING_EMAIL := l_close;',
 '    :P46_CLOSING_EMAIL_DETAIL := l_closeDetail;',
+'    :P46_SIGNATURE := l_signature;',
+'    :P46_SIGNATURE_DETAIL := l_signatureDetail;',
 '',
 'EXCEPTION',
 '    WHEN NO_DATA_FOUND THEN',
-'    :P46_ACCOUNT_NO := NULL;',
+'    -- :P46_ACCOUNT_NO := NULL;',
 '    :P46_REMARKS := NULL;',
+'    :P46_REMARKS_DETAIL := NULL;',
 '    :P46_NOTE := NULL;',
 '    :P46_NOTE_DETAIL := NULL;',
 '    :P46_IMPORTANT := NULL;',
+'    :P46_IMPORTANT_DETAIL := NULL;',
 '    :P46_SUBJECT := NULL;',
 '    :P46_OPENING_EMAIL := NULL;',
 '    :P46_OPENING_EMAIL_DETAIL := NULL;',
@@ -1615,9 +1761,11 @@ wwv_flow_imp_page.create_page_da_action(
 '    :P46_ADD := NULL;',
 '    :P46_CLOSING_EMAIL := NULL;',
 '    :P46_CLOSING_EMAIL_DETAIL := NULL;',
+'    :P46_SIGNATURE := NULL;',
+'    :P46_SIGNATURE_DETAIL := NULL;',
 'END;'))
 ,p_attribute_02=>'P46_PUR_ORDER_NO_U'
-,p_attribute_03=>'P46_ACCOUNT_NO,P46_REMARKS,P46_NOTE,P46_NOTE_DETAIL,P46_IMPORTANT,P46_SUBJECT,P46_OPENING_EMAIL,P46_OPENING_EMAIL_DETAIL,P46_LESS,P46_ADD,P46_CLOSING_EMAIL,P46_CLOSING_EMAIL_DETAIL'
+,p_attribute_03=>'P46_SIGNATURE,P46_REMARKS,P46_NOTE,P46_NOTE_DETAIL,P46_IMPORTANT,P46_SUBJECT,P46_OPENING_EMAIL,P46_OPENING_EMAIL_DETAIL,P46_LESS,P46_ADD,P46_CLOSING_EMAIL,P46_CLOSING_EMAIL_DETAIL,P46_IMPORTANT_DETAIL,P46_REMARKS_DETAIL,P46_SIGNATURE_DETAIL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
@@ -1630,9 +1778,9 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var accNo = $v("P46_ACCOUNT_NO");',
+'var remarks = $v("P46_REMARKS");',
 '',
-'if(accNo === "") {',
+'if(remarks === "") {',
 '    apex.item("P46_PROCESS").setValue("A");',
 '} else {',
 '    apex.item("P46_PROCESS").setValue("U");',
@@ -1677,34 +1825,35 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var accNo = $v(''P46_ACCOUNT_NO'');',
+'// var accNo = $v(''P46_ACCOUNT_NO'');',
 'var remarks = $v(''P46_REMARKS'');',
+'var remarksDetail = $v(''P46_REMARKS_DETAIL'');',
 'var note = $v(''P46_NOTE'');',
 'var noteDetail = $v(''P46_NOTE_DETAIL'');',
-'var important = $v(''P46_IMPORTANT'');',
+'var importantDetail = $v(''P46_IMPORTANT_DETAIL'');',
 'var subject = $v(''P46_SUBJECT'');',
 '',
 'apex.message.clearErrors();',
 '',
 'var hasErrors = false;',
 '',
-'if (accNo == "") {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_ACCOUNT_NO",',
-'        message: "Account No is required",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (accNo.length > 15) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_ACCOUNT_NO",',
-'        message: "Account No must not exceed 15 characters",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'}',
+'// if (accNo == "") {',
+'//     apex.message.showErrors([{',
+'//         type: "error",location: ["inline"],',
+'//         pageItem: "P46_ACCOUNT_NO",',
+'//         message: "Account No is required",',
+'//         unsafe: false',
+'//     }])',
+'//     hasErrors = true;',
+'// } else if (accNo.length > 15) {',
+'//     apex.message.showErrors([{',
+'//         type: "error",location: ["inline"],',
+'//         pageItem: "P46_ACCOUNT_NO",',
+'//         message: "Account No must not exceed 15 characters",',
+'//         unsafe: false',
+'//     }])',
+'//     hasErrors = true;',
+'// }',
 '',
 'if (remarks == "") {',
 '    apex.message.showErrors([{',
@@ -1714,10 +1863,20 @@ wwv_flow_imp_page.create_page_da_action(
 '        unsafe: false',
 '    }])',
 '    hasErrors = true;',
-'} else if (remarks.length > 100) {',
+'}',
+'',
+'if (remarksDetail == "") {',
 '    apex.message.showErrors([{',
 '        type: "error",location: ["inline"],',
-'        pageItem: "P46_REMARKS",',
+'        pageItem: "P46_REMARKS_DETAIL",',
+'        message: "Remarks is required",',
+'        unsafe: false',
+'    }])',
+'    hasErrors = true;',
+'} else if (remarksDetail.length > 100) {',
+'    apex.message.showErrors([{',
+'        type: "error",location: ["inline"],',
+'        pageItem: "P46_REMARKS_DETAIL",',
 '        message: "Remarks must not exceed 100 characters",',
 '        unsafe: false',
 '    }])',
@@ -1746,42 +1905,34 @@ wwv_flow_imp_page.create_page_da_action(
 '    apex.message.showErrors([{',
 '        type: "error",location: ["inline"],',
 '        pageItem: "P46_NOTE_DETAIL",',
-'        message: "noteDetail must not exceed 350 characters",',
+'        message: "Note must not exceed 350 characters",',
 '        unsafe: false',
 '    }])',
 '    hasErrors = true;',
 '}',
 '',
-'if (noteDetail == "") {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_NOTE_DETAIL",',
-'        message: "Note is required",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (noteDetail.length > 1000) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_NOTE_DETAIL",',
-'        message: "noteDetail must not exceed 1000 characters",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'}',
+'// if (noteDetail == "") {',
+'//     apex.message.showErrors([{',
+'//         type: "error",location: ["inline"],',
+'//         pageItem: "P46_NOTE_DETAIL",',
+'//         message: "Note is required",',
+'//         unsafe: false',
+'//     }])',
+'//     hasErrors = true;',
+'// } else if (noteDetail.length > 1000) {',
+'//     apex.message.showErrors([{',
+'//         type: "error",location: ["inline"],',
+'//         pageItem: "P46_NOTE_DETAIL",',
+'//         message: "noteDetail must not exceed 1000 characters",',
+'//         unsafe: false',
+'//     }])',
+'//     hasErrors = true;',
+'// }',
 '',
-'if (important == "") {',
+'if (importantDetail && importantDetail.length > 100) {',
 '    apex.message.showErrors([{',
 '        type: "error",location: ["inline"],',
-'        pageItem: "P46_IMPORTANT",',
-'        message: "Important is required",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (important.length > 100) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_IMPORTANT",',
+'        pageItem: "P46_IMPORTANT_DETAIL",',
 '        message: "Important must not exceed 100 characters",',
 '        unsafe: false',
 '    }])',
@@ -1930,6 +2081,8 @@ wwv_flow_imp_page.create_page_da_action(
 'var add = $v(''P46_ADD'');',
 'var closingEmail = $v(''P46_CLOSING_EMAIL'');',
 'var closingEmailDetail = $v(''P46_CLOSING_EMAIL_DETAIL'');',
+'var signature = $v("P46_SIGNATURE");',
+'var signatureDetail = $v("P46_SIGNATURE_DETAIL");',
 'var process = $v(''P46_PROCESS'');',
 '',
 'apex.message.clearErrors();',
@@ -1974,11 +2127,11 @@ wwv_flow_imp_page.create_page_da_action(
 '    hasErrors = true;',
 '}',
 '',
-'if (add.length > 30) {',
+'if (add.length > 50) {',
 '    apex.message.showErrors([{',
 '        type: "error",location: ["inline"],',
 '        pageItem: "P46_ADD",',
-'        message: "Add must not exceed 30 characters",',
+'        message: "Add must not exceed 50 characters",',
 '        unsafe: false',
 '    }])',
 '    hasErrors = true;',
@@ -2012,6 +2165,26 @@ wwv_flow_imp_page.create_page_da_action(
 '    hasErrors = true;',
 '}',
 '',
+'if (signature == "") {',
+'    apex.message.showErrors([{',
+'        type: "error",location: ["inline"],',
+'        pageItem: "P46_SIGNATURE",',
+'        message: "Signature is required",',
+'        unsafe: false',
+'    }])',
+'    hasErrors = true;',
+'}',
+'',
+'if (signatureDetail == "") {',
+'    apex.message.showErrors([{',
+'        type: "error",location: ["inline"],',
+'        pageItem: "P46_SIGNATURE_DETAIL",',
+'        message: "Signature is required",',
+'        unsafe: false',
+'    }])',
+'    hasErrors = true;',
+'}',
+'',
 'if (hasErrors) {',
 '    return false;',
 '}',
@@ -2031,22 +2204,24 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    IF :P46_PROCESS = ''A'' THEN ',
 '        INSERT INTO ',
-'            NIT014 (account_no, remarks, note_id, important, subject, opening_email_id, "LESS", "ADD",',
+'            NIT014 (remarks_id, remarks, note_id, important_id, important, subject, opening_email_id, "LESS", "ADD",',
 '                    closing_email_id, create_user, create_date, update_user, update_date, note, opening_email,',
-'                    closing_email, po_id)',
+'                    closing_email, signature_id, signature, po_id)',
 '        VALUES ',
-'            (:P46_ACCOUNT_NO, :P46_REMARKS, :P46_NOTE, :P46_IMPORTANT, :P46_SUBJECT,',
+'            (:P46_REMARKS, :P46_REMARKS_DETAIL, :P46_NOTE, :P46_IMPORTANT, :P46_IMPORTANT_DETAIL, :P46_SUBJECT,',
 '             :P46_OPENING_EMAIL, :P46_LESS, :P46_ADD, :P46_CLOSING_EMAIL, V(''APP_USER''), SYSDATE,',
 '             NULL, NULL, :P46_NOTE_DETAIL, :P46_OPENING_EMAIL_DETAIL, :P46_CLOSING_EMAIL_DETAIL, ',
-'             :P46_PUR_ORDER_NO_U);',
+'             :P46_SIGNATURE, :P46_SIGNATURE_DETAIL, :P46_PUR_ORDER_NO_U);',
 '    ELSIF :P46_PROCESS = ''U'' THEN',
 '        UPDATE',
 '            NIT014',
 '        SET',
-'            account_no = :P46_ACCOUNT_NO,',
-'            remarks = :P46_REMARKS,',
+'            -- account_no = :P46_ACCOUNT_NO,',
+'            remarks_id = :P46_REMARKS,',
+'            remarks = :P46_REMARKS_DETAIL,',
 '            note_id = :P46_NOTE,',
-'            important = :P46_IMPORTANT,',
+'            important_id = :P46_IMPORTANT,',
+'            important = :P46_IMPORTANT_DETAIL,',
 '            subject = :P46_SUBJECT,',
 '            opening_email_id = :P46_OPENING_EMAIL,',
 '            "LESS" = :P46_LESS,',
@@ -2056,12 +2231,15 @@ wwv_flow_imp_page.create_page_da_action(
 '            update_date = SYSDATE,',
 '            note = :P46_NOTE_DETAIL,',
 '            opening_email = :P46_OPENING_EMAIL_DETAIL,',
-'            closing_email = :P46_CLOSING_EMAIL_DETAIL',
+'            closing_email = :P46_CLOSING_EMAIL_DETAIL,',
+'            signature_id = :P46_SIGNATURE,',
+'            signature = :P46_SIGNATURE_DETAIL',
 '        WHERE po_id = :P46_PUR_ORDER_NO_U;',
 '    END IF;',
 'END;',
 ''))
-,p_attribute_02=>'P46_PUR_ORDER_NO_U,P46_PROCESS,P46_ACCOUNT_NO,P46_REMARKS,P46_IMPORTANT,P46_NOTE,P46_NOTE_DETAIL,P46_SUBJECT,P46_OPENING_EMAIL,P46_OPENING_EMAIL_DETAIL,P46_LESS,P46_ADD,P46_CLOSING_EMAIL,P46_CLOSING_EMAIL_DETAIL'
+,p_attribute_02=>'P46_PUR_ORDER_NO_U,P46_PROCESS,P46_REMARKS,P46_IMPORTANT,P46_NOTE,P46_NOTE_DETAIL,P46_SUBJECT,P46_OPENING_EMAIL,P46_OPENING_EMAIL_DETAIL,P46_LESS,P46_ADD,P46_CLOSING_EMAIL,P46_CLOSING_EMAIL_DETAIL,P46_IMPORTANT_DETAIL,P46_REMARKS_DETAIL,P46_SIGNATURE'
+||',P46_SIGNATURE_DETAIL'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
 );
@@ -2196,34 +2374,35 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var accNo = $v(''P46_ACCOUNT_NO'');',
+'// var accNo = $v(''P46_ACCOUNT_NO'');',
 'var remarks = $v(''P46_REMARKS'');',
+'var remarksDetail = $v(''P46_REMARKS_DETAIL'');',
 'var note = $v(''P46_NOTE'');',
 'var noteDetail = $v(''P46_NOTE_DETAIL'');',
-'var important = $v(''P46_IMPORTANT'');',
+'var importantDetail = $v(''P46_IMPORTANT_DETAIL'');',
 'var subject = $v(''P46_SUBJECT'');',
 '',
 'apex.message.clearErrors();',
 '',
 'var hasErrors = false;',
 '',
-'if (accNo == "") {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_ACCOUNT_NO",',
-'        message: "Account No is required",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (accNo.length > 15) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_ACCOUNT_NO",',
-'        message: "Account No must not exceed 15 characters",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'}',
+'// if (accNo == "") {',
+'//     apex.message.showErrors([{',
+'//         type: "error",location: ["inline"],',
+'//         pageItem: "P46_ACCOUNT_NO",',
+'//         message: "Account No is required",',
+'//         unsafe: false',
+'//     }])',
+'//     hasErrors = true;',
+'// } else if (accNo.length > 15) {',
+'//     apex.message.showErrors([{',
+'//         type: "error",location: ["inline"],',
+'//         pageItem: "P46_ACCOUNT_NO",',
+'//         message: "Account No must not exceed 15 characters",',
+'//         unsafe: false',
+'//     }])',
+'//     hasErrors = true;',
+'// }',
 '',
 'if (remarks == "") {',
 '    apex.message.showErrors([{',
@@ -2233,10 +2412,20 @@ wwv_flow_imp_page.create_page_da_action(
 '        unsafe: false',
 '    }])',
 '    hasErrors = true;',
-'} else if (remarks.length > 100) {',
+'}',
+'',
+'if (remarksDetail == "") {',
 '    apex.message.showErrors([{',
 '        type: "error",location: ["inline"],',
-'        pageItem: "P46_REMARKS",',
+'        pageItem: "P46_REMARKS_DETAIL",',
+'        message: "Remarks is required",',
+'        unsafe: false',
+'    }])',
+'    hasErrors = true;',
+'} else if (remarksDetail.length > 100) {',
+'    apex.message.showErrors([{',
+'        type: "error",location: ["inline"],',
+'        pageItem: "P46_REMARKS_DETAIL",',
 '        message: "Remarks must not exceed 100 characters",',
 '        unsafe: false',
 '    }])',
@@ -2271,36 +2460,28 @@ wwv_flow_imp_page.create_page_da_action(
 '    hasErrors = true;',
 '}',
 '',
-'if (noteDetail == "") {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_NOTE_DETAIL",',
-'        message: "Note is required",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (noteDetail.length > 1000) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_NOTE_DETAIL",',
-'        message: "noteDetail must not exceed 1000 characters",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'}',
+'// if (noteDetail == "") {',
+'//     apex.message.showErrors([{',
+'//         type: "error",location: ["inline"],',
+'//         pageItem: "P46_NOTE_DETAIL",',
+'//         message: "Note is required",',
+'//         unsafe: false',
+'//     }])',
+'//     hasErrors = true;',
+'// } else if (noteDetail.length > 1000) {',
+'//     apex.message.showErrors([{',
+'//         type: "error",location: ["inline"],',
+'//         pageItem: "P46_NOTE_DETAIL",',
+'//         message: "noteDetail must not exceed 1000 characters",',
+'//         unsafe: false',
+'//     }])',
+'//     hasErrors = true;',
+'// }',
 '',
-'if (important == "") {',
+'if (importantDetail && importantDetail.length > 100) {',
 '    apex.message.showErrors([{',
 '        type: "error",location: ["inline"],',
-'        pageItem: "P46_IMPORTANT",',
-'        message: "Important is required",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (important.length > 100) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P46_IMPORTANT",',
+'        pageItem: "P46_IMPORTANT_DETAIL",',
 '        message: "Important must not exceed 100 characters",',
 '        unsafe: false',
 '    }])',
@@ -2344,10 +2525,12 @@ wwv_flow_imp_page.create_page_da_action(
 'UPDATE',
 '    NIT014',
 'SET',
-'    account_no = :P46_ACCOUNT_NO,',
-'    remarks = :P46_REMARKS,',
+'    -- account_no = :P46_ACCOUNT_NO,',
+'    remarks_id = :P46_REMARKS,',
+'    remarks = :P46_REMARKS_DETAIL,',
 '    note_id = :P46_NOTE,',
-'    important = :P46_IMPORTANT,',
+'    important_id = :P46_IMPORTANT,',
+'    important = :P46_IMPORTANT_DETAIL,',
 '    subject = :P46_SUBJECT,',
 '    opening_email_id = :P46_OPENING_EMAIL,',
 '    "LESS" = :P46_LESS,',
@@ -2357,11 +2540,14 @@ wwv_flow_imp_page.create_page_da_action(
 '    update_date = SYSDATE,',
 '    note = :P46_NOTE_DETAIL,',
 '    opening_email = :P46_OPENING_EMAIL_DETAIL,',
-'    closing_email = :P46_CLOSING_EMAIL_DETAIL',
+'    closing_email = :P46_CLOSING_EMAIL_DETAIL,',
+'    signature_id = :P46_SIGNATURE,',
+'    signature = :P46_SIGNATURE_DETAIL',
 'WHERE po_id = :P46_PUR_ORDER_NO_U;',
 '',
 ''))
-,p_attribute_02=>'P46_PUR_ORDER_NO_U,P46_ACCOUNT_NO,P46_REMARKS,P46_IMPORTANT,P46_NOTE,P46_NOTE_DETAIL,P46_SUBJECT,P46_OPENING_EMAIL,P46_OPENING_EMAIL_DETAIL,P46_LESS,P46_ADD,P46_CLOSING_EMAIL,P46_CLOSING_EMAIL_DETAIL'
+,p_attribute_02=>'P46_PUR_ORDER_NO_U,P46_REMARKS,P46_IMPORTANT,P46_NOTE,P46_NOTE_DETAIL,P46_SUBJECT,P46_OPENING_EMAIL,P46_OPENING_EMAIL_DETAIL,P46_LESS,P46_ADD,P46_CLOSING_EMAIL,P46_CLOSING_EMAIL_DETAIL,P46_IMPORTANT_DETAIL,P46_REMARKS_DETAIL,P46_SIGNATURE,P46_SIGNATU'
+||'RE_DETAIL'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
 ,p_client_condition_type=>'EQUALS'
@@ -2377,6 +2563,159 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_CLOSE_REGION'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_imp.id(33626330564196829)
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(62109869405066920)
+,p_name=>'Set Important Details'
+,p_event_sequence=>170
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P46_IMPORTANT'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'change'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(62109993748066921)
+,p_event_id=>wwv_flow_imp.id(62109869405066920)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P46_IMPORTANT_DETAIL'
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'    v_important_detail VARCHAR2(4000);',
+'BEGIN',
+'    SELECT CASE',
+'             WHEN EXISTS (',
+'                 SELECT 1',
+'                 FROM NIT014',
+'                 WHERE PO_ID = :P46_PUR_ORDER_NO_U',
+'                   AND IMPORTANT_ID = :P46_IMPORTANT',
+'             )',
+'             THEN',
+'                 (SELECT IMPORTANT',
+'                  FROM NIT014',
+'                  WHERE PO_ID = :P46_PUR_ORDER_NO_U',
+'                    AND IMPORTANT_ID = :P46_IMPORTANT)',
+'             ELSE',
+'                 (SELECT IMPORTANT',
+'                  FROM NIM031',
+'                  WHERE IMPORTANT_ID = :P46_IMPORTANT)',
+'           END',
+'    INTO v_important_detail',
+'    FROM DUAL;',
+'',
+'    RETURN v_important_detail;',
+'END;'))
+,p_attribute_07=>'P46_PUR_ORDER_NO_U,P46_IMPORTANT'
+,p_attribute_08=>'N'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(65874141230340907)
+,p_name=>'Set Remarks Detail'
+,p_event_sequence=>180
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P46_REMARKS'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'change'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(65874294127340908)
+,p_event_id=>wwv_flow_imp.id(65874141230340907)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P46_REMARKS_DETAIL'
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'    v_remarks_detail VARCHAR2(4000);',
+'BEGIN',
+'    SELECT CASE',
+'             WHEN EXISTS (',
+'                 SELECT 1',
+'                 FROM NIT014',
+'                 WHERE PO_ID = :P46_PUR_ORDER_NO_U',
+'                   AND REMARKS_ID = :P46_REMARKS',
+'             )',
+'             THEN',
+'                 (SELECT REMARKS',
+'                  FROM NIT014',
+'                  WHERE PO_ID = :P46_PUR_ORDER_NO_U',
+'                    AND REMARKS_ID = :P46_REMARKS)',
+'             ELSE',
+'                 (SELECT REMARKS',
+'                  FROM NIM038',
+'                  WHERE REMARKS_ID = :P46_REMARKS)',
+'           END',
+'    INTO v_remarks_detail',
+'    FROM DUAL;',
+'',
+'    RETURN v_remarks_detail;',
+'END;'))
+,p_attribute_07=>'P46_PUR_ORDER_NO_U,P46_REMARKS'
+,p_attribute_08=>'N'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(65875162746340917)
+,p_name=>'Set Signature Details'
+,p_event_sequence=>190
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P46_SIGNATURE'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'change'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(65875222956340918)
+,p_event_id=>wwv_flow_imp.id(65875162746340917)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P46_SIGNATURE_DETAIL'
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'    v_signature_detail VARCHAR2(4000);',
+'BEGIN',
+'    SELECT CASE',
+'             WHEN EXISTS (',
+'                 SELECT 1',
+'                 FROM NIT014',
+'                 WHERE PO_ID = :P46_PUR_ORDER_NO_U',
+'                   AND SIGNATURE_ID = :P46_SIGNATURE',
+'             )',
+'             THEN',
+'                 (SELECT SIGNATURE',
+'                  FROM NIT014',
+'                  WHERE PO_ID = :P46_PUR_ORDER_NO_U',
+'                    AND SIGNATURE_ID = :P46_SIGNATURE)',
+'             ELSE',
+'                 (SELECT SIGNATURE',
+'                  FROM NIM044',
+'                  WHERE SIGNATURE_ID = :P46_SIGNATURE)',
+'           END',
+'    INTO v_signature_detail',
+'    FROM DUAL;',
+'',
+'    RETURN v_signature_detail;',
+'END;'))
+,p_attribute_07=>'P46_PUR_ORDER_NO_U,P46_SIGNATURE'
+,p_attribute_08=>'N'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
 );
 wwv_flow_imp.component_end;
 end;

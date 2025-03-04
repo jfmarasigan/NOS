@@ -57,10 +57,60 @@ wwv_flow_imp_page.create_page(
 '            p83KeyMap[key]();',
 '        }',
 '    });',
+'}',
+'',
+'function highlightValue() {',
+'    const inputFieldIds = ["P83_DBA", "P83_DATE_FROM", "P83_DATE_TO"];',
+'',
+'    inputFieldIds.forEach((fieldId) => {',
+'        $(`#${fieldId}`).on("focus", function() {',
+'            $(this).select();',
+'        });',
+'    })',
+'}',
+'',
+'async function doesDBAExists() {',
+'    const response = await apex.server.process(''DBA_EXISTS'', {',
+'        pageItems: ''#P83_DBA''',
+'    }, {',
+'        dataType: ''json''',
+'    });',
+'',
+'    if(response.success) {',
+'        return true;',
+'    } else {',
+'        throw response.errorMessage;',
+'    }',
 '}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP83Keys();',
 'setTitle("Customer Item Purchase History");',
+'// autoClearInputValue();',
+'highlightValue();',
+'',
+'const dateFields = [''P83_DATE_FROM'', ''P83_DATE_TO''];',
+'',
+'dateFields.forEach((fieldId) => {',
+'  const dateField = document.getElementById(fieldId);',
+'',
+'  dateField.addEventListener(''input'', function () {',
+'    let value = dateField.value.replace(/\D/g, '''');',
+'',
+'    if (value.length > 2) {',
+'      value = value.substring(0, 2) + ''/'' + value.substring(2);',
+'    }',
+'    if (value.length > 5) {',
+'      value = value.substring(0, 5) + ''/'' + value.substring(5, 9);',
+'    }',
+'',
+'    if (value.length > 10) {',
+'      value = value.substring(0, 10);',
+'    }',
+'',
+'    dateField.value = value;',
+'  });',
+'});',
+'',
 '$(document).ready(function() { ',
 '    $("#P83_DBA, #P83_DATE_FROM, #P83_DATE_TO").on("keydown", function(event) {',
 '        if (event.key === "Enter" || event.keyCode === 13) {',
@@ -82,12 +132,24 @@ wwv_flow_imp_page.create_page(
 '    });',
 '});'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.a-GV-table tr.is-selected .a-GV-cell {',
+'     background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused {',
+'     box-shadow: 0 0 0 1px black inset !important;',
+'}',
+'',
+'.apex-item-text {',
+'    background-color: white;',
+'}',
+'',
 '#search.t-DialogRegion {',
 '    background-color: white;',
 '    border-radius: 12px;',
 '}',
 '',
-'.ui-dialog {',
+'.ui-dialog:not(.ui-dialog-autocomplete) {',
 '    background-color: #056AC8;',
 '}',
 '',
@@ -98,6 +160,7 @@ wwv_flow_imp_page.create_page(
 '',
 '.t-Form-error {',
 '    color: #FFD700 !important;',
+'    font-weight: 700;',
 '}',
 '',
 '#sort-filter span.t-Form-itemText,',
@@ -200,6 +263,7 @@ wwv_flow_imp_page.create_page(
 '',
 '.text-red {',
 '    color: red;',
+'    font-weight: 700;',
 '}',
 '',
 '.a-GV-header a, th.a-GV-header {',
@@ -254,7 +318,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'sort-filter'
 ,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--removeHeader js-removeLandmark:t-Region--noBorder:t-Region--hiddenOverflow:margin-bottom-none:margin-left-md:margin-right-md'
 ,p_plug_template=>wwv_flow_imp.id(4319920360084164)
-,p_plug_display_sequence=>10
+,p_plug_display_sequence=>30
 ,p_location=>null
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'expand_shortcuts', 'N',
@@ -263,7 +327,7 @@ wwv_flow_imp_page.create_page_plug(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(29988735390862739)
 ,p_plug_name=>'Buttons'
-,p_plug_display_sequence=>40
+,p_plug_display_sequence=>50
 ,p_location=>null
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'expand_shortcuts', 'N',
@@ -330,21 +394,21 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'table'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>30
+,p_plug_display_sequence=>40
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'WITH my_select AS (',
 '    SELECT',
-'    TO_CHAR(npt001.INVOICE_ID, ''000000'') AS "INVOICE_NO",',
-'    npt001.DATE_CREATED AS "INVOICE_DATE",',
-'    SUBSTR(npt002.ITEM_NUM, 1, 10) AS "ITEM_NO",',
-'    npt002.BRAND_CODE AS "CO",',
-'    npt002.ITEM_DESC AS "ITEM_DESC",',
-'    npt002.QUANTITY AS "QTY",',
-'    npt002.ITEM_PRICE AS "REG_PRICE",',
-'    npt002.UOM_CODE AS "UOM",',
-'    NVL(npt002.DISCOUNT_VALUE, 0) AS "DISCOUNT",',
-'    npt002.DS AS "DT",',
+'        ''CH-'' || LTRIM(TO_CHAR(npt001.INVOICE_ID, ''000000'')) AS "INVOICE_NO",',
+'        TO_CHAR(npt001.DATE_CREATED, ''MM/DD/YYYY'') AS "INVOICE_DATE",',
+'        SUBSTR(npt002.ITEM_NUM, 1, 10) AS "ITEM_NO",',
+'        npt002.BRAND_CODE AS "CO",',
+'        npt002.ITEM_DESC AS "ITEM_DESC",',
+'        npt002.QUANTITY AS "QTY",',
+'        npt002.ITEM_PRICE AS "REG_PRICE",',
+'        npt002.UOM_CODE AS "UOM",',
+'        NVL(npt002.DISCOUNT_VALUE, 0) AS "DISCOUNT",',
+'        npt002.DS AS "DT",',
 '    CASE',
 '        WHEN npt002.DISCOUNTED_PRICE IS NOT NULL THEN npt002.DISCOUNTED_PRICE',
 '        ELSE npt002.ITEM_PRICE',
@@ -366,14 +430,51 @@ wwv_flow_imp_page.create_page_plug(
 '                (:P83_SORTED_BY = ''Item Description''AND UPPER(npt002.ITEM_DESC) = UPPER(:P83_SEARCH_VALUE))',
 '            )',
 '        )',
-'    ORDER BY ',
-'        CASE ',
-'            WHEN :P83_SORTED_BY = ''Item No'' THEN UPPER(npt002.item_num)',
-'            WHEN :P83_SORTED_BY = ''Item Description'' THEN UPPER(npt002.item_desc)',
-'        END',
+'    ',
+'    UNION ALL',
+'',
+'    SELECT',
+'        ''CA-'' || LTRIM(TO_CHAR(npt033.CASH_INVOICE_ID, ''000000'')) AS "INVOICE_NO",',
+'        TO_CHAR(npt033.DATE_CREATED, ''MM/DD/YYYY'') AS "INVOICE_DATE",',
+'        SUBSTR(npt002.ITEM_NUM, 1, 10) AS "ITEM_NO",',
+'        npt002.BRAND_CODE AS "CO",',
+'        npt002.ITEM_DESC AS "ITEM_DESC",',
+'        npt002.QUANTITY AS "QTY",',
+'        npt002.ITEM_PRICE AS "REG_PRICE",',
+'        npt002.UOM_CODE AS "UOM",',
+'        NVL(npt002.DISCOUNT_VALUE, 0) AS "DISCOUNT",',
+'        npt002.DS AS "DT",',
+'    CASE',
+'        WHEN npt002.DISCOUNTED_PRICE IS NOT NULL THEN npt002.DISCOUNTED_PRICE',
+'        ELSE npt002.ITEM_PRICE',
+'    END AS "NET_PRICE"',
+'    FROM',
+'        NPT033 npt033',
+'    JOIN',
+'        NPT002 npt002 ON npt033.cash_invoice_id = npt002.cash_invoice_id',
+'    JOIN',
+'        NPT009 npt009 ON npt033.customer_id = npt009.customer_id',
+'    WHERE',
+'        UPPER(npt009.dba) LIKE ''%'' || UPPER(:P83_DBA) || ''%''',
+'        AND TO_DATE(npt033.date_created, ''MM/DD/YYYY'') BETWEEN TO_DATE(:P83_DATE_FROM, ''MM/DD/YYYY'') ',
+'        AND TO_DATE(:P83_DATE_TO, ''MM/DD/YYYY'')',
+'        AND (',
+'            (:P83_SEARCH_VALUE IS NULL OR :P83_SEARCH_VALUE = '''') OR',
+'            (',
+'                (:P83_SORTED_BY = ''Item No'' AND UPPER(npt002.ITEM_NUM) = UPPER(:P83_SEARCH_VALUE)) OR',
+'                (:P83_SORTED_BY = ''Item Description''AND UPPER(npt002.ITEM_DESC) = UPPER(:P83_SEARCH_VALUE))',
+'            )',
+'        )',
 ')',
 '',
-'SELECT * FROM my_select;',
+'SELECT * FROM (',
+'    SELECT * FROM my_select',
+'    ORDER BY ',
+'        CASE :P83_SORTED_BY',
+'            WHEN ''Item No'' THEN UPPER(ITEM_NO)',
+'            WHEN ''Item Description'' THEN UPPER(ITEM_DESC)',
+'        END',
+');',
 ''))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P83_DBA,P83_DATE_FROM,P83_DATE_TO,P83_SEARCH_VALUE,P83_SORTED_BY'
@@ -419,7 +520,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'INVOICE_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'INVOICE_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_DATE_PICKER_APEX'
 ,p_heading=>'Invoice Date'
@@ -434,8 +535,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_11=>'Y'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -1025,17 +1128,20 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(29988284033862734)
 ,p_prompt=>'DBA:'
 ,p_pre_element_text=>'<div class="formLabel">DBA</div>&nbsp;:&nbsp;'
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_display_as=>'NATIVE_AUTO_COMPLETE'
+,p_lov=>'SELECT DBA FROM NPT009'
 ,p_cSize=>30
 ,p_colspan=>4
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large'
 ,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-,p_attribute_02=>'N'
-,p_attribute_04=>'TEXT'
-,p_attribute_05=>'BOTH'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'CONTAINS_IGNORE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'10'
+,p_attribute_09=>'1'
+,p_attribute_10=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(29988480946862736)
@@ -1043,6 +1149,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_imp.id(29988284033862734)
 ,p_prompt=>'Date:'
+,p_placeholder=>'MM/DD/YYYY'
 ,p_pre_element_text=>'<div class="formLabel">Date</div>&nbsp;:&nbsp;'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
@@ -1062,6 +1169,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_imp.id(29988284033862734)
 ,p_prompt=>'To'
+,p_placeholder=>'MM/DD/YYYY'
 ,p_pre_element_text=>'To &nbsp;&nbsp;'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
@@ -1133,14 +1241,77 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var dba = $v(''P83_DBA'');',
-'var dateFrom = $v(''P83_DATE_FROM'');',
-'var dateTo = $v(''P83_DATE_TO'');',
-'var currentDate = new Date();',
+'async function validateFilters() {',
+'    var dba = $v(''P83_DBA'');',
+'    var dateFrom = $v(''P83_DATE_FROM'');',
+'    var dateTo = $v(''P83_DATE_TO'');',
+'    var currentDate = new Date();',
 '',
-'apex.message.clearErrors();',
+'    apex.message.clearErrors();',
 '',
-'var hasErrors = false;',
+'    var hasErrors = false;',
+'',
+'    function showError(item, errorMessage) {',
+'        apex.message.showErrors([{type: "error",location: ["inline"],pageItem: item,message: errorMessage,unsafe: false}]);',
+'        hasErrors = true;',
+'    }',
+'',
+'    if (dba == "") {',
+'        showError("P83_DBA", "DBA cannot be empty");',
+'    } else if (dba.length > 100) {',
+'        showError("P83_DBA", "DBA cannot exceed 100 characters");',
+'    } else {',
+'        try {',
+'            await doesDBAExists();',
+'        } catch (error) {',
+'            showError("P83_DBA", error);',
+'        }',
+'    }',
+'',
+'    var dateFromParsed = parseDate(dateFrom);',
+'    var dateToParsed = parseDate(dateTo);',
+'',
+'    if (dateFrom == "") {',
+'        showError("P83_DATE_FROM", "Date From is required");',
+'    } else if (!isDateValid(dateFrom)) {',
+'        showError("P83_DATE_FROM", "Please Enter a valid date");',
+'    } else if (dateFromParsed > dateToParsed) {',
+'        showError("P83_DATE_FROM", "Date must be earlier than Date To");',
+'    }',
+'',
+'    if (dateTo == "") {',
+'        showError("P83_DATE_TO", "Date To is required");',
+'    } else if (!isDateValid(dateTo)) {',
+'        showError("P83_DATE_TO", "Please Enter a valid date");',
+'    } else if (dateToParsed > currentDate) {',
+'        showError("P83_DATE_TO", "Date cannot exceed today''s date");',
+'    }',
+'',
+'    // if (hasErrors) {',
+'    //     return false;',
+'    // } else {',
+'    //     $(document.activeElement).blur();',
+'    //     apex.item(''P83_SEARCH_VALUE'').setValue('''');',
+'    // }',
+'',
+'    // apex.message.clearErrors();',
+'',
+'    return hasErrors;',
+'}',
+'',
+'async function refreshTable() {',
+'    const hasErrors = await validateFilters();',
+'    if(!hasErrors) {',
+'        $(document.activeElement).blur();',
+'        apex.item(''P83_SEARCH_VALUE'').setValue('''');',
+'        apex.region("table").refresh();',
+'    } else {',
+'        return false;',
+'    }',
+'}',
+'',
+'refreshTable();',
+'',
 '',
 'function isDateValid(dateString) {',
 '    var datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;',
@@ -1162,90 +1333,6 @@ wwv_flow_imp_page.create_page_da_action(
 '    var parts = dateString.split("/");',
 '    return new Date(parts[2], parts[0] - 1, parts[1]);',
 '}',
-'',
-'if (dba == "") {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P83_DBA",',
-'        message: "DBA cannot be empty",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (dba.length > 100) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P83_DBA",',
-'        message: "DBA cannot exceed 100 characters",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'}',
-'',
-'var dateFromParsed = parseDate(dateFrom);',
-'var dateToParsed = parseDate(dateTo);',
-'',
-'if (dateFrom == "") {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P83_DATE_FROM",',
-'        message: "Date From is required",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (!isDateValid(dateFrom)) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P83_DATE_FROM",',
-'        message: "Please Enter a valid date",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (dateFromParsed > dateToParsed) {',
-'    apex.message.showErrors([{',
-'        type: "error",',
-'        location: ["inline"],',
-'        pageItem: "P83_DATE_FROM",',
-'        message: "Date must be earlier than Date To",',
-'        unsafe: false',
-'    }]);',
-'    hasErrors = true;',
-'}',
-'',
-'if (dateTo == "") {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P83_DATE_TO",',
-'        message: "Date To is required",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (!isDateValid(dateTo)) {',
-'    apex.message.showErrors([{',
-'        type: "error",location: ["inline"],',
-'        pageItem: "P83_DATE_TO",',
-'        message: "Please Enter a valid date",',
-'        unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'} else if (dateToParsed > currentDate) {',
-'    apex.message.showErrors([{',
-'        type: "error",',
-'        location: ["inline"],',
-'        pageItem: "P83_DATE_TO",',
-'        message: "Date cannot exceed today''s date",',
-'        unsafe: false',
-'    }]);',
-'    hasErrors = true;',
-'}',
-'',
-'if (hasErrors) {',
-'    return false;',
-'} else {',
-'    $(document.activeElement).blur();',
-'    apex.item(''P83_SEARCH_VALUE'').setValue('''');',
-'}',
-'',
-'apex.message.clearErrors();',
 ''))
 );
 wwv_flow_imp_page.create_page_da_action(
@@ -1257,6 +1344,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_REFRESH'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_imp.id(31324245411885426)
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(31376259912216344)
@@ -1461,6 +1549,49 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_CLEAR'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P83_SEARCH_VALUE'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(58206643493110829)
+,p_name=>'Select First Cell'
+,p_event_sequence=>110
+,p_triggering_element_type=>'REGION'
+,p_triggering_region_id=>wwv_flow_imp.id(31324245411885426)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'NATIVE_IG|REGION TYPE|gridpagechange'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(58206761682110830)
+,p_event_id=>wwv_flow_imp.id(58206643493110829)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'$(".a-GV-cell").first().trigger("click");'
+);
+wwv_flow_imp_page.create_page_process(
+ p_id=>wwv_flow_imp.id(62109472827066916)
+,p_process_sequence=>10
+,p_process_point=>'ON_DEMAND'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'DBA_EXISTS'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'    v_exists NUMBER;',
+'BEGIN',
+'    SELECT COUNT(*)',
+'    INTO v_exists',
+'    FROM NPT009',
+'    WHERE "DBA" = :P83_DBA;',
+'',
+'    IF v_exists = 0 THEN',
+'        HTP.P(''{"success": false, "errorMessage": "DBA does not exist"}'');',
+'    ELSE',
+'        HTP.P(''{"success": true}'');',
+'    END IF;',
+'END;'))
+,p_process_clob_language=>'PLSQL'
+,p_internal_uid=>62109472827066916
 );
 wwv_flow_imp.component_end;
 end;

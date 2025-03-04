@@ -82,7 +82,7 @@ wwv_flow_imp_page.create_page(
 '',
 '',
 '.t-Form-labelContainer .t-Form-label::before {',
-'    content: '''' !important; /* Remove the asterisk before the label */',
+'    content: '''' !important;',
 '}',
 '',
 '',
@@ -93,6 +93,10 @@ wwv_flow_imp_page.create_page(
 '',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.t-Form-error, .a-Form-error{',
+'    font-weight: bold;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'40rem'
@@ -235,7 +239,6 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(43435813458832038)
 ,p_name=>'P215_PAYMENT_TERMS_NAME'
 ,p_source_data_type=>'VARCHAR2'
-,p_is_required=>true
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_imp.id(43434990184832029)
 ,p_item_source_plug_id=>wwv_flow_imp.id(43434990184832029)
@@ -323,8 +326,6 @@ wwv_flow_imp_page.create_page_process(
 '        v(''APP_USER''), ',
 '        SYSTIMESTAMP',
 '    );',
-'',
-'    apex_util.set_session_state(''SUCCESS_MSG'', ''Payment Term added successfully'');',
 'END;'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
@@ -336,7 +337,8 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
-,p_attribute_02=>'Y'
+,p_attribute_01=>'P215_PAYMENT_TERMS_NAME'
+,p_attribute_02=>'N'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>43436469939832044
 );

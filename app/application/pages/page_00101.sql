@@ -15,632 +15,12 @@ wwv_flow_imp_page.create_page(
  p_id=>101
 ,p_name=>'Add/Update New Shipment'
 ,p_alias=>'ADD-UPDATE-NEW-SHIPMENT'
-,p_step_title=>'Add/Update New Shipment'
+,p_step_title=>'&P101_LABEL!HTML. New Shipment'
 ,p_warn_on_unsaved_changes=>'N'
 ,p_autocomplete_on_off=>'OFF'
-,p_javascript_file_urls=>'#APP_FILES#js/jquery-ui.min.js'
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'let vendorCtr = 1;',
-'let isAutoCompleteOpen = false;',
-'let svp = [];',
-'',
-'const p101KeyMap = {',
-'    f8 : (v) => {',
-'        $("#add-vendor-btn").trigger("click");',
-'    },',
-'    escape : (v) => {',
-'        apex.navigation.redirect($("#P101_SRURL").val());',
-'    }',
-'}',
-'',
-'function mapP101Keys() {',
-'    $(document).off(''keydown.p101keyevents'');',
-'    $(document).on(''keydown.p101keyevents'', (ev) => {',
-'        var key = ev.key?.toLowerCase();',
-'        if (p101KeyMap[key]) {',
-'            ev.preventDefault();',
-'            p101KeyMap[key](ev);',
-'        }',
-'    });',
-'}',
-'',
-'function resetValidityOnKeydown(elem) {',
-'    elem.on("keydown", function (ev) {',
-'        if (!this.checkValidity()) {',
-'            this.setCustomValidity("");',
-'        }',
-'    });',
-'}',
-'',
-'function parseMDY(value) {',
-'    var date = value.split("/");',
-'    var d = parseInt(date[1], 10),',
-'        m = parseInt(date[0], 10),',
-'        y = parseInt(date[2], 10);  ',
-'    return new Date(y, m - 1, d);',
-'}',
-'',
-'function compareDates (d1, d2) {',
-'    let date1 = new Date(d1).getTime();',
-'    let date2 = new Date(d2).getTime();',
-'',
-'    if (date1 < date2) {',
-'        return -1',
-'    } else if (date1 > date2) {',
-'        return 1;',
-'    } else {',
-'        return 0;',
-'    }',
-'};',
-'',
-'function repositionDateFields() {',
-'    $(".shipment-dates").append(''<div class="dates-label"></div><div class="dates-fields"></div>'');',
-'    $("#P101_ETD_LABEL").appendTo(".dates-label");',
-'    $(".t-Form-inputContainer:has(.t-Form-itemWrapper):has(#P101_ETD)").appendTo(".dates-fields");',
-'    $(`<div class="dates-fields-separator">-</div>`).appendTo(".dates-fields");',
-'    $(".t-Form-inputContainer:has(.t-Form-itemWrapper):has(#P101_ETA)").appendTo(".dates-fields");',
-'    $(`<div class="dates-fields-separator">-</div>`).appendTo(".dates-fields");',
-'    $(".t-Form-inputContainer:has(.t-Form-itemWrapper):has(#P101_ATA)").appendTo(".dates-fields");',
-'    $(".dates-fields .t-Form-inputContainer").removeClass("col col-2");',
-'    $(".shipment-dates .etd, .shipment-dates .eta, .shipment-dates .ata").remove();',
-'}',
-'',
-'function initialize() {',
-'    setTitle(`${$v("P101_LABEL")} New Shipment`);',
-'    repositionDateFields();',
-'    mapP101Keys();',
-'    setAutocompleteForVendorName(1);',
-'    setAutocompleteForVendorRefPo(1);',
-'    setValidationForVendor(1);',
-'    setValidationForVendorRefPo(1);',
-'    setInvNosChangeEvent(1);',
-'',
-'    $("#P101_SVP1").addClass("svp");',
-'    $("#P101_VENDOR_ID1").addClass("vendor-id required");',
-'    $("#P101_VENDOR_REF_PO_ID1").addClass("vendor-ref-po-id required");',
-'    $("#P101_VENDOR_ID1").attr("vendor-seq", "1");',
-'    $("#P101_VENDOR_REF_PO_ID1").attr("vendor-seq", "1");',
-'    $("#P101_SHIPMENT_YR, #P101_SHIPMENT_NO").on("keydown", (ev) => {',
-'        if (ev.key?.toLowerCase() !== "tab") {',
-'            ev.preventDefault();',
-'        }',
-'    });',
-'',
-'    const amountRegexFn = value => /^\d*\.?\d*$/.test(value);',
-'    const amountInvalidMsg = "Please enter a valid amount";',
-'',
-'    setInputFilter($("#P101_FREIGHT_COST"), amountRegexFn, amountInvalidMsg);',
-'    setInputFilter($("#P101_INSURANCE_COST"), amountRegexFn, amountInvalidMsg);',
-'    setInputFilter($("#P101_HANDLING_COST"), amountRegexFn, amountInvalidMsg);',
-'    setInputFilter($("#P101_DUTIES_AND_TAXES"), amountRegexFn, amountInvalidMsg);',
-'    setInputFilter($("#P101_MISC_EXPENSES"), amountRegexFn, amountInvalidMsg);',
-'    setInputFilter($("#P101_VENDOR_CREDITS"), amountRegexFn, amountInvalidMsg);',
-'',
-'    resetValidityOnKeydown($("#P101_ETD_input"));',
-'    resetValidityOnKeydown($("#P101_ETA_input"));',
-'    resetValidityOnKeydown($("#P101_ATA_input"));',
-'',
-'    $("#P101_ETD").on("change", function (ev) {',
-'        const etd = parseMDY(apex.item("P101_ETD").getValue());',
-'        const eta = parseMDY(apex.item("P101_ETA").getValue());',
-'        const ata = parseMDY(apex.item("P101_ETA").getValue());',
-'        const elem = document.getElementById("P101_ETD_input");',
-'        let message = "";',
-'',
-'        if (isNaN(etd)) {',
-'            message = "Invalid date";',
-'        } else if (apex.item("P101_ETA").getValue() !== "" && compareDates(etd, eta) === 1) {',
-'            message = "ETD should be earlier than or equal to ETA";',
-'        } else if (apex.item("P101_ATA").getValue() !== "" && compareDates(etd, ata) === 1) { ',
-'            message = "ETD should be earlier than or equal to ATA";',
-'        } else {',
-'            elem.setCustomValidity("");',
-'        }',
-'        ',
-'        if (message !== "") {',
-'            elem.setCustomValidity(message);',
-'            elem.reportValidity();',
-'            $("#P101_ETD").focus();',
-'            $("#P101_ETD").val("");',
-'        }',
-'    });',
-'',
-'    $("#P101_ETA").on("change", (ev) => {',
-'        const etd = parseMDY(apex.item("P101_ETD").getValue());',
-'        const eta = parseMDY(apex.item("P101_ETA").getValue());',
-'        const elem = document.getElementById("P101_ETA_input");',
-'        let message = "";',
-'',
-'        if (isNaN(eta)) {',
-'            message = "Invalid date";',
-'        } else if (apex.item("P101_ETD").getValue() !== "" && compareDates(etd, eta) === 1) {',
-'            message = "ETA should be later than or equal to ETD";',
-'        } else {',
-'            elem.setCustomValidity("");',
-'        }',
-'        ',
-'        if (message !== "") {',
-'            elem.setCustomValidity(message);',
-'            elem.reportValidity();',
-'            $("#P101_ETA").focus();',
-'            $("#P101_ETA").val("");',
-'        }',
-'    });',
-'',
-'    $("#P101_ATA").on("change", (ev) => {',
-'        const etd = parseMDY(apex.item("P101_ETD").getValue());',
-'        const ata = parseMDY(apex.item("P101_ATA").getValue());',
-'        const elem = document.getElementById("P101_ATA_input");',
-'        let message = "";',
-'',
-'        if (isNaN(ata)) {',
-'            message = "Invalid date";',
-'        } else if (apex.item("P101_ETD").getValue() !== "" && compareDates(etd, ata) === 1) {',
-'            message = "ATA should be later than or equal to ETD";',
-'        } else {',
-'            elem.setCustomValidity("");',
-'        }',
-'        ',
-'        if (message !== "") {',
-'            elem.setCustomValidity(message);',
-'            elem.reportValidity();',
-'            $("#P101_ATA").focus();',
-'            $("#P101_ATA").val("");',
-'        }',
-'    });',
-'',
-'    $(".required").on("keydown", (ev) => {',
-'        if (ev.key?.toLowerCase() === "tab" && !ev.shiftKey) {',
-'            const elem = ev.target;',
-'            if (elem.value === "") {',
-'                ev.preventDefault();',
-'                $(elem).focus();',
-'                elem.setCustomValidity("This field is required");',
-'                elem.reportValidity();',
-'            } else {',
-'                elem.setCustomValidity("");',
-'            }',
-'        }',
-'    });',
-'}',
-'',
-'function setInvNosChangeEvent(vendorCounter) {',
-'    $(`#P101_VENDOR_INV_NO${vendorCounter}`).on("change", function(ev) {',
-'        const invInputs = this.value.split(",");',
-'        const svpId = parseInt(this.getAttribute("svp-id"), 10);',
-'        const svpIndx = svp.findIndex(x => x.svpId === svpId);',
-'',
-'        if (!isNaN(svpId) && svpIndx !== -1) {',
-'            for (var i = 0; i < invInputs.length && svpIndx !== -1; i++) {',
-'                const inv = svp[svpIndx].invoices.findIndex(x => x.docNo?.toString() === invInputs[i]);',
-'                if (inv === -1) {',
-'                    svp[svpIndx].invoices.push({svp: svpId, invoiceId: null, docNo: invInputs[i], status: "N"});',
-'                } else {',
-'                    svp[svpIndx].invoices[inv].status = ''U'';',
-'                }',
-'            }',
-'',
-'            const svpInvs = svp[svpIndx].invoices;',
-'            for (var j = 0; j < svpInvs.length; j++) {',
-'                if (invInputs.indexOf(svpInvs[j].docNo?.toString()) === -1) {',
-'                    if (svp[svpIndx].invoices[j].status === "N") {',
-'                        svp[svpIndx].invoices.splice(j, 1);',
-'                    } else {',
-'                        svp[svpIndx].invoices[j].status = "D";',
-'                    }',
-'                }',
-'            }',
-'        }',
-'    });',
-'}',
-'',
-'function setAutocompleteForVendorName(vendorCounter) {    ',
-'    $(`#P101_VENDOR_NAME${vendorCounter}`).autocomplete({',
-'        autoFocus: true,',
-'        minLength: 1,',
-'        delay: 250,',
-'        source: function (request, response) {',
-'            apex.server.process("SEARCH_VENDORS", {',
-'                x01: request.term,',
-'            })',
-'            .done(data => {',
-'                response(data);',
-'            });',
-'        },',
-'        open: function () {',
-'            isAutoCompleteOpen = true;',
-'        },',
-'        select: function(ev, ui) {',
-'            $(`#P101_VENDOR_ID${vendorCounter}`).val(ui?.item?.realValue);',
-'        },',
-'        close : function () {',
-'            isAutoCompleteOpen = false;',
-'        }',
-'    });',
-'    $(`#P101_VENDOR_NAME${vendorCounter}`).on("blur", () => {',
-'        isAutoCompleteOpen = false;',
-'    });',
-'}',
-'',
-'function setAutocompleteForVendorRefPo(vendorCounter) {',
-'    $(`#P101_VENDOR_REF_PO${vendorCounter}`).autocomplete({',
-'        autoFocus: true,',
-'        minLength: 1,',
-'        delay: 100,',
-'        source: function (request, response) {',
-'            apex.server.process("SEARCH_REF_POS", {',
-'                x01: request.term,',
-'                x02: apex.item(`P101_VENDOR_ID${vendorCounter}`).getValue()',
-'            })',
-'            .done(data => {',
-'                response(data);',
-'            });',
-'        },',
-'        select: function(ev, ui) {',
-'            $(`#P101_VENDOR_REF_PO_ID${vendorCounter}`).val(ui?.item?.realValue);',
-'            // set selected vendor PO',
-'        }',
-'    });',
-'}',
-'',
-'function setValidationForVendor(vendorCounter) {',
-'    $(`#P101_VENDOR_NAME${vendorCounter}`).on("keydown", function(ev) {',
-'        if (!this.checkValidity()) {',
-'            this.setCustomValidity("");',
-'        }',
-'    });',
-'    $(`#P101_VENDOR_NAME${vendorCounter}`).on("change", function (ev) {',
-'        const vendorId = $(`#P101_VENDOR_ID${vendorCounter}`).val();',
-'        if (vendorId !== "") {',
-'            apex.server.process("CHECK_VENDOR", {',
-'                x01: vendorId',
-'            })',
-'            .done(data => {',
-'                if (data.isValid !== "Y") {',
-'                    $(this).focus();',
-'                    this.value = "";',
-'                    $(`#P101_VENDOR_ID${vendorCounter}`).val("");',
-'                    this.setCustomValidity("Invalid vendor entered");',
-'                    this.reportValidity();',
-'                } else {',
-'                    this.setCustomValidity("");',
-'                }',
-'            });',
-'        } else {',
-'            $(this).focus();',
-'            this.value = "";',
-'            $(`#P101_VENDOR_ID${vendorCounter}`).val("");',
-'            this.setCustomValidity("Invalid vendor entered");',
-'            this.reportValidity();',
-'        }',
-'    });',
-'}',
-'',
-'function setValidationForVendorRefPo(vendorCounter) {',
-'    $(`#P101_VENDOR_REF_PO${vendorCounter}`).on("keydown", function(ev) {',
-'        if (!this.checkValidity()) {',
-'            this.setCustomValidity("");',
-'        }',
-'    });',
-'    $(`#P101_VENDOR_REF_PO${vendorCounter}`).on("change", function (ev) {',
-'        apex.server.process("CHECK_PO", {',
-'            x01: this.value,',
-'            x02: apex.item(`P101_VENDOR_ID${vendorCounter}`).getValue()',
-'        })',
-'        .done(data => {',
-'            if (data.isValid !== "Y") {',
-'                $(this).focus();',
-'                this.value = "";',
-'                $(`#P101_VENDOR_REF_PO_ID${vendorCounter}`).val("");',
-'                this.setCustomValidity("Invalid PO entered");',
-'                this.reportValidity();',
-'            } else {',
-'                this.setCustomValidity("");',
-'            }',
-'        })',
-'    });',
-'}',
-'',
-'function addNewVendor(data) {',
-'    vendorCtr++;',
-'',
-'    let vendorInputClone = $(".row.vendors-input:first").clone();',
-'    const seqNo = data?.vendorSeq || vendorCtr;',
-'',
-'    vendorInputClone.find("input, a-autocomplete, span.display_only.apex-item-display-only, div.t-Form-fieldContainer, span.a-Form-error, div.t-Form-error div").each(function(index, elem) { ',
-'        let currentId = elem.id;',
-'        let newId = "";',
-'        if (currentId === "P101_VENDOR1") {',
-'            newId = `P101_VENDOR${seqNo || ""}`;',
-'        } if (currentId === "P101_VENDOR_NAME1_input") {',
-'            newId = `P101_VENDOR_NAME${seqNo}_input`;',
-'        } else if (currentId === "P101_VENDOR_NAME1") {',
-'            newId = `P101_VENDOR_NAME${seqNo}`;',
-'            elem.value = data?.vendorName || "";',
-'            elem.name = newId;',
-'            elem.disabled = (data?.vendorName || "") !== "";',
-'            elem.classList.remove("apex-page-item-error");',
-'            elem.removeAttribute("aria-describedby");',
-'            elem.removeAttribute("aria-invalid");',
-'        } else if (currentId === "P101_VENDOR_ID1") {',
-'            newId = `P101_VENDOR_ID${seqNo}`;',
-'            elem.value = data?.vendorId || "";',
-'            elem.name = newId;',
-'        } else if (currentId === "P101_VENDOR_REF_PO1") {',
-'            newId = `P101_VENDOR_REF_PO${seqNo}`;',
-'            elem.value = data?.vendorRefPo || "";',
-'            elem.name = newId;',
-'        } else if (currentId === "P101_VENDOR_REF_PO_ID1") {',
-'            newId = `P101_VENDOR_REF_PO_ID${seqNo}`;',
-'            elem.value = data?.vendorRefPo || "";',
-'        } else if (currentId === "P101_VENDOR_INV_NO1") {',
-'            newId = `P101_VENDOR_INV_NO${seqNo}`;',
-'            elem.value = data?.invDisplay || "";',
-'            elem.name = newId;',
-'            elem.setAttribute("svp-id", data?.svp);',
-'        } else if (currentId === "P101_SVP1") {',
-'            newId = `P101_SVP${seqNo}`;',
-'            elem.value = data?.svp || "";',
-'            elem.name = newId;',
-'        } else if (currentId === "P101_VENDOR_NAME1_CONTAINER") {',
-'            newId = `P101_VENDOR_NAME${seqNo}_CONTAINER`;',
-'        } else if (currentId === "P101_VENDOR_NAME1_error_placeholder") {',
-'            newId = `P101_VENDOR_NAME${seqNo}_error_placeholder`;',
-'        } else if (currentId === "P101_VENDOR_NAME1_error") {',
-'            newId = `P101_VENDOR_NAME${seqNo}_error`;',
-'            elem.innerHTML = "";',
-'        } else if (currentId === "P101_VENDOR_REF_PO1_CONTAINER") {',
-'            newId = `P101_VENDOR_REF_PO${seqNo}_CONTAINER`;',
-'        } else if (currentId === "P101_VENDOR_REF_PO1_error_placeholder") {',
-'            newId = `P101_VENDOR_REF_PO${seqNo}_error_placeholder`;',
-'        } else if (currentId === "P101_VENDOR_REF_PO1_error") {',
-'            newId = `P101_VENDOR_REF_PO${seqNo}_error`;',
-'            elem.innerHTML = "";',
-'        } else if (currentId === "P101_VENDOR_INV_NO1_CONTAINER") {',
-'            newId = `P101_VENDOR_INV_NO${seqNo}_CONTAINER`;',
-'        } else if (currentId === "P101_VENDOR_INV_NO1_error_placeholder") {',
-'            newId = `P101_VENDOR_INV_NO${seqNo}_error_placeholder`;',
-'        } else if (currentId === "P101_VENDOR_INV_NO1_error") {',
-'            newId = `P101_VENDOR_INV_NO${seqNo}_error`;',
-'            elem.innerHTML = "";',
-'        }',
-'        elem.setAttribute("vendor-seq", seqNo);',
-'        elem.id = newId;',
-'    });',
-'',
-'    vendorInputClone.find(`#P101_VENDOR${seqNo}`).text(`Vendor ${seqNo}`);',
-'',
-'    vendorInputClone.find(`.t-Form-labelContainer`).remove();',
-'',
-'    vendorInputClone.insertAfter($(".row.vendors-input:last"));',
-'',
-'    setAutocompleteForVendorName(seqNo);',
-'    setAutocompleteForVendorRefPo(seqNo);',
-'    setValidationForVendorRefPo(seqNo);',
-'    setValidationForVendorRefPo(seqNo);',
-'    setInvNosChangeEvent(seqNo);',
-'',
-'    // $(`#P101_VENDOR_REF_PO${vendorCtr}`).on("keyup", function(ev) {',
-'    //     resetSelectedVendorPos(ev, $(this));',
-'    // });',
-'}',
-'',
-'function getSelectedVendorPos() {',
-'    let vendors = { VENDORS : [] };',
-'    $(".row.vendors-input").each(function(index, elem) {',
-'        let val = $(this).find(".vendor-id").val();',
-'        if (val !== "") {',
-'            vendors.VENDORS.push(val);',
-'        }',
-'    });',
-'    return vendors;',
-'}',
-'',
-'function resetSelectedVendorPos(ev, elem) {',
-'    if (["backspace", "delete"].indexOf(ev.key.toLowerCase()) !== -1 && elem.val() === "") {',
-'        $(`#P101_VENDOR_ID${elem.attr("vendor-seq")}`).val("");',
-'        apex.server.process("SET_SELECTED_VENDOR_POS", {',
-'            p_clob_01: JSON.stringify(getSelectedVendorPos()),',
-'        })',
-'        .done(data => { });',
-'    }',
-'}',
-'',
-'function getBasicInfoData() {',
-'    let data = {',
-'        shipmentId: $v("P101_SHIPMENT_ID"),',
-'        shipmentNo: `${$v("P101_SHIPMENT_YR")}-${$v("P101_SHIPMENT_NO")}`,',
-'        vendors: [],',
-'        invoices: [],',
-'        vessel: $v("P101_VESSEL_NAME_BL1"),',
-'        vesselBlNo: $v("P101_VESSEL_NAME_BL2"),',
-'        barge: $v("P101_BARGE_BL1"),',
-'        bargeBlNo: $v("P101_BARGE_BL2"),',
-'        containerType: $v("P101_CONTAINER_TYPE_NO1"),',
-'        containerNo: $v("P101_CONTAINER_TYPE_NO2"),',
-'        origin: $v("P101_ORIGIN"),',
-'        eta: $v("P101_ETA"),',
-'        etd: $v("P101_ETD"),',
-'        ata: $v("P101_ATA"),',
-'        freightCost: $v("P101_FREIGHT_COST"),',
-'        insuranceCost: $v("P101_INSURANCE_COST"),',
-'        handlingCost: $v("P101_HANDLING_COST"),',
-'        dutiesAndTaxes: $v("P101_DUTIES_AND_TAXES"),',
-'        miscExpenses: $v("P101_MISC_EXPENSES"),',
-'        vendorCredits: $v("P101_VENDOR_CREDITS")',
-'    };',
-'',
-'    $(".row.vendors-input").each(function(index, elem) {',
-'        const svpId = $(this).find(".svp").val();',
-'        const vendorId = $(this).find(".vendor-id").val();',
-'        const invNos = $(this).find(".vendor-inv-no").val();',
-'',
-'        let invoices = [];',
-'        let svpIndx = svp.findIndex(x => x.svpId?.toString() === svpId);',
-'        if (svpIndx !== -1) {',
-'            invoices.push(...(svp[svpIndx].invoices.map(inv => { ',
-'                return {',
-'                    invoiceId: inv.invoiceId,',
-'                    docNo: inv.docNo,',
-'                    status: inv.status',
-'                }',
-'            })));',
-'        } else {',
-'            invoices.push(...(invNos.split('','').map(inv => {',
-'                return {',
-'                    invoiceId: null,',
-'                    docNo: inv,',
-'                    status: ''N''',
-'                }',
-'            })))',
-'        }',
-'',
-'        data.vendors.push({',
-'            svpId: svpId,',
-'            vendorId: vendorId,',
-'            vendorSeq: $(this).find(".vendor-id").attr("vendor-seq"),',
-'            poId: $(this).find(".vendor-ref-po-id").val(),',
-'            invNos: $(this).find(".vendor-inv-no").val(),',
-'            invoices: invoices',
-'        });',
-'    });',
-'',
-'    return data;',
-'}',
-'',
-'function validateFields() {',
-'    let errors = [];',
-'    apex.message.clearErrors();',
-'    $(".required").each((index, elem) => {',
-'        if ($v(elem.id) === "" && elem.type !== "hidden") {',
-'            errors.push({',
-'                type:       "error",',
-'                location:   ["inline"],',
-'                pageItem:   elem.id,',
-'                message:    "This field is required",',
-'                unsafe:     false',
-'            });',
-'        }',
-'    });',
-'',
-'    const invNoLength = 10;',
-'    $(".row.vendors-input").each(function(index, elem) {',
-'        const invNos = $(this).find(".vendor-inv-no").val();',
-'        const xLength = invNos.split(",").find((invNo) => invNo.length > invNoLength);',
-'        if (xLength !== undefined) {',
-'            errors.push({',
-'                type:       "error",',
-'                location:   ["inline"],',
-'                pageItem:   $(this).find(".vendor-inv-no").attr("id"),',
-'                message:    "One or more invoice number/s are invalid.",',
-'                unsafe:     false',
-'            });',
-'        }',
-'    });',
-'',
-'    if (errors.length > 0) {',
-'        apex.message.showErrors(errors);',
-'        return false;',
-'    }',
-'    return true;',
-'}',
-'',
-'function submitForm() {',
-'    apex.server.process("SAVE_SHIPMENT", {',
-'        pageItems : ["P101_LABEL"],',
-'        p_clob_01 : JSON.stringify(getBasicInfoData())',
-'    }, {',
-'        dataType: ''json''',
-'    })',
-'    .done(data => {',
-'        // apex.page.submit({',
-'        //     request: "SUBMIT",',
-'        //     set: { "P101_SHIPMENT_ID" : data.id },',
-'        //     showWait: true',
-'        // });',
-'        apex.navigation.redirect(data.u);',
-'    });',
-'}',
-'',
-'function loadVendorData(vendors) {',
-'    // get first vendor from vendors object',
-'    const firstVendorIndex = vendors.findIndex(vendor => vendor.vendorSeq === 1);',
-'    const firstVendor = vendors[firstVendorIndex];',
-'    const fvinvs = firstVendor.invoices.sort((a, b) => a.invoiceId - b.invoiceId);',
-'    svp.push({svpId: firstVendor.svp, invoices: fvinvs});',
-'',
-'    // set first vendor to fields',
-'    $("#P101_SVP1").val(firstVendor.svp);',
-'    $("#P101_VENDOR_NAME1").val(firstVendor.vendorName);',
-'    $("#P101_VENDOR_NAME1").prop("disabled", true);',
-'    $("#P101_VENDOR_ID1").val(firstVendor.vendorId);',
-'    $("#P101_VENDOR_REF_PO1").val(firstVendor.vendorRefPo);',
-'    $("#P101_VENDOR_REF_PO_ID1").val(firstVendor.vendorRefPo);',
-'    $("#P101_VENDOR_INV_NO1").val(fvinvs.map(x => x.docNo).join());',
-'    $("#P101_VENDOR_INV_NO1").attr("svp-id", firstVendor.svp);',
-'    vendorCtr = firstVendor.vendorSeq;',
-'',
-'    // remove first vendor from vendors object',
-'    vendors.splice(firstVendorIndex, 1);',
-'',
-'    // set other vendors to field in order',
-'    for (var i = 0; i < vendors.length; i++) {',
-'        let svpDatum = vendors[i];',
-'        const invs = svpDatum.invoices.sort((a, b) => a.invoiceId - b.invoiceId);',
-'        svpDatum.invDisplay = invs.map(x => x.docNo).join();',
-'        svp.push({svpId: svpDatum.svp, invoices: invs});',
-'        addNewVendor(vendors[i]);',
-'    }',
-'}',
-'',
-'function getVendors1() {',
-'    $(".shipment-no").prop("disabled", true);',
-'',
-'    let waitSpinner = apex.widget.waitPopup();',
-'    apex.server.process("GET_VENDORS", {',
-'        x01: $v("P101_SHIPMENT_ID")',
-'    })',
-'    .done(data => {',
-'',
-'    })',
-'    .fail((jqXHR, textStatus, errorThrown) => {',
-'        // error: An error occurred while retrieving vendor information for this shipment',
-'    });',
-'}',
-'',
-'function getVendors2() {',
-'    $(".shipment-no").prop("disabled", true);',
-'',
-'    let waitSpinner = apex.widget.waitPopup();',
-'    apex.server.process("GET_VENDORS2", {',
-'        x01: $v("P101_SHIPMENT_ID")',
-'    })',
-'    .done(data => { ',
-'',
-'    })',
-'    .fail((jqXHR, textStatus, errorThrown) => {',
-'        // error: An error occurred while retrieving vendor information for this shipment',
-'    });',
-'}',
-'',
-'function getVendors() {',
-'    $(".shipment-no").prop("disabled", true);',
-'',
-'    let waitSpinner = apex.widget.waitPopup();',
-'    apex.server.process("GET_VENDORS3", {',
-'        x01: $v("P101_SHIPMENT_ID")',
-'    })',
-'    .done(data => {',
-'        let vendors = JSON.parse(data.svp);',
-'        vendors.sort((a, b) => a.vendorSeq - b.vendorSeq);',
-'        loadVendorData(vendors);',
-'        waitSpinner.remove();',
-'        $("#P101_VENDOR_REF_PO1").focus();',
-'    })',
-'    .fail((jqXHR, textStatus, errorThrown) => {',
-'        // error: An error occurred while retrieving vendor information for this shipment',
-'    });',
-'}'))
+,p_javascript_file_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'#APP_FILES#js/jquery-ui.min.js',
+'#APP_FILES#js/shipment-add-update.min.js'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'initialize();',
 ''))
@@ -648,187 +28,8 @@ wwv_flow_imp_page.create_page(
 '#APP_FILES#css/cmn#MIN#.css',
 '#APP_FILES#css/jquery-ui.min.css',
 '#APP_FILES#css/jquery-ui.structure.min.css',
-'#APP_FILES#css/jquery-ui.theme.min.css'))
-,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.t-Header .t-Header-branding {',
-'    background-color: white !important;',
-'    color: rgb(30, 58, 138) !important;',
-'}',
-' ',
-'body {',
-'    background-color: rgb(30, 58, 138);',
-'}',
-'',
-'.t-Region-header {',
-'    color: white;',
-'    background-color: rgb(30, 58, 138);',
-'}',
-'',
-'.t-Region {',
-'    background-color: rgb(30, 58, 138);',
-'}',
-'',
-'.t-Region-bodyWrap, .t-Region-body  {',
-'    border-radius: 0.5rem;',
-'    background-color: white;',
-'}',
-'',
-'.p101-section {',
-'    border-radius: 0.5rem;',
-'}',
-'',
-'.p101-section label, .p101-section input, .t-Region-title, #P101_VENDOR_NAME {',
-'    font-size: 1.125rem !important;',
-'}',
-'',
-'.vendor-name:disabled,',
-'.shipment-no:disabled {',
-'    color: black;',
-'    background-color: #d9d9d9;',
-'    opacity: unset;',
-'}',
-'',
-'.p101-label-req {',
-'    color: red;',
-'}',
-'',
-'.t-Form-labelContainer {',
-'    text-align: start;',
-'}',
-'',
-'div.is-required  .t-Form-label:before { ',
-'    content: none !important;',
-'}',
-'',
-'.t-Form-labelContainer {',
-'    display: flex;',
-'    align-items: center;',
-'}',
-'',
-'.t-Form-labelContainer label {',
-'    align-content: center;',
-'}',
-'',
-'#P101_CONTAINER_TYPE_NO2_CONTAINER .t-Form-labelContainer {',
-'    justify-content: center;',
-'}',
-'',
-'#basic-info .t-Region-body,',
-'#vessel-info .t-Region-body,',
-'#cost-info .t-Region-body {',
-'    padding-top: 0;',
-'    border: var(--ut-region-border-color,var(--ut-component-border-color));',
-'    border-color: white;',
-'    border-radius: 0.5rem;',
-'    border-style: solid;',
-'    border-width: var(--ut-region-border-width,var(--ut-component-border-width,1px));',
-'}',
-'',
-'',
-'#P101_VENDOR_NAME_CONTAINER .t-Form-inputContainer,',
-'#P101_VENDOR_INV_NO_CONTAINER .t-Form-inputContainer {',
-'    max-width: 63%;',
-'}',
-'',
-'.t-Form-labelContainer:has(#P101_VENDOR_NAME_LABEL),',
-'.t-Form-labelContainer:has(#P101_VENDOR_INV_NO_LABEL) {',
-'    max-width: 27%;',
-'}',
-'',
-'#P101_SHIPMENT_NO1_CONTAINER:after,',
-'#P101_SHIPMENT_YR_CONTAINER:after {',
-'    content: "\002D";',
-'    align-self: center;',
-'}',
-'',
-'.dates-label {',
-'    width: 16.8%;',
-'    padding-top: 0.5rem;',
-'    padding-bottom: 0.5rem;',
-'    display: flex;',
-'    align-items: center;',
-'}',
-'',
-'.dates-fields {',
-'    width: 35%;',
-'    display: flex;',
-'}',
-'',
-'.dates-fields .t-Form-inputContainer {',
-'    padding-left: 0;',
-'    padding-right: 0;',
-'    width: 30%;',
-'}',
-'',
-'.dates-fields .dates-fields-separator {',
-'    font-size: 1.125rem;',
-'    align-self: center;',
-'    width: 5%;',
-'    display: flex;',
-'    justify-content: center;',
-'}',
-'',
-'#add-vendor-btn {',
-'    font-size: 1.125rem;',
-'    font-weight: 600;',
-'} ',
-'',
-'.vendor-no {',
-'    margin-block-start: 0.25rem;',
-'    font-size: 1.125rem;',
-'    font-weight: normal;',
-'}',
-'',
-'.vendor-name label,',
-'.vendor-ref-po label {',
-'    padding-block-start: 0.25rem;',
-'    padding-block-end: 0.25rem;',
-'}',
-'',
-'.no-pad-start {',
-'    padding-inline-start: 0;',
-'}',
-'',
-'.ui-menu-item {',
-'    font-size: 1.125rem;',
-'    font-family: var(--ut-base-font-family,var(--a-base-font-family,sans-serif));',
-'}',
-'',
-'/* font sizes for pop up LOV */',
-'.a-IconList-item, .a-PopupLOV-search {',
-'    font-size: 1.125rem !important;',
-'}',
-'',
-'/* css for popup LOV type modal dialog */',
-'.ui-dialog-popuplov .ui-dialog-titlebar {',
-'    background-color: #046BC8;',
-'    color: white;',
-'}',
-'',
-'.ui-dialog-popuplov .ui-dialog-titlebar .ui-dialog-title {',
-'    font-size: 1.125rem;',
-'}',
-'',
-'.ui-dialog-titlebar-close{',
-'    display: none;',
-'}',
-'/* ',
-'.a-PopupLOV-searchBar {',
-'    background-color: #046BC8;',
-'} */',
-'',
-'.a-PopupLOV-results .a-GV-header a,',
-'.a-PopupLOV-results th.a-GV-header {',
-'    background-color: #046BC8;',
-'    color: white;',
-'}',
-'',
-'.a-PopupLOV-results table,',
-'.a-PopupLOV-results tr,',
-'.a-PopupLOV-results td,',
-'.a-PopupLOV-results th {',
-'    font-size: 1rem;',
-'}'))
+'#APP_FILES#css/jquery-ui.theme.min.css',
+'#APP_FILES#css/shipment-add-update.min.css'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
@@ -915,6 +116,20 @@ wwv_flow_imp_page.create_page_branch(
 ,p_branch_condition_type=>'REQUEST_IN_CONDITION'
 ,p_branch_condition=>'SUBMIT'
 ,p_required_patch=>wwv_flow_imp.id(4207224469083906)
+);
+wwv_flow_imp_page.create_page_branch(
+ p_id=>wwv_flow_imp.id(63180410253478103)
+,p_branch_name=>'Redirect to Listing'
+,p_branch_action=>'f?p=&APP_ID.:100:&SESSION.::&DEBUG.:100::'
+,p_branch_point=>'BEFORE_HEADER'
+,p_branch_type=>'REDIRECT_URL'
+,p_branch_sequence=>10
+,p_branch_condition_type=>'EXPRESSION'
+,p_branch_condition=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'-- redirect if add / update (shipment id) and if no access',
+'(:P101_SHIPMENT_ID IS NULL and has_access(:APP_USER, 23, 81) != ''Y'') or',
+'(:P101_SHIPMENT_ID IS NOT NULL and has_access(:APP_USER, 23, 82) != ''Y'')'))
+,p_branch_condition_text=>'PLSQL'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(15062270149627933)
@@ -1067,7 +282,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>50
-,p_tag_css_classes=>'required'
+,p_tag_css_classes=>'required enterable'
 ,p_colspan=>9
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
@@ -1086,6 +301,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>18
+,p_tag_css_classes=>'enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>3
 ,p_grid_column=>10
@@ -1106,6 +322,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>40
+,p_tag_css_classes=>'enterable'
 ,p_colspan=>9
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
@@ -1124,6 +341,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>18
+,p_tag_css_classes=>'enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>3
 ,p_grid_column=>10
@@ -1144,6 +362,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>4
+,p_tag_css_classes=>'enterable'
 ,p_colspan=>4
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
@@ -1162,6 +381,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>12
+,p_tag_css_classes=>'enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>5
 ,p_grid_column=>5
@@ -1182,6 +402,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>10
+,p_tag_css_classes=>'enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>3
 ,p_grid_column=>10
@@ -1199,10 +420,11 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>120
 ,p_item_plug_id=>wwv_flow_imp.id(15062059775627931)
 ,p_prompt=>'ETD - ETA - ATA'
-,p_placeholder=>'mm/dd/yyyy'
-,p_display_as=>'NATIVE_DATE_PICKER_APEX'
+,p_placeholder=>'MM/DD/YYYY'
+,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
-,p_tag_css_classes=>'required'
+,p_cMaxlength=>10
+,p_tag_css_classes=>'required date-fields enterable'
 ,p_grid_row_css_classes=>'shipment-dates'
 ,p_colspan=>4
 ,p_grid_label_column_span=>2
@@ -1210,11 +432,9 @@ wwv_flow_imp_page.create_page_item(
 ,p_field_template=>wwv_flow_imp.id(15621067564319309)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'N'
-,p_attribute_02=>'POPUP'
-,p_attribute_03=>'NONE'
-,p_attribute_06=>'NONE'
-,p_attribute_09=>'N'
-,p_attribute_11=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(15063917851627950)
@@ -1222,10 +442,11 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>140
 ,p_item_plug_id=>wwv_flow_imp.id(15062059775627931)
 ,p_prompt=>'ETA'
-,p_placeholder=>'mm/dd/yyyy'
-,p_display_as=>'NATIVE_DATE_PICKER_APEX'
+,p_placeholder=>'MM/DD/YYYY'
+,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
-,p_tag_css_classes=>'required'
+,p_cMaxlength=>10
+,p_tag_css_classes=>'required date-fields enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>3
 ,p_grid_label_column_span=>1
@@ -1233,11 +454,9 @@ wwv_flow_imp_page.create_page_item(
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'N'
-,p_attribute_02=>'POPUP'
-,p_attribute_03=>'NONE'
-,p_attribute_06=>'NONE'
-,p_attribute_09=>'N'
-,p_attribute_11=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(15653953307560901)
@@ -1245,10 +464,11 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>150
 ,p_item_plug_id=>wwv_flow_imp.id(15062059775627931)
 ,p_prompt=>'ATA'
-,p_placeholder=>'mm/dd/yyyy'
-,p_display_as=>'NATIVE_DATE_PICKER_APEX'
+,p_placeholder=>'MM/DD/YYYY'
+,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
-,p_tag_css_classes=>'required'
+,p_cMaxlength=>10
+,p_tag_css_classes=>'required date-fields enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>3
 ,p_grid_label_column_span=>1
@@ -1256,11 +476,9 @@ wwv_flow_imp_page.create_page_item(
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_attribute_01=>'N'
-,p_attribute_02=>'POPUP'
-,p_attribute_03=>'NONE'
-,p_attribute_06=>'NONE'
-,p_attribute_09=>'N'
-,p_attribute_11=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(15654059894560902)
@@ -1268,8 +486,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(15062136902627932)
 ,p_prompt=>'Freight Cost'
-,p_format_mask=>'999999999999990D00'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_tag_css_classes=>'cost-info-field enterable'
 ,p_colspan=>4
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
@@ -1283,8 +501,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_imp.id(15062136902627932)
 ,p_prompt=>'Insurance Cost'
-,p_format_mask=>'999999999999990D00'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_tag_css_classes=>'cost-info-field enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>4
 ,p_grid_label_column_span=>2
@@ -1299,8 +517,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_imp.id(15062136902627932)
 ,p_prompt=>'Handling Cost'
-,p_format_mask=>'999999999999990D00'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_tag_css_classes=>'cost-info-field enterable'
 ,p_colspan=>4
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
@@ -1314,8 +532,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_imp.id(15062136902627932)
 ,p_prompt=>'Duties And Taxes'
-,p_format_mask=>'999999999999990D00'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_tag_css_classes=>'cost-info-field enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>4
 ,p_grid_label_column_span=>2
@@ -1330,8 +548,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_imp.id(15062136902627932)
 ,p_prompt=>'Misc. Expenses'
-,p_format_mask=>'999999999999990D00'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_tag_css_classes=>'cost-info-field enterable'
 ,p_colspan=>4
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
@@ -1345,8 +563,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>60
 ,p_item_plug_id=>wwv_flow_imp.id(15062136902627932)
 ,p_prompt=>'Vendor Credits'
-,p_format_mask=>'999999999999990D00'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
+,p_tag_css_classes=>'cost-info-field enterable'
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>4
 ,p_grid_label_column_span=>2
@@ -1359,7 +577,14 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(15655721924560919)
 ,p_name=>'P101_SRURL'
 ,p_item_sequence=>80
-,p_item_default=>'APEX_PAGE.GET_URL(p_page => 100)'
+,p_item_default=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'APEX_PAGE.GET_URL(',
+'    p_page => 100,',
+'    p_items => ''P100_SEARCH,P100_SORT,P100_SELECTED_ID,P100_SMSG'',',
+'    p_values => :P101_QSEARCH || '','' || :P101_QSORT || '','' || ',
+'                CASE WHEN :P101_LABEL = ''Add'' THEN :P101_SELECTED_ID ELSE :P101_SHIPMENT_ID END || '','',',
+'    p_clear_cache => ''100''',
+')'))
 ,p_item_default_type=>'EXPRESSION'
 ,p_item_default_language=>'PLSQL'
 ,p_display_as=>'NATIVE_HIDDEN'
@@ -1447,7 +672,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_prompt=>'Reference PO Number'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
-,p_tag_css_classes=>'fs-1125 vendor-ref-po'
+,p_tag_css_classes=>'fs-1125 vendor-ref-po enterable'
 ,p_tag_attributes=>'vendor-seq="1"'
 ,p_begin_on_new_line=>'N'
 ,p_field_template=>wwv_flow_imp.id(4383087695084279)
@@ -1465,7 +690,8 @@ wwv_flow_imp_page.create_page_item(
 ,p_prompt=>'Vendor Invoice Number <span class="p101-label-req">*</span>'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
-,p_tag_css_classes=>'fs-1125 required vendor-inv-no'
+,p_cMaxlength=>60
+,p_tag_css_classes=>'fs-1125 required vendor-inv-no enterable'
 ,p_tag_attributes=>'vendor-seq="1"'
 ,p_begin_on_new_line=>'N'
 ,p_field_template=>wwv_flow_imp.id(4383087695084279)
@@ -1499,6 +725,38 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'N'
 );
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(42427405280064044)
+,p_name=>'P101_QSORT'
+,p_item_sequence=>90
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+,p_item_comment=>'URL for when returning to main shipment screen'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(42427596117064045)
+,p_name=>'P101_QSEARCH'
+,p_item_sequence=>100
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+,p_item_comment=>'URL for when returning to main shipment screen'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(47038198822224210)
+,p_name=>'P101_SELECTED_ID'
+,p_item_sequence=>110
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+,p_item_comment=>'URL for when returning to main shipment screen'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(47038544726224214)
+,p_name=>'P101_UCHANGE'
+,p_item_sequence=>120
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'N'
+,p_item_comment=>'URL for when returning to main shipment screen'
+);
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(15062405570627935)
 ,p_computation_sequence=>10
@@ -1517,6 +775,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'change'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(17924429912262921)
@@ -1576,7 +835,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P101_VENDOR_CREDITS'
 ,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'this.browserEvent.key?.toLowerCase() === "enter"'
+,p_triggering_expression=>'this.browserEvent.key?.toLowerCase() === "enter" && !isFormSubmitted && $v("P101_LABEL") === "Add"'
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'keydown'
@@ -1589,8 +848,74 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'document.querySelector("#P101_VENDOR_CREDITS").disabled = true;',
 'if (validateFields()) {',
+'    isFormSubmitted = true;',
 '    submitForm();',
+'} else {',
+'    document.querySelector("#P101_VENDOR_CREDITS").disabled = false;',
+'    document.querySelector("#P101_VENDOR_CREDITS").focus();',
+'    isFormSubmitted = false;',
+'}'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(55223754916124201)
+,p_name=>'On enter press update'
+,p_event_sequence=>60
+,p_triggering_element_type=>'JQUERY_SELECTOR'
+,p_triggering_element=>'input'
+,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_expression=>'this.browserEvent.key?.toLowerCase() === "enter" && !isFormSubmitted && $v("P101_LABEL") === "Update"'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'keydown'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(55223837191124202)
+,p_event_id=>wwv_flow_imp.id(55223754916124201)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'document.querySelector("#P101_VENDOR_CREDITS").disabled = true;',
+'if (validateFields()) {',
+'    isFormSubmitted = true;',
+'    submitForm();',
+'} else {',
+'    document.querySelector("#P101_VENDOR_CREDITS").disabled = false;',
+'    document.querySelector("#P101_VENDOR_CREDITS").focus();',
+'    isFormSubmitted = false;',
+'}'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(59426419383201102)
+,p_name=>'Validate cost info field input'
+,p_event_sequence=>70
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P101_FREIGHT_COST,P101_INSURANCE_COST,P101_HANDLING_COST,P101_DUTIES_AND_TAXES,P101_VENDOR_CREDITS,P101_MISC_EXPENSES'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'change'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(59426505117201103)
+,p_event_id=>wwv_flow_imp.id(59426419383201102)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'const thisElem = this.triggeringElement;',
+'const value = thisElem.value;',
+'',
+'if (value !== "" && !/^(\d*\.?\d{1,2}|\d{1,3}(,\d{3})*(\.\d{1,2})?)$/.test(value)) {',
+'    thisElem.setCustomValidity("Please enter a valid amount");',
+'    thisElem.reportValidity();',
+'} else {',
+'    thisElem.setCustomValidity("");',
+'    thisElem.value = formatAmount(value.replace(",", ""));',
 '}'))
 );
 wwv_flow_imp_page.create_page_process(
@@ -1619,8 +944,12 @@ wwv_flow_imp_page.create_page_process(
 '          from nit016',
 '         where shipment_id = :P101_SHIPMENT_ID;',
 '',
-'        select freight_cost, insurance_cost, handling_cost,',
-'               duties_and_taxes, misc_expenses, vendor_credits',
+'        select TO_CHAR(freight_cost, ''999,999,999.90''), ',
+'               TO_CHAR(insurance_cost, ''999,999,999.90''), ',
+'               TO_CHAR(handling_cost, ''999,999,999.90''),',
+'               TO_CHAR(duties_and_taxes, ''999,999,999.90''), ',
+'               TO_CHAR(misc_expenses, ''999,999,999.90''), ',
+'               TO_CHAR(vendor_credits, ''999,999,999.90'')',
 '          into :P101_FREIGHT_COST, :P101_INSURANCE_COST, :P101_HANDLING_COST,',
 '               :P101_DUTIES_AND_TAXES, :P101_MISC_EXPENSES, :P101_VENDOR_CREDITS',
 '          from nit017',
@@ -1811,7 +1140,7 @@ wwv_flow_imp_page.create_page_process(
 'declare',
 '    s_json_clob             clob;',
 '    v_shipment_id           nit016.shipment_id%TYPE;',
-'    v_url                   varchar2(200);',
+'    v_url                   varchar2(500);',
 'begin',
 '    --Get the clob passed in from the Ajax process',
 '    s_json_clob := apex_application.g_clob_01;',
@@ -1819,8 +1148,8 @@ wwv_flow_imp_page.create_page_process(
 '',
 '    v_url := apex_page.get_url(',
 '        p_page   => 102,',
-'        p_items  => ''P102_SHIPMENT_ID,P102_LABEL'',',
-'        p_values => v_shipment_id || '','' || :P101_LABEL',
+'        p_items  => ''P102_SHIPMENT_ID,P102_LABEL,P102_QSEARCH,P102_QSORT,P102_UCHANGE'',',
+'        p_values => v_shipment_id || '','' || :P101_LABEL || '','' || :P101_QSEARCH || '','' || :P101_QSORT || '','' || :P101_UCHANGE',
 '    );',
 '',
 '    apex_json.open_object;',
@@ -1914,6 +1243,7 @@ wwv_flow_imp_page.create_page_process(
 '                KEY ''vendorName'' VALUE b.vendor_name,',
 '                KEY ''vendorSeq'' VALUE a.vendor_sequence,',
 '                KEY ''vendorRefPo'' VALUE a.po_id,',
+'                KEY ''refInvs'' VALUE a.ref_invoices,',
 '                KEY ''invoices'' VALUE (',
 '                    select json_arrayagg(json_object(',
 '                                KEY ''svp'' VALUE x.svp_id,',

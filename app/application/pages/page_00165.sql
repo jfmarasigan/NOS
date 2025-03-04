@@ -72,11 +72,56 @@ wwv_flow_imp_page.create_page(
 'setTitle("Item Masterfile Brand Utilities")',
 '',
 ' $( document ).ready(function() {',
-'  $(".a-GV-cell").first().trigger("click");',
+'    $(".a-GV-cell").first().trigger("click");',
+'',
+'    const currentDate = new Date();',
+'    const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");',
+'',
+'    $(document).on("keydown", function(event) {',
+'        if($("#option").is(":visible")) {',
+'            if(event.key === ''A'' || event.key === ''a'') {',
+'                generateReport("BRAND_UTIL_PDF_COURIER_NEW", "pdf", {',
+'                    fileName: `ItemMasterfileBrandUtilities_${formattedDate}.pdf`,',
+'                    mode : "print",',
+'                    parameters : {',
+'                        P_BRAND_CODE : $v("P165_BRAND_CODE"),',
+'                        P_BRAND_NAME : $v("P165_BRAND_NAME"),',
+'                        P_BRAND_ID : $v("P165_BRAND_ID")',
+'                    },',
+'                    spinnerEnabled : true',
+'                });',
+'            } else if (event.key === "B" || event.key === ''b'') {',
+'                generateReport("BRAND_UTIL_PDF_ARIAL", "pdf", {',
+'                    fileName: `ItemMasterfileBrandUtilities_${formattedDate}.pdf`,',
+'                    mode : "print",',
+'                    parameters : {',
+'                        P_BRAND_CODE : $v("P165_BRAND_CODE"),',
+'                        P_BRAND_NAME : $v("P165_BRAND_NAME"),',
+'                        P_BRAND_ID : $v("P165_BRAND_ID")',
+'                    },',
+'                    spinnerEnabled : true',
+'                });',
+'            }',
+'        }',
+'    });',
 ' });',
 ''))
 ,p_css_file_urls=>'#APP_FILES#css/items_masterfile_css#MIN#.css'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.ui-dialog {',
+'    background-color: #056AC8;',
+'}',
+'',
+'.t-Region#dot,',
+'.t-Region#graphic {',
+'    border-radius: 0 !important;',
+'    font-size: 1.125rem;',
+'    border: none !important;',
+'    outline: none !important;',
+'    background-color: #056AC8 !important; ',
+'    color: white !important;',
+'}',
+'',
 'body, #button-region {',
 '    background-color: rgb(30, 58, 138);',
 '}',
@@ -142,6 +187,27 @@ wwv_flow_imp_page.create_page(
 '',
 '.a-GV-hdr .a-GV-table {',
 '    width: 100% !important;',
+'}',
+'',
+'#brand_list .a-GV-table colgroup col:nth-child(1) {',
+'    width: 5rem;',
+'}',
+'',
+'#brand_list .a-GV-table colgroup col:nth-child(2) {',
+'    width: 40rem;',
+'}',
+'',
+'#brand_list .a-GV-table colgroup col:nth-child(3),',
+'#brand_list .a-GV-table colgroup col:nth-child(4) {',
+'    width: 10rem;',
+'}',
+'',
+'#brand_list .a-GV-table colgroup col:nth-child(5) {',
+'    width: 13rem;',
+'}',
+'',
+'#brand_list .a-GV-table colgroup col:nth-child(6) {',
+'    width: 12rem;',
 '}',
 '',
 '.ui-widget-overlay.ui-front {',
@@ -229,7 +295,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Brand Code'
+,p_heading=>'Code'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>20
 ,p_value_alignment=>'LEFT'
@@ -526,6 +592,47 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_column_id=>wwv_flow_imp.id(35715939941706521)
 ,p_is_visible=>true
 ,p_is_frozen=>false
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(55266594846963949)
+,p_plug_name=>'Printing Options'
+,p_region_name=>'option'
+,p_region_template_options=>'js-modal:js-dialog-nosize'
+,p_plug_template=>wwv_flow_imp.id(4296448473084118)
+,p_plug_display_sequence=>30
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_location=>null
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(58203807079110801)
+,p_plug_name=>'Dotmatrix'
+,p_region_name=>'dot'
+,p_parent_plug_id=>wwv_flow_imp.id(55266594846963949)
+,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--hiddenOverflow:margin-bottom-none'
+,p_plug_template=>wwv_flow_imp.id(4319920360084164)
+,p_plug_display_sequence=>20
+,p_location=>null
+,p_plug_source=>'A - Dotmatrix'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(58203966014110802)
+,p_plug_name=>'Graphic Printer'
+,p_region_name=>'graphic'
+,p_parent_plug_id=>wwv_flow_imp.id(55266594846963949)
+,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--hiddenOverflow:margin-bottom-none'
+,p_plug_template=>wwv_flow_imp.id(4319920360084164)
+,p_plug_display_sequence=>30
+,p_location=>null
+,p_plug_source=>'B - Graphic Printer'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(76164455018909785)
@@ -1070,25 +1177,26 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'click'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(38761360437655603)
+ p_id=>wwv_flow_imp.id(58204068064110803)
 ,p_event_id=>wwv_flow_imp.id(38761299854655602)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_OPEN_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(55266594846963949)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(38761360437655603)
+,p_event_id=>wwv_flow_imp.id(38761299854655602)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'const currentDate = new Date();',
-'const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");',
-'',
-'generateReport("BRAND_UTIL_PDF_COURIER_NEW", "pdf", { ',
-'    fileName: `ItemMasterfileBrandUtilities_${formattedDate}.pdf`,',
-'    mode : "print",',
-'    parameters : {',
-'        P_BRAND_CODE : $v("P165_BRAND_CODE"),',
-'        P_BRAND_NAME : $v("P165_BRAND_NAME"),',
-'        P_BRAND_ID : $v("P165_BRAND_ID")',
-'    },',
-'    spinnerEnabled : true',
+'$(document).off(''keydown.p165keyevents'');',
+'$("#option").on("dialogbeforeclose", function(event, ui) {',
+'    setTimeout(mapP165Keys, 0);',
 '});'))
 );
 wwv_flow_imp_page.create_page_da_event(

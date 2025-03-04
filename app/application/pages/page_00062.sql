@@ -16,19 +16,14 @@ wwv_flow_imp_page.create_page(
 ,p_name=>'POS Cashiering - Company Check Payment'
 ,p_alias=>'POS-CASHIERING-COMPANY-CHECK-PAYMENT'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'POS Cashiering - Company Check Payment'
+,p_step_title=>'Company Check'
 ,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let lastSelected = null;',
 'const p62KeyMap = {',
-'    home: (v) => {',
-'        console.log("to-top");',
-'        $("#to-top").trigger("click");',
-'    },',
-'    end: (v) => {',
-'        console.log("to bottom");',
-'        $("#to-bottom").trigger("click");',
+'    enter: (v) => {',
+'        $("#enter").trigger("click");',
 '    }',
 '}',
 '',
@@ -44,12 +39,13 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_javascript_code_onload=>'mapP62Keys();'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.t-Dialog-body{',
-'    label, input {',
-'        font-size: 1.125rem;',
-'    }',
-'    padding-bottom: 0;',
-'    padding-left: 0;',
+'.t-Dialog-body {',
+'    background-color: #056AC8;',
+'    color: white;',
+'}',
+'',
+'.t-Dialog-body label, .t-Dialog-body input {',
+'    font-size: 1.125rem;',
 '}',
 '',
 '.apex-item-display-only {',
@@ -59,8 +55,23 @@ wwv_flow_imp_page.create_page(
 '',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.t-Form-fieldContainer.rel-col, .t-Form-fieldContainer.rel-col .t-Form-label {',
+'    flex-direction: row !important;',
+'    color: white;',
+'}',
+'',
+'.t-Form-fieldContainer .t-Form-labelContainer {',
+'    padding-block-end: var(--ut-field-padding-y, .5rem) !important;',
+'}',
+'',
+'.t-Form-fieldContainer .t-Form-inputContainer {',
+'    padding-block-start: var(--ut-field-padding-y, .5rem) !important;',
+'    justify-content: end;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
+,p_dialog_width=>'350'
 ,p_dialog_chained=>'N'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'11'
@@ -69,11 +80,13 @@ wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(44523304058129220)
 ,p_button_sequence=>60
 ,p_button_name=>'Enter'
+,p_button_static_id=>'enter'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'Enter'
 ,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'hiddenbtn'
 ,p_grid_new_row=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
@@ -96,7 +109,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_is_required=>true
 ,p_item_sequence=>40
 ,p_prompt=>'Amount:'
-,p_format_mask=>'FML999G999G999G999G990D00'
+,p_format_mask=>'999G999G999G999G990D00'
 ,p_display_as=>'NATIVE_NUMBER_FIELD'
 ,p_cSize=>12
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
@@ -188,7 +201,7 @@ wwv_flow_imp_page.create_page_da_action(
 '',
 '        INSERT INTO NPT014 ',
 '                     (PAYMENT_METHOD_ID, AMOUNT, USER_CREATED, DATE_CREATED)',
-'              VALUES (2, v_amount, :apex_user, SYSDATE);',
+'              VALUES (2, v_amount, v(''APP_USER''), SYSDATE);',
 '',
 '        :P62_URL := apex_page.get_url(',
 '            p_page        => 43,',
@@ -201,9 +214,8 @@ wwv_flow_imp_page.create_page_da_action(
 '            p_n001            => v_amount ',
 '        );',
 '',
-'        INSERT INTO NPT014 ',
-'                     (PAYMENT_METHOD_ID, AMOUNT, USER_CREATED, DATE_CREATED)',
-'              VALUES (2, v_amount, :apex_user, SYSDATE);',
+'        INSERT INTO NPT014 (PAYMENT_METHOD_ID, AMOUNT, USER_CREATED, DATE_CREATED)',
+'              VALUES (2, v_amount, v(''APP_USER''), SYSDATE);',
 '    END IF;',
 '',
 'END;',

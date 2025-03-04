@@ -67,7 +67,7 @@ wwv_flow_imp_page.create_page(
 '',
 '',
 '.t-Form-labelContainer .t-Form-label::before {',
-'    content: '''' !important; /* Remove the asterisk before the label */',
+'    content: '''' !important;',
 '}',
 '',
 '',
@@ -78,6 +78,10 @@ wwv_flow_imp_page.create_page(
 '',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.t-Form-error, .a-Form-error{',
+'    font-weight: bold;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
@@ -156,7 +160,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
-,p_cMaxlength=>1
+,p_cMaxlength=>2
 ,p_colspan=>5
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
@@ -294,8 +298,6 @@ wwv_flow_imp_page.create_page_process(
 'BEGIN',
 '    INSERT INTO NPM003 (ACCOUNT_TYPE_CODE, ACCOUNT_TYPE_NAME, DESCRIPTION, USER_CREATED, DATE_CREATE, USER_UPDATE, DATE_UPDATED)',
 '    VALUES (:P206_ACCOUNT_TYPE_CODE, :P206_ACCOUNT_TYPE_NAME, :P206_DESCRIPTION, v(''APP_USER''), SYSTIMESTAMP, v(''APP_USER''), SYSTIMESTAMP);',
-'',
-'    apex_util.set_session_state(''SUCCESS_MSG'', ''Account Type added successfully'');',
 'END;'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
@@ -307,7 +309,8 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
-,p_attribute_02=>'Y'
+,p_attribute_01=>'P206_ACCOUNT_TYPE_CODE'
+,p_attribute_02=>'N'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>42746132989111439
 );

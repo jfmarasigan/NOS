@@ -53,6 +53,10 @@ wwv_flow_imp_page.create_page(
 '        } else {',
 '            return false;',
 '        }',
+'});',
+'',
+'$("#P216_PAYMENT_TERMS_NAME").on("focus", function () {',
+'   $(this).select();',
 '});'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP216Keys();',
@@ -81,7 +85,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.t-Form-labelContainer .t-Form-label::before {',
-'    content: '''' !important; /* Remove the asterisk before the label */',
+'    content: '''' !important;',
 '}',
 '',
 '',
@@ -92,6 +96,10 @@ wwv_flow_imp_page.create_page(
 '',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.t-Form-error, .a-Form-error{',
+'    font-weight: bold;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_attributes=>'close: function() { customEvent(''customDialogClose'', {modalPageId: ''MODAL_CLOSE_FIXED''});} '
@@ -234,7 +242,6 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(43476874620172806)
 ,p_name=>'P216_PAYMENT_TERMS_NAME'
 ,p_source_data_type=>'VARCHAR2'
-,p_is_required=>true
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_imp.id(43436752291832047)
 ,p_item_source_plug_id=>wwv_flow_imp.id(43436752291832047)
@@ -313,9 +320,7 @@ wwv_flow_imp_page.create_page_process(
 '    DAYS = NVL(:P216_DAYS, 0),',
 '    USER_UPDATE = v(''APP_USER''), ',
 '    DATE_UPDATED = SYSTIMESTAMP',
-'WHERE PAYMENT_TERMS_ID = :P216_PAYMENT_TERMS_ID;',
-'',
-'apex_util.set_session_state(''SUCCESS_MSG'', ''Payment Term updated successfully'');'))
+'WHERE PAYMENT_TERMS_ID = :P216_PAYMENT_TERMS_ID;'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>43477321593172811
@@ -326,7 +331,8 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
-,p_attribute_02=>'Y'
+,p_attribute_01=>'P216_PAYMENT_TERMS_ID'
+,p_attribute_02=>'N'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>43477480437172812
 );

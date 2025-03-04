@@ -50,48 +50,6 @@ wwv_flow_imp_page.create_page(
 '    text-align: start;',
 '}',
 '',
-'/* #discountGrid table,',
-'#discountGrid tr,',
-'#discountGrid td,',
-'#discountGrid th {',
-'    font-size: 1.125rem;',
-'}',
-'#departmentGrid table,',
-'#departmentGrid tr,',
-'#departmentGrid td,',
-'#departmentGrid th {',
-'    font-size: 1.125rem;',
-'}',
-'#sicGrid table,',
-'#sicGrid tr,',
-'#sicGrid td,',
-'#sicGrid th {',
-'    font-size: 1.125rem;',
-'}',
-'#classGrid table,',
-'#classGrid tr,',
-'#classGrid td,',
-'#classGrid th {',
-'    font-size: 1.125rem;',
-'}',
-'#ICL-grid table,',
-'#ICL-grid tr,',
-'#ICL-grid td,',
-'#ICL-grid th {',
-'    font-size: 1.125rem;',
-'}',
-'#ISL-grid table,',
-'#ISL-grid tr,',
-'#ISL-grid td,',
-'#ISL-grid th {',
-'    font-size: 1.125rem;',
-'}',
-'#IDL-grid table,',
-'#IDL-grid tr,',
-'#IDL-grid td,',
-'#IDL-grid th {',
-'    font-size: 1.125rem;',
-'} */',
 '#discount-list table,',
 '#discount-list tr,',
 '#discount-list td,',
@@ -99,20 +57,10 @@ wwv_flow_imp_page.create_page(
 '    font-size: 1.125rem;',
 '}',
 '',
-'/* #departmentGrid_ig, #sicGrid_ig, #classGrid_ig {',
-'    border: 0.0625rem solid #046BC8;',
-'} */',
-'',
 '.a-GV-table .a-GV-cell, th.a-GV-header {',
 '    border-color: #046BC8;',
 '}',
 '',
-'/* #departmentGrid .a-GV-header a, #departmentGrid th.a-GV-header,',
-'#sicGrid .a-GV-header a, #sicGrid th.a-GV-header,',
-'#classGrid .a-GV-header a, #classGrid th.a-GV-header {',
-'    background-color: #046BC8;',
-'    color: white;',
-'} */',
 '.a-GV-header a, th.a-GV-header {',
 '    background-color: #046BC8;',
 '    color: white;',
@@ -143,13 +91,7 @@ wwv_flow_imp_page.create_page_plug(
 '    DISCOUNT_DESC,',
 '    TYPE,',
 '    CATEGORY,',
-'    -- CASE',
-'    --     WHEN TYPE = ''Percent'' THEN',
-'    --     ''Percent - '' ||  DISCOUNT_VALUE || ''%''',
-'    --     ELSE ',
-'    --     ''Fixed - '' || DISCOUNT_VALUE',
-'    -- END AS DISCOUNT_VALUE,',
-'    DATE_FROM || '' - '' || DATE_TO AS EFFECTIVE_DATE_RANGE',
+'    TO_CHAR(DATE_FROM, ''MM/DD/YYYY'') || '' - '' || TO_CHAR(DATE_TO, ''MM/DD/YYYY'') AS EFFECTIVE_DATE_RANGE',
 'FROM NPT008'))
 ,p_is_editable=>false
 ,p_plug_source_type=>'NATIVE_FORM'
@@ -193,28 +135,40 @@ wwv_flow_imp_page.create_page_plug(
 '    IF :P69_CATEGORY = ''Class'' THEN',
 '        return q''~',
 '            SELECT',
-'                CLASS_ID AS ID, CLASS_NAME AS SUBCATEGORY, DISCOUNT_VALUE AS VALUE ',
+'                CLASS_ID AS ID, CLASS_NAME AS SUBCATEGORY, ',
+'                CASE :P69_TYPE',
+'                WHEN ''Fixed'' THEN TO_CHAR(DISCOUNT_VALUE, ''99G999G999G999D00'')',
+'                WHEN ''Percent'' THEN DISCOUNT_VALUE || ''%''',
+'                END AS VALUE ',
 '            FROM NPT030',
 '            WHERE DISCOUNT_ID = :P69_DISCOUNT_ID',
 '        ~'';',
 '    ELSIF :P69_CATEGORY = ''Department'' THEN',
 '        return q''~',
 '            SELECT',
-'                DEPT_ID AS ID, DEPT_NAME AS SUBCATEGORY, DISCOUNT_VALUE AS VALUE ',
+'                DEPT_ID AS ID, DEPT_NAME AS SUBCATEGORY,',
+'                CASE :P69_TYPE',
+'                WHEN ''Fixed'' THEN TO_CHAR(DISCOUNT_VALUE, ''99G999G999G999D00'')',
+'                WHEN ''Percent'' THEN DISCOUNT_VALUE || ''%''',
+'                END AS VALUE ',
 '            FROM NPT029',
 '            WHERE DISCOUNT_ID = :P69_DISCOUNT_ID',
 '        ~'';',
 '    ELSE',
 '        return q''~',
 '            SELECT',
-'                SIC_ID AS ID, SIC_NAME AS SUBCATEGORY, DISCOUNT_VALUE AS VALUE ',
+'                SIC_ID AS ID, SIC_NAME AS SUBCATEGORY, ',
+'                CASE :P69_TYPE',
+'                WHEN ''Fixed'' THEN TO_CHAR(DISCOUNT_VALUE, ''99G999G999G999D00'')',
+'                WHEN ''Percent'' THEN DISCOUNT_VALUE || ''%''',
+'                END AS VALUE ',
 '            FROM NPT028',
 '            WHERE DISCOUNT_ID = :P69_DISCOUNT_ID',
 '        ~'';',
 '    END IF;',
 'END; '))
 ,p_plug_source_type=>'NATIVE_IG'
-,p_ajax_items_to_submit=>'P69_DISCOUNT_ID'
+,p_ajax_items_to_submit=>'P69_DISCOUNT_ID,P69_TYPE'
 ,p_prn_units=>'INCHES'
 ,p_prn_paper_size=>'LETTER'
 ,p_prn_width=>11
@@ -295,7 +249,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'VALUE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'VALUE'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_NUMBER_FIELD'
 ,p_heading=>'Value'
@@ -306,7 +260,9 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_04=>'decimal'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
 ,p_filter_lov_type=>'NONE'
 ,p_use_as_row_header=>false
 ,p_enable_sort_group=>true
@@ -514,6 +470,44 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_02=>'VALUE'
 ,p_attribute_04=>'Y'
 ,p_attribute_05=>'PLAIN'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(70298782470784940)
+,p_name=>'Percent Header'
+,p_event_sequence=>10
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+,p_display_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_display_when_cond=>'P69_TYPE'
+,p_display_when_cond2=>'Percent'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70298895853784941)
+,p_event_id=>wwv_flow_imp.id(70298782470784940)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'$("#discount-list_ig_grid_vc .a-GV-header").eq(1).html("Percent Value")'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(70298955081784942)
+,p_name=>'Fixed Header'
+,p_event_sequence=>20
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+,p_display_when_type=>'VAL_OF_ITEM_IN_COND_EQ_COND2'
+,p_display_when_cond=>'P69_TYPE'
+,p_display_when_cond2=>'Fixed'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70299036982784943)
+,p_event_id=>wwv_flow_imp.id(70298955081784942)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'$("#discount-list_ig_grid_vc .a-GV-header").eq(1).html("Fixed Value")'
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(22268736414028346)

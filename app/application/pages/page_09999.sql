@@ -97,7 +97,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_template=>wwv_flow_imp.id(4254771719084042)
 ,p_plug_display_sequence=>10
 ,p_location=>null
-,p_region_image=>'#APP_FILES#img/login-img.png'
+,p_region_image=>'#APP_FILES#images/CPI_logo.jpg'
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'expand_shortcuts', 'N',
   'output_as', 'HTML')).to_clob

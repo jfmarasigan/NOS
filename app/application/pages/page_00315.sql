@@ -41,6 +41,30 @@ wwv_flow_imp_page.create_page(
 'mapP7Keys();',
 '',
 '',
+'const fullDate = [''P315_INPUT_RELEASE_DATE''];',
+'',
+'fullDate.forEach((fieldId) => {',
+'  const dateField = document.getElementById(fieldId);',
+'',
+'  dateField.addEventListener(''input'', function () {',
+'    let value = dateField.value.replace(/\D/g, '''');',
+'',
+'    if (value.length > 2) {',
+'      value = value.substring(0, 2) + ''/'' + value.substring(2);',
+'    }',
+'    if (value.length > 5) {',
+'      value = value.substring(0, 5) + ''/'' + value.substring(5, 9);',
+'    }',
+'',
+'    if (value.length > 10) {',
+'      value = value.substring(0, 10);',
+'    }',
+'',
+'    dateField.value = value;',
+'  });',
+'});',
+'',
+'',
 '// MM validation',
 'setInputFilter($("#P315_MM"), function(value) {',
 '    return /^([1-9]|1[012]|^$)$/.test(value); // accepts empty string',
@@ -132,7 +156,6 @@ wwv_flow_imp_page.create_page(
 '',
 '#P315_INPUT_RELEASE_DATE {',
 '    height: 2.3rem;',
-'    text-align: center;',
 '}',
 '',
 '.hide {',
@@ -140,8 +163,9 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.error-msg {',
-'    color: red;',
+'    color: #FFD700;',
 '    font-size: 0.8rem;',
+'    font-weight: 600;',
 '    padding-left: 0.7rem;',
 '    padding-bottom: 0.2rem;',
 '}'))
@@ -171,7 +195,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_name=>'Release Gift Certificate'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4329702440084182)
-,p_plug_display_sequence=>70
+,p_plug_display_sequence=>60
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT',
@@ -306,7 +330,7 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(30917001875029537)
 ,p_name=>'P315_SUCCESS_MSG'
-,p_item_sequence=>40
+,p_item_sequence=>50
 ,p_item_default=>'Test from release success'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
@@ -324,6 +348,13 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_is_persistent=>'N'
 ,p_protection_level=>'S'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(77936050784036544)
+,p_name=>'P315_IS_DONATION'
+,p_item_sequence=>40
+,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
 );
 wwv_flow_imp_page.create_page_computation(
@@ -380,12 +411,16 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'',
 'var errorArea = document.getElementById("errorArea")',
 '',
 'var date_regex = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|3[01])[- \/.](19|20)\d\d$/;',
 'var date_regex_1 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-9]|2[09])[- \/.](19|20)\d\d$/;',
-'var date_regex_2 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[12][0-8]|2[08])[- \/.](19|20)\d\d$/;',
+'var date_regex_2 = /^(0?[1-9]|1[012])[- \/.](0?[1-9]|[1][0-9]|2[08])[- \/.](19|20)\d\d$/;',
+'',
+'var date = $(''#P315_INPUT_RELEASE_DATE'').val();',
+'var inputDate = new Date(date); //dd-mm-YYYY',
+'var today = new Date();',
+'today.setHours(0,0,0,0);',
 '',
 'if ($(''#P315_INPUT_RELEASE_DATE'').val().substring(0,3) === "02/" || $(''#P315_INPUT_RELEASE_DATE'').val().substring(0,2) === "2/") {',
 '    var year = '''';',
@@ -396,8 +431,16 @@ wwv_flow_imp_page.create_page_da_action(
 '    }',
 '    if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {',
 '        if (date_regex_1.test($(''#P315_INPUT_RELEASE_DATE'').val()) || $(''#P315_INPUT_RELEASE_DATE'').val().trim().length === 0) {',
-'            errorArea.style.display = "none"',
-'            return true;',
+'            ',
+'            // check if input date greater than current date',
+'            if (inputDate <= today) {',
+'                errorArea.style.display = "none"',
+'                return true;',
+'            } else {',
+'                errorArea.style.display = "block"',
+'                document.getElementById("P315_INPUT_RELEASE_DATE").focus();',
+'                return false;',
+'            }',
 '        } else {',
 '            errorArea.style.display = "block"',
 '            document.getElementById("P315_INPUT_RELEASE_DATE").focus();',
@@ -405,8 +448,16 @@ wwv_flow_imp_page.create_page_da_action(
 '        }',
 '    } else {',
 '        if (date_regex_2.test($(''#P315_INPUT_RELEASE_DATE'').val()) || $(''#P315_INPUT_RELEASE_DATE'').val().trim().length === 0) {',
-'            errorArea.style.display = "none"',
-'            return true;',
+'            ',
+'            // check if input date greater than current date',
+'            if (inputDate <= today) {',
+'                errorArea.style.display = "none"',
+'                return true;',
+'            } else {',
+'                errorArea.style.display = "block"',
+'                document.getElementById("P315_INPUT_RELEASE_DATE").focus();',
+'                return false;',
+'            }',
 '        } else {',
 '            errorArea.style.display = "block"',
 '            document.getElementById("P315_INPUT_RELEASE_DATE").focus();',
@@ -415,8 +466,16 @@ wwv_flow_imp_page.create_page_da_action(
 '    }',
 '} else {',
 '    if (date_regex.test($(''#P315_INPUT_RELEASE_DATE'').val()) || $(''#P315_INPUT_RELEASE_DATE'').val().trim().length === 0) {',
-'        errorArea.style.display = "none"',
-'        return true;',
+'        ',
+'        // check if input date greater than current date',
+'        if (inputDate <= today) {',
+'            errorArea.style.display = "none"',
+'            return true;',
+'        } else {',
+'            errorArea.style.display = "block"',
+'            document.getElementById("P315_INPUT_RELEASE_DATE").focus();',
+'            return false;',
+'        }',
 '    } else {',
 '        errorArea.style.display = "block"',
 '        document.getElementById("P315_INPUT_RELEASE_DATE").focus();',
@@ -434,18 +493,32 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DECLARE',
 'BEGIN',
-'    UPDATE NPT020',
-'        SET RELEASE_DATE = :P315_INPUT_RELEASE_DATE,',
-'            GC_STATUS_ID = 2,',
-'            USER_UPDATE = :app_user, ',
-'            DATE_UPDATED = SYSDATE',
-'        WHERE GIFT_CERTIFICATE_ID = :P315_GET_SELECTED_GC_NO;',
+'',
+'    IF :P315_IS_DONATION = ''Y'' THEN ',
+'        UPDATE NPT020',
+'            SET RELEASE_DATE = :P315_INPUT_RELEASE_DATE,',
+'                GC_STATUS_ID = (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''RELEASED''),',
+'                USER_UPDATE = :app_user, ',
+'                DATE_UPDATED = SYSDATE',
+'            WHERE npt020.DONATION_GC_NO = :P315_GET_SELECTED_GC_NO;',
+'    ELSE ',
+'        UPDATE NPT020',
+'            SET RELEASE_DATE = :P315_INPUT_RELEASE_DATE,',
+'                GC_STATUS_ID = (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''RELEASED''),',
+'                USER_UPDATE = :app_user, ',
+'                DATE_UPDATED = SYSDATE',
+'            WHERE npt020.REGULAR_GC_NO = :P315_GET_SELECTED_GC_NO;',
+'    END IF;',
 '',
 '    ',
 '    apex_util.set_session_state(''SUCCESS_MSG'', ''Successfully released gift certificate'');',
 'END;',
 ''))
-,p_attribute_02=>'P315_INPUT_RELEASE_DATE'
+,p_attribute_02=>'P315_INPUT_RELEASE_DATE,P315_IS_DONATION'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
 ,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'

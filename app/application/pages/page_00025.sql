@@ -107,6 +107,19 @@ wwv_flow_imp_page.create_page(
 '',
 '#updateInventory .a-GV-bdy {',
 '    height: calc(75vh - 2.5625rem) !important;',
+'}',
+'',
+'.a-GV-table tr.is-selected .a-GV-cell{',
+'    background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused{',
+'    border-color: black;',
+'    box-shadow: 0 0 0 1px black inset;',
+'}',
+'',
+'.a-GV-header, .a-GV-headerGroup, .a-GV-cell {',
+'    border-color: rgba(0,0,0,1) !important;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
@@ -124,37 +137,54 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_column=>2
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'WITH update_balance AS (',
+'    SELECT DISTINCT',
+'        nit4.item_id,',
+'        nit1.item_num AS "Item Number",',
+'        nit2.upc AS UPC,',
+'        nim22.brand_name AS "Brand Name",',
+'        nit1.item_desc AS "Item Description",   ',
+'        TO_CHAR(',
+'            ROUND((SELECT SUM(nit02.quantity * nit04.qty) FROM NIT002 nit02, NIT004 nit04 WHERE nit02.item_id = nit04.item_id AND nit02.uom_id = nit04.uom_id AND nit04.item_id = nit1.item_id) / (SELECT MAX(quantity) FROM NIT002 WHERE item_id = nit1.i'
+||'tem_id), 2),',
+'             ''99990.99'') AS "Total # of CS",',
+'        0 + (SELECT SUM(nit02.quantity * nit04.qty) FROM NIT002 nit02, NIT004 nit04 WHERE nit02.item_id = nit04.item_id AND nit02.uom_id = nit04.uom_id AND nit04.item_id = nit1.item_id) AS "Total # of Units"',
+'    FROM',
+'        NIT001 nit1,',
+'        NIT002 nit2,',
+'        NIT004 nit4,',
+'        NIM022 nim22',
+'    WHERE',
+'        nit4.uom_id = (SELECT MAX(uom_id) FROM NIT004 WHERE item_id = nit4.item_id) AND',
+'        nit4.item_id = nit2.item_id AND ',
+'        nit4.uom_id = nit2.uom_id AND',
+'        nit4.item_id = nit1.item_id AND   ',
+'        nit1.brand_id = nim22.brand_id AND',
+'        (',
+'           (:P25_ITEM_NUM_QUERY IS NOT NULL AND lower(nit1.item_num) LIKE ''%'' || lower(:P25_ITEM_NUM_QUERY) || ''%'' )',
+'',
+'        OR (:P25_ITEM_NUM_QUERY IS NULL AND :P25_UPC_QUERY IS NOT NULL AND nit2.upc LIKE ''%'' || :P25_UPC_QUERY || ''%'' )',
+'',
+'        OR (:P25_ITEM_NUM_QUERY IS NULL AND :P25_UPC_QUERY IS NULL AND :P25_ITEM_DESC_QUERY IS NOT NULL AND lower(nit1.item_desc) LIKE ''%'' || lower(:P25_ITEM_DESC_QUERY) || ''%'')',
+'',
+'        )',
+'    ORDER BY',
+'        CASE WHEN :P25_ITEM_NUM_QUERY IS NOT NULL AND lower(nit1.item_num) LIKE lower(:P25_ITEM_NUM_QUERY) || ''%'' THEN 0 ELSE 1 END,',
+'        CASE WHEN :P25_ITEM_DESC_QUERY IS NOT NULL AND lower(nit1.item_desc) LIKE lower(:P25_ITEM_DESC_QUERY) || ''%'' THEN 0 ELSE 1 END,',
+'        CASE WHEN :P25_ITEM_NUM_QUERY IS NOT NULL THEN nit1.item_num',
+'             WHEN :P25_ITEM_DESC_QUERY IS NOT NULL THEN nit1.item_desc END ASC',
+')',
+'',
 'SELECT',
-'    nit4.item_id,',
-'    nit1.item_num AS "Item Number",',
-'    nit2.upc AS UPC,',
-'    nim22.brand_name AS "Brand Name",',
-'    nit1.item_desc AS "Item Description",   ',
-'    TO_CHAR(',
-'        ROUND((SELECT SUM(nit02.quantity * nit04.qty) FROM NIT002 nit02, NIT004 nit04 WHERE nit02.item_id = nit04.item_id AND nit02.uom_id = nit04.uom_id AND nit04.item_id = nit1.item_id) / (SELECT MAX(quantity) FROM NIT002 WHERE item_id = nit1.item_'
-||'id), 2),',
-'         ''99999.99'') AS "Total # of CS",',
-'    0 + (SELECT SUM(nit02.quantity * nit04.qty) FROM NIT002 nit02, NIT004 nit04 WHERE nit02.item_id = nit04.item_id AND nit02.uom_id = nit04.uom_id AND nit04.item_id = nit1.item_id) AS "Total # of Units"',
+'    item_id,',
+'    "Item Number",',
+'    UPC,',
+'    "Brand Name",',
+'    "Item Description",   ',
+'    "Total # of CS",',
+'    "Total # of Units"',
 'FROM',
-'    NIT001 nit1,',
-'    NIT002 nit2,',
-'    NIT004 nit4,',
-'    NIM022 nim22',
-'WHERE',
-'    nit4.uom_id = (SELECT MAX(uom_id) FROM NIT004 WHERE item_id = nit4.item_id) AND',
-'    nit4.warehouse_id = (SELECT MAX(warehouse_id) FROM NIT004 WHERE item_id = nit4.item_id) AND',
-'    nit4.item_id = nit2.item_id AND ',
-'    nit4.uom_id = nit2.uom_id AND',
-'    nit4.item_id = nit1.item_id AND   ',
-'    nit1.brand_id = nim22.brand_id AND',
-'    (',
-'       (:P25_ITEM_NUM_QUERY IS NOT NULL AND lower(nit1.item_num) LIKE ''%'' || lower(:P25_ITEM_NUM_QUERY) || ''%'' )',
-'',
-'    OR (:P25_ITEM_NUM_QUERY IS NULL AND :P25_UPC_QUERY IS NOT NULL AND nit2.upc LIKE ''%'' || :P25_UPC_QUERY || ''%'' )',
-'',
-'    OR (:P25_ITEM_NUM_QUERY IS NULL AND :P25_UPC_QUERY IS NULL AND :P25_ITEM_DESC_QUERY IS NOT NULL AND lower(nit1.item_desc) LIKE ''%'' || lower(:P25_ITEM_DESC_QUERY) || ''%'')',
-'',
-'    );'))
+'    update_balance'))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P25_ITEM_NUM_QUERY,P25_UPC_QUERY,P25_ITEM_DESC_QUERY'
 ,p_prn_units=>'INCHES'
@@ -592,6 +622,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>D</u> - Quantity Details Update History'
 ,p_warn_on_unsaved_changes=>null
+,p_button_condition=>'has_access(:APP_USER, 6, 50) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
@@ -896,6 +929,8 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'$("#s").trigger("click")'
+,p_server_condition_type=>'EXISTS'
+,p_server_condition_expr1=>'SELECT * FROM NIT004'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(10905888003353225)
@@ -950,6 +985,26 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let url = $v("P25_PREPARED_URL");',
 'apex.navigation.redirect(url);'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(51981841735682909)
+,p_name=>'New_1'
+,p_event_sequence=>100
+,p_triggering_element_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_element=>'window'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'apexafterclosedialog'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(51981920907682910)
+,p_event_id=>wwv_flow_imp.id(51981841735682909)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(7172322635817535)
 );
 wwv_flow_imp.component_end;
 end;

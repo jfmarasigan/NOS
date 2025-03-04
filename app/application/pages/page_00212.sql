@@ -38,7 +38,11 @@ wwv_flow_imp_page.create_page(
 '            p212KeyMap[key]();',
 '        }',
 '    });',
-'}'))
+'}',
+'',
+'$("#P212_ORGANIZATION_TYPE_NAME").on("focus", function () {',
+'   $(this).select();',
+'});'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP212Keys();',
 '$x(''P212_ORGANIZATION_TYPE_NAME'').focus();'))
@@ -66,7 +70,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.t-Form-labelContainer .t-Form-label::before {',
-'    content: '''' !important; /* Remove the asterisk before the label */',
+'    content: '''' !important;',
 '}',
 '',
 '',
@@ -77,6 +81,10 @@ wwv_flow_imp_page.create_page(
 '',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.t-Form-error, .a-Form-error{',
+'    font-weight: bold;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_attributes=>'close: function() { customEvent(''customDialogClose'', {modalPageId: ''MODAL_CLOSE_FIXED''});} '
@@ -253,11 +261,10 @@ wwv_flow_imp_page.create_page_process(
 'UPDATE NPM010',
 'SET',
 '    ORGANIZATION_TYPE_NAME = :P212_ORGANIZATION_TYPE_NAME, ',
+'    DESCRIPTION = :P212_DESCRIPTION,',
 '    USER_UPDATE = v(''APP_USER''), ',
 '    DATE_UPDATED = SYSTIMESTAMP',
-'WHERE ORGANIZATION_TYPE_ID = :P212_ORGANIZATION_TYPE_ID;',
-'',
-'apex_util.set_session_state(''SUCCESS_MSG'', ''Organization Type updated successfully'');'))
+'WHERE ORGANIZATION_TYPE_ID = :P212_ORGANIZATION_TYPE_ID;'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>43090938267119044
@@ -268,7 +275,8 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
-,p_attribute_02=>'Y'
+,p_attribute_01=>'P212_ORGANIZATION_TYPE_ID'
+,p_attribute_02=>'N'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>43091065523119045
 );

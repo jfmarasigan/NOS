@@ -17,6 +17,7 @@ wwv_flow_imp_page.create_page(
 ,p_alias=>'POS-CASHIERING-CLOSING-BALANCE'
 ,p_page_mode=>'MODAL'
 ,p_step_title=>'CLOSING BALANCE'
+,p_warn_on_unsaved_changes=>'N'
 ,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -32,7 +33,6 @@ wwv_flow_imp_page.create_page(
 '    },',
 '',
 '    escape: (v) => {',
-'        console.log("to-top");',
 '        $("#esc").trigger("click");',
 '    },',
 '',
@@ -76,7 +76,6 @@ wwv_flow_imp_page.create_page(
 '.apex-item-display-only {',
 '    font-size: 1.125rem;',
 '    font-family: Arial;',
-'   // white-space: nowrap;',
 '    font-weight: 100;',
 '    color: white;',
 '}',
@@ -124,9 +123,9 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.apex-page-success {',
-'    background-color: #ffcccc !important; /* Light red background */',
-'    border-color: #ff0000 !important;     /* Red border */',
-'    color: #ff0000 !important;           /* Red text */',
+'    background-color: #ffcccc !important;',
+'    border-color: #ff0000 !important;     ',
+'    color: #ff0000 !important;        ',
 '}',
 ''))
 ,p_step_template=>wwv_flow_imp.id(4218915405083976)

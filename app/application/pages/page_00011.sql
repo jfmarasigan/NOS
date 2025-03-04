@@ -26,9 +26,7 @@ wwv_flow_imp_page.create_page(
 '    enter: (v) => {',
 '        $("#search").trigger("click");',
 '    }',
-'',
 '}',
-'',
 '',
 'function mapP11Keys() {',
 '    $(document).off(''keydown.p11keyevents'');',
@@ -42,7 +40,6 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '$x(''P11_ITEM_NUM'').focus();',
-'',
 ''))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP11Keys();',
@@ -56,12 +53,12 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.t-Dialog-body{',
-'    label, input {',
-'        font-size: 1.125rem;',
-'    }',
-'//    background-color: #046BC8;',
 '    padding-bottom: 0;',
 '    padding-left: 0;',
+'}',
+'',
+'.t-Dialog-body label, .t-Dialog-body input {',
+'    font-size: 1.125rem;',
 '}',
 '',
 '.t-Region-body{',
@@ -75,9 +72,12 @@ wwv_flow_imp_page.create_page(
 '    margin-left: 0;',
 '}',
 '',
-'',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.apex-item-text {',
+'    background-color: white;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'

@@ -16,7 +16,7 @@ wwv_flow_imp_page.create_page(
 ,p_name=>'Credit Memo Search'
 ,p_alias=>'CREDIT-MEMO-SEARCH'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Credit Memo Search'
+,p_step_title=>'Search'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_file_urls=>'#APP_FILES#js/cmn#MIN#.js'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -36,11 +36,41 @@ wwv_flow_imp_page.create_page(
 '        }',
 '    });',
 '}'))
-,p_javascript_code_onload=>'mapP123Keys();'
+,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'mapP123Keys();',
+'setInputFilter($("#P123_CM_NO"), function(value) {  return /^\d*$/.test(value);}, "Only digits are allowed");',
+'',
+'const dateFields = [''P123_CM_DATE''];',
+'',
+'dateFields.forEach((fieldId) => {',
+'  const dateField = document.getElementById(fieldId);',
+'',
+'  dateField.addEventListener(''input'', function () {',
+'    let value = dateField.value.replace(/\D/g, '''');',
+'',
+'    if (value.length > 2) {',
+'      value = value.substring(0, 2) + ''/'' + value.substring(2);',
+'    }',
+'    if (value.length > 5) {',
+'      value = value.substring(0, 5) + ''/'' + value.substring(5, 9);',
+'    }',
+'',
+'    if (value.length > 10) {',
+'      value = value.substring(0, 10);',
+'    }',
+'',
+'    dateField.value = value;',
+'  });',
+'});',
+''))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.format-size{',
 '    font-size: 1.125rem;',
 '    font-family: Arial;',
+'}',
+'',
+'.text_field{',
+'    background-color: white;',
 '}',
 '',
 '.err{',
@@ -50,6 +80,11 @@ wwv_flow_imp_page.create_page(
 '',
 '#next{',
 '    display: none;',
+'}',
+'',
+'#P123_DBA .apex-item-text {',
+'    border: none;',
+'    font-size: 1.125rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
@@ -72,17 +107,20 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P123_DBA'
 ,p_item_sequence=>40
 ,p_prompt=>'<span class="format-size">Search for DBA:</span>'
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_display_as=>'NATIVE_AUTO_COMPLETE'
+,p_lov=>'SELECT DBA FROM NPT009'
 ,p_cSize=>30
 ,p_tag_css_classes=>'format-size'
 ,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
 ,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-,p_attribute_02=>'N'
-,p_attribute_04=>'TEXT'
-,p_attribute_05=>'BOTH'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'CONTAINS_IGNORE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'7'
+,p_attribute_09=>'1'
+,p_attribute_10=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(43415044747652506)
@@ -106,6 +144,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P123_CM_DATE'
 ,p_item_sequence=>60
 ,p_prompt=>'<span class="format-size">CM Date:</span>'
+,p_placeholder=>'MM/DD/YYYY'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_tag_css_classes=>'format-size'
@@ -195,9 +234,10 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_event_id=>wwv_flow_imp.id(43415526964652511)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'jQuery($v("P123_FOCUS")).trigger("focus").select();'
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SET_FOCUS'
+,p_affected_elements_type=>'JAVASCRIPT_EXPRESSION'
+,p_affected_elements=>'$v("P123_FOCUS")'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(43415930024652515)

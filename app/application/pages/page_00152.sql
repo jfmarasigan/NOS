@@ -73,7 +73,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(41225298359388934)
 ,p_item_source_plug_id=>wwv_flow_imp.id(41225298359388934)
-,p_source=>'COLLECTION_ID'
+,p_source=>'COLLECTION_TYPE_ID'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_is_persistent=>'N'
@@ -85,7 +85,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P152_COLLECTION_TYPE_NAME'
 ,p_source_data_type=>'VARCHAR2'
 ,p_is_required=>true
-,p_item_sequence=>20
+,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_imp.id(41225298359388934)
 ,p_item_source_plug_id=>wwv_flow_imp.id(41225298359388934)
 ,p_prompt=>'Collection Type Name:'
@@ -109,7 +109,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P152_COLLECTION_TYPE_DESCRIPTION'
 ,p_source_data_type=>'VARCHAR2'
 ,p_is_required=>true
-,p_item_sequence=>30
+,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_imp.id(41225298359388934)
 ,p_item_source_plug_id=>wwv_flow_imp.id(41225298359388934)
 ,p_prompt=>'Description:'
@@ -128,27 +128,16 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_04=>'TEXT'
 ,p_attribute_05=>'BOTH'
 );
-wwv_flow_imp_page.create_page_da_event(
- p_id=>wwv_flow_imp.id(41223888077388920)
-,p_name=>'On press Enter'
-,p_event_sequence=>10
-,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P152_COLLECTION_NAME'
-,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'this.browserEvent.key?.toLowerCase() === ''enter'';'
-,p_bind_type=>'bind'
-,p_execution_type=>'IMMEDIATE'
-,p_bind_event_type=>'keyup'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(41223979792388921)
-,p_event_id=>wwv_flow_imp.id(41223888077388920)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'Y'
-,p_action=>'NATIVE_SET_FOCUS'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P152_COLLECTION_DESC'
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(67459274595426309)
+,p_name=>'P152_PROCESS'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_imp.id(41225298359388934)
+,p_source=>'CASE WHEN :P152_COLLECTION_ID_1 IS NULL THEN 1 ELSE 2 END'
+,p_source_type=>'EXPRESSION'
+,p_source_language=>'PLSQL'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(41226188138388943)
@@ -181,7 +170,7 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'INSERT INTO NPM015(collection_type_name, collection_type_description,user_created,date_created,',
 '                    user_updated, date_updated)',
-'            VALUES(:P152_COLLECTION_NAME, :P152_COLLECTION_DESC, :APP_USER, SYSDATE,',
+'            VALUES(:P152_COLLECTION_TYPE_NAME, :P152_COLLECTION_TYPE_DESCRIPTION, :APP_USER, SYSDATE,',
 '                    :APP_USER, SYSDATE);'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
@@ -198,7 +187,7 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'UPDATE NPM015 SET collection_type_name = :P152_COLLECTION_TYPE_NAME, collection_type_description = :P152_COLLECTION_TYPE_DESCRIPTION,',
 '                    user_updated = :APP_USER, date_updated = SYSDATE',
-'WHERE collection_id = :P152_COLLECTION_ID_1;'))
+'WHERE collection_type_id = :P152_COLLECTION_ID_1;'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'P152_COLLECTION_ID_1'
@@ -210,7 +199,8 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_sequence=>30
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
-,p_process_name=>'New'
+,p_process_name=>'Close Dialog'
+,p_attribute_01=>'P152_PROCESS'
 ,p_attribute_02=>'Y'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>41224966634388931

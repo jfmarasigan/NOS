@@ -37,7 +37,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '.t-Dialog-body{',
 '    padding-top: 0;',
-'    background-color: #226597;',
+'    background-color: #056BC9;',
 '}',
 '.t-Form-labelContainer{',
 '    text-align: start;',

@@ -1,0 +1,5 @@
+https://github.com/daust/JasperReportsIntegration
+
+1. cmd to this directory
+2. gradlew.bat build
+3. war file is inside a zip file in the build directory

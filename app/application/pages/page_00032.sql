@@ -105,17 +105,16 @@ wwv_flow_imp_page.create_page(
 '',
 '#otas table, ',
 '#otas tr, ',
-'#otas td{',
+'#otas td {',
 '    font-size: 1.125rem;',
-'    border: 0.0625rem solid black;',
 '}',
+'',
 '#otas th {',
 '    font-size: 1rem;',
 '}',
-'    ',
 '',
-'.a-GV-table .a-GV-cell, th.a-GV-header{',
-'    border-color: black;',
+'.a-IG, .a-GV-table .a-GV-cell, th.a-GV-header {',
+'    border-color: black !important;',
 '}',
 '',
 '.btns {',
@@ -145,12 +144,12 @@ wwv_flow_imp_page.create_page(
 '',
 '/* set modal header to a different background and font color */',
 '.ui-dialog .ui-dialog-titlebar {',
-'    background-color: #226597;',
+'    background-color: #056AC8;',
 '    color: white;',
 '}',
 '',
 '#search-dialog{',
-'    background-color: #226597;',
+'    background-color: #056AC8;',
 '}',
 '.ui-dialog-titlebar-close{',
 '    display: none;',
@@ -178,9 +177,18 @@ wwv_flow_imp_page.create_page(
 '    font-weight: 700;',
 '    line-height: normal;',
 '}',
-' ',
+'.ui-dialog-titlebar{',
+'    border: none;',
+'} ',
 'body{',
 '    background-color: rgb(30, 58, 138);',
+'}',
+'.is-selected td{',
+'    background-color: #F5DC1C !important;',
+'}',
+'',
+'.is-focused {',
+'    box-shadow: 0 0 0 1px black inset !important;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
@@ -238,7 +246,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Code'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>20
+,p_display_sequence=>40
 ,p_value_alignment=>'LEFT'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>false
@@ -270,7 +278,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Name'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>30
+,p_display_sequence=>50
 ,p_value_alignment=>'LEFT'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
@@ -300,7 +308,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_session_state_data_type=>'VARCHAR2'
 ,p_is_query_only=>true
 ,p_item_type=>'NATIVE_HIDDEN'
-,p_display_sequence=>10
+,p_display_sequence=>30
 ,p_attribute_01=>'Y'
 ,p_use_as_row_header=>true
 ,p_enable_sort_group=>false

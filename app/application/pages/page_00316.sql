@@ -203,6 +203,15 @@ wwv_flow_imp_page.create_page(
 '',
 '.a-GV-header-sort {',
 '    display: none;',
+'}',
+'',
+'.a-GV-table tr.is-selected {',
+'    --a-gv-background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused',
+'{',
+'    box-shadow: inset 0 0 0 1px black;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
@@ -216,37 +225,60 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'table'
 ,p_region_template_options=>'#DEFAULT#:margin-top-md'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>60
+,p_plug_display_sequence=>70
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT ',
-'    ROWNUM AS "Primary Key",',
-'    npt020.GIFT_CERTIFICATE_ID AS "GC_NO",',
+'    -- Create ranking for sorting order',
+'    CASE ',
+'        WHEN extract(year from npt020.ISSUE_DATE) = :P316_ISSUE_YR THEN TO_CHAR(npt020.GIFT_CERTIFICATE_ID - 1000000000000)',
+'        WHEN npt020.GIFT_CERTIFICATE_ID = :P316_GC_NO THEN 2 || npt020.GIFT_CERTIFICATE_ID',
+'        WHEN npt020.GIFT_CERTIFICATE_ID LIKE :P316_GC_NO || ''%'' THEN 3 || npt020.GIFT_CERTIFICATE_ID',
+'        WHEN npt020.GIFT_CERTIFICATE_ID LIKE ''%'' || :P316_GC_NO || ''%'' THEN 4 || npt020.GIFT_CERTIFICATE_ID',
+'        ELSE 5 || npt020.GIFT_CERTIFICATE_ID',
+'    END AS "Primary Key",',
+'    npt020.REGULAR_GC_NO AS "GC_NO",',
 '    (SELECT "GC_TYPE_CODE" ',
 '        FROM NPM013 npm013 ',
 '        WHERE npm013."GC_TYPE_ID" = npt020."GC_TYPE_ID") AS "TYPE",',
-'    npt020.ISSUE_DATE AS "ISSUE_DATE",',
-'    npt020.EXPIRY_DATE AS "EXPIRY_DATE",',
-'    npt020.RELEASE_DATE AS "RELEASED_DATE",',
-'    npt020.REDEEMED_DATE AS "REDEEMED_DATE",',
-'    npt020.AMOUNT AS "AMOUNT",',
-'    npt020.BALANCE AS "BALANCE",',
+'    TO_CHAR(npt020.ISSUE_DATE, ''MM/DD/YYYY'') AS "ISSUE_DATE",',
+'    TO_CHAR(npt020.EXPIRY_DATE, ''MM/DD/YYYY'') AS "EXPIRY_DATE",',
+'    TO_CHAR(npt020.RELEASE_DATE, ''MM/DD/YYYY'') AS "RELEASED_DATE",',
+'    TO_CHAR(npt020.REDEEMED_DATE, ''MM/DD/YYYY'') AS "REDEEMED_DATE",',
+'    CASE ',
+'        WHEN npt020.AMOUNT = 0 THEN ''0.00''',
+'        ELSE TO_CHAR(npt020.AMOUNT, ''999,999,999.00'')',
+'    END AS "AMOUNT",',
+'    CASE ',
+'        WHEN npt020.BALANCE = 0 THEN ''0.00''',
+'        ELSE TO_CHAR(npt020.BALANCE, ''999,999,999.00'')',
+'    END AS "BALANCE",',
 '    npt020.RECIPIENT AS "RECIPIENT",',
 '    npm014.GC_STATUS_NAME AS "STATUS"',
 'FROM',
 '    NPT020 npt020',
 'JOIN ',
 '    NPM014 npm014 ON npt020.GC_STATUS_ID = npm014.GC_STATUS_ID',
+'JOIN ',
+'    NPM013 npm013 ON npt020.GC_TYPE_ID = npm013.GC_TYPE_ID',
 'WHERE ',
-'',
-'    -- check if SEARCH BY ISSUE YEAR has a value',
-'    (:P316_ISSUE_YR IS NOT NULL OR :P316_ISSUE_YR != '''') AND',
-'        extract(year from npt020.ISSUE_DATE) = :P316_ISSUE_YR',
-'    OR',
-'',
-'    -- else, check if SEARCH BY GC NO has a value',
-'       (:P316_ISSUE_YR IS NULL AND (:P316_GC_NO IS NOT NULL OR :P316_GC_NO != '''')) AND',
-'        npt020.GIFT_CERTIFICATE_ID = :P316_GC_NO;'))
+'    npm013.DONATION = ''N'' AND ',
+'    (',
+'        (',
+'            (:P316_ISSUE_YR IS NOT NULL OR :P316_ISSUE_YR != '''') AND',
+'            extract(year from npt020.ISSUE_DATE) = :P316_ISSUE_YR',
+'        )',
+'        OR',
+'        (',
+'            (:P316_ISSUE_YR IS NULL AND (:P316_GC_NO IS NOT NULL OR :P316_GC_NO != '''')) AND',
+'            (',
+'                npt020.GIFT_CERTIFICATE_ID = :P316_GC_NO',
+'                OR npt020.GIFT_CERTIFICATE_ID LIKE :P316_GC_NO || ''%''',
+'                OR npt020.GIFT_CERTIFICATE_ID LIKE ''%'' || :P316_GC_NO || ''%''',
+'                OR npt020.GIFT_CERTIFICATE_ID LIKE ''%'' || :P316_GC_NO',
+'            )',
+'        )',
+'    )'))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P316_ISSUE_YR,P316_GC_NO'
 ,p_prn_units=>'INCHES'
@@ -312,7 +344,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'RELEASED_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'RELEASED_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_DATE_PICKER_APEX'
 ,p_heading=>'Released Date'
@@ -327,8 +359,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_11=>'Y'
 ,p_is_required=>false
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_enable_sort_group=>true
@@ -343,7 +377,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'REDEEMED_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'REDEEMED_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Redeemed Date'
@@ -353,8 +387,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>false
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_enable_sort_group=>true
@@ -398,15 +434,24 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'Primary Key'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'Primary Key'
-,p_data_type=>'NUMBER'
-,p_session_state_data_type=>'VARCHAR2'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
-,p_item_type=>'NATIVE_HIDDEN'
+,p_item_type=>'NATIVE_TEXT_FIELD'
+,p_heading_alignment=>'LEFT'
 ,p_display_sequence=>10
-,p_attribute_01=>'Y'
+,p_value_alignment=>'LEFT'
+,p_attribute_05=>'BOTH'
+,p_is_required=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>false
+,p_enable_sort_group=>true
+,p_enable_control_break=>true
+,p_enable_hide=>true
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
@@ -416,7 +461,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'AMOUNT'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'AMOUNT'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_NUMBER_FIELD'
 ,p_heading=>'Amount'
@@ -427,7 +472,9 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_04=>'decimal'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
 ,p_filter_lov_type=>'NONE'
 ,p_use_as_row_header=>false
 ,p_enable_sort_group=>true
@@ -442,7 +489,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'EXPIRY_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'EXPIRY_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Expiry Date'
@@ -452,8 +499,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_enable_sort_group=>true
@@ -488,9 +537,8 @@ wwv_flow_imp_page.create_region_column(
 '    };',
 '    return options;',
 '}'))
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -500,7 +548,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'BALANCE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'BALANCE'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Balance'
@@ -510,7 +558,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_enable_sort_group=>true
@@ -525,7 +576,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'ISSUE_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'ISSUE_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Issue Date'
@@ -535,8 +586,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_enable_sort_group=>true
@@ -672,8 +725,11 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_view_id=>wwv_flow_imp.id(46324946796427553)
 ,p_display_seq=>10
 ,p_column_id=>wwv_flow_imp.id(31990222620279521)
-,p_is_visible=>true
+,p_is_visible=>false
 ,p_is_frozen=>false
+,p_sort_order=>1
+,p_sort_direction=>'ASC'
+,p_sort_nulls=>'LAST'
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(46329013203427607)
@@ -698,9 +754,6 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_column_id=>wwv_flow_imp.id(53947732429897465)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_sort_order=>1
-,p_sort_direction=>'DESC'
-,p_sort_nulls=>'LAST'
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(54519128087552314)
@@ -729,7 +782,7 @@ wwv_flow_imp_page.create_ig_report_column(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(46260428363944458)
 ,p_plug_name=>'Buttons'
-,p_plug_display_sequence=>70
+,p_plug_display_sequence=>80
 ,p_plug_grid_row_css_classes=>'buttons-row'
 ,p_location=>null
 ,p_ai_enabled=>false
@@ -828,6 +881,13 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(32479840719104106)
 ,p_name=>'P316_PREPARED_URL'
+,p_item_sequence=>60
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(77935691429036540)
+,p_name=>'P316_IS_DONATION'
 ,p_item_sequence=>50
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
@@ -867,6 +927,15 @@ wwv_flow_imp_page.create_page_computation(
 ,p_computation_type=>'EXPRESSION'
 ,p_computation_language=>'PLSQL'
 ,p_computation=>'Null'
+);
+wwv_flow_imp_page.create_page_computation(
+ p_id=>wwv_flow_imp.id(77935733113036541)
+,p_computation_sequence=>50
+,p_computation_item=>'P316_IS_DONATION'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'EXPRESSION'
+,p_computation_language=>'PLSQL'
+,p_computation=>'''N'''
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(31988209992279501)
@@ -979,11 +1048,11 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    :P316_PREPARED_URL := apex_page.get_url(',
 '       p_page   => 314,',
-'       p_items  => ''P314_GET_SELECTED_GC_NO'',',
-'       p_values => :P316_SELECTED_GC_NO',
+'       p_items  => ''P314_GET_SELECTED_GC_NO,P314_IS_DONATION'',',
+'       p_values => :P316_SELECTED_GC_NO || '','' || :P316_IS_DONATION',
 '     );',
 'END;'))
-,p_attribute_02=>'P316_SELECTED_GC_NO'
+,p_attribute_02=>'P316_SELECTED_GC_NO,P316_IS_DONATION'
 ,p_attribute_03=>'P316_PREPARED_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
@@ -1048,9 +1117,9 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'BEGIN',
 '    :P316_PREPARED_URL := apex_page.get_url(',
-'       p_page   => 318',
-'    --    p_items  => ''P314_GET_SELECTED_GC_NO'',',
-'    --    p_values => :P316_SELECTED_GC_NO',
+'       p_page   => 318,',
+'       p_items  => ''P318_FROM_PAGE'',',
+'       p_values => ''STATUS''',
 '     );',
 'END;'))
 ,p_attribute_03=>'P316_PREPARED_URL'
@@ -1068,6 +1137,31 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let url = $v("P316_PREPARED_URL");',
 'apex.navigation.redirect(url);'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(70200044877373443)
+,p_name=>'Closed or Cancelled'
+,p_event_sequence=>60
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(27635499826681010)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'apexafterclosecanceldialog'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70200296975373445)
+,p_event_id=>wwv_flow_imp.id(70200044877373443)
+,p_event_result=>'TRUE'
+,p_action_sequence=>50
+,p_execute_on_page_init=>'N'
+,p_name=>'To select 1st cell of the table'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'setTimeout(() => {',
+'  $( document ).ready(function() {',
+'    $(".a-GV-cell").first().trigger("click");',
+' });',
+'}, "500");'))
 );
 wwv_flow_imp.component_end;
 end;

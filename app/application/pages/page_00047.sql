@@ -48,12 +48,13 @@ wwv_flow_imp_page.create_page(
 '',
 '$(''#P47_CODE'').focus();'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.t-Dialog-body{',
-'    label, input {',
-'        font-size: 1.125rem;',
-'    }',
-'    padding-bottom: 0;',
-'    padding-left: 0;',
+'.t-Dialog-body {',
+'    background-color: #056AC8;',
+'    color: white;',
+'}',
+'',
+'.t-Dialog-body label, .t-Dialog-body input {',
+'    font-size: 1.125rem;',
 '}',
 '',
 '.apex-item-display-only {',
@@ -63,8 +64,27 @@ wwv_flow_imp_page.create_page(
 '',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.t-Form-fieldContainer.rel-col, .t-Form-fieldContainer.rel-col .t-Form-label {',
+'    flex-direction: row !important;',
+'    color: white;',
+'}',
+'',
+'.t-Form-fieldContainer .t-Form-labelContainer {',
+'    padding-block-end: var(--ut-field-padding-y, .5rem) !important;',
+'}',
+'',
+'.t-Form-fieldContainer .t-Form-inputContainer {',
+'    padding-block-start: var(--ut-field-padding-y, .5rem) !important;',
+'    justify-content: end;',
+'}',
+'',
+'.t-Form-inputContainer .t-Form-error, .t-Form-inputContainer .t-Form-error div {',
+'    color: #FFD700;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
+,p_dialog_width=>'350'
 ,p_dialog_chained=>'N'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'11'
@@ -106,7 +126,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>50
 ,p_prompt=>'Number:'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
-,p_cSize=>30
+,p_cSize=>20
 ,p_cMaxlength=>12
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
@@ -127,6 +147,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P47_AMOUNT'
 ,p_item_sequence=>40
 ,p_prompt=>'Amount:'
+,p_format_mask=>'999G999G999G999G990D00'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
@@ -141,28 +162,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>30
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
-);
-wwv_flow_imp_page.create_page_validation(
- p_id=>wwv_flow_imp.id(27426245107078112)
-,p_validation_name=>'Validate Code'
-,p_validation_sequence=>10
-,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'    v_code NUMBER;',
-'BEGIN',
-'    SELECT gift_certificate_id INTO v_code',
-'      FROM NPT020',
-'     WHERE gift_certificate_id = :P47_CODE',
-'       AND amount = balance;',
-'    --  EXCEPTION WHEN NO_DATA_FOUND THEN ',
-'    --  RAISE_APPLICATION_ERROR(-20001, ''Gift Code is not existing.'');',
-'END;'))
-,p_validation_type=>'PLSQL_ERROR'
-,p_error_message=>'Gift Code is not existing.'
-,p_always_execute=>'Y'
-,p_associated_item=>wwv_flow_imp.id(18712932765804242)
-,p_error_display_location=>'INLINE_WITH_FIELD'
-,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(25489624945440402)
@@ -220,18 +219,20 @@ wwv_flow_imp_page.create_page_da_action(
 '      FROM NPT020',
 '     WHERE gift_certificate_id = :P47_CODE;',
 '',
-'    IF v_balance > v_amount THEN',
+'    IF v_balance >= v_amount THEN',
 '        apex_collection.add_member(',
 '            p_collection_name => ''PAYMENT'',',
 '            p_c001            => ''Gift Certificate'',',
 '            p_n001            => v_amount, ',
 '            p_n002            => v_amount, ',
 '            p_n003            => v_amount, ',
-'            p_n004            => TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, ''$'', ''''), '','', ''''))',
+'            p_n004            => TO_CHAR(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, ''$'', ''''), '','', '''')), ''FM999999990.00'')',
 '        ); ',
 '',
 '        UPDATE NPT020',
-'        SET balance = balance - v_amount',
+'        SET balance = balance - v_amount,',
+'            gc_status_id = (SELECT gc_status_id FROM NPM014',
+'                            WHERE gc_status_name = ''Redeemed'')',
 '        WHERE gift_certificate_id = :P47_CODE;',
 '',
 '        :P47_URL := apex_page.get_url(',
@@ -246,8 +247,9 @@ wwv_flow_imp_page.create_page_da_action(
 '        );',
 '',
 '        UPDATE NPT020',
-'        SET balance = 0',
-'        WHERE gift_certificate_id = :P47_CODE;',
+'        SET balance = 0,',
+'            gc_status_id = 3',
+'      WHERE gift_certificate_id = :P47_CODE;',
 '    END IF;',
 '',
 'END;'))
@@ -279,59 +281,6 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_DIALOG_CLOSE'
 );
 wwv_flow_imp_page.create_page_da_event(
- p_id=>wwv_flow_imp.id(25490306922440409)
-,p_name=>'Console Log'
-,p_event_sequence=>20
-,p_bind_type=>'bind'
-,p_bind_event_type=>'ready'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(25490489563440410)
-,p_event_id=>wwv_flow_imp.id(25490306922440409)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_CLEAR'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P47_AMOUNT'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(38714342508254524)
-,p_event_id=>wwv_flow_imp.id(25490306922440409)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var amount = $v(''P47_AMOUNT'');  ',
-'console.log(''P47_AMOUNT:'', amount);'))
-);
-wwv_flow_imp_page.create_page_da_event(
- p_id=>wwv_flow_imp.id(38713977693254520)
-,p_name=>'Set Value on Amount'
-,p_event_sequence=>30
-,p_bind_type=>'bind'
-,p_bind_event_type=>'ready'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(38714098141254521)
-,p_event_id=>wwv_flow_imp.id(38713977693254520)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P47_AMOUNT'
-,p_attribute_01=>'SQL_STATEMENT'
-,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT SUM(n005)',
-'FROM apex_collections',
-'WHERE collection_name = ''PURCHASE'''))
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(44275884212177742)
 ,p_name=>'Check if GCode Exists'
 ,p_event_sequence=>40
@@ -353,9 +302,13 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>'SQL_STATEMENT'
 ,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT count(balance)',
-'      FROM NPT020',
-'     WHERE gift_certificate_id = :P47_CODE',
-'       AND balance = amount;'))
+'FROM NPT020 a, NPM014 b',
+'WHERE a.balance = a.amount',
+'  AND  a.gc_status_id = b.gc_status_id',
+'  AND a.gift_certificate_id = :P47_CODE',
+'  AND b.gc_status_name <> ''Redeemed''',
+'  AND a.expiry_date >= TRUNC(SYSDATE);',
+''))
 ,p_attribute_07=>'P47_CODE'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'

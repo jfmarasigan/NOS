@@ -69,11 +69,58 @@ wwv_flow_imp_page.create_page(
 'setTitle("Collections and Outstanding (Collections Entry) - Bank Name Utilities")',
 '',
 ' $( document ).ready(function() {',
-'  $(".a-GV-cell").first().trigger("click");',
+'    $(".a-GV-cell").first().trigger("click");',
+'',
+'    const currentDate = new Date();',
+'    const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");',
+'',
+'    $(document).on("keydown", function(event) {',
+'        if($("#option").is(":visible")) {',
+'            if(event.key === ''A'' || event.key === ''a'') {',
+'                generateReport("BANK_UTIL_PDF_COURIER_NEW", "pdf", {',
+'                    fileName: `ItemMasterfileBankUtilities_${formattedDate}.pdf`,',
+'                    mode : "print",',
+'                    parameters : {',
+'                        P_BANK_CODE : $v("P177_BANK_CODE"),',
+'                        P_BANK_NAME : $v("P177_BANK_NAME"),',
+'                        P_BANK_ID : $v("P177_BANK_ID"),',
+'                        P_BANK_ROUTE_NO : $v("P177_BANK_ROUTE_NO")',
+'                    },',
+'                    spinnerEnabled : true',
+'                });',
+'            } else if (event.key === "B" || event.key === ''b'') {',
+'                generateReport("BANK_UTIL_PDF_ARIAL", "pdf", {',
+'                    fileName: `ItemMasterfileBankUtilities_${formattedDate}.pdf`,',
+'                    mode : "print",',
+'                    parameters : {',
+'                        P_BANK_CODE : $v("P177_BANK_CODE"),',
+'                        P_BANK_NAME : $v("P177_BANK_NAME"),',
+'                        P_BANK_ID : $v("P177_BANK_ID"),',
+'                        P_BANK_ROUTE_NO : $v("P177_BANK_ROUTE_NO")',
+'                    },',
+'                    spinnerEnabled : true',
+'                });',
+'            }',
+'        }',
+'    });',
 ' });',
 ''))
 ,p_css_file_urls=>'#APP_FILES#css/items_masterfile_css#MIN#.css'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.ui-dialog {',
+'    background-color: #056AC8;',
+'}',
+'',
+'.t-Region#dot,',
+'.t-Region#graphic {',
+'    border-radius: 0 !important;',
+'    font-size: 1.125rem;',
+'    border: none !important;',
+'    outline: none !important;',
+'    background-color: #056AC8 !important; ',
+'    color: white !important;',
+'}',
+'',
 'body, #button-region {',
 '    background-color: rgb(30, 58, 138);',
 '}',
@@ -138,6 +185,28 @@ wwv_flow_imp_page.create_page(
 '',
 '.a-GV-hdr .a-GV-table {',
 '    width: 100% !important;',
+'}',
+'',
+'#bank_list .a-GV-table colgroup col:nth-child(1) {',
+'    width: 8rem;',
+'}',
+'',
+'#bank_list .a-GV-table colgroup col:nth-child(2) {',
+'    width: 30rem;',
+'}',
+'',
+'#bank_list .a-GV-table colgroup col:nth-child(3),',
+'#bank_list .a-GV-table colgroup col:nth-child(4),',
+'#bank_list .a-GV-table colgroup col:nth-child(5) {',
+'    width: 10rem;',
+'}',
+'',
+'#bank_list .a-GV-table colgroup col:nth-child(6) {',
+'    width: 13rem;',
+'}',
+'',
+'#bank_list .a-GV-table colgroup col:nth-child(7) {',
+'    width: 12rem;',
 '}',
 '',
 '.ui-widget-overlay.ui-front {',
@@ -569,6 +638,47 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_column_id=>wwv_flow_imp.id(40582690398970206)
 ,p_is_visible=>true
 ,p_is_frozen=>false
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(58205671586110819)
+,p_plug_name=>'Printing Options'
+,p_region_name=>'option'
+,p_region_template_options=>'js-modal:js-dialog-nosize'
+,p_plug_template=>wwv_flow_imp.id(4296448473084118)
+,p_plug_display_sequence=>30
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_location=>null
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(58205885849110821)
+,p_plug_name=>'Dotmatrix'
+,p_region_name=>'dot'
+,p_parent_plug_id=>wwv_flow_imp.id(58205671586110819)
+,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--hiddenOverflow:margin-bottom-none'
+,p_plug_template=>wwv_flow_imp.id(4319920360084164)
+,p_plug_display_sequence=>20
+,p_location=>null
+,p_plug_source=>'A - Dotmatrix'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(58205966733110822)
+,p_plug_name=>'Graphic Printer'
+,p_region_name=>'graphic'
+,p_parent_plug_id=>wwv_flow_imp.id(58205671586110819)
+,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--hiddenOverflow:margin-bottom-none'
+,p_plug_template=>wwv_flow_imp.id(4319920360084164)
+,p_plug_display_sequence=>30
+,p_location=>null
+,p_plug_source=>'B - Graphic Printer'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(230450796188492669)
@@ -1083,26 +1193,26 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'click'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(40547913357929657)
+ p_id=>wwv_flow_imp.id(58206034657110823)
 ,p_event_id=>wwv_flow_imp.id(40547453757929656)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_OPEN_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(58205671586110819)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(40547913357929657)
+,p_event_id=>wwv_flow_imp.id(40547453757929656)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'const currentDate = new Date();',
-'const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");',
-'',
-'generateReport("BANK_UTIL_PDF_COURIER_NEW", "pdf", { ',
-'    fileName: `ItemMasterfileBankUtilities_${formattedDate}.pdf`,',
-'    mode : "print",',
-'    parameters : {',
-'        P_BANK_CODE : $v("P177_BANK_CODE"),',
-'        P_BANK_NAME : $v("P177_BANK_NAME"),',
-'        P_BANK_ID : $v("P177_BANK_ID"),',
-'        P_BANK_ROUTE_NO : $v("P177_BANK_ROUTE_NO")',
-'    },',
-'    spinnerEnabled : true',
+'$(document).off(''keydown.p177keyevents'');',
+'$("#option").on("dialogbeforeclose", function(event, ui) {',
+'    setTimeout(mapP177Keys, 0);',
 '});'))
 );
 wwv_flow_imp_page.create_page_da_event(

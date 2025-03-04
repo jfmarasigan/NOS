@@ -18,8 +18,37 @@ wwv_flow_imp_page.create_page(
 ,p_page_mode=>'MODAL'
 ,p_step_title=>'Incoming Shipment'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'function mapP17Keys(){',
+'    $(document).on(''keydown.p17keyevents'', (ev) => {',
+'',
+'        const excludedKeys = [',
+'            "PageUp", ',
+'            "PageDown",  ',
+'            "ArrowUp", ',
+'            "ArrowDown"',
+'        ];',
+'        if (!excludedKeys.includes(ev.key)) {',
+'            apex.navigation.dialog.close(true);',
+'            $(document).off(''keydown.p17keyevents'');',
+'        }',
+'',
+'    });',
+'}',
+''))
+,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'mapP17Keys();',
+'apex.region("table1").focus();'))
 ,p_css_file_urls=>'#APP_FILES#css/ibi-css#MIN#.css'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.a-GV-table tr.is-selected .a-GV-cell {',
+'     background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused {',
+'     box-shadow: 0 0 0 1px black inset !important;',
+'}',
+'',
 '.t-Dialog-body {',
 '    background-color: #056AC8;',
 '    padding: 1rem .75rem .25rem .75rem !important;',
@@ -86,7 +115,7 @@ wwv_flow_imp_page.create_page_plug(
 'SELECT',
 '    nit024.po_id AS "PO_NUMBER",',
 '    nit006.vendor_code AS "SUPPLIER",',
-'    nit012.eta_date AS "ETA_DATE",',
+'    TO_CHAR(nit012.eta_date, ''MM/DD/YYYY'') AS "ETA_DATE",',
 '    TO_CHAR((nit013.qty * nit002.quantity) / (SELECT MAX(nit2.quantity) FROM NIT002 nit2 WHERE nit2.item_id = :P17_ITEM_ID), ''9999999.99'') || '' '' || nim026.uom_code AS "QTY_UOM",',
 '    NULL AS "UNIT_COST_UOM",',
 '    TO_CHAR(nit013.internal_price, ''9999999.99'') AS "INTERNAL_PRICE",',
@@ -167,7 +196,7 @@ wwv_flow_imp_page.create_region_column(
 '}'))
 ,p_enable_sort_group=>false
 ,p_enable_hide=>false
-,p_is_primary_key=>false
+,p_is_primary_key=>true
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
 );
@@ -207,7 +236,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'ETA_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'ETA_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_DATE_PICKER_APEX'
 ,p_heading=>'ETA'
@@ -221,8 +250,12 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_09=>'N'
 ,p_attribute_11=>'Y'
 ,p_is_required=>true
-,p_enable_filter=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function( options ) {',
@@ -282,7 +315,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_value_alignment=>'LEFT'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<div style="display: flex; justify-content: space-between;">',
-'    <span><b>$</b></span>',
+'    <span></span>',
 '    <span>&INTERNAL_PRICE./&INT_UOM_CODE.</span>',
 '</div>'))
 ,p_use_as_row_header=>false
@@ -365,7 +398,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_value_alignment=>'LEFT'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<div style="display: flex; justify-content: space-between;">',
-'    <span><b>$</b></span>',
+'    <span></span>',
 '    <span>&LANDED_COST.</span>',
 '</div>'))
 ,p_filter_is_required=>false

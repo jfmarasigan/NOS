@@ -49,6 +49,19 @@ wwv_flow_imp_page.create_page(
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.a-GV-header-sort{',
 '    display: none!important;',
+'}',
+'',
+'.a-GV-table tr.is-selected .a-GV-cell{',
+'    background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused{',
+'    border-color: black;',
+'    box-shadow: 0 0 0 1px black inset;',
+'}',
+'',
+'.a-GV-header, .a-GV-headerGroup, .a-GV-cell {',
+'    border-color: rgba(0,0,0,1) !important;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'45rem'

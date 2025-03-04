@@ -175,7 +175,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
-,p_cMaxlength=>50
+,p_cMaxlength=>20
 ,p_field_template=>wwv_flow_imp.id(4382365997084278)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:margin-right-sm'
 ,p_is_persistent=>'N'

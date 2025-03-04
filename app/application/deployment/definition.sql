@@ -43,6 +43,10 @@ wwv_flow_imp_shared.create_install(
 'end;',
 '',
 ''))
+,p_prompt_sub_string_03=>'Y'
+,p_install_prompt_03=>'default or sit?'
+,p_required_free_kb=>100
+,p_required_sys_privs=>'CREATE PROCEDURE:CREATE TABLE:CREATE TRIGGER:CREATE VIEW'
 );
 wwv_flow_imp.component_end;
 end;

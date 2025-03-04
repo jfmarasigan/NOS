@@ -16,8 +16,8 @@ wwv_flow_imp_page.create_page(
 ,p_name=>'Refund Reason'
 ,p_alias=>'REFUND-REASON'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Refund Reason'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_file_urls=>'#APP_FILES#js/cmn#MIN#.js'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let lastSelected = null;',
 'const p97KeyMap = {',
@@ -39,9 +39,12 @@ wwv_flow_imp_page.create_page(
 '    });',
 '}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'setTitle("Refund");',
 'mapP97Keys();',
-''))
+'if($v("P97_PARENT") == 96){',
+'    $(''.ui-dialog-title'', parent ? parent.document : document).text(''Refund Reason'')',
+'} else if($v("P97_PARENT") == 122){',
+'    $(''.ui-dialog-title'', parent ? parent.document : document).text(''Return Reason'')',
+'}'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.format-size{',
 '    color: white;',
@@ -99,6 +102,13 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_02=>'VALUE'
 ,p_attribute_04=>'Y'
 ,p_attribute_05=>'PLAIN'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(55724040772275642)
+,p_name=>'P97_PARENT'
+,p_item_sequence=>10
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(18425904742367831)

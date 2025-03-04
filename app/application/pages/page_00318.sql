@@ -86,15 +86,40 @@ wwv_flow_imp_page.create_page(
 '',
 '',
 '',
-'// MM/DD/YYYY validation',
-'setInputFilter($("#P318_DATE_FROM"), function(value) {',
-'    return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only',
-'}, "Invalid input. Date should be in MM/DD/YYYY format.");',
+'// // MM/DD/YYYY validation',
+'// setInputFilter($("#P318_DATE_FROM"), function(value) {',
+'//     return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only',
+'// }, "Invalid input. Date should be in MM/DD/YYYY format.");',
 '',
-'// MM/DD/YYYY validation',
-'setInputFilter($("#P318_DATE_TO"), function(value) {',
-'    return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only',
-'}, "Invalid input. Date should be in MM/DD/YYYY format.");'))
+'// // MM/DD/YYYY validation',
+'// setInputFilter($("#P318_DATE_TO"), function(value) {',
+'//     return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only',
+'// }, "Invalid input. Date should be in MM/DD/YYYY format.");',
+'',
+'',
+'',
+'const fullDate = [''P318_DATE_FROM'', ''P318_DATE_TO''];',
+'',
+'fullDate.forEach((fieldId) => {',
+'  const dateField = document.getElementById(fieldId);',
+'',
+'  dateField.addEventListener(''input'', function () {',
+'    let value = dateField.value.replace(/\D/g, '''');',
+'',
+'    if (value.length > 2) {',
+'      value = value.substring(0, 2) + ''/'' + value.substring(2);',
+'    }',
+'    if (value.length > 5) {',
+'      value = value.substring(0, 5) + ''/'' + value.substring(5, 9);',
+'    }',
+'',
+'    if (value.length > 10) {',
+'      value = value.substring(0, 10);',
+'    }',
+'',
+'    dateField.value = value;',
+'  });',
+'});'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.t-Dialog-header {',
 '    background-color: #056AC8;',
@@ -184,7 +209,6 @@ wwv_flow_imp_page.create_page(
 '',
 '#P318_DATE_FROM,',
 '#P318_DATE_TO {',
-'    text-align: center;',
 '    font-size: 1.125rem;',
 '    height: 2rem;',
 '}',
@@ -236,7 +260,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'from-id'
 ,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--noUI:t-Region--hiddenOverflow:margin-top-none'
 ,p_plug_template=>wwv_flow_imp.id(4319920360084164)
-,p_plug_display_sequence=>40
+,p_plug_display_sequence=>50
 ,p_plug_new_grid_row=>false
 ,p_plug_new_grid_column=>false
 ,p_location=>null
@@ -264,7 +288,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_name=>'Release Gift Certificate'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4329702440084182)
-,p_plug_display_sequence=>80
+,p_plug_display_sequence=>70
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT',
@@ -279,7 +303,7 @@ wwv_flow_imp_page.create_page_plug(
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(27781920204535928)
-,p_button_sequence=>70
+,p_button_sequence=>60
 ,p_button_name=>'Search'
 ,p_button_static_id=>'enter'
 ,p_button_action=>'DEFINED_BY_DA'
@@ -379,6 +403,13 @@ wwv_flow_imp_page.create_page_item(
 ,p_protection_level=>'S'
 ,p_attribute_01=>'Y'
 ,p_ai_enabled=>false
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(77933176348036515)
+,p_name=>'P318_FROM_PAGE'
+,p_item_sequence=>40
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
 );
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(33724584461036902)
@@ -572,13 +603,21 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'BEGIN',
-'    :P318_PREPARED_URL := apex_page.get_url(',
-'       p_page   => 308,',
-'       p_items  => ''P308_DATE_FROM,P308_DATE_TO'',',
-'       p_values => :P318_DATE_FROM || '','' || :P318_DATE_TO',
-'     );',
+'    IF :P318_FROM_PAGE = ''DONATION'' THEN ',
+'        :P318_PREPARED_URL := apex_page.get_url(',
+'           p_page   => 363,',
+'           p_items  => ''P363_DATE_FROM,P363_DATE_TO'',',
+'           p_values => :P318_DATE_FROM || '','' || :P318_DATE_TO',
+'         );',
+'    ELSE ',
+'        :P318_PREPARED_URL := apex_page.get_url(',
+'           p_page   => 308,',
+'           p_items  => ''P308_DATE_FROM,P308_DATE_TO'',',
+'           p_values => :P318_DATE_FROM || '','' || :P318_DATE_TO',
+'         );',
+'     END IF;',
 'END;'))
-,p_attribute_02=>'P318_DATE_FROM,P318_DATE_TO'
+,p_attribute_02=>'P318_DATE_FROM,P318_DATE_TO,P318_FROM_PAGE'
 ,p_attribute_03=>'P318_PREPARED_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'

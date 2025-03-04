@@ -29,20 +29,28 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_javascript_code_onload=>'setModalTitle();'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.t-Dialog{',
-'    background-color: #226597;',
-'}',
+'/* .t-Dialog{',
+'    background-color: #056AC8;',
+'} */',
 '.white-text{',
-'    color:white;',
+'    color:white !important;',
+'    height: 1px;',
+'    padding: 0px;',
 '}',
-'.btns{',
+'.white-text:hover {',
+'    outline: none;',
+'    border: none;',
+'    box-shadow: none;',
+'}',
+'/* .btns{',
 '    font-size: 1.125rem;',
-'}',
+'} */',
 '.text-general{',
 '    font-size: 1.125rem;',
 '}',
 '.t-Form-label{',
 '    font-size: 1.125rem;',
+'    /* color:white; */',
 '}',
 ''))
 ,p_page_template_options=>'#DEFAULT#'
@@ -68,7 +76,7 @@ wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(7113862110022045)
 ,p_plug_name=>'Form Body'
 ,p_parent_plug_id=>wwv_flow_imp.id(6113003091173267)
-,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--scrollBody'
+,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--noUI:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_imp.id(4319920360084164)
 ,p_plug_display_sequence=>10
 ,p_plug_display_point=>'SUB_REGIONS'
@@ -123,7 +131,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_tag_css_classes=>'text-general'
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382365997084278)
-,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--large'
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large'
 ,p_is_persistent=>'N'
 ,p_protection_level=>'S'
 ,p_attribute_01=>'N'
@@ -147,7 +155,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_tag_css_classes=>'text-general'
 ,p_grid_label_column_span=>2
 ,p_field_template=>wwv_flow_imp.id(4382365997084278)
-,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--large'
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'Y'
 ,p_attribute_02=>'N'

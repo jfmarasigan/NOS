@@ -71,7 +71,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.t-Form-itemWrapper > input {',
-'    background-color: #ece7e7;',
+'    background-color: white;',
 '    height: 2rem;',
 '}',
 '',
@@ -98,7 +98,8 @@ wwv_flow_imp_page.create_page(
 '',
 '.error-msg {',
 '    color: red;',
-'    font-size: 1rem;',
+'    font-size: 0.75rem;',
+'    font-weight: 600;',
 '    padding-bottom: 0.5rem;',
 '}',
 '',
@@ -404,6 +405,8 @@ wwv_flow_imp_page.create_page_da_action(
 '       p_page   => 304',
 '     );',
 'END;'))
+,p_attribute_03=>'P309_PREPARED_URL'
+,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
 );

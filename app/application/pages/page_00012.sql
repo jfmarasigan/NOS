@@ -39,24 +39,25 @@ wwv_flow_imp_page.create_page(
 ''))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP12Keys();',
-'/*',
-'  $( document ).ready(function() {',
-'    $(".a-GV-cell").first().trigger("click");',
-' });',
-' */'))
+'',
+'$("h1.ui-dialog-title").css("line-height", "normal");'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.t-Dialog-body{',
-'    label, input, .apex-item-display-only {',
-'        font-size: 1.125rem;',
-'    }',
-'    background-color: #226597;',
-'    padding-top: 0;',
+'.t-Dialog-body label, .t-Dialog-body input, .t-Dialog-body .apex-item-display-only {',
+'    font-size: 1.125rem;',
 '}',
 '',
-'#update-table {',
-'    table, tr, td, th {',
-'        font-size: 1.125rem;',
-'    }',
+'.t-Dialog-body {',
+'    background-color: #056AC8;',
+'    padding-top: 0;',
+'    padding-bottom: .5rem;',
+'}',
+'',
+'.t-Region {',
+'    margin-bottom: .5rem;',
+'}',
+'',
+'#update-table table, #update-table tr, #update-table td, #update-table th {',
+'    font-size: 1.125rem;',
 '}',
 '',
 '.t-Region-body{',
@@ -68,7 +69,6 @@ wwv_flow_imp_page.create_page(
 '    white-space: nowrap;',
 '}',
 '',
-'',
 '.white-text {',
 '    color: white;',
 '    font-size: 1.125rem;',
@@ -77,6 +77,27 @@ wwv_flow_imp_page.create_page(
 '.icon-irr-sort-asc, .icon-irr-sort-desc, .icon-down-chevron, .icon-up-chevron {',
 '    display: none !important;',
 '}',
+'',
+'#update-history .a-GV-table {',
+'    width: 100% !important;',
+'}',
+'',
+'#update-history .a-GV-table colgroup col:nth-child(1) {',
+'    width: 10rem;',
+'}',
+'',
+'#update-history .a-GV-table colgroup col:nth-child(2),',
+'#update-history .a-GV-table colgroup col:nth-child(3) {',
+'    width: 15rem;',
+'}',
+'',
+'#update-history .a-GV-table colgroup col:nth-child(4) {',
+'    width: 6rem;',
+'}',
+'',
+'',
+'',
+'',
 '',
 ''))
 ,p_page_template_options=>'#DEFAULT#'
@@ -126,8 +147,9 @@ wwv_flow_imp_page.create_page_plug(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(7169919201804137)
 ,p_plug_name=>'Item Details  Update History'
+,p_region_name=>'update-history'
 ,p_parent_plug_id=>wwv_flow_imp.id(12916498355686818)
-,p_region_template_options=>'#DEFAULT#'
+,p_region_template_options=>'#DEFAULT#:margin-bottom-none'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
 ,p_plug_display_sequence=>10
 ,p_plug_display_point=>'SUB_REGIONS'
@@ -463,7 +485,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_sequence=>40
 ,p_button_name=>'Exit'
 ,p_button_action=>'DEFINED_BY_DA'
-,p_button_template_options=>'#DEFAULT#:t-Button--noUI:t-Button--stretch'
+,p_button_template_options=>'#DEFAULT#:t-Button--tiny:t-Button--noUI:t-Button--stretch'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'press any key to exit'
 ,p_warn_on_unsaved_changes=>null

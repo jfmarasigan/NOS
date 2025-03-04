@@ -92,11 +92,27 @@ wwv_flow_imp_page.create_page(
 '',
 '        view$.grid("setSelectedRecords", [rec], true);',
 '    }',
-'}'))
+'}',
+'',
+'// function isLastRowEmpty(currentIndex) {',
+'//     let grid = apex.region("table").widget().interactiveGrid("getViews", "grid");',
+'//     let model = grid.model;',
+'    // let activeRecordId = grid.getActiveRecordId();',
+'    // let utCsKey = model.getFieldKey("UT_CS");',
+'    // let intUomKey = model.getFieldKey("INT_UOM");',
+'    // let extUomKey = model.getFieldKey("UOM_CODE");',
+'    // let lastRecord = model.recordAt(currentIndex - 1);',
+'',
+'    // let utCs = model.getValue(lastRecord, "UT_CS");',
+'    // let intUom = model.getValue(lastRecord, "INT_UOM");',
+'    // let extUom = model.getValue(lastRecord, "UOM_CODE");',
+'',
+'    // return !utCs || !intUom || !extUom;',
+'// }'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP18Keys();',
 'setTitle(`Line Items`);',
-'apex.message.setThemeHooks({ beforeShow: function(pMsgType, pElement$){ setTimeout(function() { $(''.t-Alert'').fadeOut(''slow''); }, 0); }});',
+'// apex.message.setThemeHooks({ beforeShow: function(pMsgType, pElement$){ setTimeout(function() { $(''.t-Alert'').fadeOut(''slow''); }, 0); }});',
 '$(document).ready(function() { ',
 '    var ig$ = apex.region("table").widget().interactiveGrid("getViews", "grid").view$;',
 '',
@@ -117,50 +133,109 @@ wwv_flow_imp_page.create_page(
 '            }',
 '        }',
 '',
-'        if ((cellIndex === 3 || cellIndex === 5 || cellIndex === 7 || cellIndex === 8 || cellIndex === 9) && (event.key === "Enter" || event.keyCode === 13)) {',
-'            setTimeout(function () {',
-'                apex.region("table").widget().interactiveGrid("getActions").invoke("selection-add-row");',
-'                setTimeout(function() {',
-'                    var ig$ = apex.region("table").widget().interactiveGrid("getViews").grid.view$;',
-'                    var activeRecordId = ig$.grid("getActiveRecordId");',
-'                    ig$.grid("gotoCell", activeRecordId, "ITEM_NUM").trigger("click");',
-'                }, 500)',
-'            }, 100);',
+'        // if ((cellIndex === 3 || cellIndex === 5 || cellIndex === 7 || cellIndex === 8 || cellIndex === 9) && (event.key === "Enter" || event.keyCode === 13)) {',
+'        //     setTimeout(function () {',
+'        //         apex.region("table").widget().interactiveGrid("getActions").invoke("selection-add-row");',
+'        //         setTimeout(function() {',
+'        //             var ig$ = apex.region("table").widget().interactiveGrid("getViews").grid.view$;',
+'        //             var activeRecordId = ig$.grid("getActiveRecordId");',
+'        //             ig$.grid("gotoCell", activeRecordId, "ITEM_NUM").trigger("click");',
+'        //         }, 500)',
+'        //     }, 100);',
 '            ',
-'            event.preventDefault();',
+'        //     event.preventDefault();',
+'        // }',
+'',
+'        // const isEmpty = isLastRowEmpty(currentIndex);',
+'',
+'        // if ((cellIndex === 9) && (event.key === "Tab" || event.keyCode === 9)) {',
+'        //     if(!event.shiftKey) {',
+'        //         event.preventDefault();',
+'        //         if(currentIndex === lastRecordId && !isEmpty) {',
+'        //             setTimeout(function () {',
+'        //                 apex.region("table").widget().interactiveGrid("getActions").invoke("selection-add-row");',
+'        //                 setTimeout(function() {',
+'        //                     var ig$ = apex.region("table").widget().interactiveGrid("getViews").grid.view$;',
+'        //                     var activeRecordId = ig$.grid("getActiveRecordId");',
+'        //                     ig$.grid("gotoCell", activeRecordId, "ITEM_NUM").trigger("click");',
+'        //                 }, 500)',
+'        //             }, 100);',
+'        //         }',
+'        //     }',
+'        // }',
+'',
+'        if ((cellIndex === 7) && (event.key === "Tab" || event.keyCode === 9)) {',
+'            if(!event.shiftKey) {',
+'                event.preventDefault();',
+'                if(currentIndex === lastRecordId) {',
+'                    setTimeout(function () {',
+'                        apex.region("table").widget().interactiveGrid("getActions").invoke("selection-add-row");',
+'                        setTimeout(function() {',
+'                            var ig$ = apex.region("table").widget().interactiveGrid("getViews").grid.view$;',
+'                            var activeRecordId = ig$.grid("getActiveRecordId");',
+'                            ig$.grid("gotoCell", activeRecordId, "ITEM_NUM").trigger("click");',
+'                        }, 500)',
+'                    }, 100);',
+'                }',
+'            }',
 '        }',
 '',
-'        if(cellIndex === 9 && event.keyCode === 9) {',
-'            if(!event.shiftKey && currentIndex === lastRecordId) {',
-'                event.preventDefault();',
+'        // if(cellIndex === 9 && event.keyCode === 9) {',
+'        //     if(!event.shiftKey && currentIndex === lastRecordId) {',
+'        //         event.preventDefault();',
+'        //     }',
+'        // }',
+'        ',
+'        // if (event.key === "Escape" || event.keyCode === 27) {',
+'            // var ig = apex.region("table").widget().interactiveGrid("getViews").grid;',
+'            // var model = ig.model;',
+'            // var ig$ = apex.region("table").widget().interactiveGrid("getViews").grid.view$;',
+'            // var activeRecordId = ig$.grid("getActiveRecordId");',
+'        //     ig$.grid("gotoCell", activeRecordId, "ITEM_NUM").trigger("click");',
+'        //     if(model.getChanges().length > 0) {',
+'                // setTimeout(function() {',
+'                //     apex.region("table").widget().interactiveGrid("getActions").invoke("save");',
+'                //     if (model.getTotalRecords() === 1) {',
+'                //         $("#exit").trigger("click");',
+'                //     }',
+'                // }, 500)',
+'        //     } ',
+'        //     else {',
+'        //         $("#exit").trigger("click");',
+'        //     }',
+'',
+'            ',
+'        //     event.preventDefault();',
+'        // }',
+'',
+'        if(currentIndex === lastRecordId && cellIndex === 7) {',
+'            if(event.key === "Enter" || event.keyCode === 13) {',
+'                var ig$ = apex.region("table").widget().interactiveGrid("getViews").grid.view$;',
+'                var activeRecordId = ig$.grid("getActiveRecordId");',
+'                ig$.grid("gotoCell", activeRecordId, "ITEM_NUM").trigger("click");',
+'                setTimeout(function() {',
+'                    apex.region("table").widget().interactiveGrid("getActions").invoke("save");',
+'                }, 500)',
 '            }',
 '        }',
 '        ',
-'        if (event.key === "Escape" || event.keyCode === 27) {',
-'            var ig = apex.region("table").widget().interactiveGrid("getViews").grid;',
-'            var model = ig.model;',
-'            var ig$ = apex.region("table").widget().interactiveGrid("getViews").grid.view$;',
-'            var activeRecordId = ig$.grid("getActiveRecordId");',
-'            ig$.grid("gotoCell", activeRecordId, "ITEM_NUM").trigger("click");',
-'            if(model.getChanges().length > 0) {',
-'                setTimeout(function() {',
-'                    apex.region("table").widget().interactiveGrid("getActions").invoke("save");',
-'                    if (model.getTotalRecords() === 1) {',
-'                        $("#exit").trigger("click");',
-'                    }',
-'                }, 500)',
-'            } ',
-'            else {',
+'    });',
+'',
+'    $(document).on("keydown", function(e) {',
+'        if (e.key === "Escape" || e.keyCode === 27) {',
+'            if(!$("#item-table").is(":visible")) {',
 '                $("#exit").trigger("click");',
 '            }',
-'',
 '            ',
-'            event.preventDefault();',
-'        } ',
+'        }',
 '    });',
 '});',
 ''))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.a-GV-table tr.is-selected .a-GV-cell {',
+'     background-color: #F5DC1C;',
+'}',
+'',
 '.a-PopupLOV-results {',
 '    color: black;',
 '    background-color: white;',
@@ -267,10 +342,8 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '#table .a-GV-table colgroup col:nth-child(12),',
-'#table .a-GV-table colgroup col:nth-child(13),',
-'#table .a-GV-table colgroup col:nth-child(14),',
-'#table .a-GV-table colgroup col:nth-child(15),',
-'#table .a-GV-table colgroup col:nth-child(16) {',
+'#table .a-GV-table colgroup col:nth-child(10),',
+'#table .a-GV-table colgroup col:nth-child(11) {',
 '    width: 0;',
 '}',
 '',
@@ -279,7 +352,8 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '',
-'#table .a-GV-table colgroup col:nth-child(2) {',
+'#table .a-GV-table colgroup col:nth-child(2),',
+'#table .a-GV-table colgroup col:nth-child(13) {',
 '    width: 8rem;',
 '}',
 '',
@@ -288,8 +362,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '#table .a-GV-table colgroup col:nth-child(6),',
-'#table .a-GV-table colgroup col:nth-child(8),',
-'#table .a-GV-table colgroup col:nth-child(10) {',
+'#table .a-GV-table colgroup col:nth-child(8) {',
 '    width: 7rem;',
 '}',
 '',
@@ -347,40 +420,53 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_point=>'REGION_POSITION_04'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'WITH level_1_data AS (',
+'    SELECT ',
+'        nit002.item_id,',
+'        nit002.uom_id,',
+'        nim026.uom_code AS int_uom,',
+'        nit002.price AS sell_prx',
+'    FROM',
+'        NIT002 nit002',
+'    JOIN',
+'        NIM026 nim026 ON nit002.uom_id = nim026.uom_id',
+'    WHERE',
+'        nit002."LEVEL" = 1',
+'),',
+'level_4_data AS (',
+'    SELECT ',
+'        nit002.item_id,',
+'        nit002.quantity AS ut_cs',
+'    FROM',
+'        NIT002 nit002',
+'    WHERE',
+'        nit002."LEVEL" = 4',
+')',
 'SELECT',
 '    nit007.item_number AS "V_ITEM_NUMBER",',
 '    nit001.item_id AS "ITEM_ID",',
 '    nit001.item_num AS "ITEM_NUM",',
 '    nit001.item_desc AS "ITEM_DESC",',
 '    nim022.brand_name AS "BRAND_NAME",',
-'    nit002.uom_id AS "UOM_ID",',
-'    (SELECT nit002.quantity',
-'     FROM NIT002 nit002_qty',
-'     WHERE nit002_qty.item_id = nit001.item_id',
-'     AND nit002_qty."LEVEL" = 1) AS "UT_CS",',
-'    (SELECT nim026_uom.UOM_CODE          ',
-'     FROM NIM026 nim026_uom',
-'     JOIN NIT002 nit002_uom ON nim026_uom.UOM_ID = nit002_uom.UOM_ID',
-'     WHERE nit002_uom.ITEM_ID = nit001.ITEM_ID',
-'     AND nit002_uom."LEVEL" = 1',
-'    ) AS "INT_UOM",',
-'    (SELECT nit002_price.PRICE',
-'     FROM NIT002 nit002_price',
-'     WHERE nit002_price.ITEM_ID = nit001.ITEM_ID',
-'     AND nit002_price."LEVEL" = 1) AS "SELL_PRX",',
-'     nit007.vendor_id AS "VENDOR_ID",',
-'     ROW_NUMBER() OVER (ORDER BY nit001.ITEM_NUM) AS "ROW_NUM"',
+'    l1.uom_id AS "UOM_ID",',
+'    l4.ut_cs AS "UT_CS",',
+'    l1.int_uom AS "INT_UOM",',
+'    l1.sell_prx AS "SELL_PRX",',
+'    nit007.vendor_id AS "VENDOR_ID",',
+'    ROW_NUMBER() OVER (ORDER BY nit001.ITEM_NUM) AS "ROW_NUM"',
 'FROM',
 '    NIT001 nit001',
 'JOIN',
 '    NIM022 nim022 ON nit001.brand_id = nim022.brand_id',
 'JOIN',
 '    NIT007 nit007 ON nit001.item_id = nit007.item_id',
-'JOIN',
-'    NIT002 nit002 ON nit001.item_id = nit002.item_id',
-'    AND nit002."LEVEL" = 1',
-'JOIN NIM026 nim026 ON nit002.UOM_ID = nim026.UOM_ID',
+'LEFT JOIN',
+'    level_1_data l1 ON nit001.item_id = l1.item_id',
+'LEFT JOIN',
+'    level_4_data l4 ON nit001.item_id = l4.item_id',
 'WHERE',
+'    nit007.vendor_id = :P18_VENDOR_ID',
+'    AND',
 '    (:P18_ITEM_IDS IS NULL',
 '        OR (nit001.item_id) NOT IN ',
 '        (SELECT REGEXP_SUBSTR(:P18_ITEM_IDS, ''[^,]+'', 1, LEVEL)',
@@ -390,7 +476,7 @@ wwv_flow_imp_page.create_page_plug(
 '    OR',
 '    (:P18_ITEM_NUM IS NULL AND :P18_ITEM_DESC IS NOT NULL AND UPPER(nit001.item_desc) LIKE ''%'' || UPPER(:P18_ITEM_DESC) || ''%''))'))
 ,p_plug_source_type=>'NATIVE_IG'
-,p_ajax_items_to_submit=>'P18_ITEM_NUM,P18_ITEM_DESC,P18_ITEM_IDS'
+,p_ajax_items_to_submit=>'P18_ITEM_NUM,P18_ITEM_DESC,P18_ITEM_IDS,P18_VENDOR_ID'
 ,p_prn_units=>'INCHES'
 ,p_prn_paper_size=>'LETTER'
 ,p_prn_width=>11
@@ -917,7 +1003,7 @@ wwv_flow_imp_page.create_page_plug(
 '    (SELECT nit002.QUANTITY',
 '    FROM NIT002 nit002',
 '    WHERE nit002.ITEM_ID = nit001.ITEM_ID',
-'    AND nit002."LEVEL" = 1) AS "UT_CS",',
+'    AND nit002."LEVEL" = 4) AS "UT_CS",',
 '    nit013.VENDOR_PRICE,                      ',
 '    (SELECT nim026_uom.UOM_CODE          ',
 '     FROM NIM026 nim026_uom',
@@ -926,22 +1012,27 @@ wwv_flow_imp_page.create_page_plug(
 '     AND nit002_uom."LEVEL" = 1',
 '    ) AS "INT_UOM",',
 '    nit013.INTERNAL_PRICE,                    ',
-'    (SELECT nim026_uom_code.UOM_CODE',
-'     FROM NIM026 nim026_uom_code',
-'     WHERE nim026_uom_code.UOM_ID = nit013.external_uom_id) AS "UOM_CODE",',
-'    nit013.EXTERNAL_PRICE,                    ',
+'    -- (SELECT nim026_uom_code.UOM_CODE',
+'    --  FROM NIM026 nim026_uom_code',
+'    --  WHERE nim026_uom_code.UOM_ID = nit013.external_uom_id) AS "UOM_CODE",',
+'    -- nit013.EXTERNAL_PRICE,                    ',
 '    (SELECT nit002_price.PRICE',
 '    FROM NIT002 nit002_price',
 '    WHERE nit002_price.ITEM_ID = nit001.ITEM_ID',
 '    AND nit002_price."LEVEL" = 1) AS "SELL_PRX",',
 '    nit013.ITEM_ID,',
-'    nit013.EXTERNAL_UOM_ID as UOM_ID,',
+'    -- nit013.EXTERNAL_UOM_ID as UOM_ID,',
 '    nit013.ITEM_ID as "OLD_ITEM_ID",',
-'    (SELECT nit002_qty.QUANTITY',
-'    FROM NIT002 nit002_qty',
-'    WHERE nit002_qty.ITEM_ID = nit013.ITEM_ID',
-'    AND nit002_qty.UOM_ID = nit013.EXTERNAL_UOM_ID) AS "NIT2_QTY",',
-'    nit013.VENDOR_ID AS "VENDOR_ID"',
+'    -- (SELECT nit002_qty.QUANTITY',
+'    -- FROM NIT002 nit002_qty',
+'    -- WHERE nit002_qty.ITEM_ID = nit013.ITEM_ID',
+'    -- AND nit002_qty.UOM_ID = nit013.EXTERNAL_UOM_ID) AS "NIT2_QTY",',
+'    nit013.VENDOR_ID AS "VENDOR_ID",',
+'    -- (SELECT nit002_lvl."LEVEL"',
+'    -- FROM NIT002 nit002_lvl',
+'    -- WHERE nit002_lvl.ITEM_ID = nit013.ITEM_ID',
+'    -- AND nit002_lvl.UOM_ID = nit013.EXTERNAL_UOM_ID) AS "LEVEL",',
+'    nit013.QTY * nit013.INTERNAL_PRICE AS "TOTAL_AMOUNT"',
 'FROM',
 '    NIT013 nit013',
 'JOIN',
@@ -956,7 +1047,7 @@ wwv_flow_imp_page.create_page_plug(
 '    nit013.PO_ID = :P18_PO_NO',
 '    AND nit002.UOM_ID = (SELECT MAX(UOM_ID) FROM NIT002 WHERE ITEM_ID = nit013.ITEM_ID)'))
 ,p_plug_source_type=>'NATIVE_IG'
-,p_ajax_items_to_submit=>'P18_PO_NO,P18_PO_VALUE,P18_PO_VALUE_EXT'
+,p_ajax_items_to_submit=>'P18_PO_NO,P18_PO_VALUE'
 ,p_prn_units=>'INCHES'
 ,p_prn_paper_size=>'LETTER'
 ,p_prn_width=>11
@@ -1243,83 +1334,6 @@ wwv_flow_imp_page.create_region_column(
 ,p_include_in_export=>false
 );
 wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(24652912692650441)
-,p_name=>'UOM_CODE'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'UOM_CODE'
-,p_data_type=>'VARCHAR2'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_POPUP_LOV'
-,p_heading=>'Ext UOM'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>90
-,p_value_alignment=>'RIGHT'
-,p_attribute_01=>'POPUP'
-,p_attribute_02=>'FIRST_ROWSET'
-,p_attribute_04=>'N'
-,p_attribute_05=>'Y'
-,p_attribute_06=>'0'
-,p_is_required=>true
-,p_lov_type=>'SQL_QUERY'
-,p_lov_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT',
-'    UOM_CODE as d, UOM_ID as r',
-'FROM',
-'    NIM026',
-'WHERE',
-'    UOM_ID IN (SELECT nit002.UOM_ID FROM NIT002 nit002 WHERE nit002.ITEM_ID = :P18_SELECTED_ITEM_ID)',
-''))
-,p_lov_display_extra=>true
-,p_lov_display_null=>true
-,p_lov_cascade_parent_items=>'ITEM_ID'
-,p_ajax_items_to_submit=>'P18_SELECTED_ITEM_ID'
-,p_ajax_optimize_refresh=>true
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(24653088097650442)
-,p_name=>'EXTERNAL_PRICE'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'EXTERNAL_PRICE'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_NUMBER_FIELD'
-,p_heading=>'Ext Price'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>100
-,p_value_alignment=>'RIGHT'
-,p_attribute_03=>'right'
-,p_attribute_04=>'decimal'
-,p_format_mask=>'999G999G999G999G990D00'
-,p_is_required=>false
-,p_enable_filter=>false
-,p_filter_is_required=>false
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
  p_id=>wwv_flow_imp.id(24653153821650443)
 ,p_name=>'SELL_PRX'
 ,p_source_type=>'DB_COLUMN'
@@ -1386,39 +1400,6 @@ wwv_flow_imp_page.create_region_column(
 ,p_include_in_export=>false
 );
 wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(24653387080650445)
-,p_name=>'UOM_ID'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'UOM_ID'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_NUMBER_FIELD'
-,p_heading=>'Uom Id'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>130
-,p_value_alignment=>'RIGHT'
-,p_value_css_classes=>'is-readonly'
-,p_attribute_03=>'left'
-,p_attribute_04=>'decimal'
-,p_is_required=>false
-,p_enable_filter=>false
-,p_filter_is_required=>false
-,p_static_id=>'uom-id'
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
  p_id=>wwv_flow_imp.id(26625343037248010)
 ,p_name=>'OLD_ITEM_ID'
 ,p_source_type=>'DB_COLUMN'
@@ -1452,39 +1433,6 @@ wwv_flow_imp_page.create_region_column(
 ,p_include_in_export=>false
 );
 wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(26627883439248035)
-,p_name=>'NIT2_QTY'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'NIT2_QTY'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_NUMBER_FIELD'
-,p_heading=>'Nit2 Qty'
-,p_heading_alignment=>'RIGHT'
-,p_display_sequence=>150
-,p_value_alignment=>'RIGHT'
-,p_value_css_classes=>'is-readonly'
-,p_attribute_03=>'left'
-,p_attribute_04=>'decimal'
-,p_is_required=>false
-,p_enable_filter=>false
-,p_filter_is_required=>false
-,p_static_id=>'nit2-qty'
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
  p_id=>wwv_flow_imp.id(29986456861862716)
 ,p_name=>'VENDOR_ID'
 ,p_source_type=>'DB_COLUMN'
@@ -1503,6 +1451,37 @@ wwv_flow_imp_page.create_region_column(
 ,p_enable_filter=>false
 ,p_filter_is_required=>false
 ,p_static_id=>'vendor-id'
+,p_use_as_row_header=>false
+,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'function( options ) {',
+'    options.defaultGridColumnOptions = {',
+'        noHeaderActivate: true',
+'    };',
+'    return options;',
+'}'))
+,p_enable_sort_group=>false
+,p_enable_hide=>false
+,p_is_primary_key=>false
+,p_duplicate_value=>true
+,p_include_in_export=>false
+);
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(77038790261800905)
+,p_name=>'TOTAL_AMOUNT'
+,p_source_type=>'DB_COLUMN'
+,p_source_expression=>'TOTAL_AMOUNT'
+,p_data_type=>'NUMBER'
+,p_is_query_only=>false
+,p_item_type=>'NATIVE_NUMBER_FIELD'
+,p_heading=>'Total Amount'
+,p_heading_alignment=>'CENTER'
+,p_display_sequence=>180
+,p_value_alignment=>'RIGHT'
+,p_attribute_03=>'left'
+,p_attribute_04=>'decimal'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_is_required=>false
+,p_enable_filter=>false
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function( options ) {',
@@ -1647,22 +1626,6 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_is_frozen=>false
 );
 wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(25337376296983543)
-,p_view_id=>wwv_flow_imp.id(24518892078228743)
-,p_display_seq=>38
-,p_column_id=>wwv_flow_imp.id(24652912692650441)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(25338480782983551)
-,p_view_id=>wwv_flow_imp.id(24518892078228743)
-,p_display_seq=>39
-,p_column_id=>wwv_flow_imp.id(24653088097650442)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(25339560349983560)
 ,p_view_id=>wwv_flow_imp.id(24518892078228743)
 ,p_display_seq=>40
@@ -1679,26 +1642,10 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_is_frozen=>false
 );
 wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(25341733899983581)
-,p_view_id=>wwv_flow_imp.id(24518892078228743)
-,p_display_seq=>42
-,p_column_id=>wwv_flow_imp.id(24653387080650445)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(26956547959287018)
 ,p_view_id=>wwv_flow_imp.id(24518892078228743)
 ,p_display_seq=>43
 ,p_column_id=>wwv_flow_imp.id(26625343037248010)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(29413169105890962)
-,p_view_id=>wwv_flow_imp.id(24518892078228743)
-,p_display_seq=>45
-,p_column_id=>wwv_flow_imp.id(26627883439248035)
 ,p_is_visible=>true
 ,p_is_frozen=>false
 );
@@ -1710,18 +1657,38 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_is_visible=>true
 ,p_is_frozen=>false
 );
+wwv_flow_imp_page.create_ig_report_column(
+ p_id=>wwv_flow_imp.id(77958666450074340)
+,p_view_id=>wwv_flow_imp.id(24518892078228743)
+,p_display_seq=>48
+,p_column_id=>wwv_flow_imp.id(77038790261800905)
+,p_is_visible=>true
+,p_is_frozen=>false
+);
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(20868519252453209)
 ,p_button_sequence=>40
 ,p_button_name=>'Exit'
 ,p_button_static_id=>'exit'
-,p_button_action=>'DEFINED_BY_DA'
+,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'Exit'
-,p_warn_on_unsaved_changes=>null
+,p_button_redirect_url=>'f?p=&APP_ID.:29:&SESSION.::&DEBUG.:::'
 ,p_grid_column_css_classes=>'hide'
 ,p_grid_new_row=>'Y'
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(58826895975441019)
+,p_button_sequence=>70
+,p_button_name=>'TEST'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'Test'
+,p_warn_on_unsaved_changes=>null
+,p_grid_new_row=>'Y'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(21496368468198612)
@@ -1951,6 +1918,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--normalDisplay'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 ,p_attribute_01=>'Y'
 ,p_attribute_02=>'VALUE'
 ,p_attribute_04=>'Y'
@@ -2091,7 +2059,7 @@ wwv_flow_imp_page.create_page_da_action(
 '    model.setValue(rec,''QTY'',''0'');',
 '    model.setValue(rec,''VENDOR_PRICE'',''0'');',
 '    model.setValue(rec,''INTERNAL_PRICE'',''0'');',
-'    model.setValue(rec,''EXTERNAL_PRICE'',''0'');',
+'    // model.setValue(rec,''EXTERNAL_PRICE'',''0'');',
 '',
 '    var selectedVendorId = apex.item("P18_VENDOR_ID").getValue();',
 '    var itemVendorId = apex.item("P18_SELECTED_VENDOR_ID").getValue();',
@@ -2128,7 +2096,15 @@ wwv_flow_imp_page.create_page_da_action(
 'apex.item("P18_ITEM_DESC").setValue(null)',
 '',
 'setTimeout(function () {',
-'    ig$.grid("gotoCell", activeRecordId, "QTY").trigger("click");',
+'    ig$.grid("gotoCell", activeRecordId, "QTY");',
+'    setTimeout(function() {',
+'        var focusedCell = ig$.find(".a-GV-cell.is-active.is-focused input");',
+'        console.log("focusedCell", focusedCell)',
+'        if(focusedCell.length > 0) {',
+'            focusedCell[0].focus();',
+'            focusedCell[0].select();',
+'        }',
+'    },200)',
 '}, 300);'))
 );
 wwv_flow_imp_page.create_page_da_event(
@@ -2407,6 +2383,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'change'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(24649919105650411)
@@ -2444,10 +2421,12 @@ wwv_flow_imp_page.create_page_da_action(
 'apex.item("ut-cs").node.readOnly = true;',
 'apex.item("int-uom").node.readOnly = true;',
 'apex.item("sell-prx").node.readOnly = true;',
-'apex.item("uom-id").node.readOnly = true;',
+'// apex.item("uom-id").node.readOnly = true;',
 'apex.item("old-item-id").node.readOnly = true;',
-'apex.item("nit2-qty").node.readOnly = true;',
-'apex.item("vendor-id").node.readOnly = true;'))
+'// apex.item("nit2-qty").node.readOnly = true;',
+'apex.item("vendor-id").node.readOnly = true;',
+'// apex.item("level").node.readOnly = true;',
+'apex.item("total-amount").node.readOnly = true;'))
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(25389561410344210)
@@ -2573,8 +2552,8 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    :P18_URL := apex_page.get_url(',
 '       p_page   => 29,',
-'       p_items  => ''P29_PO_NO_S,P29_FROM'',',
-'       p_values => :P18_PO_NO || '','' || :P18_FROM',
+'       p_items  => ''P29_PO_NO_S,P29_FROM,P29_PO_NUMBER'',',
+'       p_values => :P18_PO_NO || '','' || :P18_FROM || '','' || :P18_PO_NO',
 '     );',
 'END;'))
 ,p_attribute_02=>'P18_PO_NO,P18_FROM'
@@ -2605,6 +2584,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'click'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(25842426768615003)
@@ -2619,6 +2599,7 @@ wwv_flow_imp_page.create_page_da_action(
 '    var view = ig.widget().interactiveGrid("getViews","grid");',
 '    view.model.clearChanges();',
 '}, 100);'))
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(25842556931615004)
@@ -2631,8 +2612,8 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    :P18_URL := apex_page.get_url(',
 '       p_page   => 29,',
-'       p_items  => ''P29_PO_NO_S,P29_FROM'',',
-'       p_values => :P18_PO_NO || '','' || :P18_FROM',
+'       p_items  => ''P29_PO_NO_S,P29_FROM,P29_PO_NUMBER'',',
+'       p_values => :P18_PO_NO || '','' || :P18_FROM || '','' || :P18_PO_NO',
 '     );',
 'END;'))
 ,p_attribute_02=>'P18_PO_NO,P18_FROM'
@@ -2640,6 +2621,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(25842691331615005)
@@ -2653,6 +2635,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let url = $v("P18_URL");',
 'apex.navigation.redirect(url);'))
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(25844214824615021)
@@ -2675,8 +2658,24 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P18_PO_VALUE'
 ,p_attribute_01=>'PLSQL_EXPRESSION'
-,p_attribute_04=>'(:QTY * :UT_CS) * :INTERNAL_PRICE'
+,p_attribute_04=>'(:QTY * :UT_CS) * TO_NUMBER(REPLACE(:INTERNAL_PRICE,'','',''''))'
 ,p_attribute_07=>'QTY,INTERNAL_PRICE,UT_CS'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(77038562133800903)
+,p_event_id=>wwv_flow_imp.id(25844214824615021)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'COLUMN'
+,p_affected_elements=>'TOTAL_AMOUNT'
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>':QTY * TO_NUMBER(REPLACE(:INTERNAL_PRICE,'','',''''))'
+,p_attribute_07=>'QTY,INTERNAL_PRICE'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
@@ -2685,7 +2684,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(25844458849615023)
 ,p_event_id=>wwv_flow_imp.id(25844214824615021)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>20
+,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_affected_elements_type=>'ITEM'
@@ -2698,7 +2697,7 @@ wwv_flow_imp_page.create_page_da_action(
 'var col_ut_cs = model.getFieldKey("UT_CS");',
 '',
 'model.forEach(function(igrow) {',
-'    n_price = parseFloat(igrow[col_price]);',
+'    n_price = parseFloat(igrow[col_price].replace(/,/g, ""));',
 '    n_qty = parseInt(igrow[col_qty], 10);',
 '    n_ut_cs = parseFloat(igrow[col_ut_cs]);',
 '',
@@ -2720,10 +2719,11 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_event_sequence=>430
 ,p_triggering_element_type=>'COLUMN'
 ,p_triggering_region_id=>wwv_flow_imp.id(23003338014723733)
-,p_triggering_element=>'EXTERNAL_PRICE,QTY'
+,p_triggering_element=>'EXTERNAL_PRICE,QTY,LEVEL'
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'change'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(26625611120248013)
@@ -2735,7 +2735,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P18_PO_VALUE_EXT'
 ,p_attribute_01=>'PLSQL_EXPRESSION'
-,p_attribute_04=>':EXTERNAL_PRICE'
+,p_attribute_04=>'TO_NUMBER(REPLACE(:EXTERNAL_PRICE,'','',''''))'
 ,p_attribute_07=>'QTY,EXTERNAL_PRICE,NIT2_QTY'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
@@ -2758,20 +2758,23 @@ wwv_flow_imp_page.create_page_da_action(
 'var col_ut_cs = model.getFieldKey("UT_CS");',
 'var col_nit2_qty = model.getFieldKey("NIT2_QTY");',
 'var col_uom_code = model.getFieldKey("UOM_ID");',
+'var col_level = model.getFieldKey("LEVEL");',
 '',
 'model.forEach(function(igrow) {',
-'    n_price = parseFloat(igrow[col_price]);',
+'    n_price = parseFloat(igrow[col_price].replace(/,/g, ""));',
 '    n_qty = parseInt(igrow[col_qty], 10);',
 '    n_ut_cs = parseFloat(igrow[col_ut_cs]);',
 '    n_nit2_qty = parseFloat(igrow[col_nit2_qty]);',
 '    uom_code = parseInt(igrow[col_uom_code], 10);',
+'    level = parseInt(igrow[col_level], 10);',
+'',
 '',
 '    if (!isNaN(n_price) && !isNaN(n_qty) && !isNaN(n_ut_cs)) {',
-'        if (uom_code === 4) {',
+'        if (level === 4) {',
 '            n_totValue += n_qty * n_price;',
-'        } else if ((uom_code === 2 || uom_code === 3) && !isNaN(n_nit2_qty)) {',
+'        } else if ((level === 2 || level === 3) && !isNaN(n_nit2_qty)) {',
 '            n_totValue += ((n_qty * n_ut_cs) / n_nit2_qty) * n_price;',
-'        } else if (uom_code === 1) {',
+'        } else if (level === 1) {',
 '            n_totValue += (n_qty * n_ut_cs) * n_price;',
 '        }',
 '    }',
@@ -2798,6 +2801,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'change'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(26628009950248037)
@@ -2822,6 +2826,88 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(58826981060441020)
+,p_name=>'TEST'
+,p_event_sequence=>450
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(58826895975441019)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'click'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(58827092067441021)
+,p_event_id=>wwv_flow_imp.id(58826981060441020)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'console.log(isLastRowEmpty())'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(68269973051096604)
+,p_name=>'Set LEVEL'
+,p_event_sequence=>460
+,p_triggering_element_type=>'COLUMN'
+,p_triggering_region_id=>wwv_flow_imp.id(23003338014723733)
+,p_triggering_element=>'UOM_CODE'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'change'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(68270049001096605)
+,p_event_id=>wwv_flow_imp.id(68269973051096604)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'COLUMN'
+,p_affected_elements=>'LEVEL'
+,p_attribute_01=>'SQL_STATEMENT'
+,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT',
+'    nit002."LEVEL"',
+'FROM',
+'    NIT002 nit002',
+'WHERE',
+'    nit002.ITEM_ID = :ITEM_ID AND',
+'    nit002.UOM_ID = :UOM_CODE'))
+,p_attribute_07=>'ITEM_ID,UOM_CODE'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(68270483587096609)
+,p_name=>'Set Ext Price'
+,p_event_sequence=>470
+,p_triggering_element_type=>'COLUMN'
+,p_triggering_region_id=>wwv_flow_imp.id(23003338014723733)
+,p_triggering_element=>'INTERNAL_PRICE,NIT2_QTY'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'change'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(68270510352096610)
+,p_event_id=>wwv_flow_imp.id(68270483587096609)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'COLUMN'
+,p_affected_elements=>'EXTERNAL_PRICE'
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'TO_NUMBER(REPLACE(:INTERNAL_PRICE, '','', '''')) * :NIT2_QTY'
+,p_attribute_07=>'INTERNAL_PRICE,NIT2_QTY'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(23004993767723749)
 ,p_process_sequence=>20
@@ -2833,25 +2919,32 @@ wwv_flow_imp_page.create_page_process(
 ,p_attribute_04=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DECLARE',
 '    v_internal_uom_id NIT013.internal_uom_id%TYPE;',
+'    l_internal_price NUMBER(6,2);',
+'    -- l_external_price NUMBER(6,2);',
+'    l_vendor_price NUMBER(6,2);',
 'BEGIN',
 '        :P18_PO_VALUE := TO_NUMBER(REPLACE(:P18_PO_VALUE, '','', ''''));',
-'        :P18_PO_VALUE_EXT := TO_NUMBER(REPLACE(:P18_PO_VALUE_EXT, '','', ''''));',
-'        :vendor_price := TO_NUMBER(REPLACE(:vendor_price, '','', ''''));',
-'        :internal_price := TO_NUMBER(REPLACE(:internal_price, '','', ''''));',
-'        :external_price := TO_NUMBER(REPLACE(:external_price, '','', ''''));',
+'        -- :P18_PO_VALUE_EXT := TO_NUMBER(REPLACE(:P18_PO_VALUE_EXT, '','', ''''));',
+'        l_vendor_price := TO_NUMBER(REPLACE(:vendor_price, '','', ''''));',
+'        l_internal_price := TO_NUMBER(REPLACE(:internal_price, '','', ''''));',
+'        -- l_external_price := TO_NUMBER(REPLACE(:external_price, '','', ''''));',
 '        ',
-'        SELECT uom_id',
-'        INTO v_internal_uom_id',
-'        FROM NIM026',
-'        WHERE uom_code = :INT_UOM;',
+'        IF :int_uom IS NOT NULL THEN',
+'            SELECT uom_id',
+'            INTO v_internal_uom_id',
+'            FROM NIM026',
+'            WHERE uom_code = :INT_UOM;',
+'        END IF;',
 '',
 '        IF :APEX$ROW_STATUS = ''U'' THEN',
 '            :qty := NVL(:qty, 0);',
-'            :vendor_price := NVL(:vendor_price, 0);',
-'            :internal_price := NVL(:internal_price, 0);',
-'            :external_price := NVL(:external_price, 0);',
+'            l_vendor_price := NVL(l_vendor_price, 0);',
+'            l_internal_price := NVL(l_internal_price, 0);',
+'            -- l_external_price := NVL(l_external_price, 0);',
 '',
-'            IF :qty = 0 THEN',
+'            IF :qty = 0',
+'            --  OR :uom_code IS NULL ',
+'             THEN',
 '                DELETE FROM NIT013 ',
 '                WHERE po_id = V(''P18_PO_NO'')',
 '                AND item_id = :item_id;',
@@ -2861,34 +2954,36 @@ wwv_flow_imp_page.create_page_process(
 '                    qty = :qty,',
 '                    update_user = V(''APP_USER''),',
 '                    update_date = SYSDATE,',
-'                    vendor_price = :vendor_price,',
-'                    external_uom_id = :uom_id,',
-'                    internal_price = :internal_price,',
-'                    external_price = :external_price,',
+'                    vendor_price = l_vendor_price,',
+'                    -- external_uom_id = :uom_id,',
+'                    internal_price = l_internal_price,',
+'                    -- external_price = l_external_price,',
 '                    vendor_id = :vendor_id',
 '                WHERE po_id = V(''P18_PO_NO'')',
 '                AND item_id = :old_item_id;',
 '',
 '                UPDATE NIT012',
-'                SET in_po_value = :P18_PO_VALUE,',
-'                    ex_po_value = :P18_PO_VALUE_EXT',
+'                SET in_po_value = :P18_PO_VALUE',
+'                    -- ex_po_value = :P18_PO_VALUE_EXT',
 '                WHERE po_id = V(''P18_PO_NO'');',
 '            END IF;',
 '',
 '        ELSIF :APEX$ROW_STATUS = ''C'' THEN',
 '        ',
 '            :qty := NVL(:qty, 0);',
-'            :vendor_price := NVL(:vendor_price, 0);',
-'            :internal_price := NVL(:internal_price, 0);',
-'            :external_price := NVL(:external_price, 0);',
+'            l_vendor_price := NVL(l_vendor_price, 0);',
+'            l_internal_price := NVL(l_internal_price, 0);',
+'            -- l_external_price := NVL(l_external_price, 0);',
 '',
-'            IF :qty != 0 THEN',
-'                INSERT INTO NIT013 (po_id, item_id, qty, create_user, create_date, vendor_price, internal_uom_id, external_uom_id, internal_price, external_price, vendor_id) ',
-'                VALUES (V(''P18_PO_NO''), :item_id, :qty, V(''APP_USER''), SYSDATE, :vendor_price, v_internal_uom_id, :uom_id, :internal_price, :external_price, :vendor_id );',
+'            IF :qty != 0',
+'            --  AND :uom_code IS NOT NULL ',
+'             THEN',
+'                INSERT INTO NIT013 (po_id, item_id, qty, create_user, create_date, vendor_price, internal_uom_id, internal_price, vendor_id) ',
+'                VALUES (V(''P18_PO_NO''), :item_id, :qty, V(''APP_USER''), SYSDATE, l_vendor_price, v_internal_uom_id, l_internal_price, :vendor_id );',
 '',
 '                UPDATE NIT012',
-'                SET in_po_value = :P18_PO_VALUE,',
-'                    ex_po_value = :P18_PO_VALUE_EXT',
+'                SET in_po_value = :P18_PO_VALUE',
+'                    -- ex_po_value = :P18_PO_VALUE_EXT',
 '                WHERE po_id = V(''P18_PO_NO'');',
 '                ',
 '            END IF;',

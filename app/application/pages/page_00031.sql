@@ -17,12 +17,13 @@ wwv_flow_imp_page.create_page(
 ,p_alias=>'POS-CASHIERING-ENTER-CUSTOMER'
 ,p_page_mode=>'MODAL'
 ,p_step_title=>'Customer Name'
+,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let lastSelected = null;',
 'const p31KeyMap = {',
 '    escape : (v) => {',
-'        $("#close-customer").click();',
+'        $("#esc").trigger("click");',
 '    },',
 '    enter: (v) => {',
 '        $("#enter-customer").trigger("click");',
@@ -42,56 +43,38 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_javascript_code_onload=>'mapP31Keys();'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.text-left {',
-'    text-align: left;',
-'}',
-'',
-'.text-right {',
-'    text-align: right;',
-'}',
-'',
-'.content-block {',
-'    font-size: 1.125rem;',
-'    display: flex;',
-'    justify-content: space-between;',
-'    font-weight: 700;',
-'}',
-'',
 '.hiddenbtn {',
 '    display: none;',
 '}',
 '',
-'.t-Dialog-body label, ',
-'.t-Dialog-body input{',
+'.t-Form-label {',
 '    font-size: 1.125rem;',
-'    font-family: Arial;',
-'    padding-top: 0;',
-'    padding-bottom 0;',
+'    white-space: nowrap;',
+'    ',
 '}',
 '',
-'.t-Dialog-body{',
-'    background-color: #056AC8;',
+'#P31_CUSTOMER {',
+'    --a-field-input-flex-grow: .9;',
+'}',
+'',
+'#P31_CUSTOMER .apex-item-text {',
+'    font-size: 1.125rem;',
+'}',
+'',
+'#P31_CUSTOMER_CONTAINER .t-Form-labelContainer {',
+'    align-content: center;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(4231087530083996)
 ,p_page_template_options=>'#DEFAULT#'
+,p_dialog_height=>'150'
+,p_dialog_width=>'640px'
+,p_dialog_attributes=>'closeOnEscape: false'
 ,p_protection_level=>'C'
-,p_page_component_map=>'17'
-);
-wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(17274722616462608)
-,p_plug_name=>'Enter Customer'
-,p_region_template_options=>'#DEFAULT#:i-h320:t-Region--removeHeader js-removeLandmark:t-Region--scrollBody'
-,p_plug_template=>wwv_flow_imp.id(4319920360084164)
-,p_plug_display_sequence=>10
-,p_location=>null
-,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
-  'expand_shortcuts', 'N',
-  'output_as', 'HTML')).to_clob
+,p_page_component_map=>'11'
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(17276035383462621)
 ,p_button_sequence=>30
-,p_button_plug_id=>wwv_flow_imp.id(17274722616462608)
 ,p_button_name=>'Enter'
 ,p_button_static_id=>'enter-customer'
 ,p_button_action=>'DEFINED_BY_DA'
@@ -105,9 +88,8 @@ wwv_flow_imp_page.create_page_button(
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(17276405572462625)
 ,p_button_sequence=>40
-,p_button_plug_id=>wwv_flow_imp.id(17274722616462608)
 ,p_button_name=>'Close'
-,p_button_static_id=>'close-customer'
+,p_button_static_id=>'esc'
 ,p_button_action=>'DEFINED_BY_DA'
 ,p_button_template_options=>'#DEFAULT#'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
@@ -120,11 +102,10 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(17274811939462609)
 ,p_name=>'P31_CUSTOMER'
 ,p_item_sequence=>10
-,p_item_plug_id=>wwv_flow_imp.id(17274722616462608)
 ,p_prompt=>'DBA:'
 ,p_display_as=>'NATIVE_SELECT_ONE'
 ,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT LEGAL_NAME, LEGAL_NAME A ',
+'SELECT DBA, DBA A ',
 '  FROM NPT009'))
 ,p_lov_cascade_parent_items=>'P31_CUSTOMER'
 ,p_ajax_items_to_submit=>'P31_CUSTOMER'
@@ -141,7 +122,6 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(18258312494008511)
 ,p_name=>'P31_URL'
 ,p_item_sequence=>20
-,p_item_plug_id=>wwv_flow_imp.id(17274722616462608)
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
 );
@@ -204,7 +184,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(17276335068462624)
 ,p_event_id=>wwv_flow_imp.id(17276183668462622)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>40
+,p_action_sequence=>50
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_DIALOG_CLOSE'
 ,p_attribute_01=>'P31_CUSTOMER'
@@ -220,12 +200,33 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'click'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(17276622524462627)
+ p_id=>wwv_flow_imp.id(72265065764359931)
 ,p_event_id=>wwv_flow_imp.id(17276531555462626)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>10
+,p_action_sequence=>20
 ,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_DIALOG_CANCEL'
+,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'BEGIN',
+'    :P31_URL := apex_page.get_url(',
+'       p_page   => 305',
+'     );',
+'END;'))
+,p_attribute_03=>'P31_URL'
+,p_attribute_04=>'N'
+,p_attribute_05=>'PLSQL'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72265195499359932)
+,p_event_id=>wwv_flow_imp.id(17276531555462626)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'let url = $v("P31_URL");',
+'apex.navigation.redirect(url);'))
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(18259903040008527)

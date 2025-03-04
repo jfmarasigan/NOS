@@ -236,7 +236,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_options=>'#DEFAULT#:t-Button--large:t-Button--noUI:t-Button--stretch:t-Button--gapTop:t-Button--gapBottom'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>U</u> - Utilities'
-,p_button_redirect_url=>'f?p=&APP_ID.:160:&SESSION.::&DEBUG.:::'
+,p_button_redirect_url=>'f?p=&APP_ID.:222:&SESSION.::&DEBUG.:::'
 ,p_grid_new_row=>'N'
 ,p_grid_column_span=>4
 ,p_grid_column=>9
@@ -286,6 +286,16 @@ wwv_flow_imp_page.create_page_branch(
 'SELECT null',
 '  FROM NPM009',
 ' WHERE user_name = ''POS_USER'';'))
+);
+wwv_flow_imp_page.create_page_branch(
+ p_id=>wwv_flow_imp.id(47183443699422141)
+,p_branch_name=>'Redirect to Change Password'
+,p_branch_action=>'f?p=&APP_ID.:221:&SESSION.::&DEBUG.:::&success_msg=#SUCCESS_MSG#'
+,p_branch_point=>'BEFORE_HEADER'
+,p_branch_type=>'REDIRECT_URL'
+,p_branch_sequence=>20
+,p_branch_condition_type=>'EXISTS'
+,p_branch_condition=>'SELECT 1 FROM NPM009 WHERE USER_NAME = v(''APP_USER'') AND IS_PASSWORD_TEMPORARY = ''Y'''
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(15654789205560909)

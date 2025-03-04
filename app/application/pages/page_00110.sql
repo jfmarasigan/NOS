@@ -100,21 +100,22 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_sequence=>20
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT rownum row_id,',
+'select rownum row_id,',
 '       c.check_date check_date,',
 '       c.bank_name bank,',
 '       c.check_number check_no,',
-'       b.shipment_id shipment_no,',
+'       b.shipment_number shipment_no,',
 '       a.ata,',
 '       d.vendor_code || '' / '' || a.expense_description paid_to,',
 '       a.amount paid_amount,',
 '       e.expense_class_code "EC"',
-'  FROM nit019 a,',
-'       nit018 b,',
+'  from nit019 a,',
+'       nit016 b,',
 '       nit021 c,',
 '       nit006 d,',
 '       nim039 e',
-' WHERE a.ap_id = b.ap_id',
+' where a.container_no = b.container_no',
+'   and a.ata = b.ata',
 '   AND a.ap_id = c.ap_id',
 '   AND a.vendor_id = d.vendor_id',
 '   AND a.expense_class_id = e.expense_class_id (+)',
@@ -255,7 +256,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'SHIPMENT_NO'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'SHIPMENT_NO'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Shipment No'
@@ -264,8 +265,12 @@ wwv_flow_imp_page.create_region_column(
 ,p_value_alignment=>'LEFT'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
-,p_enable_filter=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function( options ) {',

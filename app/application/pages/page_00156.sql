@@ -45,7 +45,6 @@ wwv_flow_imp_page.create_page(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(83878751831825593)
 ,p_name=>'P156_REASON_NAME'
-,p_is_required=>true
 ,p_item_sequence=>20
 ,p_prompt=>'Go To Reason Name:'
 ,p_display_as=>'NATIVE_TEXT_FIELD'

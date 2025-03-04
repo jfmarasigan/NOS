@@ -18,8 +18,37 @@ wwv_flow_imp_page.create_page(
 ,p_page_mode=>'MODAL'
 ,p_step_title=>'Pricelist'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'function mapP13Keys(){',
+'    $(document).on(''keydown.p13keyevents'', (ev) => {',
+'',
+'        const excludedKeys = [',
+'            "PageUp", ',
+'            "PageDown",  ',
+'            "ArrowUp", ',
+'            "ArrowDown"',
+'        ];',
+'        if (!excludedKeys.includes(ev.key)) {',
+'            apex.navigation.dialog.close(true);',
+'            $(document).off(''keydown.p13keyevents'');',
+'        }',
+'',
+'    });',
+'}',
+''))
+,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'mapP13Keys();',
+'apex.region("table1").focus();'))
 ,p_css_file_urls=>'#APP_FILES#css/ibi-css#MIN#.css'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.a-GV-table tr.is-selected .a-GV-cell {',
+'     background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused {',
+'     box-shadow: 0 0 0 1px black inset !important;',
+'}',
+'',
 '.t-Dialog-body {',
 '    background-color: #056AC8;',
 '    padding: 0rem .75rem .25rem .75rem !important;',
@@ -113,7 +142,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_value_alignment=>'LEFT'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<div style="display: flex; justify-content: space-between;">',
-'    <span><b>$</b></span>',
+'    <span></span>',
 '    <span>&PRICE./&UOM.</span>',
 '</div>'))
 ,p_filter_is_required=>false
@@ -127,7 +156,7 @@ wwv_flow_imp_page.create_region_column(
 '}'))
 ,p_enable_sort_group=>false
 ,p_enable_hide=>false
-,p_is_primary_key=>false
+,p_is_primary_key=>true
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
 );
@@ -187,7 +216,7 @@ wwv_flow_imp_page.create_interactive_grid(
 ,p_is_editable=>false
 ,p_lazy_loading=>false
 ,p_requires_filter=>false
-,p_select_first_row=>false
+,p_select_first_row=>true
 ,p_fixed_row_height=>true
 ,p_pagination_type=>'SCROLL'
 ,p_show_total_row_count=>false

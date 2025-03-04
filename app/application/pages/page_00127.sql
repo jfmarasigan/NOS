@@ -40,13 +40,28 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP127Keys();',
-'setInputFilter($("#P127_CM_AMOUNT"), function(value) {  return /^\d*$/.test(value);}, "Only digits are allowed");',
+'setInputFilter($("#P127_CM_AMOUNT"), function(value) {',
+'    return /^\d*\.?\d*$/.test(value);',
+'    }, "Only digits or decimal point are allowed");',
 '',
 ''))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.format-size{',
 '    font-size: 1.125rem;',
 '    font-family: Arial;',
+'}',
+'',
+'.text_field{',
+'    background-color: white;',
+'}',
+'',
+'#enter{',
+'    display: none;',
+'}',
+'',
+'#P127_CUSTOMER_DBA .apex-item-text {',
+'    border: none;',
+'    font-size: 1.125rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
@@ -54,7 +69,7 @@ wwv_flow_imp_page.create_page(
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(46320634142497931)
-,p_button_sequence=>80
+,p_button_sequence=>110
 ,p_button_name=>'Enter'
 ,p_button_static_id=>'enter'
 ,p_button_action=>'DEFINED_BY_DA'
@@ -67,24 +82,26 @@ wwv_flow_imp_page.create_page_button(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(46319005037497915)
 ,p_name=>'P127_CUSTOMER_DBA'
-,p_item_sequence=>50
+,p_item_sequence=>80
 ,p_prompt=>'<span class="format-size">Customer DBA<span style="color: red;">*</span>:</span>'
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_display_as=>'NATIVE_AUTO_COMPLETE'
+,p_lov=>'SELECT DBA FROM NPT009'
 ,p_cSize=>30
 ,p_tag_css_classes=>'format-size'
 ,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
-,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-,p_attribute_02=>'N'
-,p_attribute_04=>'TEXT'
-,p_attribute_05=>'BOTH'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'CONTAINS_IGNORE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'7'
+,p_attribute_09=>'1'
+,p_attribute_10=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(46319132002497916)
 ,p_name=>'P127_CM_AMOUNT'
-,p_item_sequence=>60
+,p_item_sequence=>90
 ,p_prompt=>'<span class="format-size">CM Amount<span style="color: red;">*</span>:</span>'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
@@ -92,7 +109,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -101,15 +117,14 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(46319281835497917)
 ,p_name=>'P127_NOTE'
-,p_item_sequence=>70
-,p_prompt=>'<span class="format-size">Note:</span>'
+,p_item_sequence=>100
+,p_prompt=>'<span class="format-size">Reason:</span>'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_tag_css_classes=>'format-size'
 ,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -137,6 +152,22 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P127_SUBMITTED'
 ,p_item_sequence=>40
 ,p_item_default=>'0'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(47894278534514535)
+,p_name=>'P127_PAGE_TYPE'
+,p_item_sequence=>50
+,p_item_default=>'0'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(47894328631514536)
+,p_name=>'P127_CM_ID'
+,p_item_sequence=>60
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'Y'
@@ -219,10 +250,28 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'focusin'
 );
 wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(64672189260531936)
+,p_event_id=>wwv_flow_imp.id(46320418572497929)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P127_CM_AMOUNT'
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'TO_CHAR(:P127_CM_AMOUNT, ''999,999.00'')'
+,p_attribute_07=>'P127_CM_AMOUNT'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+,p_client_condition_type=>'NOT_NULL'
+,p_client_condition_element=>'P127_CM_AMOUNT'
+);
+wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46321569360497940)
 ,p_event_id=>wwv_flow_imp.id(46320418572497929)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>20
+,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
@@ -238,7 +287,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46321663833497941)
 ,p_event_id=>wwv_flow_imp.id(46320418572497929)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>30
+,p_action_sequence=>40
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
@@ -280,12 +329,12 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46320800987497933)
 ,p_event_id=>wwv_flow_imp.id(46320768927497932)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>20
+,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
 ,p_name=>'Go next'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'jQuery($v("P127_NEXT_ITEM")).trigger("focus").select();',
+'jQuery($v("P127_NEXT_ITEM")).select();',
 ''))
 ,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
 ,p_client_condition_expression=>'$v("P127_CUSTOMER_DBA") == '''' || $v("P127_CM_AMOUNT") == '''' || $v("P127_VALID") == 0'
@@ -294,7 +343,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46320998291497934)
 ,p_event_id=>wwv_flow_imp.id(46320768927497932)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>30
+,p_action_sequence=>50
 ,p_execute_on_page_init=>'N'
 ,p_name=>'Submit'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
@@ -311,16 +360,48 @@ wwv_flow_imp_page.create_page_da_action(
 '    WHERE',
 '        lower(:P127_CUSTOMER_DBA) = lower(DBA);',
 '',
-'    IF l_customer_id IS NOT NULL THEN    ',
-'        INSERT INTO NPT015(TOTAL_AMOUNT, CURRENT_BALANCE, USER_CREATED, DATE_CREATED, PAYMENT_METHOD_ID, POSTED_DATE, CUSTOMER_ID, REASON)',
-'        VALUES(:P127_CM_AMOUNT, :P127_CM_AMOUNT, :APP_USER, SYSDATE(), 3, SYSDATE(), l_customer_id, :P127_NOTE);',
+'    IF l_customer_id IS NOT NULL AND :P127_PAGE_TYPE = ''add'' THEN    ',
+'        INSERT INTO NPT015(TOTAL_AMOUNT, CURRENT_BALANCE, USER_CREATED, DATE_CREATED, CUSTOMER_ID, REASON, TYPE, CM_STATUS_ID)',
+'        VALUES(REPLACE(:P127_CM_AMOUNT, '','', ''''), REPLACE(:P127_CM_AMOUNT, '','', ''''), :APP_USER, SYSDATE(), l_customer_id, :P127_NOTE, ''DIRECT'', 1)',
+'        RETURNING CREDIT_MEMO_ID',
+'        INTO :P127_CM_ID;',
+'        :P127_SUBMITTED := 1;',
+'    ELSIF :P127_PAGE_TYPE = ''update'' THEN',
+'        UPDATE NPT015',
+'        SET TOTAL_AMOUNT = REPLACE(:P127_CM_AMOUNT, '','', ''''),',
+'            CURRENT_BALANCE = REPLACE(:P127_CM_AMOUNT, '','', ''''),',
+'            USER_UPDATE = :APP_USER,',
+'            DATE_UPDATED = SYSDATE(),',
+'            REASON = :P127_NOTE',
+'        WHERE CREDIT_MEMO_ID = :P127_CM_ID;',
 '        :P127_SUBMITTED := 1;',
 '    END IF;',
+'EXCEPTION',
+'    WHEN NO_DATA_FOUND THEN',
+'        :P127_PAGE_TYPE := ''none'';',
+'        :P127_SUBMITTED := 1;',
 'END;'))
-,p_attribute_02=>'P127_CUSTOMER_DBA,P127_CM_AMOUNT,P127_NOTE'
-,p_attribute_03=>'P127_SUBMITTED'
+,p_attribute_02=>'P127_CUSTOMER_DBA,P127_CM_AMOUNT,P127_NOTE,P127_CM_ID'
+,p_attribute_03=>'P127_SUBMITTED,P127_CM_ID,P127_PAGE_TYPE'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
+,p_wait_for_result=>'Y'
+,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_client_condition_expression=>'!($v("P127_CUSTOMER_DBA") == '''' || $v("P127_CM_AMOUNT") == '''') && $v("P127_VALID") == 1'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(64672375425531938)
+,p_event_id=>wwv_flow_imp.id(46320768927497932)
+,p_event_result=>'TRUE'
+,p_action_sequence=>60
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P127_CUSTOMER_DBA,P127_CM_AMOUNT,P127_NOTE'
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'NULL'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 ,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
 ,p_client_condition_expression=>'!($v("P127_CUSTOMER_DBA") == '''' || $v("P127_CM_AMOUNT") == '''') && $v("P127_VALID") == 1'
@@ -329,10 +410,10 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46321906991497944)
 ,p_event_id=>wwv_flow_imp.id(46320768927497932)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>40
+,p_action_sequence=>80
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_DIALOG_CLOSE'
-,p_attribute_01=>'P127_SUBMITTED'
+,p_attribute_01=>'P127_CM_ID,P127_PAGE_TYPE,P127_CUSTOMER_DBA'
 ,p_client_condition_type=>'EQUALS'
 ,p_client_condition_element=>'P127_SUBMITTED'
 ,p_client_condition_expression=>'1'
@@ -341,7 +422,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46321448531497939)
 ,p_event_id=>wwv_flow_imp.id(46320768927497932)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>50
+,p_action_sequence=>90
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
@@ -352,6 +433,31 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_wait_for_result=>'Y'
 ,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
 ,p_client_condition_expression=>'$v("P127_CUSTOMER_DBA") != '''' && $v("P127_CM_AMOUNT") != '''''
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(64672717536531942)
+,p_name=>'New'
+,p_event_sequence=>60
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(64672917882531944)
+,p_event_id=>wwv_flow_imp.id(64672717536531942)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P127_CUSTOMER_DBA,P127_CM_AMOUNT,P127_NOTE'
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'NULL'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+,p_client_condition_type=>'NOT_EQUALS'
+,p_client_condition_element=>'P127_PAGE_TYPE'
+,p_client_condition_expression=>'update'
 );
 wwv_flow_imp.component_end;
 end;

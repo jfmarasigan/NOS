@@ -74,6 +74,18 @@ wwv_flow_imp_shared.create_theme_style(
 ,p_theme_roller_read_only=>true
 ,p_reference_id=>3291983347983194966
 );
+wwv_flow_imp_shared.create_theme_style(
+ p_id=>wwv_flow_imp.id(51947746439860350)
+,p_theme_id=>42
+,p_name=>'Vita (copy_1)'
+,p_is_current=>false
+,p_is_public=>true
+,p_is_accessible=>true
+,p_theme_roller_input_file_urls=>'#THEME_FILES#less/theme/Vita.less'
+,p_theme_roller_config=>'{"classes":[],"vars":{},"customCSS":".display-only-end .apex-item-display-only{\n    text-align: end!important;\n}","useCustomLess":"N"}'
+,p_theme_roller_output_file_url=>'#THEME_DB_FILES#51947746439860350.css'
+,p_theme_roller_read_only=>false
+);
 wwv_flow_imp.component_end;
 end;
 /

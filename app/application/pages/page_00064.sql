@@ -17,6 +17,8 @@ wwv_flow_imp_page.create_page(
 ,p_alias=>'POS-CASHIERING-OPENING-BALANCE'
 ,p_page_mode=>'MODAL'
 ,p_step_title=>'OPENING BALANCE'
+,p_warn_on_unsaved_changes=>'N'
+,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let lastSelected = null;',
@@ -31,7 +33,6 @@ wwv_flow_imp_page.create_page(
 '    },',
 '',
 '    escape: (v) => {',
-'        console.log("to-top");',
 '        $("#esc").trigger("click");',
 '    },',
 '',

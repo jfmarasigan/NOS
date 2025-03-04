@@ -85,6 +85,7 @@ wwv_flow_imp_page.create_page(
 '',
 '.text-red {',
 '    color: red;',
+'    font-weight: 600;',
 '}',
 '',
 '.ui-widget-overlay {',

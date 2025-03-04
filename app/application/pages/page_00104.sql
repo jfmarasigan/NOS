@@ -95,9 +95,18 @@ wwv_flow_imp_page.create_page(
 '    if (key === "f7") {',
 '        ev.preventDefault();',
 '        $("#view-serial-nos").trigger("click");',
-'    } else if (key === "escape") {',
-'        ev.preventDefault();',
-'        apex.navigation.redirect($("#P104_SURL").val());',
+'    }',
+'});',
+'',
+'$(document).on("keydown", (ev) => {',
+'    const key = ev.key?.toLowerCase();',
+'    if (key === "escape") {',
+'        if (activeModal === null) {',
+'            ev.preventDefault();',
+'            apex.navigation.redirect($("#P104_SURL").val());',
+'        } else {',
+'            activeModal = null;',
+'        }',
 '    }',
 '});',
 '',
@@ -238,7 +247,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'shipment-info'
 ,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--noUI:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_imp.id(4319920360084164)
-,p_plug_display_sequence=>50
+,p_plug_display_sequence=>70
 ,p_location=>null
 ,p_ai_enabled=>false
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
@@ -252,7 +261,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#:margin-left-md:margin-right-md'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>60
+,p_plug_display_sequence=>80
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT a.po_id ref_po_no, a.shipment_id, b.item_num item_number, b.item_desc,',
@@ -1103,7 +1112,7 @@ wwv_flow_imp_page.create_ig_report_column(
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(31236109979300160)
-,p_button_sequence=>70
+,p_button_sequence=>90
 ,p_button_name=>'VIEW_SERIAL_NOS'
 ,p_button_static_id=>'view-serial-nos'
 ,p_button_action=>'DEFINED_BY_DA'
@@ -1130,8 +1139,14 @@ wwv_flow_imp_page.create_page_branch(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(31311102525578743)
 ,p_name=>'P104_SURL'
-,p_item_sequence=>40
-,p_item_default=>'APEX_PAGE.GET_URL(p_page => 100)'
+,p_item_sequence=>60
+,p_item_default=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'APEX_PAGE.GET_URL(',
+'    p_page => 100,',
+'    p_items => ''P100_SEARCH,P100_SORT,P100_SELECTED_ID'',',
+'    p_values => :P104_QSEARCH || '','' || :P104_QSORT || '','' || :P104_SHIPMENT_ID,',
+'    p_clear_cache => ''100''',
+')'))
 ,p_item_default_type=>'EXPRESSION'
 ,p_item_default_language=>'PLSQL'
 ,p_display_as=>'NATIVE_HIDDEN'
@@ -1141,6 +1156,22 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(46914051891861204)
 ,p_name=>'P104_SHIPMENT_ID'
 ,p_item_sequence=>20
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+,p_item_comment=>'shipment ID used for updating'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(47037348101224202)
+,p_name=>'P104_QSEARCH'
+,p_item_sequence=>40
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+,p_item_comment=>'shipment ID used for updating'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(47037450706224203)
+,p_name=>'P104_QSORT'
+,p_item_sequence=>50
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
 ,p_item_comment=>'shipment ID used for updating'
@@ -1267,6 +1298,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'activeModal = ''serial-nos'';',
 'apex.region(SERIAL_NO_IG).widget().interactiveGrid("getActions").invoke("refresh");',
 'setTimeout(() => {',
 '    $.event.trigger("OPEN_SN");',

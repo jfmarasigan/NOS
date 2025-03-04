@@ -20,8 +20,15 @@ wwv_flow_imp_page.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'const p54KeyMap = {',
+'',
 '    enter : (v) => {',
-'        $.event.trigger("Search");',
+'        if(/^((TR((-)(\d{1,4}?)|(-))?)|(TR((-)(\d{1,4}?))(-(\d{1,5})?)?))$/.test($v("P54_START_WITH")) || $v("P54_START_WITH") == ''T''){',
+'            $.event.trigger("Search");',
+'        } else if(/^((tr((-)(\d{1,4}?)|(-))?)|(tr((-)(\d{1,4}?))(-(\d{1,5})?)?))$/.test($v("P54_START_WITH")) || $v("P54_START_WITH") == ''t''){',
+'            $.event.trigger("Search");',
+'        } else {',
+'            $.event.trigger(''showError'');',
+'        }',
 '    },',
 '',
 '    esc : (v) => {',
@@ -48,6 +55,14 @@ wwv_flow_imp_page.create_page(
 '',
 '.t-Form-labelContainer{',
 '    text-align: left;',
+'}',
+'',
+'.text_field{',
+'    background-color: white;',
+'}',
+'',
+'.err{',
+'    color: red;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
@@ -68,15 +83,15 @@ wwv_flow_imp_page.create_page_plug(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(20514060618240144)
 ,p_name=>'P54_START_WITH'
-,p_item_sequence=>10
+,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_imp.id(20512585409240116)
-,p_prompt=>'<p class="format-size">Start with Transfer ID:</p>'
+,p_prompt=>'<p class="format-size">Start with Transfer Number:</p>'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_tag_css_classes=>'format-size'
 ,p_grid_label_column_span=>4
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
-,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--preTextBlock'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -90,6 +105,24 @@ wwv_flow_imp_page.create_page_item(
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_ai_enabled=>false
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(65585669043220534)
+,p_name=>'P54_ERR'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_imp.id(20512585409240116)
+,p_prompt=>'Err'
+,p_source=>'Please follow the pattern: TR-YYYY-#####'
+,p_source_type=>'STATIC'
+,p_display_as=>'NATIVE_DISPLAY_ONLY'
+,p_tag_css_classes=>'err'
+,p_grid_label_column_span=>4
+,p_field_template=>wwv_flow_imp.id(4381902469084273)
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay'
+,p_attribute_01=>'Y'
+,p_attribute_02=>'VALUE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'PLAIN'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(15249212988369629)
@@ -152,6 +185,46 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_SET_FOCUS'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P54_START_WITH'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(60618178874627516)
+,p_event_id=>wwv_flow_imp.id(15249604694369633)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'$("#P54_STARTS_WITH").select()'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(65585700057220535)
+,p_event_id=>wwv_flow_imp.id(15249604694369633)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_HIDE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P54_ERR'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(65585892124220536)
+,p_name=>'Show Error'
+,p_event_sequence=>50
+,p_triggering_element_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_element=>'document'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'custom'
+,p_bind_event_type_custom=>'showError'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(65585938088220537)
+,p_event_id=>wwv_flow_imp.id(65585892124220536)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SHOW'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P54_ERR'
 );
 wwv_flow_imp.component_end;
 end;

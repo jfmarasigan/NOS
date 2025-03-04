@@ -22,7 +22,6 @@ wwv_flow_imp_page.create_page(
 'const p68KeyMap = {',
 '    enter : (v) => {',
 '        if( $v(''P68_SEARCH_NAME'').length <= 0 && $v(''P68_SEARCH_DATE_TO'').length <= 0 ){',
-'            console.log("empty");',
 '            apex.item(''P68_DISPLAY_ALL'').setValue(1);',
 '            apex.page.submit( "SUBMIT" );',
 '        } else{',
@@ -45,10 +44,29 @@ wwv_flow_imp_page.create_page(
 '    });',
 '}',
 '',
-'$x(''P68_SEARCH_NAME'').focus();'))
+'$x(''P68_SEARCH_NAME'').focus();',
+'',
+'$("#P68_SEARCH_DATE_TO")',
+'    .keypress(function(e){',
+'        if(',
+'            e.key == "1" || e.key == "2" ||',
+'            e.key == "3" || e.key == "4" ||',
+'            e.key == "5" || e.key == "6" ||',
+'            e.key == "7" || e.key == "8" ||',
+'            e.key == "9" || e.key == "0" || e.key == "/"',
+'        ){',
+'            if( $(this).val().length == 2 ){',
+'                $(this).val( $(this).val() + "/" )',
+'            } else if( $(this).val().length == 5 ){',
+'                $(this).val( $(this).val() + "/" )',
+'            }',
+'            return true;',
+'        } else {',
+'            return false;',
+'        }',
+'});'))
 ,p_javascript_code_onload=>'mapP68Keys();'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'/* Search Modal */',
 '.t-Dialog-body{',
 '    background-color: #056AC8;',
 '    padding-top: 0;',
@@ -119,48 +137,38 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_imp.id(44694643985564274)
 ,p_prompt=>'End Date: '
-,p_display_as=>'NATIVE_DATE_PICKER_APEX'
+,p_placeholder=>'MM/DD/YYYY'
+,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_grid_label_column_span=>4
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
-,p_attribute_02=>'POPUP'
-,p_attribute_03=>'NONE'
-,p_attribute_06=>'NONE'
-,p_attribute_09=>'N'
-,p_attribute_11=>'Y'
-);
-wwv_flow_imp_page.create_page_validation(
- p_id=>wwv_flow_imp.id(22268267340028341)
-,p_validation_name=>'Empty Name'
-,p_validation_sequence=>10
-,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT 1',
-'FROM DUAL',
-'WHERE :P68_SEARCH_NAME IS NOT NULL OR :P68_SEARCH_DATE_TO IS NOT NULL'))
-,p_validation_type=>'EXISTS'
-,p_error_message=>'Please type value in the fields.'
-,p_always_execute=>'Y'
-,p_associated_item=>wwv_flow_imp.id(44695047545564282)
-,p_error_display_location=>'INLINE_WITH_FIELD'
-,p_required_patch=>wwv_flow_imp.id(4207224469083906)
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_imp_page.create_page_validation(
  p_id=>wwv_flow_imp.id(22268382983028342)
-,p_validation_name=>'Empty Date To'
+,p_validation_name=>'Valid Date'
 ,p_validation_sequence=>20
 ,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT 1',
-'FROM DUAL',
-'WHERE :P68_SEARCH_NAME IS NOT NULL OR :P68_SEARCH_DATE_TO IS NOT NULL'))
-,p_validation_type=>'EXISTS'
-,p_error_message=>'Please type value in the fields.'
+'DECLARE',
+'    v_date DATE;',
+'BEGIN',
+'    v_date := TO_DATE( :P68_SEARCH_DATE_TO, ''MM/DD/YYYY'' );',
+'    RETURN TRUE;',
+'    EXCEPTION',
+'    WHEN OTHERS THEN',
+'        RETURN FALSE;',
+'END;'))
+,p_validation2=>'PLSQL'
+,p_validation_type=>'FUNC_BODY_RETURNING_BOOLEAN'
+,p_error_message=>'Must be valid Date.'
 ,p_always_execute=>'Y'
 ,p_associated_item=>wwv_flow_imp.id(44695130200564283)
 ,p_error_display_location=>'INLINE_WITH_FIELD'
-,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(22267966700028338)

@@ -251,7 +251,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_imp.id(236376830319992593)
 ,p_item_source_plug_id=>wwv_flow_imp.id(236376830319992593)
-,p_prompt=>'Route No<span style="color:red;">*</span>'
+,p_prompt=>'Route No'
 ,p_source=>'BANK_ROUTE_NO'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
@@ -295,6 +295,7 @@ wwv_flow_imp_page.create_page_validation(
 ,p_error_message=>'Field cannnot be empty.'
 ,p_associated_item=>wwv_flow_imp.id(40583850857970218)
 ,p_error_display_location=>'INLINE_WITH_FIELD'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_validation(
  p_id=>wwv_flow_imp.id(40584220468970222)

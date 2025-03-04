@@ -74,7 +74,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.t-Form-itemWrapper > input {',
-'    background-color: #ece7e7;',
+'    background-color: white;',
 '    height: 2rem;',
 '}',
 '',
@@ -102,6 +102,7 @@ wwv_flow_imp_page.create_page(
 '.error-msg {',
 '    color: red;',
 '    font-size: 0.75rem;',
+'    font-weight: 600;',
 '    padding-left: 0.7rem;',
 '    padding-bottom: 0.5rem;',
 '}',
@@ -204,7 +205,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_cMaxlength=>4
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
-,p_is_persistent=>'N'
 ,p_protection_level=>'S'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
@@ -225,7 +225,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_cSize=>32
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'

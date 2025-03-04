@@ -24,7 +24,7 @@ wwv_flow_imp_page.create_page(
 'let lastSelected = null;',
 'const p49KeyMap = {',
 '    enter: (v) => {',
-'        $("#enter").trigger("click");',
+'        $("#submit").trigger("click");',
 '    },',
 '',
 '    escape: (v) => {',
@@ -45,12 +45,13 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_javascript_code_onload=>'mapP49Keys();'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'.t-Dialog-body{',
-'    label, input {',
-'        font-size: 1.125rem;',
-'    }',
-'    padding-bottom: 0;',
-'    padding-left: 0;',
+'.t-Dialog-body {',
+'    background-color: #056AC8;',
+'    color: white;',
+'}',
+'',
+'.t-Dialog-body label, .t-Dialog-body input {',
+'    font-size: 1.125rem;',
 '}',
 '',
 '.apex-item-display-only {',
@@ -60,8 +61,27 @@ wwv_flow_imp_page.create_page(
 '',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.t-Form-fieldContainer.rel-col, .t-Form-fieldContainer.rel-col .t-Form-label {',
+'    flex-direction: row !important;',
+'    color: white;',
+'}',
+'',
+'.t-Form-fieldContainer .t-Form-labelContainer {',
+'    padding-block-end: var(--ut-field-padding-y, .5rem) !important;',
+'}',
+'',
+'.t-Form-fieldContainer .t-Form-inputContainer {',
+'    padding-block-start: var(--ut-field-padding-y, .5rem) !important;',
+'    justify-content: end;',
+'}',
+'',
+'.t-Form-inputContainer .t-Form-error, .t-Form-inputContainer .t-Form-error div {',
+'    color: #FFD700;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
+,p_dialog_width=>'350'
 ,p_dialog_chained=>'N'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'11'
@@ -98,7 +118,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>50
 ,p_prompt=>'Code:'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
-,p_cSize=>30
+,p_cSize=>20
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
 ,p_attribute_01=>'N'
@@ -167,55 +187,49 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DECLARE',
 '    v_balance NUMBER;',
-'    v_amount NUMBER;',
+'    v_amount  NUMBER;',
 'BEGIN',
+'    v_amount := TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, ''$'', ''''), '','', ''''));',
+'',
 '    SELECT balance',
 '      INTO v_balance',
 '      FROM NPT020',
 '     WHERE gift_certificate_id = :P49_CODE;',
-'     ',
 '',
-'    IF v_balance >= :P47_AMOUNT THEN',
+'    IF v_balance >= v_amount THEN',
 '        apex_collection.add_member(',
-'                p_collection_name => ''PAYMENT'',',
-'                p_c001 => ''Gift Certificate'',',
-'                p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, ''$'', ''''), '','', '''')), 2), ''FM999999999.00''),',
-'                p_n002 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, ''$'', ''''), '','', '''')), 2), ''FM999999999.00''),',
-'                p_n003 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, ''$'', ''''), '','', '''')), 2), ''FM999999999.00''),',
-'                p_n004 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, ''$'', ''''), '','', '''')), 2), ''FM999999999.00'')',
+'            p_collection_name => ''PAYMENT'',',
+'            p_c001            => ''Gift Certificate BLUE ('' || :P49_CODE || '')'',',
+'            p_n001            => v_amount, ',
+'            p_n002            => v_amount, ',
+'            p_n003            => v_amount, ',
+'            p_n004            => TO_CHAR(TO_NUMBER(REPLACE(REPLACE(:P41_TOTAL, ''$'', ''''), '','', '''')), ''FM999999990.00'')',
 '        ); ',
 '',
 '        UPDATE NPT020',
-'        SET balance = balance - TO_NUMBER(REPLACE(REPLACE(:P49_AMOUNT, ''$'', ''''), '','', ''''))',
+'        SET balance = balance - v_amount,',
+'            gc_status_id = (SELECT gc_status_id FROM NPM014',
+'                            WHERE gc_status_name = ''Redeemed'')',
 '        WHERE gift_certificate_id = :P49_CODE;',
 '',
-'        :P47_URL := apex_page.get_url(',
+'        :P49_URL := apex_page.get_url(',
 '            p_page        => 43,',
 '            p_clear_cache => ''43''',
 '        );',
-'        ',
-'',
 '    ELSE',
 '        apex_collection.add_member(',
-'                p_collection_name => ''PAYMENT'',',
-'                p_c001 => ''Gift Certificate'',',
-'                p_n001 => TO_CHAR(ROUND(TO_NUMBER(REPLACE(REPLACE(v_balance, ''$'', ''''), '','', '''')), 2), ''FM999999999.00'')',
-'                );',
-'          ',
-'         ',
-'        UPDATE NPT020',
-'        SET balance = 0',
-'        WHERE gift_certificate_id = :P49_CODE;',
-'',
-'        ',
-'         :P47_URL := apex_page.get_url(',
-'            p_page        => 41,',
-'            p_clear_cache => ''41''',
+'            p_collection_name => ''PAYMENT'',',
+'            p_c001            => ''Gift Certificate BLUE ('' || :P49_CODE || '')'',',
+'            p_n001            => v_balance ',
 '        );',
+'',
+'        UPDATE NPT020',
+'        SET balance = 0,',
+'            gc_status_id = 3',
+'      WHERE gift_certificate_id = :P49_CODE;',
 '    END IF;',
-'    ',
-'END;',
-''))
+'',
+'END;'))
 ,p_attribute_02=>'P49_AMOUNT,P49_CODE,P41_TOTAL'
 ,p_attribute_03=>'P49_URL'
 ,p_attribute_04=>'N'
@@ -244,7 +258,7 @@ wwv_flow_imp_page.create_page_da_action(
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(44276225657177746)
-,p_name=>'New'
+,p_name=>'Check if GCert Exists'
 ,p_event_sequence=>20
 ,p_triggering_element_type=>'ITEM'
 ,p_triggering_element=>'P49_CODE'
@@ -264,9 +278,13 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>'SQL_STATEMENT'
 ,p_attribute_03=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT count(balance)',
-'      FROM NPT020',
-'     WHERE gift_certificate_id = :P49_CODE',
-'       AND balance = amount;'))
+'FROM NPT020 a, NPM014 b',
+'WHERE a.balance = a.amount',
+'  AND  a.gc_status_id = b.gc_status_id',
+'  AND a.gift_certificate_id = :P49_CODE',
+'  AND b.gc_status_name <> ''Redeemed''',
+'  AND a.expiry_date >= TRUNC(SYSDATE);',
+''))
 ,p_attribute_07=>'P49_CODE'
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'

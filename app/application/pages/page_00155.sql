@@ -48,7 +48,10 @@ wwv_flow_imp_page.create_page(
 '    font-size: 1.125rem;',
 '    color: white;',
 '}',
-''))
+'',
+'.a-Form-error, .t-Form-error{',
+'    color: #FFD700;',
+'}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'16'
@@ -86,8 +89,7 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(42619918130340704)
 ,p_name=>'P155_REASON_NAME'
 ,p_source_data_type=>'VARCHAR2'
-,p_is_required=>true
-,p_item_sequence=>20
+,p_item_sequence=>30
 ,p_item_plug_id=>wwv_flow_imp.id(83862835358757865)
 ,p_item_source_plug_id=>wwv_flow_imp.id(83862835358757865)
 ,p_prompt=>'Reason Name:'
@@ -104,6 +106,60 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
 ,p_attribute_05=>'BOTH'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(67460228882426319)
+,p_name=>'P155_PROCESS'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_imp.id(83862835358757865)
+,p_source=>'CASE WHEN :P155_REASON_ID IS NULL THEN 1 ELSE 2 END'
+,p_source_type=>'EXPRESSION'
+,p_source_language=>'PLSQL'
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_validation(
+ p_id=>wwv_flow_imp.id(65484223046001949)
+,p_validation_name=>'Empty Name'
+,p_validation_sequence=>10
+,p_validation=>'P155_REASON_NAME'
+,p_validation_type=>'ITEM_NOT_NULL'
+,p_error_message=>'Must have some value.'
+,p_always_execute=>'Y'
+,p_associated_item=>wwv_flow_imp.id(42619918130340704)
+,p_error_display_location=>'INLINE_WITH_FIELD'
+);
+wwv_flow_imp_page.create_page_validation(
+ p_id=>wwv_flow_imp.id(65484321021001950)
+,p_validation_name=>'Unique Name Update'
+,p_validation_sequence=>20
+,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT 1 ',
+'FROM NIM028',
+'WHERE UPPER(REASON_NAME) = UPPER(:P155_REASON_NAME) AND qty_reason_id  != :P155_REASON_ID'))
+,p_validation_type=>'NOT_EXISTS'
+,p_error_message=>'Name already exists.'
+,p_always_execute=>'Y'
+,p_validation_condition=>'P155_REASON_ID'
+,p_validation_condition_type=>'ITEM_IS_NOT_NULL'
+,p_associated_item=>wwv_flow_imp.id(42619918130340704)
+,p_error_display_location=>'INLINE_WITH_FIELD'
+);
+wwv_flow_imp_page.create_page_validation(
+ p_id=>wwv_flow_imp.id(70298629267784939)
+,p_validation_name=>'Unique Name Add'
+,p_validation_sequence=>30
+,p_validation=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'SELECT 1 ',
+'FROM NIM028',
+'WHERE UPPER(REASON_NAME) = UPPER(:P155_REASON_NAME)'))
+,p_validation_type=>'NOT_EXISTS'
+,p_error_message=>'Name already exists.'
+,p_always_execute=>'Y'
+,p_validation_condition=>'P155_REASON_ID'
+,p_validation_condition_type=>'ITEM_IS_NULL'
+,p_associated_item=>wwv_flow_imp.id(42619918130340704)
+,p_error_display_location=>'INLINE_WITH_FIELD'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(42641747913368945)
@@ -186,10 +242,26 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_sequence=>30
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
-,p_process_name=>'New'
+,p_process_name=>'Close Dialog Add'
+,p_attribute_01=>'P155_PROCESS,P155_REASON_NAME'
 ,p_attribute_02=>'Y'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'P155_REASON_ID'
+,p_process_when_type=>'ITEM_IS_NULL'
 ,p_internal_uid=>42641300290368945
+);
+wwv_flow_imp_page.create_page_process(
+ p_id=>wwv_flow_imp.id(69539209913893501)
+,p_process_sequence=>40
+,p_process_point=>'AFTER_SUBMIT'
+,p_process_type=>'NATIVE_CLOSE_WINDOW'
+,p_process_name=>'Close Dialog Update'
+,p_attribute_01=>'P155_PROCESS,P155_REASON_ID'
+,p_attribute_02=>'Y'
+,p_error_display_location=>'INLINE_IN_NOTIFICATION'
+,p_process_when=>'P155_REASON_ID'
+,p_process_when_type=>'ITEM_IS_NOT_NULL'
+,p_internal_uid=>69539209913893501
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(42640077068368940)

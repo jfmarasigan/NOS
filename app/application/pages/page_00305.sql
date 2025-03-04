@@ -149,10 +149,11 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_plug_id=>wwv_flow_imp.id(37507535107229230)
 ,p_button_name=>'CREDIT_MEMO_CREATE_UPDATE'
 ,p_button_static_id=>'credit-memo'
-,p_button_action=>'SUBMIT'
+,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--large:t-Button--noUI:t-Button--stretch:t-Button--gapTop:t-Button--gapBottom'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>M</u> - Credit Memo Create&#47;Update'
+,p_button_redirect_url=>'f?p=&APP_ID.:124:&SESSION.::&DEBUG.:124:P124_PREVIOUS:305'
 ,p_grid_new_row=>'N'
 ,p_grid_column_span=>4
 ,p_grid_column=>8
@@ -183,6 +184,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>P</u> - Customer Item Purchase History'
 ,p_button_redirect_url=>'f?p=&APP_ID.:83:&SESSION.::&DEBUG.:::'
+,p_button_condition=>'has_access(:APP_USER, 161, 201) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_grid_new_row=>'N'
 ,p_grid_column_span=>4
 ,p_grid_column=>8
@@ -193,17 +197,18 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_plug_id=>wwv_flow_imp.id(37507535107229230)
 ,p_button_name=>'RESERVATIONS_ENTRY_UPDATE'
 ,p_button_static_id=>'reservations'
-,p_button_action=>'SUBMIT'
+,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--large:t-Button--noUI:t-Button--stretch:t-Button--gapTop:t-Button--gapBottom'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>R</u> - Reservations Entry&#47;Update'
+,p_button_redirect_url=>'f?p=&APP_ID.:370:&SESSION.::&DEBUG.:::'
 ,p_grid_new_row=>'Y'
 ,p_grid_column_span=>4
 ,p_grid_column=>2
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(31846677107912976)
-,p_button_sequence=>120
+,p_button_sequence=>130
 ,p_button_plug_id=>wwv_flow_imp.id(37507535107229230)
 ,p_button_name=>'INQUIRE_VIEW_INV_DETAILS'
 ,p_button_static_id=>'inq-inv-dets'
@@ -217,8 +222,23 @@ wwv_flow_imp_page.create_page_button(
 ,p_grid_column=>8
 );
 wwv_flow_imp_page.create_page_button(
- p_id=>wwv_flow_imp.id(31848201027912978)
+ p_id=>wwv_flow_imp.id(82158180878837105)
 ,p_button_sequence=>150
+,p_button_plug_id=>wwv_flow_imp.id(37507535107229230)
+,p_button_name=>'CLOSING_BALANCE'
+,p_button_static_id=>'closing-balance'
+,p_button_action=>'REDIRECT_PAGE'
+,p_button_template_options=>'#DEFAULT#:t-Button--large:t-Button--noUI:t-Button--stretch:t-Button--gapTop:t-Button--gapBottom'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'<u>F</u> - Closing Balance'
+,p_button_redirect_url=>'f?p=&APP_ID.:65:&SESSION.::&DEBUG.:::'
+,p_grid_new_row=>'Y'
+,p_grid_column_span=>4
+,p_grid_column=>2
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(31848201027912978)
+,p_button_sequence=>160
 ,p_button_plug_id=>wwv_flow_imp.id(37507535107229230)
 ,p_button_name=>'INQ_VIEW_SUMM_INV'
 ,p_button_static_id=>'inq-sum-inv'
@@ -227,7 +247,10 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>S</u> - Inquire&#47;View Summary of Invoices'
 ,p_button_redirect_url=>'f?p=&APP_ID.:78:&SESSION.::&DEBUG.:::'
-,p_grid_new_row=>'Y'
+,p_button_condition=>'has_access(:APP_USER, 9, 109) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
+,p_grid_new_row=>'N'
 ,p_grid_column_span=>4
 ,p_grid_column=>8
 );
@@ -322,7 +345,7 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(58479621466161020)
 ,p_name=>'P305_PLACEHOLDER4'
-,p_item_sequence=>130
+,p_item_sequence=>140
 ,p_item_plug_id=>wwv_flow_imp.id(37507535107229230)
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
 ,p_grid_label_column_span=>0
@@ -332,7 +355,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_02=>'VALUE'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLAIN'
-,p_ai_enabled=>false
 );
 wwv_flow_imp.component_end;
 end;

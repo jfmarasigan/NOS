@@ -102,9 +102,22 @@ wwv_flow_imp_page.create_page(
 '',
 '        view$.grid("setSelectedRecords", [rec], true);',
 '    }',
+'}',
+'',
+'function highlightValue() {',
+'    const inputFieldIds = ["P94_PROCESS_DATE", "P94_ITEM_FROM", "P94_FROM_NUM_UNITS", "P94_ITEM_TO",',
+'                           "P94_TO_NUM_UNITS", "P94_NOTE"];',
+'',
+'    inputFieldIds.forEach((fieldId) => {',
+'        $(`#${fieldId}`).on("focus", function() {',
+'            $(this).select();',
+'        });',
+'    })',
 '}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP94Keys();',
+'// autoClearInputValue();',
+'highlightValue();',
 '',
 'let fromValue = $v("P94_FROM");',
 'setTitle(`${fromValue === "A" ? "Add Convert Item A to Item B" : "Update Convert Item A to Item B"}`);',
@@ -167,8 +180,19 @@ wwv_flow_imp_page.create_page(
 '            }',
 '        }',
 '    });',
+'});',
+'',
+'$(document).on("keydown", function (event) {',
+'    if (event.key === "Escape" && $("#P94_PROCESS_DATE").is(":focus")) {',
+'        event.preventDefault();',
+'        $("#exit").trigger("click");',
+'    }',
 '});'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.apex-item-text, .apex-item-text.apex-item-popup-lov {',
+'    background-color: white;',
+'}',
+'',
 '.hide {',
 '    display: none;',
 '}',
@@ -192,15 +216,17 @@ wwv_flow_imp_page.create_page(
 '.t-Form-labelContainer #P94_WHS_LOCATION_LABEL, ',
 '.t-Form-labelContainer #P94_ITEM_FROM_LABEL, ',
 '.t-Form-labelContainer #P94_ITEM_TO_LABEL,',
-'.t-Form-labelContainer #P94_NOTE_LABEL,',
-'.t-Form-labelContainer #P94_INVOICE_NO_LABEL,',
-'.t-Form-labelContainer #P94_CUSTOMER_NAME_LABEL  {',
+'.t-Form-labelContainer #P94_NOTE_LABEL  {',
 '    display: flex;',
 '    align-items: start;',
 '}',
 '',
 '.t-Form-labelContainer .t-Form-label::before {',
 '    content: "" !important;',
+'}',
+'',
+'.t-Form-error {',
+'    font-weight: 700;',
 '}',
 '',
 '.ui-dialog-titlebar {',
@@ -618,7 +644,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_plug_id=>wwv_flow_imp.id(32049483135460431)
 ,p_prompt=>'Processing Date'
 ,p_placeholder=>'MM/DD/YYYY'
-,p_display_as=>'NATIVE_DATE_PICKER_APEX'
+,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>4
@@ -628,11 +654,9 @@ wwv_flow_imp_page.create_page_item(
 ,p_warn_on_unsaved_changes=>'I'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
-,p_attribute_02=>'POPUP'
-,p_attribute_03=>'NONE'
-,p_attribute_06=>'NONE'
-,p_attribute_09=>'N'
-,p_attribute_11=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(32049702474460434)
@@ -886,6 +910,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--xlarge'
 ,p_warn_on_unsaved_changes=>'I'
 ,p_is_persistent=>'N'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -897,6 +922,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>130
 ,p_item_plug_id=>wwv_flow_imp.id(32049483135460431)
 ,p_prompt=>'Invoice Date'
+,p_placeholder=>'MM/DD/YYYY'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_begin_on_new_line=>'N'
@@ -908,6 +934,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--xlarge'
 ,p_warn_on_unsaved_changes=>'I'
 ,p_is_persistent=>'N'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -929,6 +956,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--xlarge:margin-bottom-md'
 ,p_warn_on_unsaved_changes=>'I'
 ,p_is_persistent=>'N'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -1239,12 +1267,10 @@ wwv_flow_imp_page.create_page_da_action(
 'var toNoUnits = $v(''P94_TO_NUM_UNITS'');',
 'var toUOM = $v(''P94_TO_UOM'');',
 'var note = $v(''P94_NOTE'');',
-'var invoiceNo = $v(''P94_INVOICE_NO'');',
-'var invoiceDate = $v(''P94_INVOICE_DATE'');',
-'var customerName = $v(''P94_CUSTOMER_NAME'');',
 'apex.message.clearErrors();',
 'var hasErrors = false;',
 'var numRegex = /^[0-9]+$/;',
+'',
 'function isDateValid(dateString) {',
 '    var datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;',
 '    if (!dateString.match(datePattern)) {',
@@ -1257,67 +1283,62 @@ wwv_flow_imp_page.create_page_da_action(
 '    var date = new Date(year, month - 1, day);',
 '    return (date.getFullYear() === year && date.getMonth() === (month - 1) && date.getDate() === day);',
 '}',
+'',
+'function showError(item, errorMessage) {',
+'        apex.message.showErrors([{',
+'            type: "error",',
+'            location: ["inline"],',
+'            pageItem: item,',
+'            message: errorMessage,',
+'            unsafe: false',
+'        }]);',
+'        hasErrors = true;',
+'    }',
+'',
+'',
 'if (processDate == "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_PROCESS_DATE",message: "Processing Date cannot be empty",unsafe: false}])',
+'    showError("P94_PROCESS_DATE", "Processing Date cannot be empty");',
 '    hasErrors = true;',
 '} else if (!isDateValid(processDate)) {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_PROCESS_DATE",message: "Please Enter a valid date",unsafe: false}])',
+'    showError("P94_PROCESS_DATE", "Please Enter a valid date");',
 '    hasErrors = true;',
 '}',
 'if (whsLoc == "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_WHS_LOCATION",message: "Warehouse Location cannot be empty",unsafe: false}])',
+'    showError("P94_WHS_LOCATION", "Warehouse Location cannot be empty");',
 '    hasErrors = true;',
 '}',
 'if (itemFrom == "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_ITEM_FROM",message: "Item From cannot be empty",unsafe: false}])',
+'    showError("P94_ITEM_FROM", "Item From cannot be empty");',
 '    hasErrors = true;',
 '}',
 'if (fromNoUnits == "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_FROM_NUM_UNITS",message: "Number of units cannot be empty",unsafe: false}])',
+'    showError("P94_FROM_NUM_UNITS", "Number of units cannot be empty");',
 '    hasErrors = true;',
 '} else if (!numRegex.test(fromNoUnits)) {',
-'    apex.message.showErrors([{type: "error",location: ["inline"], pageItem: "P94_FROM_NUM_UNITS", message: "Number of units must be a number",unsafe: false',
-'    }])',
+'    showError("P94_FROM_NUM_UNITS", "Number of units must be a number");',
 '    hasErrors = true;',
 '}',
 'if (fromUOM == "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_FROM_UOM",message: "UOM cannot be empty",unsafe: false',
-'    }])',
+'    showError("P94_FROM_UOM", "UOM cannot be empty");',
 '    hasErrors = true;',
 '}',
 'if (itemTo == "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_ITEM_TO",message: "Item To cannot be empty",unsafe: false',
-'    }])',
+'    showError("P94_ITEM_TO", "Item To cannot be empty");',
 '    hasErrors = true;',
 '}',
 'if (toNoUnits == "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_TO_NUM_UNITS",message: "Number of units cannot be empty",unsafe: false',
-'    }])',
+'    showError("P94_TO_NUM_UNITS", "Number of units cannot be empty");',
+'    hasErrors = true;',
+'} else if (!numRegex.test(toNoUnits)) {',
+'    showError("P94_TO_NUM_UNITS", "Number of units must be a number");',
 '    hasErrors = true;',
 '}',
 'if (toUOM == "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_TO_UOM",message: "UOM cannot be empty",unsafe: false',
-'    }])',
+'    showError("P94_TO_UOM", "UOM cannot be empty");',
 '    hasErrors = true;',
 '}',
 'if (note.length > 40) {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_NOTE",message: "Note cannot exceed 40 characters",unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'}',
-'if (invoiceNo.length > 9) {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_INVOICE_NO",message: "Invoice Number cannot exceed 9 characters",unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'}',
-'if (!isDateValid(invoiceDate) && invoiceDate !== "") {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_INVOICE_DATE",message: "Please enter a valid date",unsafe: false',
-'    }])',
-'    hasErrors = true;',
-'}',
-'if (customerName.length > 40) {',
-'    apex.message.showErrors([{type: "error",location: ["inline"],pageItem: "P94_CUSTOMER_NAME",message: "Customer Name cannot exceed 40 characters",unsafe: false',
-'    }])',
+'    showError("P94_NOTE", "Note cannot exceed 40 characters");',
 '    hasErrors = true;',
 '}',
 'if (hasErrors) {',
@@ -1335,6 +1356,8 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'    v_is_posted NIT020.is_posted%TYPE;',
 'BEGIN',
 '    IF :P94_FROM = ''A'' THEN',
 '        INSERT INTO NIT020(convert_id, processing_date, warehouse_id, from_item_id, from_no_of_units, from_uom_id,',
@@ -1344,37 +1367,41 @@ wwv_flow_imp_page.create_page_da_action(
 '                           V(''APP_USER''), SYSDATE);',
 '        :P94_URL := apex_page.get_url(',
 '           p_page   => 91,',
-'           p_items  => ''P91_CONVERT_ID_F,P91_FROM'',',
-'           p_values => :P94_RECORD_NUM || '','' || :P94_FROM',
+'           p_items  => ''P91_CONVERT_ID_F,P91_FROM,P91_CONVERT_ID'',',
+'           p_values => :P94_RECORD_NUM || '','' || :P94_FROM || '','' || :P94_RECORD_NUM',
 '        );',
 '    ELSIF :P94_FROM = ''U'' THEN',
-'        UPDATE',
-'            NIT020',
-'        SET',
-'            processing_date = :P94_PROCESS_DATE,',
-'            warehouse_id = :P94_WHS_LOCATION,',
-'            from_item_id = :P94_ITEM_FROM_ID,',
-'            from_no_of_units = :P94_FROM_NUM_UNITS,',
-'            from_uom_id = :P94_FROM_UOM,',
-'            to_item_id = :P94_ITEM_TO_ID,',
-'            to_no_of_units = :P94_TO_NUM_UNITS,',
-'            to_uom_id = :P94_TO_UOM,',
-'            notes = :P94_NOTE,',
-'            update_user = V(''APP_USER''),',
-'            update_date = SYSDATE,',
-'            invoice_number = :P94_INVOICE_NO,',
-'            invoice_date = :P94_INVOICE_DATE,',
-'            customer_name = :P94_CUSTOMER_NAME',
-'        WHERE',
-'            CONVERT_ID = :P94_RECORD_NUM;',
-'        :P94_URL := apex_page.get_url(',
-'           p_page   => 91,',
-'           p_items  => ''P91_CONVERT_ID_F,P91_FROM'',',
-'           p_values => :P94_RECORD_NUM || '','' || :P94_FROM',
-'        );',
+'        SELECT is_posted',
+'        INTO v_is_posted',
+'        FROM NIT020',
+'        WHERE CONVERT_ID = :P94_RECORD_NUM;',
+'',
+'        IF v_is_posted = ''N'' THEN',
+'            UPDATE',
+'                NIT020',
+'            SET',
+'                processing_date = :P94_PROCESS_DATE,',
+'                warehouse_id = :P94_WHS_LOCATION,',
+'                from_item_id = :P94_ITEM_FROM_ID,',
+'                from_no_of_units = :P94_FROM_NUM_UNITS,',
+'                from_uom_id = :P94_FROM_UOM,',
+'                to_item_id = :P94_ITEM_TO_ID,',
+'                to_no_of_units = :P94_TO_NUM_UNITS,',
+'                to_uom_id = :P94_TO_UOM,',
+'                notes = :P94_NOTE,',
+'                update_user = V(''APP_USER''),',
+'                update_date = SYSDATE',
+'            WHERE',
+'                CONVERT_ID = :P94_RECORD_NUM;',
+'            :P94_URL := apex_page.get_url(',
+'               p_page   => 91,',
+'               p_items  => ''P91_CONVERT_ID_F,P91_FROM'',',
+'               p_values => :P94_RECORD_NUM || '','' || :P94_FROM',
+'            );',
+'        END IF;',
 '    END IF;',
 'END;'))
-,p_attribute_02=>'P94_RECORD_NUM,P94_FROM,P94_PROCESS_DATE,P94_WHS_LOCATION,P94_ITEM_FROM_ID,P94_FROM_NUM_UNITS,P94_FROM_UOM,P94_ITEM_TO_ID,P94_TO_NUM_UNITS,P94_TO_UOM,P94_NOTE,P94_INVOICE_NO,P94_INVOICE_DATE,P94_CUSTOMER_NAME'
+,p_attribute_02=>'P94_RECORD_NUM,P94_FROM,P94_PROCESS_DATE,P94_WHS_LOCATION,P94_ITEM_FROM_ID,P94_FROM_NUM_UNITS,P94_FROM_UOM,P94_ITEM_TO_ID,P94_TO_NUM_UNITS,P94_TO_UOM,P94_NOTE'
 ,p_attribute_03=>'P94_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
@@ -1411,16 +1438,16 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DECLARE',
 '    v_current_year VARCHAR2(4);',
-'    v_sequence VARCHAR2(3);',
+'    v_sequence VARCHAR2(5);',
 'BEGIN',
 '    v_current_year := TO_CHAR(SYSDATE, ''YYYY'');',
 '',
-'    SELECT LPAD(NVL(MAX(TO_NUMBER(SUBSTR(convert_id, 6, 3))), 0) + 1, 3, ''0'')',
+'    SELECT LPAD(NVL(MAX(TO_NUMBER(SUBSTR(convert_id, 9, 5))), 0) + 1, 5, ''0'')',
 '    INTO v_sequence',
 '    FROM NIT020',
-'    WHERE SUBSTR(convert_id, 1, 4) = v_current_year;',
+'    WHERE SUBSTR(convert_id, 4, 4) = v_current_year;',
 '',
-'    :P94_RECORD_NUM := v_current_year || ''-'' || v_sequence;',
+'    :P94_RECORD_NUM := ''CR-'' || v_current_year || ''-'' || v_sequence;',
 'END;'))
 ,p_attribute_03=>'P94_RECORD_NUM'
 ,p_attribute_04=>'N'
@@ -1460,14 +1487,11 @@ wwv_flow_imp_page.create_page_da_action(
 '    v_item_to NIT001.item_num%TYPE;',
 '    v_from_uom NIM026.uom_code%TYPE;',
 '    v_to_uom NIM026.uom_code%TYPE;',
-'    v_invoice_number NIT020.invoice_number%TYPE;',
-'    v_invoice_date NIT020.invoice_date%TYPE;',
-'    v_customer_name NIT020.customer_name%TYPE;',
 'BEGIN',
 '    SELECT processing_date, warehouse_id, from_item_id, from_no_of_units, from_uom_id, to_item_id, to_no_of_units,',
-'           to_uom_id, notes, invoice_number, invoice_date, customer_name',
+'           to_uom_id, notes',
 '    INTO v_process_date, v_whs_location, v_item_from_id, v_from_num_of_units, v_from_uom_id, v_item_to_id, v_to_num_of_units,',
-'         v_to_uom_id, v_note, v_invoice_number, v_invoice_date, v_customer_name',
+'         v_to_uom_id, v_note',
 '    FROM NIT020',
 '    WHERE convert_id = :P94_RECORD_NUM;',
 '',
@@ -1480,9 +1504,6 @@ wwv_flow_imp_page.create_page_da_action(
 '    :P94_TO_NUM_UNITS := v_to_num_of_units;',
 '    :P94_TO_UOM := v_to_uom_id;',
 '    :P94_NOTE := v_note;',
-'    :P94_INVOICE_NO := v_invoice_number;',
-'    :P94_INVOICE_DATE := v_invoice_date;',
-'    :P94_CUSTOMER_NAME := v_customer_name;',
 '',
 '    SELECT item_num',
 '    INTO v_item_from',
@@ -1499,7 +1520,7 @@ wwv_flow_imp_page.create_page_da_action(
 '    :P94_ITEM_TO := v_item_to;',
 'END;'))
 ,p_attribute_02=>'P94_ITEM_FROM_ID,P94_ITEM_TO_ID,P94_RECORD_NUM'
-,p_attribute_03=>'P94_PROCESS_DATE,P94_WHS_LOCATION,P94_ITEM_FROM_ID,P94_ITEM_FROM,P94_FROM_NUM_UNITS,P94_FROM_UOM,P94_ITEM_TO_ID,P94_ITEM_TO,P94_TO_NUM_UNITS,P94_TO_UOM,P94_NOTE,P94_INVOICE_NO,P94_INVOICE_DATE,P94_CUSTOMER_NAME'
+,p_attribute_03=>'P94_PROCESS_DATE,P94_WHS_LOCATION,P94_ITEM_FROM_ID,P94_ITEM_FROM,P94_FROM_NUM_UNITS,P94_FROM_UOM,P94_ITEM_TO_ID,P94_ITEM_TO,P94_TO_NUM_UNITS,P94_TO_UOM,P94_NOTE'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
@@ -1541,6 +1562,31 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'selectLastRow();'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(58825637858441007)
+,p_name=>'Set Current Date'
+,p_event_sequence=>110
+,p_condition_element=>'P94_FROM'
+,p_triggering_condition_type=>'EQUALS'
+,p_triggering_expression=>'A'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(58825768586441008)
+,p_event_id=>wwv_flow_imp.id(58825637858441007)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P94_PROCESS_DATE'
+,p_attribute_01=>'PLSQL_EXPRESSION'
+,p_attribute_04=>'TO_CHAR(SYSDATE, ''MM/DD/YYYY'')'
+,p_attribute_08=>'N'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
 );
 wwv_flow_imp.component_end;
 end;

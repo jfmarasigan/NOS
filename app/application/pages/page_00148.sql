@@ -32,17 +32,20 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P148_LEGAL_NAME'
 ,p_item_sequence=>30
 ,p_prompt=>'Legal Name'
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_display_as=>'NATIVE_AUTO_COMPLETE'
+,p_lov=>'SELECT LEGAL_NAME FROM NPT009'
 ,p_cSize=>30
 ,p_tag_css_classes=>'format-size'
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_imp.id(4381902469084273)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
 ,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-,p_attribute_02=>'N'
-,p_attribute_04=>'TEXT'
-,p_attribute_05=>'BOTH'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'CONTAINS_IGNORE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'7'
+,p_attribute_09=>'1'
+,p_attribute_10=>'Y'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(35461403557234046)

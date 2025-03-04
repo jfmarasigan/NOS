@@ -87,6 +87,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>C</u> - Collections Entry and Update'
 ,p_button_redirect_url=>'f?p=&APP_ID.:75:&SESSION.::&DEBUG.:15::'
+,p_button_condition=>'has_access(:APP_USER, 10, 190) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_grid_new_row=>'Y'
 ,p_grid_row_css_classes=>'menu-row'
 ,p_grid_column_span=>4
@@ -103,6 +106,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>P</u> - View Payments Map'
 ,p_button_redirect_url=>'f?p=&APP_ID.:150:&SESSION.::&DEBUG.:::'
+,p_button_condition=>'has_access(:APP_USER, 142, 191) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_grid_new_row=>'Y'
 ,p_grid_row_css_classes=>'menu-row'
 ,p_grid_column_span=>4
@@ -119,6 +125,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>S</u> - View Statement of Account'
 ,p_button_redirect_url=>'f?p=&APP_ID.:320:&SESSION.::&DEBUG.:320::'
+,p_button_condition=>'has_access(:APP_USER, 14, 63) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_grid_new_row=>'Y'
 ,p_grid_row_css_classes=>'menu-row'
 ,p_grid_column_span=>4

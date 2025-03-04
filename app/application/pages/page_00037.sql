@@ -46,6 +46,10 @@ wwv_flow_imp_page.create_page(
 '}'))
 ,p_javascript_code_onload=>'mapP37Keys();'
 ,p_css_file_urls=>'#APP_FILES#css/p37_css#MIN#.css'
+,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.text_field{',
+'    background-color: white;',
+'}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'17'

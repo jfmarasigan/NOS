@@ -17,6 +17,7 @@ wwv_flow_imp_page.create_page(
 ,p_alias=>'PAYMENTS-MAP-CUSTOMER'
 ,p_step_title=>'Payments Map (Customer)'
 ,p_warn_on_unsaved_changes=>'N'
+,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_file_urls=>'#APP_FILES#js/cmn#MIN#.js'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -39,6 +40,9 @@ wwv_flow_imp_page.create_page(
 '    h : (v) => {',
 '        $("#export").trigger("click");',
 '    },',
+'    r : (v) => {',
+'        $("#report").trigger("click");',
+'    },',
 '    enter : (v) => {',
 '        $("#refresh").trigger("click");',
 '    }',
@@ -56,29 +60,33 @@ wwv_flow_imp_page.create_page(
 '    });',
 '}',
 '',
+'const p150KeyMapDBA = {',
+'    escape : (v) => {',
+'        $("#esc").trigger("click");',
+'    },',
+'    enter : (v) => {',
+'        $("#refresh").trigger("click");',
+'    }',
+'}',
+'function mapP150KeysDBA() {',
+'    $(document).off(''keydown.p150keyevents'');',
+'    $(document).on(''keydown.p150keyevents'', (ev) => {',
+'        var key = ev.key?.toLowerCase();',
+'        if (p150KeyMapDBA[key]) {',
+'            ev.preventDefault();',
+'            p150KeyMapDBA[key]();',
+'        }',
+'    });',
+'}',
+'',
+'',
+'',
 '',
 'function handleTabNavigation() {',
 '',
 '    $("#P150_DBA, #P150_DATE_FROM, #P150_DATE_TO").attr("tabindex", 0);',
 '    $(":focusable").not("#P150_DBA, #P150_DATE_FROM, #P150_DATE_TO").attr("tabindex", -1);',
 '    ',
-'    const firstTableCells = $("#payment_ig_grid_vc .a-GV-cell");',
-'    const secondTableCells = $("#invoice-list_ig_grid_vc .a-GV-cell");',
-'',
-'    firstTableCells.on("keydown", function (event) {',
-'    if (event.key === "tab" && !event.shiftKey) { ',
-'        event.preventDefault(); ',
-'        secondTableCells.first().trigger("click").focus(); ',
-'    }',
-'});',
-'',
-'    secondTableCells.on("keydown", function (event) {',
-'    if (event.key === "tab" && event.shiftKey) { ',
-'        event.preventDefault(); ',
-'        firstTableCells.last().trigger("click").focus(); ',
-'    }',
-'});',
-'',
 '}',
 '',
 '',
@@ -94,16 +102,130 @@ wwv_flow_imp_page.create_page(
 '    return date.getFullYear() === year &&',
 '           date.getMonth() === month - 1 &&',
 '           date.getDate() === day;',
+'}',
+'',
+'function parseDate(dateString) {',
+'    var parts = dateString.split("/");',
+'    return new Date(parts[2], parts[0] - 1, parts[1]);',
+'}',
+'',
+'',
+'const p150KeyMapPrint = {',
+'    a : (v) => {',
+'        $("#dotmatrix").click();',
+'        console.log("A");',
+'    },',
+'    b : (v) => {',
+'        $("#graphic-printer").click();',
+'        console.log("B");',
+'    },',
+'    escape : (v) => {',
+'        mapP150KeysMenu();',
+'    }',
+'}',
+'',
+'function mapP150KeysPrint() {',
+'    $(document).off(''keydown.p150keyevents'');',
+'    $(document).on(''keydown.p150keyevents'', (ev) => {',
+'        var key = ev.key?.toLowerCase();',
+'        if (p150KeyMapPrint[key]) {',
+'            ev.preventDefault();',
+'            p150KeyMapPrint[key]();',
+'        }',
+'    });',
+'}',
+'',
+'function getTotalPayment(ig, col1) {',
+'    var model = apex.region(ig).widget().interactiveGrid("getViews", "grid").model;',
+'    var amount, total = 0;',
+'    var amountKey = model.getFieldKey(col1);',
+'',
+'    model.forEach(function(row) {',
+'        amount = parseFloat(row[amountKey].replace(/,/g, ""));',
+'        if (!isNaN(amount)) {',
+'            total += amount;',
+'        }',
+'    });',
+'    total = total.toLocaleString("en-US", {',
+'        minimumFractionDigits: 2,',
+'        maximumFractionDigits: 2',
+'    });',
+'',
+'    return total;',
+'}',
+'',
+'function getTotalCMemo(ig, col1, col2) {',
+'    var model = apex.region(ig).widget().interactiveGrid("getViews", "grid").model;',
+'    var amount, cMemoTotal = 0;',
+'    var amountKey = model.getFieldKey(col1);',
+'    var checkKey = model.getFieldKey(col2);',
+'',
+'    model.forEach(function(row) {',
+'        amount = parseFloat(row[amountKey].replace(/,/g, ""));',
+'        var check = row[checkKey]',
+'        if (!isNaN(amount)) {',
+'            if(check.includes("CMEMO")) {',
+'                cMemoTotal += amount;',
+'            }',
+'        }',
+'    });',
+'    cMemoTotal = cMemoTotal.toLocaleString("en-US", {',
+'        minimumFractionDigits: 2,',
+'        maximumFractionDigits: 2',
+'    });',
+'',
+'    return cMemoTotal;',
 '}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'mapP150KeysMenu();',
+'//mapP150KeysMenu();',
 '',
 'setTitle("Payments Map");',
 '$x(''P150_DBA'').focus();',
+'apex.item("P150_TOTAL_PAYMENT").setValue(getTotalPayment("payment", "Paid Amount"));',
+'apex.item("P150_TOTAL_CREDIT_MEMO").setValue(getTotalCMemo("payment", "Paid Amount", "Cash/Check"));',
 '',
 'handleTabNavigation();',
+'',
+'const dateFields = [''P150_DATE_FROM'', ''P150_DATE_TO'', ''P150_DATE''];',
+'',
+'dateFields.forEach((fieldId) => {',
+'  const dateField = document.getElementById(fieldId);',
+'',
+'  dateField.addEventListener(''input'', function () {',
+'    let value = dateField.value.replace(/\D/g, '''');',
+'',
+'    if (value.length > 2) {',
+'      value = value.substring(0, 2) + ''/'' + value.substring(2);',
+'    }',
+'    if (value.length > 5) {',
+'      value = value.substring(0, 5) + ''/'' + value.substring(5, 9);',
+'    }',
+'',
+'    if (value.length > 10) {',
+'      value = value.substring(0, 10);',
+'    }',
+'',
+'    dateField.value = value;',
+'  });',
+'});',
 ''))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.ui-dialog-titlebar:has(#ui-id-3) {',
+'    display: none !important;',
+'}',
+'',
+'.t-Region#date-header {',
+'    background-color: #046BC8;',
+'}',
+'',
+'.a-GV-table tr.is-selected .a-GV-cell {',
+'     background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused {',
+'     box-shadow: 0 0 0 1px black inset !important;',
+'}',
+'',
 '.btns {',
 '    font-size: 1.125rem;',
 '    color: white;',
@@ -119,6 +241,8 @@ wwv_flow_imp_page.create_page(
 '    font-size: 1.125rem;',
 '    color: white;',
 '}',
+'',
+'#daily-report label,',
 '#dba-and-date input {',
 '    font-size: 1.125rem;',
 '}',
@@ -212,9 +336,9 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '',
-'.a-GV-hdr .a-GV-table {',
+'/* .a-GV-hdr .a-GV-table {',
 '    width: 100% !important;',
-'}',
+'} */',
 '',
 ' /* Hide scrollbar for Chrome, Safari and Opera */',
 'html::-webkit-scrollbar {',
@@ -227,14 +351,14 @@ wwv_flow_imp_page.create_page(
 '  scrollbar-width: none; ',
 '} ',
 '',
-'.a-GV-w-scroll::-webkit-scrollbar {',
+'/* .a-GV-w-scroll::-webkit-scrollbar {',
 '  display: none;',
-'}',
+'} */',
 ' ',
-'.a-GV-w-scroll {',
+'/* .a-GV-w-scroll {',
 '  -ms-overflow-style: none;  ',
 '  scrollbar-width: none; ',
-'}',
+'} */',
 '',
 '.text-white {',
 '    color: white;',
@@ -248,12 +372,57 @@ wwv_flow_imp_page.create_page(
 '    display: none;',
 '}',
 '',
-'.t-Form-error {',
+'.t-Form-error:not(:has(#P150_DATE_error)) {',
 '    color: #FFD700;',
 '}',
 '',
 '#P150_DATE_FROM_error_placeholder, P150_DATE_TO_error_placeholder {',
 '    display: inline !important;',
+'}',
+'',
+'',
+'.ui-dialog-titlebar-close{',
+'    display: none;',
+'}',
+'',
+'.ui-dialog-title{',
+'    font-size: 1.5rem;',
+'    padding-bottom: 0.2rem;',
+'}',
+'',
+'#print-options .t-DialogRegion-body{',
+'    background-color: #056AC8;',
+'}',
+'',
+'',
+'.t-DialogRegion-body .t-Button-label {',
+'    font-size: 1.125rem;',
+'}',
+'',
+'.t-DialogRegion-body .t-Button-label {',
+'    color: white;',
+'}',
+'',
+'#payment .a-GV-table,',
+'#invoice-list .a-GV-table {',
+'    width: 100% !important;',
+'}',
+'',
+'#payment .a-GV-table colgroup col:nth-child(1),',
+'#payment .a-GV-table colgroup col:nth-child(4) {',
+'    width: 7rem;',
+'}',
+'',
+'#payment .a-GV-table colgroup col:nth-child(2) {',
+'    width: 9rem;',
+'}',
+'',
+'#payment .a-GV-table colgroup col:nth-child(3) {',
+'    width: 8rem;',
+'}',
+'',
+'#payment .a-GV-table colgroup col:nth-child(5) {',
+'    width: 7rem;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
@@ -284,32 +453,38 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
 ,p_plug_display_sequence=>90
 ,p_plug_new_grid_row=>false
-,p_plug_grid_column_span=>5
+,p_plug_grid_column_span=>6
 ,p_plug_display_column=>2
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT ',
-'    NPT005.date_created AS "Date Paid",',
-'    NPT005.cashcheck AS "Cash/Check",',
-'    NPT005.amount AS "Paid Amount",',
-'    NPT005.OR_NO AS "OR No.",',
-'    NPM015.collection_type_name AS "Type",',
-'    NPT005.collection_id AS "Collection ID",',
-'    NPT001.customer_id AS "Customer ID"',
-'FROM',
-'    NPT005',
-'JOIN ',
-'    NPM015 ON NPT005.collection_type_id = NPM015.collection_type_id',
-'JOIN ',
-'    NPT038 ON NPT005.collection_id = NPT038.collection_id',
-'JOIN',
-'    NPT001 ON NPT038.invoice_id = NPT001.invoice_id',
-'JOIN ',
-'    NPT009 ON NPT001.customer_id = NPT009.customer_id',
-'WHERE',
-'    UPPER(NPT009.DBA) = UPPER(:P150_DBA)',
-'AND',
-'    TRUNC(NPT005.DATE_CREATED) BETWEEN :P150_DATE_FROM AND :P150_DATE_TO;',
+'WITH customer_payment AS (',
+'    SELECT DISTINCT',
+'        TO_CHAR(NPT005.date_paid, ''MM/DD/YYYY'') AS "Date Paid",',
+'        NPT005.cashcheck AS "Cash/Check",',
+'        NPT005.amount AS "Paid Amount",',
+'        NPT005.OR_NO AS "OR No.",',
+'        NPM015.collection_type_code AS "Type",',
+'        NPT005.collection_id AS "Collection ID",',
+'        NPT005.customer_id AS "Customer ID"',
+'    FROM',
+'        NPT005',
+'    JOIN ',
+'        NPM015 ON NPT005.collection_type_id = NPM015.collection_type_id',
+'    JOIN ',
+'        NPT038 ON NPT005.collection_id = NPT038.collection_id',
+'    JOIN',
+'        NPT001 ON NPT038.invoice_id = NPT001.invoice_id',
+'    JOIN ',
+'        NPT009 ON NPT005.customer_id = NPT009.customer_id',
+'    WHERE',
+'        UPPER(NPT009.DBA) = UPPER(:P150_DBA)',
+'        AND',
+'        TRUNC(NPT005.DATE_CREATED) BETWEEN :P150_DATE_FROM AND :P150_DATE_TO',
+'    ORDER BY',
+'        TO_DATE("Date Paid", ''MM/DD/YYYY'') DESC',
+')',
+'',
+'SELECT * FROM customer_payment',
 ''))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P150_DBA,P150_DATE_FROM,P150_DATE_TO'
@@ -319,7 +494,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'Date Paid'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'Date Paid'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_DATE_PICKER_APEX'
 ,p_heading=>'Date Paid'
@@ -333,8 +508,12 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_09=>'N'
 ,p_attribute_11=>'Y'
 ,p_is_required=>true
-,p_enable_filter=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function( options ) {',
@@ -394,6 +573,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_value_alignment=>'RIGHT'
 ,p_attribute_03=>'left'
 ,p_attribute_04=>'decimal'
+,p_format_mask=>'999G999G999G999G990D00'
 ,p_is_required=>true
 ,p_enable_filter=>false
 ,p_filter_is_required=>false
@@ -419,7 +599,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_data_type=>'NUMBER'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_NUMBER_FIELD'
-,p_heading=>'Or No.'
+,p_heading=>'OR No.'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>60
 ,p_value_alignment=>'CENTER'
@@ -474,24 +654,6 @@ wwv_flow_imp_page.create_region_column(
 ,p_include_in_export=>true
 );
 wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(42955821343722517)
-,p_name=>'Customer ID'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'Customer ID'
-,p_data_type=>'NUMBER'
-,p_session_state_data_type=>'VARCHAR2'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_HIDDEN'
-,p_display_sequence=>80
-,p_attribute_01=>'Y'
-,p_filter_is_required=>false
-,p_use_as_row_header=>false
-,p_enable_sort_group=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
  p_id=>wwv_flow_imp.id(42956634971722525)
 ,p_name=>'Collection ID'
 ,p_source_type=>'DB_COLUMN'
@@ -501,6 +663,24 @@ wwv_flow_imp_page.create_region_column(
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_HIDDEN'
 ,p_display_sequence=>90
+,p_attribute_01=>'Y'
+,p_filter_is_required=>false
+,p_use_as_row_header=>false
+,p_enable_sort_group=>false
+,p_is_primary_key=>false
+,p_duplicate_value=>true
+,p_include_in_export=>false
+);
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(72831791200498326)
+,p_name=>'Customer ID'
+,p_source_type=>'DB_COLUMN'
+,p_source_expression=>'Customer ID'
+,p_data_type=>'NUMBER'
+,p_session_state_data_type=>'VARCHAR2'
+,p_is_query_only=>false
+,p_item_type=>'NATIVE_HIDDEN'
+,p_display_sequence=>100
 ,p_attribute_01=>'Y'
 ,p_filter_is_required=>false
 ,p_use_as_row_header=>false
@@ -615,14 +795,6 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_is_frozen=>false
 );
 wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(43889476092462814)
-,p_view_id=>wwv_flow_imp.id(42960943908723181)
-,p_display_seq=>6
-,p_column_id=>wwv_flow_imp.id(42955821343722517)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(44371113169899698)
 ,p_view_id=>wwv_flow_imp.id(42960943908723181)
 ,p_display_seq=>7
@@ -630,14 +802,35 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_is_visible=>true
 ,p_is_frozen=>false
 );
+wwv_flow_imp_page.create_ig_report_column(
+ p_id=>wwv_flow_imp.id(76428798408396514)
+,p_view_id=>wwv_flow_imp.id(42960943908723181)
+,p_display_seq=>8
+,p_column_id=>wwv_flow_imp.id(72831791200498326)
+,p_is_visible=>true
+,p_is_frozen=>false
+);
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(42958205511722541)
 ,p_plug_name=>'Payment Empty Header'
 ,p_plug_display_sequence=>70
-,p_plug_grid_column_span=>5
+,p_plug_grid_column_span=>6
 ,p_plug_display_column=>2
 ,p_location=>null
 ,p_plug_source=>'<h3 style="visibility: hidden;color:white;font-size:1.125rem;">Payment</h3>'
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(45406799199371528)
+,p_plug_name=>'Printing Options'
+,p_region_name=>'print-options'
+,p_region_template_options=>'js-modal:js-dialog-nosize'
+,p_plug_template=>wwv_flow_imp.id(4296448473084118)
+,p_plug_display_sequence=>130
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_location=>null
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'expand_shortcuts', 'N',
   'output_as', 'HTML')).to_clob
@@ -683,14 +876,18 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_column=>8
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT ',
-'NPT001.date_created AS Invoice_Date,',
-'NPT001.invoice_id AS Invoice_No,',
-'NPT001.total_amount AS Amount_Paid',
-'FROM NPT001',
-'JOIN NPT038 ON NPT038.INVOICE_ID = NPT001.INVOICE_ID',
-'WHERE NPT038.COLLECTION_ID = :P150_SELECTED_COLLECTION_ID',
-'AND NPT001.CUSTOMER_ID = :P150_SELECTED_CUSTOMER_ID'))
+'WITH invoice_list AS (',
+'    SELECT ',
+'    TO_CHAR(NPT001.date_created, ''MM/DD/YYYY'') AS Invoice_Date,',
+'    NPT001.invoice_id AS Invoice_No,',
+'    NPT038.amount_paid AS Amount_Paid',
+'    FROM NPT001',
+'    JOIN NPT038 ON NPT038.INVOICE_ID = NPT001.INVOICE_ID',
+'    WHERE NPT038.COLLECTION_ID = :P150_SELECTED_COLLECTION_ID',
+'    -- AND NPT001.CUSTOMER_ID = :P150_SELECTED_CUSTOMER_ID',
+'    ORDER BY Invoice_No',
+')',
+'SELECT * FROM invoice_list'))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P150_SELECTED_COLLECTION_ID,P150_SELECTED_CUSTOMER_ID'
 ,p_prn_units=>'INCHES'
@@ -727,17 +924,21 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'INVOICE_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'INVOICE_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Invoice Date'
-,p_heading_alignment=>'LEFT'
+,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>10
-,p_value_alignment=>'LEFT'
+,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
-,p_enable_filter=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function( options ) {',
@@ -761,9 +962,9 @@ wwv_flow_imp_page.create_region_column(
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Invoice No'
-,p_heading_alignment=>'LEFT'
+,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>20
-,p_value_alignment=>'LEFT'
+,p_value_alignment=>'RIGHT'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>false
@@ -789,13 +990,15 @@ wwv_flow_imp_page.create_region_column(
 ,p_source_expression=>'AMOUNT_PAID'
 ,p_data_type=>'NUMBER'
 ,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
+,p_item_type=>'NATIVE_NUMBER_FIELD'
 ,p_heading=>'Amount Paid'
-,p_heading_alignment=>'LEFT'
+,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>30
-,p_value_alignment=>'LEFT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
+,p_value_alignment=>'RIGHT'
+,p_attribute_03=>'right'
+,p_attribute_04=>'decimal'
+,p_format_mask=>'999G999G999G999G990D00'
+,p_is_required=>true
 ,p_enable_filter=>false
 ,p_filter_is_required=>false
 ,p_use_as_row_header=>false
@@ -910,6 +1113,37 @@ wwv_flow_imp_page.create_page_plug(
   'expand_shortcuts', 'N',
   'output_as', 'HTML')).to_clob
 );
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(72830245149498311)
+,p_plug_name=>'Daily Report'
+,p_region_name=>'daily-report'
+,p_region_template_options=>'js-dialog-autoheight:t-DialogRegion--noPadding:js-modal:js-dialog-nosize'
+,p_plug_template=>wwv_flow_imp.id(4296448473084118)
+,p_plug_display_sequence=>140
+,p_plug_display_point=>'REGION_POSITION_04'
+,p_location=>null
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
+);
+wwv_flow_imp_page.create_page_plug(
+ p_id=>wwv_flow_imp.id(72831967979498328)
+,p_plug_name=>'Header'
+,p_region_name=>'date-header'
+,p_parent_plug_id=>wwv_flow_imp.id(72830245149498311)
+,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--removeHeader js-removeLandmark:t-Region--hiddenOverflow'
+,p_plug_template=>wwv_flow_imp.id(4319920360084164)
+,p_plug_display_sequence=>10
+,p_location=>null
+,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'<div style="background-color: #056AC8; font-size: 1.5rem; color: white; padding: .50rem 0 .50rem 0; margin-left: 1rem;"',
+'     id="date-header">',
+'    Daily Report',
+'</div>'))
+,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
+  'expand_shortcuts', 'N',
+  'output_as', 'HTML')).to_clob
+);
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(33414195759636867)
 ,p_button_sequence=>10
@@ -943,6 +1177,20 @@ wwv_flow_imp_page.create_page_button(
 ,p_grid_column_span=>2
 );
 wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(45406880815371529)
+,p_button_sequence=>20
+,p_button_plug_id=>wwv_flow_imp.id(45406799199371528)
+,p_button_name=>'Dotmatrix'
+,p_button_static_id=>'dotmatrix'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--large:t-Button--noUI:t-Button--stretch:t-Button--padBottom'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'<u>A</u> - Dotmatrix'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'btns text-left'
+,p_grid_new_row=>'Y'
+);
+wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(42958664468722545)
 ,p_button_sequence=>30
 ,p_button_plug_id=>wwv_flow_imp.id(58726409560579468)
@@ -972,11 +1220,41 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_css_classes=>'btns text-left'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
+,p_grid_column_span=>1
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(45406959744371530)
+,p_button_sequence=>40
+,p_button_plug_id=>wwv_flow_imp.id(45406799199371528)
+,p_button_name=>'Graphic_Printer'
+,p_button_static_id=>'graphic-printer'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--large:t-Button--noUI:t-Button--stretch'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'<u>B</u> - Graphic Printer'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'btns text-left'
+,p_grid_new_row=>'Y'
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(72830160083498310)
+,p_button_sequence=>50
+,p_button_plug_id=>wwv_flow_imp.id(58726409560579468)
+,p_button_name=>'Daily_Report'
+,p_button_static_id=>'report'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--noUI'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'<u>R</u> - Daily Report'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'btns text-left'
+,p_grid_new_row=>'N'
+,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(33415379272636868)
-,p_button_sequence=>50
+,p_button_sequence=>60
 ,p_button_plug_id=>wwv_flow_imp.id(58726409560579468)
 ,p_button_name=>'Export'
 ,p_button_static_id=>'export'
@@ -992,7 +1270,7 @@ wwv_flow_imp_page.create_page_button(
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(42954532750722504)
-,p_button_sequence=>60
+,p_button_sequence=>70
 ,p_button_plug_id=>wwv_flow_imp.id(58726409560579468)
 ,p_button_name=>'Enter'
 ,p_button_static_id=>'refresh'
@@ -1006,7 +1284,7 @@ wwv_flow_imp_page.create_page_button(
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(33416973736636870)
-,p_button_sequence=>70
+,p_button_sequence=>80
 ,p_button_plug_id=>wwv_flow_imp.id(58726409560579468)
 ,p_button_name=>'Escape'
 ,p_button_static_id=>'esc'
@@ -1083,17 +1361,19 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(58726513780579469)
 ,p_prompt=>'DBA<span style="color:red;">*</span>: '
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_display_as=>'NATIVE_AUTO_COMPLETE'
+,p_lov=>'SELECT DBA FROM NPT009'
 ,p_cSize=>30
 ,p_colspan=>7
 ,p_grid_label_column_span=>1
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
-,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-,p_attribute_02=>'N'
-,p_attribute_04=>'TEXT'
-,p_attribute_05=>'BOTH'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'CONTAINS_IGNORE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'10'
+,p_attribute_09=>'1'
+,p_attribute_10=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(58727333736579474)
@@ -1101,6 +1381,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(58726513780579469)
 ,p_prompt=>'Date<span style="color:red;">*</span>:  '
+,p_placeholder=>'MM/DD/YYYY'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>10
@@ -1108,7 +1389,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_grid_label_column_span=>1
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -1120,6 +1400,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(58726513780579469)
 ,p_prompt=>'To'
+,p_placeholder=>'MM/DD/YYYY'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_cMaxlength=>10
@@ -1128,11 +1409,35 @@ wwv_flow_imp_page.create_page_item(
 ,p_grid_label_column_span=>1
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
 ,p_attribute_05=>'BOTH'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(72831814565498327)
+,p_name=>'P150_DATE'
+,p_item_sequence=>20
+,p_item_plug_id=>wwv_flow_imp.id(72830245149498311)
+,p_prompt=>'Date'
+,p_placeholder=>'MM/DD/YYYY'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_grid_label_column_span=>2
+,p_field_template=>wwv_flow_imp.id(4382028501084276)
+,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--large:margin-bottom-sm:margin-left-sm:margin-right-md'
+,p_attribute_01=>'N'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(72832827637498337)
+,p_name=>'P150_TYPE'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_imp.id(45406799199371528)
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33423843382636884)
@@ -1173,9 +1478,8 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$(document).off(''keydown.p150keyevents'');',
-'',
-'$(".ui-dialog-datepicker").css("display", "none");'))
+'mapP150KeysDBA();',
+''))
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33426170615636887)
@@ -1218,110 +1522,6 @@ wwv_flow_imp_page.create_page_da_action(
 '} else {',
 '    apex.message.clearErrors("P150_DBA");',
 '}'))
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(33427175657636887)
-,p_event_id=>wwv_flow_imp.id(33426170615636887)
-,p_event_result=>'TRUE'
-,p_action_sequence=>40
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_imp.id(41787619939876147)
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45404628486371507)
-,p_event_id=>wwv_flow_imp.id(33426170615636887)
-,p_event_result=>'TRUE'
-,p_action_sequence=>50
-,p_execute_on_page_init=>'Y'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P150_TOTAL_PAYMENT'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'    v_total_paid NUMBER := 0;',
-'BEGIN',
-'    SELECT ',
-'        SUM(NPT005.amount)',
-'    INTO',
-'        v_total_paid',
-'    FROM',
-'        NPT005',
-'    JOIN ',
-'        NPT038 ON NPT005.collection_id = NPT038.collection_id',
-'    JOIN',
-'        NPT001 ON NPT038.invoice_id = NPT001.invoice_id',
-'    JOIN ',
-'        NPT009 ON NPT001.customer_id = NPT009.customer_id',
-'    WHERE',
-'        UPPER(NPT009.DBA) = UPPER(:P150_DBA)',
-'    AND',
-'        TRUNC(NPT005.DATE_CREATED) BETWEEN :P150_DATE_FROM AND :P150_DATE_TO',
-'    AND',
-'        UPPER(NPT005.CASHCHECK) NOT LIKE ''%CMEMO%'';',
-'',
-'    RETURN NVL(TO_CHAR(v_total_paid, ''FM999990.00''), ''0.00'');',
-'',
-'EXCEPTION',
-'    WHEN OTHERS THEN',
-'        RETURN ''0.00'';',
-'',
-'END;'))
-,p_attribute_07=>'P150_DBA,P150_DATE_FROM,P150_DATE_TO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-,p_client_condition_type=>'NOT_NULL'
-,p_client_condition_element=>'P150_DATE_FROM'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45404751789371508)
-,p_event_id=>wwv_flow_imp.id(33426170615636887)
-,p_event_result=>'TRUE'
-,p_action_sequence=>60
-,p_execute_on_page_init=>'Y'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P150_TOTAL_CREDIT_MEMO'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'    v_total_credit NUMBER := 0;',
-'BEGIN',
-'    SELECT ',
-'        SUM(NPT005.amount)',
-'    INTO',
-'        v_total_credit',
-'    FROM',
-'        NPT005',
-'    JOIN ',
-'        NPT038 ON NPT005.collection_id = NPT038.collection_id',
-'    JOIN',
-'        NPT001 ON NPT038.invoice_id = NPT001.invoice_id',
-'    JOIN ',
-'        NPT009 ON NPT001.customer_id = NPT009.customer_id',
-'    WHERE',
-'        UPPER(NPT009.DBA) = UPPER(:P150_DBA)',
-'    AND',
-'        TRUNC(NPT005.DATE_CREATED) BETWEEN :P150_DATE_FROM AND :P150_DATE_TO',
-'    AND',
-'        UPPER(NPT005.CASHCHECK) LIKE ''%CMEMO%'';',
-'',
-'    RETURN NVL(TO_CHAR(v_total_credit, ''FM999990.00''), ''0.00'');',
-'',
-'EXCEPTION',
-'    WHEN OTHERS THEN',
-'        RETURN ''0.00'';',
-'',
-'END;'))
-,p_attribute_07=>'P150_DBA,P150_DATE_FROM,P150_DATE_TO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-,p_client_condition_type=>'NOT_NULL'
-,p_client_condition_element=>'P150_DATE_FROM'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33428096881636890)
@@ -1381,6 +1581,8 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'mapP150KeysMenu();',
+'',
 'apex.message.clearErrors();',
 '',
 'let field1 = $v("P150_DBA");',
@@ -1472,8 +1674,8 @@ wwv_flow_imp_page.create_page_da_action(
 'DECLARE',
 '    v_total_paid NUMBER := 0;',
 'BEGIN',
-'    SELECT ',
-'        SUM(NPT005.amount)',
+'    SELECT',
+'        SUM(DISTINCT NPT005.amount)',
 '    INTO',
 '        v_total_paid',
 '    FROM',
@@ -1487,11 +1689,11 @@ wwv_flow_imp_page.create_page_da_action(
 '    WHERE',
 '        UPPER(NPT009.DBA) = UPPER(:P150_DBA)',
 '    AND',
-'        TRUNC(NPT005.DATE_CREATED) BETWEEN :P150_DATE_FROM AND :P150_DATE_TO',
-'    AND',
-'        UPPER(NPT005.CASHCHECK) NOT LIKE ''%CMEMO%'';',
+'        TRUNC(NPT005.DATE_CREATED) BETWEEN :P150_DATE_FROM AND :P150_DATE_TO;',
+'    -- AND',
+'    --     UPPER(NPT005.CASHCHECK) NOT LIKE ''%CMEMO%'';',
 '',
-'    RETURN NVL(TO_CHAR(v_total_paid, ''FM999990.00''), ''0.00'');',
+'    RETURN NVL(TO_CHAR(v_total_paid, ''FM999,990.00''), ''0.00'');',
 '',
 'EXCEPTION',
 '    WHEN OTHERS THEN',
@@ -1502,12 +1704,28 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70213551655391731)
+,p_event_id=>wwv_flow_imp.id(42954642430722505)
+,p_event_result=>'TRUE'
+,p_action_sequence=>60
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'apex.region("payment").call("getCurrentView").model.fetchAll(function(status) {',
+'    if (status.done) {',
+'        apex.item("P150_TOTAL_PAYMENT").setValue(getTotalPayment("payment", "Paid Amount"));',
+'        apex.item("P150_TOTAL_CREDIT_MEMO").setValue(getTotalCMemo("payment", "Paid Amount", "Cash/Check"));',
+'    }',
+'});'))
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(42957760702722536)
 ,p_event_id=>wwv_flow_imp.id(42954642430722505)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>60
+,p_action_sequence=>70
 ,p_execute_on_page_init=>'Y'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
@@ -1536,7 +1754,7 @@ wwv_flow_imp_page.create_page_da_action(
 '    AND',
 '        UPPER(NPT005.CASHCHECK) LIKE ''%CMEMO%'';',
 '',
-'    RETURN NVL(TO_CHAR(v_total_credit, ''FM999990.00''), ''0.00'');',
+'    RETURN NVL(TO_CHAR(v_total_credit, ''FM999,990.00''), ''0.00'');',
 '',
 'EXCEPTION',
 '    WHEN OTHERS THEN',
@@ -1547,12 +1765,13 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(45406506979371526)
 ,p_event_id=>wwv_flow_imp.id(42954642430722505)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>70
+,p_action_sequence=>80
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -1595,11 +1814,14 @@ wwv_flow_imp_page.create_page_da_action(
 '',
 'if (selectedRecords.length > 0) {',
 '',
-'    let collectionIDSelected = selectedRecords[0][6];',
-'    let customerIDSelected = selectedRecords[0][5];',
+'    let collectionIDSelected = selectedRecords[0][5];',
+'    let customerIDSelected = selectedRecords[0][6];',
 '',
-'    $("#P150_SELECTED_COLLECTION_ID").val(collectionIDSelected);',
-'    $("#P150_SELECTED_CUSTOMER_ID").val(customerIDSelected);',
+'    // $("#P150_SELECTED_COLLECTION_ID").val(collectionIDSelected);',
+'    // $("#P150_SELECTED_CUSTOMER_ID").val(customerIDSelected);',
+'',
+'    apex.item("P150_SELECTED_COLLECTION_ID").setValue(collectionIDSelected);',
+'    apex.item("P150_SELECTED_CUSTOMER_ID").setValue(customerIDSelected);',
 '',
 '    console.log("Collection: " + collectionIDSelected);',
 '    console.log("Customer: " + customerIDSelected);',
@@ -1628,6 +1850,7 @@ wwv_flow_imp_page.create_page_da_action(
 '        $("#navigate").addClass("apex_disabled");',
 '        $("#navigate").attr("disabled", true); ',
 '    }'))
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(42956411888722523)
@@ -1765,27 +1988,37 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'click'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(42957981632722538)
+ p_id=>wwv_flow_imp.id(45407249917371533)
 ,p_event_id=>wwv_flow_imp.id(42957835258722537)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_OPEN_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(45406799199371528)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72832945349498338)
+,p_event_id=>wwv_flow_imp.id(42957835258722537)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P150_TYPE'
+,p_attribute_01=>'STATIC_ASSIGNMENT'
+,p_attribute_02=>'P'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(45407589268371536)
+,p_event_id=>wwv_flow_imp.id(42957835258722537)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'const currentDate = new Date();',
-'const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");',
-'',
-'generateReport("PAYMENTS_MAP_PDF_COURIER_NEW", "pdf", { ',
-'    fileName: `PaymentsMap_${formattedDate}.pdf`,',
-'    mode : "print",',
-'    parameters : {',
-'        P_DBA : $v("P150_DBA"),',
-'        P_DATE_FROM : $v("P150_DATE_FROM"),',
-'        P_DATE_TO : $v("P150_DATE_TO")',
-'    },',
-'    spinnerEnabled : true',
-'});'))
-,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
+,p_attribute_01=>'mapP150KeysPrint();'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(42958085211722539)
@@ -1808,37 +2041,19 @@ wwv_flow_imp_page.create_page_da_action(
 'const currentDate = new Date();',
 'const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");',
 '',
+'',
 'generateReport("PAYMENTS_MAP_XLSX", "xlsx", { ',
 '    fileName: `PaymentsMap_${formattedDate}.xlsx`,',
 '    mode : "print",',
 '    parameters : {',
 '        P_DBA : $v("P150_DBA"),',
 '        P_DATE_FROM : $v("P150_DATE_FROM"),',
-'        P_DATE_TO : $v("P150_DATE_TO")',
+'        P_DATE_TO : $v("P150_DATE_TO"),',
+'        // P_COLLECTION_ID : $v("P150_SELECTED_COLLECTION_ID"),',
+'        // P_CUSTOMER_ID : $v("P150_SELECTED_CUSTOMER_ID")',
 '    },',
 '    spinnerEnabled : true',
 '});'))
-,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
-);
-wwv_flow_imp_page.create_page_da_event(
- p_id=>wwv_flow_imp.id(45404053412371501)
-,p_name=>'Page load button'
-,p_event_sequence=>140
-,p_bind_type=>'bind'
-,p_bind_event_type=>'ready'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45404103837371502)
-,p_event_id=>wwv_flow_imp.id(45404053412371501)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'$("#navigate").addClass("apex_disabled");',
-'$("#navigate").attr("disabled", true);',
-'',
-''))
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(45404921576371510)
@@ -1859,7 +2074,11 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let field2 = $v("P150_DATE_FROM");',
+'let field3 = $v("P150_DATE_TO");',
+'let currentDate = new Date();',
 '',
+'let field2Parsed = parseDate(field2);',
+'let field3Parsed = parseDate(field3);',
 '',
 'if (!field2) {',
 '    apex.message.showErrors({',
@@ -1876,6 +2095,15 @@ wwv_flow_imp_page.create_page_da_action(
 '        location: "inline",',
 '        pageItem: "P150_DATE_FROM",',
 '        message: "Invalid date format. Use MM/DD/YYYY."',
+'    });',
+'    $("#P150_DATE_FROM").addClass("error-highlight");',
+'    hasError = true;',
+'} else if (field2Parsed > field3Parsed) {',
+'    apex.message.showErrors({',
+'        type: "error",',
+'        location: "inline",',
+'        pageItem: "P150_DATE_FROM",',
+'        message: "Date cannot exceed Date To."',
 '    });',
 '    $("#P150_DATE_FROM").addClass("error-highlight");',
 '    hasError = true;',
@@ -1901,7 +2129,12 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'let field2 = $v("P150_DATE_FROM");',
 'let field3 = $v("P150_DATE_TO");',
+'let currentDate = new Date();',
+'',
+'let field2Parsed = parseDate(field2);',
+'let field3Parsed = parseDate(field3);',
 '',
 'if (!field3) {',
 '    apex.message.showErrors({',
@@ -1921,8 +2154,26 @@ wwv_flow_imp_page.create_page_da_action(
 '    });',
 '    $("#P150_DATE_TO").addClass("error-highlight");',
 '    hasError = true;',
+'} else if (field2Parsed > field3Parsed) {',
+'    apex.message.showErrors({',
+'        type: "error",',
+'        location: "inline",',
+'        pageItem: "P150_DATE_FROM",',
+'        message: "Date cannot exceed Date To."',
+'    });',
+'    $("#P150_DATE_FROM").addClass("error-highlight");',
+'    hasError = true;',
+'} else if (field3Parsed > currentDate) {',
+'    apex.message.showErrors({',
+'        type: "error",',
+'        location: "inline",',
+'        pageItem: "P150_DATE_TO",',
+'        message: "Date cannot exceed current date."',
+'    });',
+'    $("#P150_DATE_TO").addClass("error-highlight");',
 '} else {',
 '    apex.message.clearErrors("P150_DATE_TO");',
+'    $("#refresh").trigger("click");',
 '}'))
 );
 wwv_flow_imp_page.create_page_da_event(
@@ -1951,6 +2202,363 @@ wwv_flow_imp_page.create_page_da_action(
 '    $("#payment_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");',
 '}'))
 );
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(45407084921371531)
+,p_name=>'Courier New'
+,p_event_sequence=>180
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(45406880815371529)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'click'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(42957981632722538)
+,p_event_id=>wwv_flow_imp.id(45407084921371531)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'const currentDate = new Date();',
+'const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");',
+'let type = $v("P150_TYPE");',
+'',
+'if(type === ''P'') {',
+'    generateReport("PAYMENTS_MAP_COURIER_NEW", "pdf", { ',
+'        fileName: `PaymentsMap_${formattedDate}.pdf`,',
+'        mode : "print",',
+'        parameters : {',
+'            P_DBA : $v("P150_DBA"),',
+'            P_DATE_FROM : $v("P150_DATE_FROM"),',
+'            P_DATE_TO : $v("P150_DATE_TO"),',
+'            P_USER : ''&APP_USER.''',
+'        },',
+'        spinnerEnabled : true',
+'    });',
+'} else if(type === ''D'') {',
+'    generateReport("PAYMENTS_MAP_DAILY_REPORT_COURIER_NEW", "pdf", { ',
+'        fileName: `PaymentsMapDailyReport_${formattedDate}.pdf`,',
+'        mode : "print",',
+'        parameters : {',
+'            P_DATE : $v("P150_DATE"),',
+'            P_USER : ''&APP_USER.''',
+'        },',
+'        spinnerEnabled : true',
+'    });',
+'}',
+'',
+''))
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(45407318034371534)
+,p_event_id=>wwv_flow_imp.id(45407084921371531)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_CLOSE_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(45406799199371528)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(45407423312371535)
+,p_event_id=>wwv_flow_imp.id(45407084921371531)
+,p_event_result=>'TRUE'
+,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'mapP150KeysMenu();'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(45407690206371537)
+,p_name=>'Arial'
+,p_event_sequence=>190
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(45406959744371530)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'click'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(45407820388371539)
+,p_event_id=>wwv_flow_imp.id(45407690206371537)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'const currentDate = new Date();',
+'const formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, "");',
+'let type = $v("P150_TYPE");',
+'',
+'if(type === ''P'') {',
+'    generateReport("PAYMENTS_MAP_ARIAL", "pdf", { ',
+'        fileName: `PaymentsMap_${formattedDate}.pdf`,',
+'        mode : "print",',
+'        parameters : {',
+'            P_DBA : $v("P150_DBA"),',
+'            P_DATE_FROM : $v("P150_DATE_FROM"),',
+'            P_DATE_TO : $v("P150_DATE_TO"),',
+'            P_USER : ''&APP_USER.''',
+'        },',
+'        spinnerEnabled : true',
+'    });',
+'} else if(type === ''D'') {',
+'    generateReport("PAYMENTS_MAP_DAILY_REPORT_ARIAL", "pdf", { ',
+'        fileName: `PaymentsMapDailyReport_${formattedDate}.pdf`,',
+'        mode : "print",',
+'        parameters : {',
+'            P_DATE : $v("P150_DATE"),',
+'            P_USER : ''&APP_USER.''',
+'        },',
+'        spinnerEnabled : true',
+'    });',
+'}'))
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(45407771068371538)
+,p_event_id=>wwv_flow_imp.id(45407690206371537)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_CLOSE_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(45406799199371528)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(45407957782371540)
+,p_event_id=>wwv_flow_imp.id(45407690206371537)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'mapP150KeysMenu();'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(45408041527371541)
+,p_name=>'Closed'
+,p_event_sequence=>200
+,p_triggering_element_type=>'REGION'
+,p_triggering_region_id=>wwv_flow_imp.id(45406799199371528)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'apexafterclosecanceldialog'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(45408134307371542)
+,p_event_id=>wwv_flow_imp.id(45408041527371541)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'mapP150KeysMenu();'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(52085056160356701)
+,p_name=>'Disable Navigate'
+,p_event_sequence=>210
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(52085156467356702)
+,p_event_id=>wwv_flow_imp.id(52085056160356701)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$("#navigate").addClass("apex_disabled");',
+'$("#navigate").attr("disabled", true);'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(72832029635498329)
+,p_name=>'Open Date'
+,p_event_sequence=>220
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(72830160083498310)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'click'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72832191141498330)
+,p_event_id=>wwv_flow_imp.id(72832029635498329)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$("#daily-report").dialog("option", "width", 400);',
+'apex.message.clearErrors();'))
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72832471116498333)
+,p_event_id=>wwv_flow_imp.id(72832029635498329)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_CLEAR'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P150_DATE'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72832269491498331)
+,p_event_id=>wwv_flow_imp.id(72832029635498329)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_OPEN_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(72830245149498311)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72832381210498332)
+,p_event_id=>wwv_flow_imp.id(72832029635498329)
+,p_event_result=>'TRUE'
+,p_action_sequence=>50
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$(document).off(''keydown.p150keyevents'');',
+'$("#daily-report").on("dialogbeforeclose", function(event, ui) {',
+'    setTimeout(mapP150KeysMenu, 0);',
+'});'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(72832544913498334)
+,p_name=>'On Enter'
+,p_event_sequence=>230
+,p_triggering_element_type=>'ITEM'
+,p_triggering_element=>'P150_DATE'
+,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_expression=>'this.browserEvent.key?.toLowerCase() === ''enter'';'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'keydown'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72832726541498336)
+,p_event_id=>wwv_flow_imp.id(72832544913498334)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'var date= $v(''P150_DATE'');',
+'',
+'apex.message.clearErrors();',
+'',
+'var hasErrors = false;',
+'',
+'function isDateValid(dateString) {',
+'    var datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;',
+'',
+'    if (!dateString.match(datePattern)) {',
+'        return false;',
+'    }',
+'',
+'    var parts = dateString.split("/");',
+'    var month = parseInt(parts[0], 10);',
+'    var day = parseInt(parts[1], 10);',
+'    var year = parseInt(parts[2], 10);',
+'',
+'    var date = new Date(year, month - 1, day);',
+'    return (date.getFullYear() === year && date.getMonth() === (month - 1) && date.getDate() === day);',
+'}',
+'',
+'if (date == "") {',
+'    apex.message.showErrors([{',
+'        type: "error",location: ["inline"],',
+'        pageItem: "P150_DATE",',
+'        message: "Date is required",',
+'        unsafe: false',
+'    }])',
+'    hasErrors = true;',
+'} else if (!isDateValid(date)) {',
+'    apex.message.showErrors([{',
+'        type: "error",location: ["inline"],',
+'        pageItem: "P150_DATE",',
+'        message: "Please Enter a valid date",',
+'        unsafe: false',
+'    }])',
+'    hasErrors = true;',
+'}',
+'',
+'if (hasErrors) {',
+'    return false;',
+'}',
+'apex.message.clearErrors();',
+'',
+''))
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72832633428498335)
+,p_event_id=>wwv_flow_imp.id(72832544913498334)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_CLOSE_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(72830245149498311)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72833778028498346)
+,p_event_id=>wwv_flow_imp.id(72832544913498334)
+,p_event_result=>'TRUE'
+,p_action_sequence=>60
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'setTimeout(function() {',
+'    $.event.trigger("openPrint");',
+'}, 10)'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(72833373250498342)
+,p_name=>'Open Print Options'
+,p_event_sequence=>240
+,p_triggering_element_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_element=>'document'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'custom'
+,p_bind_event_type_custom=>'openPrint'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72833441896498343)
+,p_event_id=>wwv_flow_imp.id(72833373250498342)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_OPEN_REGION'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(45406799199371528)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72833598354498344)
+,p_event_id=>wwv_flow_imp.id(72833373250498342)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P150_TYPE'
+,p_attribute_01=>'STATIC_ASSIGNMENT'
+,p_attribute_02=>'D'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72833617231498345)
+,p_event_id=>wwv_flow_imp.id(72833373250498342)
+,p_event_result=>'TRUE'
+,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'mapP150KeysPrint();'
+);
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(42956506581722524)
 ,p_process_sequence=>10
@@ -1958,6 +2566,7 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_type=>'NATIVE_SESSION_STATE'
 ,p_process_name=>'Clear Session'
 ,p_attribute_01=>'CLEAR_CACHE_CURRENT_PAGE'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 ,p_internal_uid=>42956506581722524
 );
 wwv_flow_imp.component_end;

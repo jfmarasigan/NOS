@@ -51,6 +51,10 @@ wwv_flow_imp_page.create_page(
 '    max-width: 33.33% !important;',
 '}',
 '',
+'.t-Form-inputContainer:has(#P314_REMAINING_BALANCE) {',
+'    padding-inline-start: 0;',
+'}',
+'',
 '.t-Form-labelContainer:has(#P314_AMOUNT_LABEL) {',
 '    max-width: fit-content !important;',
 '}',
@@ -159,7 +163,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_name=>'Gift Certificate Inquire'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4329702440084182)
-,p_plug_display_sequence=>40
+,p_plug_display_sequence=>50
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT',
@@ -830,6 +834,21 @@ wwv_flow_imp_page.create_page_item(
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'Y'
 );
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(74198151708493907)
+,p_name=>'P314_SET_DETAILS'
+,p_item_sequence=>40
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(77935366614036537)
+,p_name=>'P314_IS_DONATION'
+,p_item_sequence=>30
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attribute_01=>'Y'
+);
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(19647045166637496)
 ,p_name=>'Close Dialog'
@@ -856,115 +875,115 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'ready'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31990895566279527)
+ p_id=>wwv_flow_imp.id(74198026806493906)
 ,p_event_id=>wwv_flow_imp.id(31990799541279526)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'Y'
-,p_name=>'Set GC No'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_GC_NO'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT GIFT_CERTIFICATE_ID INTO :P314_GC_NO',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_GC_NO;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31990937708279528)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>30
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set GC Type'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_GC_TYPE'
+,p_affected_elements=>'P314_SET_DETAILS'
 ,p_attribute_01=>'FUNCTION_BODY'
 ,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'BEGIN',
 '    SELECT ',
-'        --   npm013.GC_TYPE_CODE INTO :P314_GC_TYPE',
-'          npm013.GC_TYPE_CODE || '' - '' || npm013.TYPE_NAME INTO :P314_GC_TYPE',
-'    FROM NPM013 npm013',
-'    WHERE npm013.GC_TYPE_ID = (SELECT npt020.GC_TYPE_ID',
-'                        FROM NPT020 npt020',
-'                        WHERE npt020.GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO);',
-'    RETURN :P314_GC_TYPE;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991151764279530)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>40
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set GC Status'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_STATUS'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'    -- status;',
-'BEGIN',
-'    SELECT ',
-'        (    ',
-'        CASE npt020.GC_STATUS_ID',
+'        (CASE ',
+'            WHEN :P314_IS_DONATION = ''Y'' THEN npt020.DONATION_GC_NO',
+'            ELSE npt020.REGULAR_GC_NO',
+'         END',
+'        ) || '',,,'' || ',
+'        npm013.GC_TYPE_CODE || '' - '' || npm013.TYPE_NAME || '',,,'' ||',
+'',
+'        ( CASE npt020.GC_STATUS_ID',
 '            -- 1 for printed status',
-'            WHEN 1 THEN npm014.GC_STATUS_NAME || '' - '' || npt020.PRINT_DATE',
-'            ',
+'            WHEN 1 THEN npm014.GC_STATUS_NAME || '' - '' || TO_CHAR(npt020.PRINT_DATE, ''MM/DD/YYYY'')',
+'',
 '            -- 2 for released status',
-'            WHEN 2 THEN npm014.GC_STATUS_NAME || '' - '' || npt020.RELEASE_DATE',
-'            ',
+'            WHEN 2 THEN npm014.GC_STATUS_NAME || '' - '' || TO_CHAR(npt020.RELEASE_DATE, ''MM/DD/YYYY'')',
+'',
 '            -- 3 for redeemed status',
-'            WHEN 3 THEN npm014.GC_STATUS_NAME || '' - '' || npt020.REDEEMED_DATE',
-'            ',
+'            WHEN 3 THEN npm014.GC_STATUS_NAME || '' - '' || TO_CHAR(npt020.REDEEMED_DATE, ''MM/DD/YYYY'')',
+'',
 '            -- 4 for expired status',
-'            WHEN 4 THEN npm014.GC_STATUS_NAME || '' - '' || npt020.EXPIRY_DATE',
-'            ',
+'            WHEN 4 THEN npm014.GC_STATUS_NAME || '' - '' || TO_CHAR(npt020.EXPIRY_DATE, ''MM/DD/YYYY'')',
+'',
 '            -- 5 for voided status',
-'            WHEN 5 THEN npm014.GC_STATUS_NAME || '' - '' || npt020.DATE_UPDATED',
+'            WHEN 5 THEN npm014.GC_STATUS_NAME || '' - '' || TO_CHAR(npt020.DATE_UPDATED, ''MM/DD/YYYY'')',
 '',
 '            -- 6 for created status',
-'            WHEN 6 THEN npm014.GC_STATUS_NAME || '' - '' || npt020.DATE_CREATED',
-'        END) INTO :P314_STATUS',
-'    ',
-'    ',
+'            WHEN 6 THEN npm014.GC_STATUS_NAME || '' - '' || TO_CHAR(npt020.DATE_CREATED, ''MM/DD/YYYY'')',
+'        END) || '',,,'' ||',
+'',
+'        TO_CHAR(npt020.ISSUE_DATE, ''MM/DD/YYYY'') || '',,,'' || ',
+'        TO_CHAR(npt020.EXPIRY_DATE, ''MM/DD/YYYY'') || '',,,'' ||',
+'        npt020.DESCRIPTION_1 || '',,,'' || npt020.DESCRIPTION_2 || '',,,'' || ',
+'        npt020.THIS_ENTITLES || '',,,'' || npt020.REMARKS       || '',,,'' || ',
+'        npt020.BEST_WISHES   || '',,,'' || npt020.RECIPIENT     || '',,,'' || ',
+'        npt020.EVENT         || '',,,'' || ',
+'        ',
+'        TO_CHAR(npt020.AMOUNT, ''999,999,999.00'')       || '',,,'' || ',
+'        TO_CHAR(npt020.BALANCE, ''999,999,999.00'')',
+'',
+'    INTO ',
+'        :P314_SET_DETAILS',
+'',
 '    FROM NPT020 npt020',
 '',
+'    JOIN NPM013 npm013 ON npm013.GC_TYPE_ID = npt020.GC_TYPE_ID',
+'    ',
 '    JOIN NPM014 npm014 ON npt020.GC_STATUS_ID = npm014.GC_STATUS_ID',
 '',
-'    WHERE npt020.GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
+'    WHERE ',
+'        ',
+'        (:P314_IS_DONATION = ''Y'' AND npt020.DONATION_GC_NO = :P314_GET_SELECTED_GC_NO)',
 '',
-'    -- WHERE npm014.GC_STATUS_ID = (SELECT npt020.GC_STATUS_ID',
-'    --                     FROM NPT020 npt020',
-'    --                     WHERE npt020.GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO);',
-'',
-'    RETURN :P314_STATUS;',
+'        OR',
+'        ',
+'        (:P314_IS_DONATION != ''Y'' AND npt020.REGULAR_GC_NO = :P314_GET_SELECTED_GC_NO);',
+'    ',
+'    RETURN :P314_SET_DETAILS;',
 'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
+,p_attribute_07=>'P314_GET_SELECTED_GC_NO,P314_IS_DONATION'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );
 wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(74198239063493908)
+,p_event_id=>wwv_flow_imp.id(31990799541279526)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'// SET DETAILS',
+'let details = apex.item("P314_SET_DETAILS").getValue();',
+'detailsArray = details.split(",,,");',
+'',
+'// SET DETAILS',
+'',
+'apex.item("P314_GC_NO").setValue(detailsArray[0]);',
+'apex.item("P314_GC_TYPE").setValue(detailsArray[1]);',
+'apex.item("P314_STATUS").setValue(detailsArray[2]);',
+'apex.item("P314_ISSUED_DATE").setValue(detailsArray[3]);',
+'apex.item("P314_EXPIRATION").setValue(detailsArray[4]);',
+'',
+'apex.item("P314_DESCRIPTION_1").setValue(detailsArray[5]);',
+'apex.item("P314_DESCRIPTION_2").setValue(detailsArray[6]);',
+'apex.item("P314_THIS_ENTITLES").setValue(detailsArray[7]);',
+'apex.item("P314_REMARKS").setValue(detailsArray[8]);',
+'apex.item("P314_BEST_WISHES").setValue(detailsArray[9]);',
+'apex.item("P314_RECIPIENT").setValue(detailsArray[10]);',
+'apex.item("P314_EVENT").setValue(detailsArray[11]);',
+'',
+'apex.item("P314_AMOUNT").setValue(detailsArray[12]);',
+'apex.item("P314_REMAINING_BALANCE").setValue(detailsArray[13]);'))
+);
+wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(31992332618279542)
 ,p_event_id=>wwv_flow_imp.id(31990799541279526)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>50
+,p_action_sequence=>30
 ,p_execute_on_page_init=>'Y'
 ,p_name=>'Set Invoice ID'
 ,p_action=>'NATIVE_SET_VALUE'
@@ -972,13 +991,35 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_affected_elements=>'P314_RELEASE'
 ,p_attribute_01=>'FUNCTION_BODY'
 ,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- set to null for now while waiting for the final decision',
-'BEGIN',
-'    :P314_RELEASE := null;',
+'DECLARE',
+'type_cash VARCHAR(20);',
+'type_cod VARCHAR(20);',
 '',
-'    RETURN :P314_RELEASE;',
+'BEGIN',
+'    SELECT INVOICE_ID INTO type_cash',
+'    FROM NPT020',
+'    WHERE ',
+'        (:P314_IS_DONATION = ''Y'' AND npt020.DONATION_GC_NO = :P314_GET_SELECTED_GC_NO)',
+'        OR',
+'        (:P314_IS_DONATION != ''Y'' AND npt020.REGULAR_GC_NO = :P314_GET_SELECTED_GC_NO);',
+'',
+'',
+'    SELECT CASH_INVOICE_ID INTO type_cod',
+'    FROM NPT020',
+'    WHERE ',
+'        (:P314_IS_DONATION = ''Y'' AND npt020.DONATION_GC_NO = :P314_GET_SELECTED_GC_NO)',
+'        OR',
+'        (:P314_IS_DONATION != ''Y'' AND npt020.REGULAR_GC_NO = :P314_GET_SELECTED_GC_NO);',
+'',
+'    IF type_cash > 0 AND (type_cod IS NULL OR type_cod = 0) THEN',
+'        RETURN type_cash;',
+'    ELSIF type_cod > 0 THEN',
+'        RETURN type_cod;',
+'    ELSE',
+'        RETURN NULL;',
+'    END IF;',
 'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
+,p_attribute_07=>'P314_GET_SELECTED_GC_NO,P314_IS_DONATION'
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
@@ -987,7 +1028,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(31992494194279543)
 ,p_event_id=>wwv_flow_imp.id(31990799541279526)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>60
+,p_action_sequence=>40
 ,p_execute_on_page_init=>'Y'
 ,p_name=>'Set Invoice Date'
 ,p_action=>'NATIVE_SET_VALUE'
@@ -995,276 +1036,47 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_affected_elements=>'P314_INVOICE_DATE'
 ,p_attribute_01=>'FUNCTION_BODY'
 ,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- set to null for now while waiting for the final decision',
-'BEGIN',
-'    :P314_INVOICE_DATE := null;',
+'DECLARE',
+'type_cash VARCHAR(20);',
+'type_cod VARCHAR(20);',
 '',
-'    RETURN :P314_INVOICE_DATE;',
+'BEGIN',
+'',
+'    ',
+'    SELECT INVOICE_ID INTO type_cod',
+'    FROM NPT020',
+'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
+'    ',
+'    SELECT CASH_INVOICE_ID INTO type_cash',
+'    FROM NPT020',
+'    WHERE ',
+'        (:P314_IS_DONATION = ''Y'' AND npt020.DONATION_GC_NO = :P314_GET_SELECTED_GC_NO)',
+'        OR',
+'        (:P314_IS_DONATION != ''Y'' AND npt020.REGULAR_GC_NO = :P314_GET_SELECTED_GC_NO);',
+'',
+'',
+'    IF type_cash > 0 AND (type_cod IS NULL OR type_cod = 0) THEN',
+'',
+'        SELECT TO_CHAR(DATE_CREATED, ''MM/DD/YYYY'') INTO :P314_INVOICE_DATE',
+'        FROM NPT033 npt033',
+'        WHERE npt033.CASH_INVOICE_ID = type_cash;',
+'',
+'        RETURN :P314_INVOICE_DATE;',
+'',
+'    ELSIF type_cod > 0 THEN',
+'',
+'        SELECT TO_CHAR(DATE_CREATED, ''MM/DD/YYYY'') INTO :P314_INVOICE_DATE',
+'        FROM NPT001 npt001',
+'        WHERE npt001.INVOICE_ID = type_cod;',
+'',
+'        RETURN :P314_INVOICE_DATE;',
+'',
+'    ELSE',
+'        RETURN NULL;',
+'    END IF;',
 'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
+,p_attribute_07=>'P314_GET_SELECTED_GC_NO,P314_IS_DONATION'
 ,p_attribute_08=>'N'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991228110279531)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>70
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Issue Date'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_ISSUED_DATE'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT ISSUE_DATE INTO :P314_ISSUED_DATE',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_ISSUED_DATE;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'N'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991393514279532)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>80
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Epiry Date'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_EXPIRATION'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT EXPIRY_DATE INTO :P314_EXPIRATION',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_EXPIRATION;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'N'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991463343279533)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>90
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Description 1'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_DESCRIPTION_1'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           DESCRIPTION_1 INTO :P314_DESCRIPTION_1',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_DESCRIPTION_1;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991814183279537)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>100
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Description 2'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_DESCRIPTION_2'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           DESCRIPTION_2 INTO :P314_DESCRIPTION_2',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_DESCRIPTION_2;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991686526279535)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>110
-,p_execute_on_page_init=>'Y'
-,p_name=>'SetThis Entitles'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_THIS_ENTITLES'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           THIS_ENTITLES INTO :P314_THIS_ENTITLES',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_THIS_ENTITLES;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991960935279538)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>120
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Remarks'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_REMARKS'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           REMARKS INTO :P314_REMARKS',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_REMARKS;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991562252279534)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>130
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Best Wishes'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_BEST_WISHES'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           BEST_WISHES INTO :P314_BEST_WISHES',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_BEST_WISHES;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31992046169279539)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>140
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Recipient'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_RECIPIENT'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           RECIPIENT INTO :P314_RECIPIENT',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_RECIPIENT;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31991783810279536)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>150
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Event'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_EVENT'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           EVENT INTO :P314_EVENT',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_EVENT;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31992108887279540)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>160
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Amount'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_AMOUNT'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           AMOUNT INTO :P314_AMOUNT',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_AMOUNT;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(31992257752279541)
-,p_event_id=>wwv_flow_imp.id(31990799541279526)
-,p_event_result=>'TRUE'
-,p_action_sequence=>170
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set Balance'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P314_REMAINING_BALANCE'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'BEGIN',
-'    SELECT',
-'           BALANCE INTO :P314_REMAINING_BALANCE',
-'    FROM NPT020',
-'    WHERE GIFT_CERTIFICATE_ID = :P314_GET_SELECTED_GC_NO;',
-'    RETURN :P314_REMAINING_BALANCE;',
-'END;'))
-,p_attribute_07=>'P314_GET_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );

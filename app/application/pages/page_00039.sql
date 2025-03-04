@@ -39,6 +39,10 @@ wwv_flow_imp_page.create_page(
 ,p_javascript_code_onload=>'mapP8Keys();'
 ,p_css_file_urls=>'#APP_FILES#css/ibi-css#MIN#.css'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.apex-item-text {',
+'    background-color: white;',
+'}',
+'',
 '.t-Dialog-body {',
 '    background-color: #056AC8;',
 '}',
@@ -85,6 +89,7 @@ wwv_flow_imp_page.create_page(
 '',
 '.text-red {',
 '    color: red;',
+'    font-weight: 700;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'640'

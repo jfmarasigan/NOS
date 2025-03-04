@@ -38,7 +38,11 @@ wwv_flow_imp_page.create_page(
 '            p208KeyMap[key]();',
 '        }',
 '    });',
-'}'))
+'}',
+'',
+'$("#P208_ACCOUNT_TYPE_NAME").on("focus", function () {',
+'   $(this).select();',
+'});'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP208Keys();',
 '$x(''P208_ACCOUNT_TYPE_NAME'').focus();'))
@@ -66,7 +70,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.t-Form-labelContainer .t-Form-label::before {',
-'    content: '''' !important; /* Remove the asterisk before the label */',
+'    content: '''' !important;',
 '}',
 '',
 '',
@@ -77,6 +81,16 @@ wwv_flow_imp_page.create_page(
 '',
 '.hiddenbtn {',
 '    display: none;',
+'}',
+'',
+'.t-Form-error, .a-Form-error{',
+'    font-weight: bold;',
+'}',
+'',
+'#P208_ACCOUNT_TYPE_CODE:disabled {',
+'    color: black;',
+'    background-color: #d9d9d9;',
+'    opacity: unset;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_attributes=>'close: function() { customEvent(''customDialogClose'', {modalPageId: ''MODAL_CLOSE_FIXED''});} '
@@ -157,7 +171,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
-,p_cMaxlength=>1
+,p_cMaxlength=>2
 ,p_colspan=>5
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
@@ -292,11 +306,10 @@ wwv_flow_imp_page.create_page_process(
 'UPDATE NPM003 ',
 'SET',
 '    ACCOUNT_TYPE_NAME = :P208_ACCOUNT_TYPE_NAME, ',
+'    DESCRIPTION = :P208_DESCRIPTION,',
 '    USER_UPDATE = v(''APP_USER''), ',
 '    DATE_UPDATED = SYSTIMESTAMP',
-'WHERE ACCOUNT_TYPE_ID = :P208_ACCOUNT_TYPE_ID;',
-'',
-'apex_util.set_session_state(''SUCCESS_MSG'', ''Account Type updated successfully'');'))
+'WHERE ACCOUNT_TYPE_ID = :P208_ACCOUNT_TYPE_ID;'))
 ,p_process_clob_language=>'PLSQL'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>42870221954395920
@@ -307,7 +320,8 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
-,p_attribute_02=>'Y'
+,p_attribute_01=>'P208_ACCOUNT_TYPE_ID'
+,p_attribute_02=>'N'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_internal_uid=>42870710594395925
 );

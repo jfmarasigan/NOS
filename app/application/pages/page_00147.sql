@@ -83,15 +83,9 @@ wwv_flow_imp_page.create_page(
 '    height: 6rem!important;',
 '}',
 '',
-'#a2, #b2{',
+'#a2, #b2, #e, #p2{',
 '    font-size: 1.125rem;',
 '    outline: none;',
-'}',
-'#p2, #e {',
-'    font-size: 1.125rem;',
-'}',
-'',
-'#p2:hover, #e:hover{',
 '    border: 0;',
 '}',
 '',
@@ -721,37 +715,72 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'click'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45598623196188012)
+ p_id=>wwv_flow_imp.id(46662001264115401)
 ,p_event_id=>wwv_flow_imp.id(45598583316188011)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
-,p_execute_on_page_init=>'Y'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P147_PRINT_FORMAT'
-,p_attribute_01=>'STATIC_ASSIGNMENT'
-,p_attribute_02=>'export'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
+,p_execute_on_page_init=>'N'
+,p_name=>'Export main'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'var d = new Date();',
+'var datestamp = d.getFullYear() + "";',
+'if( (d.getMonth() + 1) >= 10){',
+'    datestamp = datestamp + (d.getMonth() + 1) + "";',
+'}',
+'else{',
+'    datestamp = datestamp + "0" + (d.getMonth() + 1);',
+'}',
+'if( (d.getDate() + 1) >= 10){',
+'    datestamp = datestamp + d.getDate() + "";',
+'}',
+'else{',
+'    datestamp = datestamp + "0" + d.getDate();',
+'}',
+'generateReport("SOA_EOM_MAIN_XLS", "xlsx", { ',
+'    fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".xlsx",',
+'    mode : "export",',
+'    parameters : {',
+'        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
+'        P_PRINT_TYPE: "graphic"',
+'    }',
+'});'))
+,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_client_condition_expression=>'$v("P147_PRINT_TYPE") == ''main'''
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45599079027188016)
+ p_id=>wwv_flow_imp.id(46662123501115402)
 ,p_event_id=>wwv_flow_imp.id(45598583316188011)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>20
 ,p_execute_on_page_init=>'N'
+,p_name=>'Export ageing'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'$(".ui-dialog-titlebar-close").trigger("click");'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45599206234188018)
-,p_event_id=>wwv_flow_imp.id(45598583316188011)
-,p_event_result=>'TRUE'
-,p_action_sequence=>30
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_OPEN_REGION'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_imp.id(45598271192188008)
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'var d = new Date();',
+'var datestamp = d.getFullYear() + "";',
+'if( (d.getMonth() + 1) >= 10){',
+'    datestamp = datestamp + (d.getMonth() + 1) + "";',
+'}',
+'else{',
+'    datestamp = datestamp + "0" + (d.getMonth() + 1);',
+'}',
+'if( (d.getDate() + 1) >= 10){',
+'    datestamp = datestamp + d.getDate() + "";',
+'}',
+'else{',
+'    datestamp = datestamp + "0" + d.getDate();',
+'}',
+'generateReport("SOA_EOM_CUSTOMERS_XLS", "xlsx", { ',
+'    fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".xlsx",',
+'    mode : "export",',
+'    parameters : {',
+'        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
+'        P_PRINT_TYPE: "graphic"',
+'    }',
+'});'))
+,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_client_condition_expression=>'$v("P147_PRINT_TYPE") == ''ageing'''
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(45598740185188013)
@@ -807,74 +836,6 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'click'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45599450581188020)
-,p_event_id=>wwv_flow_imp.id(45599363754188019)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_name=>'Export main'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var d = new Date();',
-'var datestamp = d.getFullYear() + "";',
-'if( (d.getMonth() + 1) >= 10){',
-'    datestamp = datestamp + (d.getMonth() + 1) + "";',
-'}',
-'else{',
-'    datestamp = datestamp + "0" + (d.getMonth() + 1);',
-'}',
-'if( (d.getDate() + 1) >= 10){',
-'    datestamp = datestamp + d.getDate() + "";',
-'}',
-'else{',
-'    datestamp = datestamp + "0" + d.getDate();',
-'}',
-'generateReport("SOA_EOM_MAIN_XLS", "xlsx", { ',
-'    fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".xlsx",',
-'    mode : "export",',
-'    parameters : {',
-'        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
-'        P_PRINT_TYPE: "dotmatrix"',
-'    }',
-'});'))
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$v("P147_PRINT_FORMAT") == ''export'' && $v("P147_PRINT_TYPE") == ''main'''
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45600111163188027)
-,p_event_id=>wwv_flow_imp.id(45599363754188019)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_name=>'Export ageing'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var d = new Date();',
-'var datestamp = d.getFullYear() + "";',
-'if( (d.getMonth() + 1) >= 10){',
-'    datestamp = datestamp + (d.getMonth() + 1) + "";',
-'}',
-'else{',
-'    datestamp = datestamp + "0" + (d.getMonth() + 1);',
-'}',
-'if( (d.getDate() + 1) >= 10){',
-'    datestamp = datestamp + d.getDate() + "";',
-'}',
-'else{',
-'    datestamp = datestamp + "0" + d.getDate();',
-'}',
-'generateReport("SOA_EOM_CUSTOMERS_XLS", "xlsx", { ',
-'    fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".xlsx",',
-'    mode : "export",',
-'    parameters : {',
-'        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
-'        P_PRINT_TYPE: "dotmatrix"',
-'    }',
-'});'))
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$v("P147_PRINT_FORMAT") == ''export'' && $v("P147_PRINT_TYPE") == ''ageing'''
-);
-wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(45600320471188029)
 ,p_event_id=>wwv_flow_imp.id(45599363754188019)
 ,p_event_result=>'TRUE'
@@ -899,7 +860,7 @@ wwv_flow_imp_page.create_page_da_action(
 '}',
 'generateReport("SOA_EOM_MAIN", "pdf", { ',
 '    fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".pdf",',
-'    mode : "export",',
+'    mode : "print",',
 '    parameters : {',
 '        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
 '        P_PRINT_TYPE: "dotmatrix"',
@@ -933,7 +894,7 @@ wwv_flow_imp_page.create_page_da_action(
 '}',
 'generateReport("SOA_EOM_CUSTOMERS", "pdf", { ',
 '    fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".pdf",',
-'    mode : "export",',
+'    mode : "print",',
 '    parameters : {',
 '        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
 '        P_PRINT_TYPE: "dotmatrix"',
@@ -953,78 +914,10 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_event_type=>'click'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45600074333188026)
-,p_event_id=>wwv_flow_imp.id(45599863502188024)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_name=>'Export main'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var d = new Date();',
-'var datestamp = d.getFullYear() + "";',
-'if( (d.getMonth() + 1) >= 10){',
-'    datestamp = datestamp + (d.getMonth() + 1) + "";',
-'}',
-'else{',
-'    datestamp = datestamp + "0" + (d.getMonth() + 1);',
-'}',
-'if( (d.getDate() + 1) >= 10){',
-'    datestamp = datestamp + d.getDate() + "";',
-'}',
-'else{',
-'    datestamp = datestamp + "0" + d.getDate();',
-'}',
-'generateReport("SOA_EOM_MAIN_XLS", "xlsx", { ',
-'    fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".xlsx",',
-'    mode : "export",',
-'    parameters : {',
-'        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
-'        P_PRINT_TYPE: "graphic"',
-'    }',
-'});'))
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$v("P147_PRINT_FORMAT") == ''export'' && $v("P147_PRINT_TYPE") == ''main'''
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(45600206057188028)
-,p_event_id=>wwv_flow_imp.id(45599863502188024)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_name=>'Export ageing'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var d = new Date();',
-'var datestamp = d.getFullYear() + "";',
-'if( (d.getMonth() + 1) >= 10){',
-'    datestamp = datestamp + (d.getMonth() + 1) + "";',
-'}',
-'else{',
-'    datestamp = datestamp + "0" + (d.getMonth() + 1);',
-'}',
-'if( (d.getDate() + 1) >= 10){',
-'    datestamp = datestamp + d.getDate() + "";',
-'}',
-'else{',
-'    datestamp = datestamp + "0" + d.getDate();',
-'}',
-'generateReport("SOA_EOM_CUSTOMERS_XLS", "xlsx", { ',
-'    fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".xlsx",',
-'    mode : "export",',
-'    parameters : {',
-'        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
-'        P_PRINT_TYPE: "graphic"',
-'    }',
-'});'))
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$v("P147_PRINT_FORMAT") == ''export'' && $v("P147_PRINT_TYPE") == ''ageing'''
-);
-wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(45600435145188030)
 ,p_event_id=>wwv_flow_imp.id(45599863502188024)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>30
+,p_action_sequence=>50
 ,p_execute_on_page_init=>'N'
 ,p_name=>'Print main'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
@@ -1045,7 +938,7 @@ wwv_flow_imp_page.create_page_da_action(
 '}',
 'generateReport("SOA_EOM_MAIN", "pdf", { ',
 '    fileName: $v("P147_LEGAL_NAME") + "_Main Account Summary Report_" + datestamp + ".pdf",',
-'    mode : "export",',
+'    mode : "print",',
 '    parameters : {',
 '        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
 '        P_PRINT_TYPE: "graphic"',
@@ -1058,7 +951,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(45600760183188033)
 ,p_event_id=>wwv_flow_imp.id(45599863502188024)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>40
+,p_action_sequence=>60
 ,p_execute_on_page_init=>'N'
 ,p_name=>'Print ageing'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
@@ -1079,7 +972,7 @@ wwv_flow_imp_page.create_page_da_action(
 '}',
 'generateReport("SOA_EOM_CUSTOMERS", "pdf", { ',
 '    fileName: $v("P147_LEGAL_NAME") + "_Collections Ageing Summary Report_" + datestamp + ".pdf",',
-'    mode : "export",',
+'    mode : "print",',
 '    parameters : {',
 '        P_CUSTOMER_ID : $v("P147_CUSTOMER_ID"),',
 '        P_PRINT_TYPE: "graphic"',

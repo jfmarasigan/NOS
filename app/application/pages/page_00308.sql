@@ -149,10 +149,14 @@ wwv_flow_imp_page.create_page(
 '',
 '.hide {',
 '    display: none;',
+'}',
+'',
+'.a-GV {',
+'    font-size: 1rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
-,p_dialog_width=>'1000'
-,p_dialog_max_width=>'1000'
+,p_dialog_width=>'600'
+,p_dialog_max_width=>'600'
 ,p_dialog_chained=>'N'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'21'
@@ -177,15 +181,14 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
 ,p_plug_display_sequence=>30
 ,p_plug_new_grid_row=>false
-,p_plug_grid_column_span=>3
 ,p_plug_display_point=>'SUB_REGIONS'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT ',
 '    A.GC_STATUS_ID AS "GC_STATUS_ID",',
 '    COALESCE( C.COUNT, 0 ) AS "COUNT",',
-'    COALESCE( C.SOLD_AMOUNT, 0.00 ) AS "SOLD_AMOUNT",',
-'    COALESCE( C.BALANCE, 0.00 ) AS "BALANCE"',
+'    TO_CHAR(COALESCE( C.SOLD_AMOUNT, 0.00 ), ''999,999,999.00'') AS "SOLD_AMOUNT",',
+'    TO_CHAR(COALESCE( C.BALANCE, 0.00 ), ''999,999,999.00'') AS "BALANCE"',
 'FROM ',
 '    (',
 '        SELECT',
@@ -232,8 +235,8 @@ wwv_flow_imp_page.create_page_plug(
 '        FROM NPM014 npm014 ',
 '        WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
 '        COALESCE( COUNT(*), 0 ) "COUNT",',
-'        COALESCE( SUM(npt020.AMOUNT), 0 ) AS "SOLD_AMOUNT",',
-'        COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"',
+'        TO_CHAR(COALESCE( SUM(npt020.AMOUNT), 0 ), ''999,999,999.00'') AS "SOLD_AMOUNT",',
+'        TO_CHAR(COALESCE( SUM(npt020.BALANCE), 0 ), ''999,999,999.00'') AS "BALANCE"',
 'FROM NPT020 npt020',
 'WHERE ',
 '    (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
@@ -245,7 +248,7 @@ wwv_flow_imp_page.create_page_plug(
 '',
 'UNION',
 '    ',
-'SELECT ''0'', 0, 0, 0',
+'SELECT ''0'', 0, ''0.00'', ''0.00''',
 'FROM dual',
 'WHERE NOT EXISTS',
 '      ( ',
@@ -332,7 +335,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'BALANCE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'BALANCE'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Balance'
@@ -342,7 +345,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>false
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -382,7 +388,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'SOLD_AMOUNT'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'SOLD_AMOUNT'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_NUMBER_FIELD'
 ,p_heading=>'Sold Amount'
@@ -393,7 +399,9 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_04=>'decimal'
 ,p_is_required=>false
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
 ,p_filter_lov_type=>'NONE'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -506,329 +514,6 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_is_frozen=>false
 );
 wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(27798852860719130)
-,p_plug_name=>'Total Table'
-,p_region_name=>'total-table'
-,p_parent_plug_id=>wwv_flow_imp.id(27797982255719121)
-,p_region_template_options=>'#DEFAULT#'
-,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>40
-,p_plug_new_grid_row=>false
-,p_plug_grid_column_span=>3
-,p_plug_display_point=>'SUB_REGIONS'
-,p_query_type=>'SQL'
-,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT ',
-'    A.GC_STATUS_ID AS "GC_STATUS_ID",',
-'    COALESCE( C.COUNT, 0 ) AS "COUNT",',
-'    COALESCE( C.TOTAL_AMOUNT, 0.00 ) AS "TOTAL_AMOUNT",',
-'    COALESCE( C.BALANCE, 0.00 ) AS "BALANCE"',
-'FROM ',
-'    (',
-'        SELECT',
-'            (SELECT GC_STATUS_NAME',
-'            FROM NPM014 npm014 ',
-'            WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
-'            0 AS "COUNT",',
-'            0.00 AS "TOTAL_AMOUNT",',
-'            0.00 AS "BALANCE"',
-'        FROM NPT020 npt020',
-'        WHERE ',
-'            (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
-'        GROUP BY ( "GC_STATUS_ID" )',
-'    ) A',
-'     ',
-'LEFT JOIN',
-'    (',
-'        SELECT',
-'            (SELECT GC_STATUS_NAME',
-'            FROM NPM014 npm014 ',
-'            WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
-'            COALESCE( COUNT(*), 0 ) "COUNT",',
-'            COALESCE( SUM(npt020.AMOUNT), 0 ) AS "TOTAL_AMOUNT",',
-'            COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"',
-'        FROM NPT020 npt020',
-'        WHERE ',
-'            (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
-'        GROUP BY ( "GC_STATUS_ID" )',
-'    ) C',
-'',
-'    ON A.GC_STATUS_ID = C.GC_STATUS_ID',
-'',
-'UNION',
-'',
-'-- union this to get total using GROUP BY ROLLUP',
-'',
-'SELECT ',
-'       (SELECT GC_STATUS_NAME',
-'        FROM NPM014 npm014 ',
-'        WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
-'        COALESCE( COUNT(*), 0 ) "COUNT",',
-'        COALESCE( SUM(npt020.AMOUNT), 0 ) AS "TOTAL_AMOUNT",',
-'        COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"',
-'FROM NPT020 npt020',
-'WHERE ',
-'    (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
-'GROUP BY ROLLUP ( "GC_STATUS_ID" )',
-'',
-'UNION',
-'    ',
-'SELECT ''0'', 0, 0, 0',
-'FROM dual',
-'WHERE NOT EXISTS',
-'      ( ',
-'        SELECT ',
-'               (SELECT GC_STATUS_NAME',
-'                FROM NPM014 npm014 ',
-'                WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
-'                COALESCE( COUNT(*), 0 ) "COUNT",',
-'                COALESCE( SUM(npt020.AMOUNT), 0 ) AS "TOTAL_AMOUNT",',
-'                COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"',
-'        FROM NPT020 npt020',
-'        WHERE ',
-'            (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
-'        GROUP BY ROLLUP ( "GC_STATUS_ID" )',
-'      );',
-''))
-,p_plug_source_type=>'NATIVE_IG'
-,p_ajax_items_to_submit=>'P308_DATE_FROM,P308_DATE_TO'
-,p_prn_units=>'INCHES'
-,p_prn_paper_size=>'LETTER'
-,p_prn_width=>11
-,p_prn_height=>8.5
-,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header_font_color=>'#000000'
-,p_prn_page_header_font_family=>'Helvetica'
-,p_prn_page_header_font_weight=>'normal'
-,p_prn_page_header_font_size=>'12'
-,p_prn_page_footer_font_color=>'#000000'
-,p_prn_page_footer_font_family=>'Helvetica'
-,p_prn_page_footer_font_weight=>'normal'
-,p_prn_page_footer_font_size=>'12'
-,p_prn_header_bg_color=>'#EEEEEE'
-,p_prn_header_font_color=>'#000000'
-,p_prn_header_font_family=>'Helvetica'
-,p_prn_header_font_weight=>'bold'
-,p_prn_header_font_size=>'10'
-,p_prn_body_bg_color=>'#FFFFFF'
-,p_prn_body_font_color=>'#000000'
-,p_prn_body_font_family=>'Helvetica'
-,p_prn_body_font_weight=>'normal'
-,p_prn_body_font_size=>'10'
-,p_prn_border_width=>.5
-,p_prn_page_header_alignment=>'CENTER'
-,p_prn_page_footer_alignment=>'CENTER'
-,p_prn_border_color=>'#666666'
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(33727845209036935)
-,p_name=>'COUNT'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'COUNT'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Count'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>20
-,p_value_alignment=>'RIGHT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
-,p_enable_filter=>true
-,p_filter_is_required=>false
-,p_filter_lov_type=>'DISTINCT'
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>true
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(33727930945036936)
-,p_name=>'TOTAL_AMOUNT'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'TOTAL_AMOUNT'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Total Amount'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>30
-,p_value_alignment=>'RIGHT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
-,p_enable_filter=>true
-,p_filter_is_required=>false
-,p_filter_lov_type=>'DISTINCT'
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>true
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(33728058655036937)
-,p_name=>'BALANCE'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'BALANCE'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Balance'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>40
-,p_value_alignment=>'RIGHT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
-,p_enable_filter=>true
-,p_filter_is_required=>false
-,p_filter_lov_type=>'DISTINCT'
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>true
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(33728117655036938)
-,p_name=>'GC_STATUS_ID'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'GC_STATUS_ID'
-,p_data_type=>'VARCHAR2'
-,p_session_state_data_type=>'VARCHAR2'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_HIDDEN'
-,p_display_sequence=>10
-,p_attribute_01=>'Y'
-,p_filter_is_required=>false
-,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_interactive_grid(
- p_id=>wwv_flow_imp.id(33727521287036932)
-,p_internal_uid=>33727521287036932
-,p_is_editable=>false
-,p_lazy_loading=>false
-,p_requires_filter=>false
-,p_select_first_row=>true
-,p_fixed_row_height=>true
-,p_pagination_type=>'SCROLL'
-,p_show_total_row_count=>false
-,p_show_toolbar=>false
-,p_toolbar_buttons=>null
-,p_enable_save_public_report=>false
-,p_enable_subscriptions=>true
-,p_enable_flashback=>true
-,p_define_chart_view=>true
-,p_enable_download=>true
-,p_download_formats=>'CSV:HTML:XLSX:PDF'
-,p_enable_mail_download=>true
-,p_fixed_header=>'PAGE'
-,p_show_icon_view=>false
-,p_show_detail_view=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultModelOptions = {',
-'        pageSize: 1000',
-'    };',
-'    options.defaultGridViewOptions = {',
-'        pagination: {',
-'            scroll: true,',
-'            virtual: true,',
-'            loadMore: false',
-'        },',
-'        resizeColumns: false,',
-'        reorderColumns: false,',
-'        footer: false',
-'    };',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    }',
-'    return options;',
-'}'))
-);
-wwv_flow_imp_page.create_ig_report(
- p_id=>wwv_flow_imp.id(33808321578879515)
-,p_interactive_grid_id=>wwv_flow_imp.id(33727521287036932)
-,p_static_id=>'338084'
-,p_type=>'PRIMARY'
-,p_default_view=>'GRID'
-,p_show_row_number=>false
-,p_settings_area_expanded=>true
-);
-wwv_flow_imp_page.create_ig_report_view(
- p_id=>wwv_flow_imp.id(33808544718879515)
-,p_report_id=>wwv_flow_imp.id(33808321578879515)
-,p_view_type=>'GRID'
-,p_stretch_columns=>true
-,p_srv_exclude_null_values=>false
-,p_srv_only_display_columns=>true
-,p_edit_mode=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(33820128125879600)
-,p_view_id=>wwv_flow_imp.id(33808544718879515)
-,p_display_seq=>1
-,p_column_id=>wwv_flow_imp.id(33727845209036935)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(33821074296879606)
-,p_view_id=>wwv_flow_imp.id(33808544718879515)
-,p_display_seq=>2
-,p_column_id=>wwv_flow_imp.id(33727930945036936)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(33821938609879614)
-,p_view_id=>wwv_flow_imp.id(33808544718879515)
-,p_display_seq=>3
-,p_column_id=>wwv_flow_imp.id(33728058655036937)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(33859970571176037)
-,p_view_id=>wwv_flow_imp.id(33808544718879515)
-,p_display_seq=>4
-,p_column_id=>wwv_flow_imp.id(33728117655036938)
-,p_is_visible=>true
-,p_is_frozen=>false
-,p_sort_order=>1
-,p_sort_direction=>'ASC'
-,p_sort_nulls=>'LAST'
-);
-wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(27799510421719137)
 ,p_plug_name=>'Status Table'
 ,p_region_name=>'status-table'
@@ -836,7 +521,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#:margin-left-none'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
 ,p_plug_display_sequence=>10
-,p_plug_grid_column_span=>2
+,p_plug_grid_column_span=>4
 ,p_plug_display_point=>'SUB_REGIONS'
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -1015,345 +700,6 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_sort_order=>1
 ,p_sort_direction=>'ASC'
 ,p_sort_nulls=>'LAST'
-);
-wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(28141685092254517)
-,p_plug_name=>'Donations Table'
-,p_region_name=>'donations-table'
-,p_parent_plug_id=>wwv_flow_imp.id(27797982255719121)
-,p_region_template_options=>'#DEFAULT#'
-,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>20
-,p_plug_new_grid_row=>false
-,p_plug_grid_column_span=>3
-,p_plug_display_point=>'SUB_REGIONS'
-,p_query_type=>'SQL'
-,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT ',
-'    A.GC_STATUS_ID AS "GC_STATUS_ID",',
-'    COALESCE( C.COUNT, 0 ) AS "COUNT",',
-'    COALESCE( C.DONATIONS_AMOUNT, 0.00 ) AS "DONATIONS_AMOUNT",',
-'    COALESCE( C.BALANCE, 0.00 ) AS "BALANCE"',
-'FROM ',
-'    (',
-'        SELECT',
-'            (SELECT GC_STATUS_NAME',
-'            FROM NPM014 npm014 ',
-'            WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
-'            0 AS "COUNT",',
-'            0.00 AS "DONATIONS_AMOUNT",',
-'            0.00 AS "BALANCE"',
-'        FROM NPT020 npt020',
-'        WHERE ',
-'            (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
-'        GROUP BY ( "GC_STATUS_ID" )',
-'    ) A',
-'     ',
-'LEFT JOIN',
-'    (',
-'        SELECT',
-'            (SELECT GC_STATUS_NAME',
-'            FROM NPM014 npm014 ',
-'            WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
-'            COALESCE( COUNT(*), 0 ) "COUNT",',
-'            COALESCE( SUM(npt020.AMOUNT), 0 ) AS "DONATIONS_AMOUNT",',
-'            COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"',
-'        FROM NPT020 npt020',
-'        WHERE ',
-'            ((npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
-'            AND',
-'            (SELECT DONATION',
-'             FROM NPM013 npm013',
-'             WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = ''Y''',
-'            )',
-'        GROUP BY ( "GC_STATUS_ID" )',
-'    ) C',
-'',
-'    ON A.GC_STATUS_ID = C.GC_STATUS_ID',
-'',
-'UNION',
-'',
-'-- union this to get total using GROUP BY ROLLUP',
-'',
-'SELECT ',
-'       (SELECT GC_STATUS_NAME',
-'        FROM NPM014 npm014 ',
-'        WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
-'        COALESCE( COUNT(*), 0 ) "COUNT",',
-'        COALESCE( SUM(npt020.AMOUNT), 0 ) AS "DONATIONS_AMOUNT",',
-'        COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"',
-'FROM NPT020 npt020',
-'WHERE ',
-'    (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
-'    AND',
-'    (SELECT DONATION',
-'     FROM NPM013 npm013',
-'     WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = ''Y''',
-'',
-'GROUP BY ROLLUP ( "GC_STATUS_ID" )',
-'',
-'UNION',
-'    ',
-'SELECT ''0'', 0, 0, 0',
-'FROM dual',
-'WHERE NOT EXISTS',
-'      ( ',
-'        SELECT ',
-'               (SELECT GC_STATUS_NAME',
-'                FROM NPM014 npm014 ',
-'                WHERE npm014.GC_STATUS_ID = npt020.GC_STATUS_ID) AS "GC_STATUS_ID",',
-'                COALESCE( COUNT(*), 0 ) "COUNT",',
-'                COALESCE( SUM(npt020.AMOUNT), 0 ) AS "DONATIONS_AMOUNT",',
-'                COALESCE( SUM(npt020.BALANCE), 0 ) AS "BALANCE"',
-'        FROM NPT020 npt020',
-'        WHERE ',
-'            (npt020.ISSUE_DATE BETWEEN :P308_DATE_FROM AND :P308_DATE_TO)',
-'            AND',
-'            (SELECT DONATION',
-'             FROM NPM013 npm013',
-'             WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) = ''Y''',
-'',
-'        GROUP BY ROLLUP ( "GC_STATUS_ID" )',
-'      )',
-';'))
-,p_plug_source_type=>'NATIVE_IG'
-,p_ajax_items_to_submit=>'P308_DATE_FROM,P308_DATE_TO'
-,p_prn_units=>'INCHES'
-,p_prn_paper_size=>'LETTER'
-,p_prn_width=>11
-,p_prn_height=>8.5
-,p_prn_orientation=>'HORIZONTAL'
-,p_prn_page_header_font_color=>'#000000'
-,p_prn_page_header_font_family=>'Helvetica'
-,p_prn_page_header_font_weight=>'normal'
-,p_prn_page_header_font_size=>'12'
-,p_prn_page_footer_font_color=>'#000000'
-,p_prn_page_footer_font_family=>'Helvetica'
-,p_prn_page_footer_font_weight=>'normal'
-,p_prn_page_footer_font_size=>'12'
-,p_prn_header_bg_color=>'#EEEEEE'
-,p_prn_header_font_color=>'#000000'
-,p_prn_header_font_family=>'Helvetica'
-,p_prn_header_font_weight=>'bold'
-,p_prn_header_font_size=>'10'
-,p_prn_body_bg_color=>'#FFFFFF'
-,p_prn_body_font_color=>'#000000'
-,p_prn_body_font_family=>'Helvetica'
-,p_prn_body_font_weight=>'normal'
-,p_prn_body_font_size=>'10'
-,p_prn_border_width=>.5
-,p_prn_page_header_alignment=>'CENTER'
-,p_prn_page_footer_alignment=>'CENTER'
-,p_prn_border_color=>'#666666'
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(33726650038036923)
-,p_name=>'COUNT'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'COUNT'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Count'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>20
-,p_value_alignment=>'RIGHT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
-,p_enable_filter=>true
-,p_filter_is_required=>false
-,p_filter_lov_type=>'DISTINCT'
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>true
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(33726853049036925)
-,p_name=>'BALANCE'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'BALANCE'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Balance'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>40
-,p_value_alignment=>'RIGHT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
-,p_enable_filter=>true
-,p_filter_is_required=>false
-,p_filter_lov_type=>'DISTINCT'
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>true
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(33728228409036939)
-,p_name=>'GC_STATUS_ID'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'GC_STATUS_ID'
-,p_data_type=>'VARCHAR2'
-,p_session_state_data_type=>'VARCHAR2'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_HIDDEN'
-,p_display_sequence=>10
-,p_attribute_01=>'Y'
-,p_filter_is_required=>false
-,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(33728760717036944)
-,p_name=>'DONATIONS_AMOUNT'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'DONATIONS_AMOUNT'
-,p_data_type=>'NUMBER'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_NUMBER_FIELD'
-,p_heading=>'Donations Amount'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>30
-,p_value_alignment=>'RIGHT'
-,p_attribute_03=>'left'
-,p_attribute_04=>'decimal'
-,p_is_required=>false
-,p_enable_filter=>true
-,p_filter_is_required=>false
-,p_filter_lov_type=>'NONE'
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>true
-);
-wwv_flow_imp_page.create_interactive_grid(
- p_id=>wwv_flow_imp.id(33726306173036920)
-,p_internal_uid=>33726306173036920
-,p_is_editable=>false
-,p_lazy_loading=>false
-,p_requires_filter=>false
-,p_select_first_row=>true
-,p_fixed_row_height=>true
-,p_pagination_type=>'SCROLL'
-,p_show_total_row_count=>false
-,p_show_toolbar=>false
-,p_toolbar_buttons=>null
-,p_enable_save_public_report=>false
-,p_enable_subscriptions=>true
-,p_enable_flashback=>true
-,p_define_chart_view=>true
-,p_enable_download=>true
-,p_download_formats=>'CSV:HTML:XLSX:PDF'
-,p_enable_mail_download=>true
-,p_fixed_header=>'PAGE'
-,p_show_icon_view=>false
-,p_show_detail_view=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultModelOptions = {',
-'        pageSize: 1000',
-'    };',
-'    options.defaultGridViewOptions = {',
-'        pagination: {',
-'            scroll: true,',
-'            virtual: true,',
-'            loadMore: false',
-'        },',
-'        resizeColumns: false,',
-'        reorderColumns: false,',
-'        footer: false',
-'    };',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    }',
-'    return options;',
-'}'))
-);
-wwv_flow_imp_page.create_ig_report(
- p_id=>wwv_flow_imp.id(33806915070879510)
-,p_interactive_grid_id=>wwv_flow_imp.id(33726306173036920)
-,p_static_id=>'338070'
-,p_type=>'PRIMARY'
-,p_default_view=>'GRID'
-,p_show_row_number=>false
-,p_settings_area_expanded=>true
-);
-wwv_flow_imp_page.create_ig_report_view(
- p_id=>wwv_flow_imp.id(33807178998879510)
-,p_report_id=>wwv_flow_imp.id(33806915070879510)
-,p_view_type=>'GRID'
-,p_stretch_columns=>true
-,p_srv_exclude_null_values=>false
-,p_srv_only_display_columns=>true
-,p_edit_mode=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(33811296238879534)
-,p_view_id=>wwv_flow_imp.id(33807178998879510)
-,p_display_seq=>1
-,p_column_id=>wwv_flow_imp.id(33726650038036923)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(33813054974879548)
-,p_view_id=>wwv_flow_imp.id(33807178998879510)
-,p_display_seq=>3
-,p_column_id=>wwv_flow_imp.id(33726853049036925)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(33873532525359404)
-,p_view_id=>wwv_flow_imp.id(33807178998879510)
-,p_display_seq=>4
-,p_column_id=>wwv_flow_imp.id(33728228409036939)
-,p_is_visible=>true
-,p_is_frozen=>false
-,p_sort_order=>1
-,p_sort_direction=>'ASC'
-,p_sort_nulls=>'LAST'
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(33884862861426195)
-,p_view_id=>wwv_flow_imp.id(33807178998879510)
-,p_display_seq=>2
-,p_column_id=>wwv_flow_imp.id(33728760717036944)
-,p_is_visible=>true
-,p_is_frozen=>false
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(27800178242719143)

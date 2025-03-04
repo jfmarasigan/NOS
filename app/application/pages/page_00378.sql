@@ -120,10 +120,6 @@ wwv_flow_imp_page.create_page(
 '    border: 1px solid #046BC8;',
 '    table-layout: fixed;',
 '}',
-'',
-'/* th, td {',
-'    width: 33.33%;',
-'} */',
 '/* section 4 end */',
 '',
 '.hide {',
@@ -142,10 +138,19 @@ wwv_flow_imp_page.create_page(
 '    width: 100% !important;',
 '}',
 '',
+'.a-GV-row {',
+'    height: 3.02rem !important;',
+'    pointer-events: none;',
+'}',
+'',
 '#table_ig {',
 '    height: fit-content !important;',
 '    overflow-y: auto;',
 '    overflow-x: hidden;',
+'}',
+'',
+'.a-GV-header-sort {',
+'    display: none;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'460'
@@ -204,7 +209,7 @@ wwv_flow_imp_page.create_page_plug(
 '           npt036.UPDATED AS "UPDATED"',
 '    FROM NPT036 npt036',
 '    WHERE npt036.RESERVE_ID = :P378_RESERVE_NO',
-'    ORDER BY npt036.RESERVATION_UPDATE_ID DESC) tbl',
+'    ORDER BY npt036.DATE_CREATED DESC) tbl',
 '',
 'WHERE rownum <= 3;'))
 ,p_plug_source_type=>'NATIVE_IG'
@@ -342,7 +347,8 @@ wwv_flow_imp_page.create_region_column(
 '    };',
 '    return options;',
 '}'))
-,p_enable_sort_group=>false
+,p_enable_sort_group=>true
+,p_enable_control_break=>false
 ,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
@@ -429,7 +435,7 @@ wwv_flow_imp_page.create_ig_report_column(
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(46211356019542670)
 ,p_view_id=>wwv_flow_imp.id(78008296200027080)
-,p_display_seq=>5
+,p_display_seq=>4
 ,p_column_id=>wwv_flow_imp.id(45466003268718728)
 ,p_is_visible=>true
 ,p_is_frozen=>false
@@ -442,6 +448,9 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_is_visible=>true
 ,p_is_frozen=>false
 ,p_width=>110
+,p_sort_order=>1
+,p_sort_direction=>'DESC'
+,p_sort_nulls=>'LAST'
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(45543617859099421)

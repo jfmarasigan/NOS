@@ -42,6 +42,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '.t-Form-label{',
 '    font-size:1.125rem;',
+'    /* color:white; */',
 '}',
 '',
 '.text-left {',
@@ -51,6 +52,9 @@ wwv_flow_imp_page.create_page(
 '.text-right {',
 '    text-align: right;',
 '}',
+'/* .t-Dialog{',
+'    background-color: #056AC8;',
+'} */',
 '',
 ''))
 ,p_page_template_options=>'#DEFAULT#'

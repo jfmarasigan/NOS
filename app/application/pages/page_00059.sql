@@ -25,7 +25,6 @@ wwv_flow_imp_page.create_page(
 '        $.event.trigger("cancelDialog");',
 '    },',
 '    enter : (v) => {',
-'        // $(document).off(''keydown.p59keyevents'');',
 '        apex.page.submit( "SUBMIT" );',
 '    }',
 '}',

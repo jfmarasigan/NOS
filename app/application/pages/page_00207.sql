@@ -49,12 +49,11 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '.t-Dialog-body{',
-'    label, input {',
-'        font-size: 1.125rem;',
-'    }',
-'//    background-color: #046BC8;',
 '    padding-bottom: 0;',
 '    padding-left: 0;',
+'}',
+'.t-Dialog-body label, .t-Dialog-body input{',
+'    font-size: 1.125rem;',
 '}',
 '',
 '.t-Region-body{',
@@ -138,6 +137,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_grid_label_column_span=>4
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--preTextBlock:margin-top-sm'
+,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
@@ -154,6 +154,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_grid_label_column_span=>4
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--preTextBlock:margin-top-sm'
+,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'

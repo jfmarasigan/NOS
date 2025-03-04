@@ -19,6 +19,9 @@ wwv_flow_imp_page.create_page(
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_file_urls=>'#APP_FILES#js/cmn#MIN#.js'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'let convertIdSelected;',
+'let openedViaPageLoad = false;',
+'',
 'const p91KeyMap = {',
 '    a: (v) => {',
 '        $("#a").trigger("click");',
@@ -38,25 +41,21 @@ wwv_flow_imp_page.create_page(
 '    r: (v) => {',
 '        $("#r").trigger("click");',
 '    },',
+'    s: (v) => {',
+'        $("#s").trigger("click");',
+'    },',
 '    home: (v) => {',
 '        $("#home").trigger("click");',
 '    },',
 '    end: (v) => {',
 '        $("#end").trigger("click");',
 '    },',
-'    s: (v) => {',
-'        $("#s").trigger("click");',
-'    },',
 '    escape: (v) => {',
-'        if($("#search").is(":visible")) {',
-'            $("#close-search").trigger("click");',
-'        } else if($("#sort-by").is(":visible")) {',
-'            $("#close-sort").trigger("click");',
-'        } else if($("#reports").is(":visible")) {',
-'            $("#close-reports").trigger("click");',
-'        } else if($("#option").is(":visible")) {',
-'            $("#close-option").trigger("click");',
-'        } else {',
+'        if(openedViaPageLoad) {',
+'            openedViaPageLoad = false;',
+'            return;',
+'        }',
+'        if(!$("#search").is(":visible") && !$("#sort-by").is(":visible") && !$("#reports").is(":visible") && !$("#option").is(":visible")) {',
 '            $("#exit").trigger("click");',
 '        }',
 '    }',
@@ -74,7 +73,10 @@ wwv_flow_imp_page.create_page(
 '        var key = ev.key?.toLowerCase();',
 '        if (p91KeyMap[key]) {',
 '            ev.preventDefault();',
-'            p91KeyMap[key]();',
+'            setTimeout(() => {',
+'                p91KeyMap[key]();',
+'            }, 350)',
+'            ',
 '        }',
 '    });',
 '}',
@@ -115,10 +117,82 @@ wwv_flow_imp_page.create_page(
 '',
 '        view$.grid("setSelectedRecords", [rec], true);',
 '    }',
+'}',
+'',
+'let fromF = $v("P91_FROM");',
+'function selectRecord() {',
+'    apex.region("table").call("getCurrentView").model.fetchAll(function(status) {',
+'        if (status.done) {',
+'            ',
+'            let view = apex.region("table").call("getCurrentView"),',
+'                model = view.model,',
+'                view$ = view.view$,',
+'                id = $v("P91_CONVERT_ID").substring(8),',
+'                rec = model.getRecord(id);',
+'',
+'            if (rec) {',
+'                let pi = view$.grid("getPageInfo"),',
+'                    index = model.indexOf(rec),',
+'                    offset = index * pi.rowHeight;',
+'',
+'                $(".a-GV-w-scroll").scrollTop(offset);',
+'',
+'                setTimeout(function () {',
+'                    view$.grid("setSelectedRecords", [rec], true);',
+'                    let row$ = view$.find("tr.is-selected");',
+'',
+'                    if (row$.length > 0) {',
+'                        $(row$).find(".a-GV-cell").first().trigger("click");',
+'                    } else {',
+'                        (".a-GV-cell").first().trigger("click");',
+'                    }',
+'                }, fromF === ''A'' || fromF === ''U'' ? 2000 : 500);',
+'            } else {',
+'                setTimeout(function () {',
+'                    $(".a-GV-cell").first().trigger("click");',
+'                }, 500);',
+'            }',
+'        }',
+'    });',
+'}',
+'',
+'function highlightValue() {',
+'    const inputFieldIds = ["P91_ITEM_FROM_C", "P91_ITEM_TO_C", "P91_MONTH_FROM_B", "P91_MONTH_TO_B"];',
+'',
+'    inputFieldIds.forEach((fieldId) => {',
+'        $(`#${fieldId}`).on("focus", function() {',
+'            $(this).select();',
+'        });',
+'    })',
 '}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP91Keys();',
 'setTitle("Convert Item A to Item B");',
+'highlightValue();',
+'selectRecord();',
+'',
+'const dateFields = [''P91_MONTH_FROM_B'', ''P91_MONTH_TO_B''];',
+'',
+'dateFields.forEach((fieldId) => {',
+'  const dateField = document.getElementById(fieldId);',
+'',
+'  dateField.addEventListener(''input'', function () {',
+'    let value = dateField.value.replace(/\D/g, '''');',
+'',
+'    if (value.length > 2) {',
+'      value = value.substring(0, 2) + ''/'' + value.substring(2);',
+'    }',
+'    if (value.length > 5) {',
+'      value = value.substring(0, 5) + ''/'' + value.substring(5, 9);',
+'    }',
+'',
+'    if (value.length > 10) {',
+'      value = value.substring(0, 10);',
+'    }',
+'',
+'    dateField.value = value;',
+'  });',
+'});',
 '',
 '$(document).ready(function() { ',
 '    $("#P91_SEARCH_VALUE").on("keydown", function(event) {',
@@ -127,69 +201,81 @@ wwv_flow_imp_page.create_page(
 '            event.preventDefault();',
 '        }',
 '    });',
-'});',
 '',
-'$(document).on("keydown", function(e) {',
-'    if ($("#sort-by").is(":visible")) {',
-'        const buttons = $(".sort-btns");',
-'        const focusedIndex = buttons.index(document.activeElement);',
-'        ',
-'        if (e.key === "ArrowDown") {',
-'            e.preventDefault();',
-'            const nextIndex = (focusedIndex + 1) % buttons.length;',
-'            buttons.eq(nextIndex).focus();',
-'        } else if (e.key === "ArrowUp") {',
-'            e.preventDefault();',
-'            const prevIndex = (focusedIndex - 1 + buttons.length) % buttons.length;',
-'            buttons.eq(prevIndex).focus();',
-'        }',
-'    }',
-'',
-'    if($("#reports").is(":visible")) {',
-'        if(e.key.toLowerCase() === "a") {',
-'            setTimeout(() => {',
-'                apex.item("P91_REPORT").setValue("A");',
-'                $.event.trigger(''reportA'');',
-'            }, 100)',
-'            e.preventDefault();',
-'        } else if(e.key.toLowerCase() === "b") {',
-'            apex.item("P91_REPORT").setValue("B");',
-'            $.event.trigger(''reportBSetMonth'');',
-'            e.preventDefault();',
-'        } else if(e.key.toLowerCase() === "c") {',
-'            apex.item("P91_REPORT").setValue("C");',
-'            $.event.trigger(''reportCSetItem'');',
-'            e.preventDefault();',
-'        }',
-'    }',
-'',
-'    if($("#option").is(":visible")) {',
-'        if(e.key.toLowerCase() === "a") {',
-'            $.event.trigger(''printA'');',
-'        } else if(e.key.toLowerCase() === "b") {',
-'            $.event.trigger(''printB'');',
-'        }',
-'    }',
-'',
-'    if($("#crr-b").is(":visible")) {',
-'        $("#P91_MONTH_FROM_B, #P91_MONTH_TO_B").on("keydown", function(event) {',
-'            if (event.key === "Enter" || event.keyCode === 13) {',
-'                $("#submit-months").trigger("click");',
-'                event.preventDefault();',
+'    $(document).on("keydown", function(e) {',
+'        if ($("#sort-by").is(":visible")) {',
+'            const buttons = $(".sort-btns");',
+'            const focusedIndex = buttons.index(document.activeElement);',
+'            ',
+'            if (e.key === "ArrowDown") {',
+'                e.preventDefault();',
+'                const nextIndex = (focusedIndex + 1) % buttons.length;',
+'                buttons.eq(nextIndex).focus();',
+'            } else if (e.key === "ArrowUp") {',
+'                e.preventDefault();',
+'                const prevIndex = (focusedIndex - 1 + buttons.length) % buttons.length;',
+'                buttons.eq(prevIndex).focus();',
 '            }',
-'        });',
-'    }',
+'        }',
 '',
-'    if($("#icr-c").is(":visible")) {',
-'        $("#P91_ITEM_FROM_C, #P91_ITEM_TO_C").on("keydown", function(event) {',
-'            if (event.key === "Enter" || event.keyCode === 13) {',
-'                $("#submit-items").trigger("click");',
-'                event.preventDefault();',
+'        if($("#reports").is(":visible")) {',
+'            if(e.key.toLowerCase() === "a") {',
+'                setTimeout(() => {',
+'                    apex.item("P91_REPORT").setValue("A");',
+'                    $.event.trigger(''reportA'');',
+'                }, 100)',
+'                e.preventDefault();',
+'            } else if(e.key.toLowerCase() === "b") {',
+'                apex.item("P91_REPORT").setValue("B");',
+'                $.event.trigger(''reportBSetMonth'');',
+'                e.preventDefault();',
+'            } else if(e.key.toLowerCase() === "c") {',
+'                apex.item("P91_REPORT").setValue("C");',
+'                $.event.trigger(''reportCSetItem'');',
+'                e.preventDefault();',
 '            }',
-'        });',
-'    }',
+'        }',
+'',
+'        if($("#option").is(":visible")) {',
+'            if(e.key.toLowerCase() === "a") {',
+'                $.event.trigger(''printA'');',
+'            } else if(e.key.toLowerCase() === "b") {',
+'                $.event.trigger(''printB'');',
+'            }',
+'        }',
+'',
+'        if($("#crr-b").is(":visible")) {',
+'            $("#P91_MONTH_FROM_B, #P91_MONTH_TO_B").on("keydown", function(event) {',
+'                if (event.key === "Enter" || event.keyCode === 13) {',
+'                    $("#submit-months").trigger("click");',
+'                    event.preventDefault();',
+'                }',
+'            });',
+'        }',
+'',
+'        if($("#icr-c").is(":visible")) {',
+'            $("#P91_ITEM_FROM_C, #P91_ITEM_TO_C").on("keydown", function(event) {',
+'                if (event.key === "Enter" || event.keyCode === 13) {',
+'                    $("#submit-items").trigger("click");',
+'                    event.preventDefault();',
+'                }',
+'            });',
+'        }',
+'    });',
 '});'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'.a-GV-table tr.is-selected .a-GV-cell {',
+'     background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused {',
+'     box-shadow: 0 0 0 1px black inset !important;',
+'}',
+'',
+'.apex-item-text {',
+'    background-color: white;',
+'}',
+'',
 '#inquire span {',
 '    font-size: 1.125rem !important;',
 '}',
@@ -386,6 +472,7 @@ wwv_flow_imp_page.create_page(
 '',
 '.text-red {',
 '    color: red;',
+'    font-weight: 700;',
 '}',
 '',
 '#table .a-GV-header a, #table th.a-GV-header {',
@@ -408,7 +495,7 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '#table .a-GV-table colgroup col:nth-child(1) {',
-'    width: 3rem;',
+'    width: 4rem;',
 '}',
 '',
 '#table .a-GV-table colgroup col:nth-child(2) {',
@@ -422,11 +509,15 @@ wwv_flow_imp_page.create_page(
 '',
 '#table .a-GV-table colgroup col:nth-child(4),',
 '#table .a-GV-table colgroup col:nth-child(6) {',
-'    width: 20rem;',
+'    width: 19rem;',
 '}',
 '',
 '#table .a-GV-table colgroup col:nth-child(7) {',
 '    width: 3rem;',
+'}',
+'',
+'#table .a-GV-table colgroup col:nth-child(8) {',
+'    width: 6rem;',
 '}',
 '',
 '#table1 table,',
@@ -450,11 +541,6 @@ wwv_flow_imp_page.create_page(
 '    width: 3rem;',
 '}',
 '',
-'#table1 .a-GV-table colgroup col:nth-child(8),',
-'#table1 .a-GV-table colgroup col:nth-child(9) {',
-'    width: 7rem;',
-'}',
-'',
 '#table1 .a-GV-table colgroup col:nth-child(2), ',
 '#table1 .a-GV-table colgroup col:nth-child(5) {',
 '    width: 4rem;',
@@ -463,9 +549,6 @@ wwv_flow_imp_page.create_page(
 '#table1 .a-GV-table colgroup col:nth-child(4), ',
 '#table1 .a-GV-table colgroup col:nth-child(7) {',
 '    width: 6rem;',
-'}',
-'#table1 .a-GV-table colgroup col:nth-child(10) {',
-'    width: 9rem;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
@@ -488,14 +571,14 @@ wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(32047261067460409)
 ,p_plug_name=>'Item From & To'
 ,p_region_name=>'item-from'
-,p_plug_display_sequence=>60
+,p_plug_display_sequence=>80
 ,p_plug_display_column=>2
 ,p_location=>null
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<div style="display: flex; margin-left: 6rem; color: white;">',
-'    <span>----------------------------------------Item From----------------------------------------</span>',
-'    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>',
-'    <span>-----------------------------------------Item To-----------------------------------------</span>',
+'<div style="display: flex; margin-left: 7.7rem; color: white;">',
+'    <span>-----------------------------------------------Item From-----------------------------------------------</span>',
+'    <div>&nbsp;&nbsp;&nbsp;</div>',
+'    <span>------------------------------------------------Item To------------------------------------------------</span>',
 '</div>',
 ''))
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
@@ -505,7 +588,7 @@ wwv_flow_imp_page.create_page_plug(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(32047525374460412)
 ,p_plug_name=>'Buttons'
-,p_plug_display_sequence=>80
+,p_plug_display_sequence=>100
 ,p_location=>null
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'expand_shortcuts', 'N',
@@ -624,10 +707,10 @@ wwv_flow_imp_page.create_page_plug(
 '    nit020.to_no_of_units * (SELECT nit02.quantity',
 '                               FROM NIT002 nit02',
 '                               WHERE nit02.item_id = nit020.to_item_id',
-'                               AND nit02.uom_id = nit020.to_uom_id) AS "TO_UNITS",',
-'    nit020.invoice_number AS "INV_NO",',
-'    nit020.invoice_date AS "INV_DATE",',
-'    nit020.customer_name AS "CUST_NAME"',
+'                               AND nit02.uom_id = nit020.to_uom_id) AS "TO_UNITS"',
+'    -- nit020.invoice_number AS "INV_NO",',
+'    -- TO_CHAR(nit020.invoice_date, ''MM/DD/YYYY'') AS "INV_DATE",',
+'    -- nit020.customer_name AS "CUST_NAME"',
 'FROM',
 '    NIT020 nit020',
 '    JOIN NIM027 nim027 ON nim027.warehouse_id = nit020.warehouse_id',
@@ -673,10 +756,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Locn'
+,p_heading=>'Location'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>10
-,p_value_alignment=>'LEFT'
+,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>false
@@ -706,7 +789,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_heading=>'Qty'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>20
-,p_value_alignment=>'RIGHT'
+,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>false
@@ -736,7 +819,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_heading=>'UOM'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>30
-,p_value_alignment=>'LEFT'
+,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>false
@@ -766,7 +849,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_heading=>'Total Units'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>40
-,p_value_alignment=>'RIGHT'
+,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>false
 ,p_enable_filter=>false
@@ -796,7 +879,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_heading=>'Qty'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>50
-,p_value_alignment=>'RIGHT'
+,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>false
@@ -826,7 +909,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_heading=>'UOM'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>60
-,p_value_alignment=>'LEFT'
+,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>false
@@ -856,97 +939,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_heading=>'Total Units'
 ,p_heading_alignment=>'CENTER'
 ,p_display_sequence=>70
-,p_value_alignment=>'RIGHT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
-,p_enable_filter=>false
-,p_filter_is_required=>false
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(40136937375196242)
-,p_name=>'INV_NO'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'INV_NO'
-,p_data_type=>'VARCHAR2'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Invoice No'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>80
-,p_value_alignment=>'LEFT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
-,p_enable_filter=>false
-,p_filter_is_required=>false
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(40137088305196243)
-,p_name=>'INV_DATE'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'INV_DATE'
-,p_data_type=>'DATE'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Invoice Date'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>90
-,p_value_alignment=>'LEFT'
-,p_attribute_05=>'BOTH'
-,p_is_required=>false
-,p_enable_filter=>false
-,p_filter_is_required=>false
-,p_use_as_row_header=>false
-,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'function( options ) {',
-'    options.defaultGridColumnOptions = {',
-'        noHeaderActivate: true',
-'    };',
-'    return options;',
-'}'))
-,p_enable_sort_group=>false
-,p_enable_hide=>false
-,p_is_primary_key=>false
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(40137172856196244)
-,p_name=>'CUST_NAME'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'CUST_NAME'
-,p_data_type=>'VARCHAR2'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_TEXT_FIELD'
-,p_heading=>'Customer Name'
-,p_heading_alignment=>'CENTER'
-,p_display_sequence=>100
-,p_value_alignment=>'LEFT'
+,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>false
 ,p_enable_filter=>false
@@ -1080,30 +1073,6 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_is_visible=>true
 ,p_is_frozen=>false
 );
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(40455297551528884)
-,p_view_id=>wwv_flow_imp.id(33288568086176404)
-,p_display_seq=>20
-,p_column_id=>wwv_flow_imp.id(40136937375196242)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(40456129759528890)
-,p_view_id=>wwv_flow_imp.id(33288568086176404)
-,p_display_seq=>21
-,p_column_id=>wwv_flow_imp.id(40137088305196243)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
-wwv_flow_imp_page.create_ig_report_column(
- p_id=>wwv_flow_imp.id(40457084449528898)
-,p_view_id=>wwv_flow_imp.id(33288568086176404)
-,p_display_seq=>22
-,p_column_id=>wwv_flow_imp.id(40137172856196244)
-,p_is_visible=>true
-,p_is_frozen=>false
-);
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(33266557148145313)
 ,p_plug_name=>'Conversion Item Info'
@@ -1125,10 +1094,10 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_display_point=>'SUB_REGIONS'
 ,p_location=>null
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<div style="display: flex; margin-left: 4.3rem;" id="from-to">',
-'    <span>--------------Item From--------------</span>',
-'    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>',
-'    <span>---------------Item To---------------</span>',
+'<div style="display: flex; margin-left: 8rem;" id="from-to">',
+'    <span>-------------------------------Item From-------------------------------</span>',
+'    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>',
+'    <span>--------------------------------Item To--------------------------------</span>',
 '</div>',
 ''))
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
@@ -1156,13 +1125,13 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'table'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>70
+,p_plug_display_sequence=>90
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'WITH my_select AS (',
 '    SELECT',
-'        SUBSTR(nit020.convert_id, 6, 8) AS "NO",',
-'        nit020.processing_date AS "PROCESS_DATE",',
+'        SUBSTR(nit020.convert_id, 9, 5) AS "NO",',
+'        TO_CHAR(nit020.processing_date, ''MM/DD/YYYY'') AS "PROCESS_DATE",',
 '        nit001_from_item.item_num AS "FROM_ITEM_NUM",',
 '        nit001_from_item.item_desc AS "FROM_ITEM_DESC",',
 '        nit001_to_item.item_num AS "TO_ITEM_NUM",',
@@ -1170,7 +1139,8 @@ wwv_flow_imp_page.create_page_plug(
 '        CASE WHEN nit020.is_posted = ''N'' THEN NULL',
 '        ELSE ''P''',
 '        END AS "POST",',
-'        nit020.convert_id AS "CONVERT_ID"',
+'        nit020.convert_id AS "CONVERT_ID",',
+'        nit020.create_user AS "CONVERTED_BY"',
 '    FROM',
 '        NIT020 nit020',
 '    LEFT JOIN',
@@ -1178,7 +1148,7 @@ wwv_flow_imp_page.create_page_plug(
 '    LEFT JOIN',
 '        NIT001 nit001_to_item ON nit020.to_item_id = nit001_to_item.item_id',
 '    WHERE',
-'        (:P91_YEAR IS NOT NULL AND SUBSTR(nit020.convert_id, 1, 4) = :P91_YEAR)',
+'        (:P91_YEAR IS NOT NULL AND SUBSTR(nit020.convert_id, 4, 4) = :P91_YEAR)',
 '    ORDER BY ',
 '        CASE ',
 '            WHEN :P91_SORTED_BY = ''Item From'' THEN nit001_from_item.item_num',
@@ -1231,7 +1201,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'PROCESS_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'PROCESS_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Processing Date'
@@ -1241,8 +1211,12 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_max_length=>0
-,p_enable_filter=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function( options ) {',
@@ -1443,13 +1417,43 @@ wwv_flow_imp_page.create_region_column(
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
 );
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(72829546968498304)
+,p_name=>'CONVERTED_BY'
+,p_source_type=>'DB_COLUMN'
+,p_source_expression=>'CONVERTED_BY'
+,p_data_type=>'VARCHAR2'
+,p_is_query_only=>false
+,p_item_type=>'NATIVE_TEXT_FIELD'
+,p_heading=>'Converted By'
+,p_heading_alignment=>'CENTER'
+,p_display_sequence=>90
+,p_value_alignment=>'LEFT'
+,p_attribute_05=>'BOTH'
+,p_is_required=>true
+,p_max_length=>40
+,p_enable_filter=>false
+,p_use_as_row_header=>false
+,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'function( options ) {',
+'    options.defaultGridColumnOptions = {',
+'        noHeaderActivate: true',
+'    };',
+'    return options;',
+'}'))
+,p_enable_sort_group=>false
+,p_enable_hide=>false
+,p_is_primary_key=>false
+,p_duplicate_value=>true
+,p_include_in_export=>false
+);
 wwv_flow_imp_page.create_interactive_grid(
  p_id=>wwv_flow_imp.id(33082525300059328)
 ,p_internal_uid=>33082525300059328
 ,p_is_editable=>false
 ,p_lazy_loading=>false
 ,p_requires_filter=>false
-,p_select_first_row=>true
+,p_select_first_row=>false
 ,p_fixed_row_height=>true
 ,p_pagination_type=>'SCROLL'
 ,p_show_total_row_count=>true
@@ -1461,7 +1465,8 @@ wwv_flow_imp_page.create_interactive_grid(
 ,p_define_chart_view=>false
 ,p_enable_download=>false
 ,p_download_formats=>null
-,p_fixed_header=>'PAGE'
+,p_fixed_header=>'REGION'
+,p_fixed_header_max_height=>500
 ,p_show_icon_view=>false
 ,p_show_detail_view=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -1563,6 +1568,14 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_view_id=>wwv_flow_imp.id(33083152022059329)
 ,p_display_seq=>8
 ,p_column_id=>wwv_flow_imp.id(40133206946196205)
+,p_is_visible=>true
+,p_is_frozen=>false
+);
+wwv_flow_imp_page.create_ig_report_column(
+ p_id=>wwv_flow_imp.id(74462166944901173)
+,p_view_id=>wwv_flow_imp.id(33083152022059329)
+,p_display_seq=>9
+,p_column_id=>wwv_flow_imp.id(72829546968498304)
 ,p_is_visible=>true
 ,p_is_frozen=>false
 );
@@ -1793,6 +1806,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>A</u> - Add'
 ,p_warn_on_unsaved_changes=>null
+,p_button_condition=>'has_access(:APP_USER, 141, 186) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns'
 ,p_grid_new_row=>'Y'
 );
@@ -1822,6 +1838,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'hide'
 ,p_grid_new_row=>'Y'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(32047766404460414)
@@ -1834,6 +1851,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>U</u> - Update'
 ,p_warn_on_unsaved_changes=>null
+,p_button_condition=>'has_access(:APP_USER, 141, 187) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
@@ -1862,6 +1882,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>I</u> - Inquire'
 ,p_warn_on_unsaved_changes=>null
+,p_button_condition=>'has_access(:APP_USER, 141, 207) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
@@ -1892,6 +1915,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_warn_on_unsaved_changes=>null
 ,p_grid_column_css_classes=>'hide'
 ,p_grid_new_row=>'Y'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(32047963502460416)
@@ -1904,6 +1928,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>P</u> - Post'
 ,p_warn_on_unsaved_changes=>null
+,p_button_condition=>'has_access(:APP_USER, 141, 188) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
@@ -1921,6 +1948,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_warn_on_unsaved_changes=>null
 ,p_grid_column_css_classes=>'hide'
 ,p_grid_new_row=>'Y'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(32048013028460417)
@@ -1948,6 +1976,9 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>R</u> - Reports'
 ,p_warn_on_unsaved_changes=>null
+,p_button_condition=>'has_access(:APP_USER, 141, 189) = ''Y'''
+,p_button_condition2=>'PLSQL'
+,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns'
 ,p_grid_new_row=>'Y'
 ,p_grid_column_span=>2
@@ -2009,6 +2040,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'hide'
 ,p_grid_new_row=>'Y'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(42170899477532408)
@@ -2081,7 +2113,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_grid_label_column_span=>0
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#:margin-top-none:margin-bottom-none:t-Form-fieldContainer--normalDisplay'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'Y'
 ,p_attribute_02=>'VALUE'
 ,p_attribute_04=>'Y'
@@ -2262,7 +2293,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P91_CONVERT_ID'
 ,p_item_sequence=>20
 ,p_display_as=>'NATIVE_HIDDEN'
-,p_is_persistent=>'N'
 ,p_attribute_01=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
@@ -2434,6 +2464,19 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_imp.id(32048537665460422)
 );
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(71621270337549133)
+,p_event_id=>wwv_flow_imp.id(32048694850460423)
+,p_event_result=>'TRUE'
+,p_action_sequence=>50
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$(document).off(''keydown.p91keyevents'');',
+'$("#search").on("dialogbeforeclose", function(event, ui) {',
+'    setTimeout(mapP91Keys, 0);',
+'});'))
+);
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33265755526145305)
 ,p_name=>'Open Inquire'
@@ -2495,10 +2538,10 @@ wwv_flow_imp_page.create_page_da_action(
 '    WHERE convert_id = i_convert_id;',
 '',
 '    :P91_RECORD_NO := i_convert_id;',
-'    :P91_PROCESS_DATE := i_process_date;',
+'    :P91_PROCESS_DATE := TO_CHAR(i_process_date, ''MM/DD/YYYY'');',
 '    IF i_posted = ''N'' THEN ',
 '        :P91_POSTED := ''NO'';',
-'    ELSIF i_posted = ''P'' THEN ',
+'    ELSIF i_posted = ''Y'' THEN ',
 '        :P91_POSTED := ''YES'';',
 '    END IF;',
 '    :P91_NOTE := i_note;',
@@ -2663,10 +2706,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action_sequence=>60
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'setTimeout(function() {',
-'    $(".a-GV-cell").first().trigger("click");',
-'}, 500);'))
+,p_attribute_01=>'selectRecord();'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33269017783145338)
@@ -2703,7 +2743,7 @@ wwv_flow_imp_page.create_page_da_action(
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33269539753145343)
-,p_name=>'Close'
+,p_name=>'Close Search'
 ,p_event_sequence=>60
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_imp.id(33269431505145342)
@@ -2820,7 +2860,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_event_id=>wwv_flow_imp.id(33625042411196816)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
-,p_execute_on_page_init=>'Y'
+,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
 ,p_affected_elements=>'P91_SORTED_BY'
@@ -2860,6 +2900,7 @@ wwv_flow_imp_page.create_page_da_action(
 'setTimeout(function() {',
 '    $(".a-GV-cell").first().trigger("click");',
 '}, 500);'))
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33625260238196818)
@@ -2916,6 +2957,7 @@ wwv_flow_imp_page.create_page_da_action(
 'setTimeout(function() {',
 '    $(".a-GV-cell").first().trigger("click");',
 '}, 500);'))
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33625485253196820)
@@ -2972,13 +3014,18 @@ wwv_flow_imp_page.create_page_da_action(
 'setTimeout(function() {',
 '    $(".a-GV-cell").first().trigger("click");',
 '}, 500);'))
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(33625956018196825)
 ,p_name=>'Open Search on Load'
 ,p_event_sequence=>130
+,p_condition_element=>'P91_YEAR'
+,p_triggering_condition_type=>'NULL'
 ,p_bind_type=>'bind'
 ,p_bind_event_type=>'ready'
+,p_display_when_type=>'EXISTS'
+,p_display_when_cond=>'SELECT * FROM NIT020'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(33626139444196827)
@@ -2988,6 +3035,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'$("#search").dialog("option", "width", 450);'
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(33626043825196826)
@@ -2998,6 +3046,18 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_OPEN_REGION'
 ,p_affected_elements_type=>'REGION'
 ,p_affected_region_id=>wwv_flow_imp.id(32048537665460422)
+,p_build_option_id=>wwv_flow_imp.id(4207224469083906)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(72829374807498302)
+,p_event_id=>wwv_flow_imp.id(33625956018196825)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$("#s").trigger("click");',
+'openedViaPageLoad = true;'))
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(39855796899059234)
@@ -3024,6 +3084,7 @@ wwv_flow_imp_page.create_page_da_action(
 '       p_values => ''A''',
 '     );',
 'END;'))
+,p_attribute_02=>'P91_CONVERT_ID'
 ,p_attribute_03=>'P91_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
@@ -3121,8 +3182,8 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'if (this.data.selectedRecords && this.data.selectedRecords.length > 0) {',
-'    let convertIDSelected = this.data.selectedRecords[0][7];',
-'    apex.item("P91_CONVERT_ID").setValue(convertIDSelected);',
+'    convertIdSelected = this.data.selectedRecords[0][7];',
+'    apex.item("P91_CONVERT_ID").setValue(convertIdSelected);',
 '}'))
 );
 wwv_flow_imp_page.create_page_da_event(
@@ -3184,10 +3245,10 @@ wwv_flow_imp_page.create_page_da_action(
 'if(convertIdF && fromF) {',
 '    if(fromF === "A") {',
 '        showGPopup({message: `Conversion Record Number : ${convertIdF} has been created!`, ',
-'        icon: ICON_OK_LARGE, width: 540, top: "85%", timeoutActive: true})',
+'        icon: ICON_OK_LARGE, width: 600, top: "85%", timeoutActive: true})',
 '    } else if(fromF === "U") {',
 '        showGPopup({message: `Conversion Record Number : ${convertIdF} has been updated!`, ',
-'        icon: ICON_OK_LARGE, width: 540, top: "85%", timeoutActive: true})',
+'        icon: ICON_OK_LARGE, width: 600, top: "85%", timeoutActive: true})',
 '    }',
 '',
 '    apex.item("P91_CONVERT_ID_F").setValue(null);',
@@ -3240,32 +3301,27 @@ wwv_flow_imp_page.create_page_da_action(
 '    const convertId = $v("P91_CONVERT_ID");',
 '',
 '    try {',
-'        const fromExistsInWarehouse = await checkItemInWarehouse(convertId, ''FROM'');',
-'        console.log("FROM WAREHOUSE:", fromExistsInWarehouse)',
-'        // if (!fromExistsInWarehouse) {',
-'        //     throw `Item From does not exist in the warehouse.`;',
+'        // await checkItemInWarehouse(convertId, ''FROM'');',
+'        await checkItemInWarehouse(convertId);',
+'',
+'        // await checkUomForItem(convertId, ''FROM'');',
+'        await checkUomForItem(convertId)',
+'',
+'        // const toExistsInWarehouse = ',
+'        // await checkItemInWarehouse(convertId, ''TO'');',
+'        // if (!toExistsInWarehouse) {',
+'        //     throw `Item To does not exist in the warehouse.`;',
 '        // }',
 '',
-'        const fromUomExists = await checkUomForItem(convertId, ''FROM'');',
-'        console.log("FROM UOM:", fromUomExists)',
-'        // if (!fromUomExists) {',
-'        //     throw `Item From UOM for Item From does not exist.`;',
+'        // const toUomExists = ',
+'        // await checkUomForItem(convertId, ''TO'');',
+'        // if (!toUomExists) {',
+'        //     throw `Item To UOM for Item To does not exist.`;',
 '        // }',
 '',
-'        const toExistsInWarehouse = await checkItemInWarehouse(convertId, ''TO'');',
-'        console.log("TO WAREHOUSE:", fromUomExists)',
-'        if (!toExistsInWarehouse) {',
-'            throw `Item To does not exist in the warehouse.`;',
-'        }',
+'        await updateNit004Qty(convertId);',
 '',
-'        const toUomExists = await checkUomForItem(convertId, ''TO'');',
-'        console.log("TO UOM:", fromUomExists)',
-'        if (!toUomExists) {',
-'            throw `Item To UOM for Item To does not exist.`;',
-'        }',
-'',
-'        await updateNit004Qty(convertId, ''FROM'');',
-'        await updateNit004Qty(convertId, ''TO'');',
+'        await insertToNIT022(convertId);',
 '',
 '        await updateIsPosted(convertId);',
 '',
@@ -3276,15 +3332,13 @@ wwv_flow_imp_page.create_page_da_action(
 '    }',
 '}',
 '',
-'async function checkItemInWarehouse(convertId, itemType) {',
+'async function checkItemInWarehouse(convertId) {',
 '    const response = await apex.server.process(''CHECK_ITEM_IN_WAREHOUSE'', {',
 '        pageItems: ''#P91_CONVERT_ID'',',
-'        x01: convertId,',
-'        x02: itemType',
+'        x01: convertId',
 '    }, {',
 '        dataType: ''json''',
 '    });',
-'    console.log("Warehouse response:", response)',
 '    if (response.success) {',
 '        return true;',
 '    } else {',
@@ -3292,15 +3346,13 @@ wwv_flow_imp_page.create_page_da_action(
 '    }',
 '}',
 '',
-'async function checkUomForItem(convertId, itemType) {',
+'async function checkUomForItem(convertId) {',
 '    const response = await apex.server.process(''CHECK_UOM_FOR_ITEM'', {',
 '        pageItems: ''#P91_CONVERT_ID'',',
-'        x01: convertId,',
-'        x02: itemType',
+'        x01: convertId',
 '    }, {',
 '        dataType: ''json''',
 '    });',
-'    console.log("UOM response:", response)',
 '    if (response.success) {',
 '        return true;',
 '    } else {',
@@ -3308,20 +3360,33 @@ wwv_flow_imp_page.create_page_da_action(
 '    }',
 '}',
 '',
-'async function updateNit004Qty(convertId, itemType) {',
+'async function updateNit004Qty(convertId) {',
 '    const response = await apex.server.process(''UPDATE_NIT004_QTY'', {',
 '        pageItems: ''#P91_CONVERT_ID'',',
-'        x01: convertId,',
-'        x02: itemType',
+'        x01: convertId',
 '    }, {',
 '        dataType: ''json''',
 '    });',
-'    console.log("Qty response:", response)',
 '',
 '    if (response.success) {',
 '        return true;',
 '    } else {',
 '        throw response.message || ''An unknown error occured. Row not Updated.''',
+'    }',
+'}',
+'',
+'async function insertToNIT022(convertId) {',
+'    const response = await apex.server.process(''INSERT_TO_NIT022'', {',
+'        pageItems: ''#P91_CONVERT_ID'',',
+'        x01: convertId',
+'    }, {',
+'        dataType: ''json''',
+'    });',
+'',
+'    if (response.success) {',
+'        return true;',
+'    } else {',
+'        throw ''An unknown error occured.''',
 '    }',
 '}',
 '',
@@ -3505,10 +3570,20 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_affected_region_id=>wwv_flow_imp.id(42170243821532402)
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(42173547064532435)
+ p_id=>wwv_flow_imp.id(72829991134498308)
 ,p_event_id=>wwv_flow_imp.id(42173242925532432)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_CLEAR'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P91_MONTH_FROM_B,P91_MONTH_TO_B'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(42173547064532435)
+,p_event_id=>wwv_flow_imp.id(42173242925532432)
+,p_event_result=>'TRUE'
+,p_action_sequence=>50
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -3566,10 +3641,20 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_affected_region_id=>wwv_flow_imp.id(42170243821532402)
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(42170102761532401)
+ p_id=>wwv_flow_imp.id(72830049242498309)
 ,p_event_id=>wwv_flow_imp.id(40831029519330246)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_CLEAR'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P91_MONTH_FROM_B,P91_MONTH_TO_B'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(42170102761532401)
+,p_event_id=>wwv_flow_imp.id(40831029519330246)
+,p_event_result=>'TRUE'
+,p_action_sequence=>50
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -3902,6 +3987,96 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_client_condition_type=>'NOT_NULL'
 ,p_client_condition_element=>'P91_CONVERT_ID'
 );
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(55261751380963901)
+,p_name=>'If Year is Not Null'
+,p_event_sequence=>290
+,p_condition_element=>'P91_YEAR'
+,p_triggering_condition_type=>'NOT_NULL'
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(55261896707963902)
+,p_event_id=>wwv_flow_imp.id(55261751380963901)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>'$("#P91_YEAR_CONTAINER .t-Form-itemText").html("Review Conversion Records for the year&nbsp;");'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(55262195411963905)
+,p_name=>'Select First Cell'
+,p_event_sequence=>300
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(55262228319963906)
+,p_event_id=>wwv_flow_imp.id(55262195411963905)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'// var convertId = $v("P91_CONVERT_ID").substring(8);',
+'// setTimeout(function() {',
+'//     $( document ).ready(function() {',
+'//         $("#table .a-GV-bdy .a-GV-w-scroll .a-GV-table tbody").children(".a-GV-row").each( function () {',
+'//             if( $(this).attr("data-id") == convertId ){',
+'//                 $(this).find(".a-GV-cell").first().trigger("click");',
+'//             } else if(convertId === "") {',
+'//                 $(".a-GV-cell").first().trigger("click");',
+'//             }',
+'//         });',
+'//     });',
+'// }, 500);',
+'',
+'selectRecord();'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(71622671059549147)
+,p_name=>'Select First'
+,p_event_sequence=>310
+,p_triggering_element_type=>'REGION'
+,p_triggering_region_id=>wwv_flow_imp.id(33082059287059321)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'NATIVE_IG|REGION TYPE|gridpagechange'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(71622711568549148)
+,p_event_id=>wwv_flow_imp.id(71622671059549147)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'let isVisible = $(".g-popup-div").is(":visible");',
+'setTimeout(function() {',
+'    selectRecord();',
+'}, isVisible ? 2100 : 50);'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(71622861231549149)
+,p_name=>'Set Sorted By'
+,p_event_sequence=>320
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(71622957410549150)
+,p_event_id=>wwv_flow_imp.id(71622861231549149)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if($v("P91_SORTED_BY") === "") {',
+'    apex.item("P91_SORTED_BY").setValue("Conversion Record Number");',
+'}'))
+);
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(40827545157330211)
 ,p_process_sequence=>10
@@ -3916,8 +4091,7 @@ wwv_flow_imp_page.create_page_process(
 '    v_exists NUMBER;',
 '    v_item_num VARCHAR(30);',
 'BEGIN',
-'    SELECT warehouse_id, ',
-'           CASE WHEN apex_application.g_x02 = ''FROM'' THEN from_item_id ELSE to_item_id END',
+'    SELECT warehouse_id, from_item_id',
 '    INTO v_warehouse_id, v_item_id',
 '    FROM NIT020',
 '    WHERE convert_id = apex_application.g_x01;',
@@ -3962,9 +4136,7 @@ wwv_flow_imp_page.create_page_process(
 '    v_uom_code VARCHAR(10);',
 '    v_item_num VARCHAR(30);',
 'BEGIN',
-'    SELECT warehouse_id,',
-'           CASE apex_application.g_x02 WHEN ''FROM'' THEN from_item_id ELSE to_item_id END,',
-'           CASE apex_application.g_x02 WHEN ''FROM'' THEN from_uom_id ELSE to_uom_id END',
+'    SELECT warehouse_id, from_item_id, from_uom_id',
 '    INTO v_warehouse_id, v_item_id, v_uom_id',
 '    FROM NIT020',
 '    WHERE convert_id = apex_application.g_x01;',
@@ -3991,34 +4163,7 @@ wwv_flow_imp_page.create_page_process(
 '    ELSE',
 '        HTP.P(''{"success": true}'');',
 '    END IF;',
-'END;',
-'',
-'-- DECLARE',
-'--     v_warehouse_id NUMBER;',
-'--     v_item_id NUMBER;',
-'--     v_uom_id NUMBER;',
-'--     v_exists NUMBER;',
-'-- BEGIN',
-'--     SELECT warehouse_id,',
-'--            CASE :x02 WHEN ''FROM'' THEN from_item_id ELSE to_item_id END,',
-'--            CASE :x02 WHEN ''FROM'' THEN from_uom_id ELSE to_uom_id END',
-'--     INTO v_warehouse_id, v_item_id, v_uom_id',
-'--     FROM NIT020',
-'--     WHERE convert_id = :x01;',
-'',
-'--     SELECT COUNT(*)',
-'--     INTO v_exists',
-'--     FROM NIT004',
-'--     WHERE ITEM_ID = v_item_id',
-'--       AND WAREHOUSE_ID = v_warehouse_id',
-'--       AND UOM_ID = v_uom_id;',
-'',
-'--     IF v_exists = 0 THEN',
-'--         HTP.P(''false'');',
-'--     ELSE',
-'--         HTP.P(''true'');',
-'--     END IF;',
-'-- END;'))
+'END;'))
 ,p_process_clob_language=>'PLSQL'
 ,p_internal_uid=>40827649334330212
 );
@@ -4029,63 +4174,114 @@ wwv_flow_imp_page.create_page_process(
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'UPDATE_NIT004_QTY'
 ,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- DECLARE',
-'--     v_warehouse_id NUMBER;',
-'--     v_item_id NUMBER;',
-'--     v_uom_id NUMBER;',
-'--     v_no_of_units NUMBER;',
-'-- BEGIN',
-'--     SELECT warehouse_id,',
-'--            CASE apex_application.g_x02 WHEN ''FROM'' THEN from_item_id ELSE to_item_id END,',
-'--            CASE apex_application.g_x02 WHEN ''FROM'' THEN from_uom_id ELSE to_uom_id END,',
-'--            CASE apex_application.g_x02 WHEN ''FROM'' THEN from_no_of_units ELSE to_no_of_units END',
-'--     INTO v_warehouse_id, v_item_id, v_uom_id, v_no_of_units',
-'--     FROM NIT020',
-'--     WHERE convert_id = apex_application.g_x01;',
-'',
-'--     UPDATE NIT004',
-'--     SET QTY = v_no_of_units',
-'--     WHERE ITEM_ID = v_item_id',
-'--       AND UOM_ID = v_uom_id',
-'--       AND WAREHOUSE_ID = v_warehouse_id;',
-'',
-'--     COMMIT;',
-'-- END;',
-'',
 'DECLARE',
 '    v_warehouse_id NUMBER;',
-'    v_item_id NUMBER;',
-'    v_uom_id NUMBER;',
-'    v_no_of_units NUMBER;',
+'    v_from_item_id NUMBER;',
+'    v_to_item_id NUMBER;',
+'    v_from_uom_id NUMBER;',
+'    v_to_uom_id NUMBER;',
+'    v_from_no_of_units NUMBER;',
+'    v_to_no_of_units NUMBER;',
+'    v_from_qty NUMBER;',
+'    v_to_qty NUMBER;',
+'    v_exists NUMBER;',
 'BEGIN',
-'    SELECT warehouse_id,',
-'           CASE apex_application.g_x02 WHEN ''FROM'' THEN from_item_id ELSE to_item_id END,',
-'           CASE apex_application.g_x02 WHEN ''FROM'' THEN from_uom_id ELSE to_uom_id END,',
-'           CASE apex_application.g_x02 WHEN ''FROM'' THEN from_no_of_units ELSE to_no_of_units END',
-'    INTO v_warehouse_id, v_item_id, v_uom_id, v_no_of_units',
+'    SELECT warehouse_id, from_item_id, to_item_id, from_uom_id, to_uom_id, from_no_of_units, to_no_of_units',
+'    INTO v_warehouse_id, v_from_item_id, v_to_item_id, v_from_uom_id, v_to_uom_id, v_from_no_of_units, v_to_no_of_units',
 '    FROM NIT020',
 '    WHERE convert_id = apex_application.g_x01;',
 '',
-'    UPDATE NIT004',
-'    SET QTY = v_no_of_units',
-'    WHERE ITEM_ID = v_item_id',
-'      AND UOM_ID = v_uom_id',
-'      AND WAREHOUSE_ID = v_warehouse_id;',
-'',
-'    IF SQL%ROWCOUNT = 0 THEN',
-'        HTP.P(''{"success": false}'');',
+'    SELECT qty',
+'    INTO v_from_qty',
+'    FROM NIT004',
+'    WHERE ITEM_ID = v_from_item_id',
+'        AND UOM_ID = v_from_uom_id',
+'        AND WAREHOUSE_ID = v_warehouse_id;',
+'    ',
+'    IF v_from_qty < v_from_no_of_units THEN',
+'        HTP.P(''{"success": false, "message": "Number of units exceeds inventory."}'');',
+'        RETURN;',
 '    ELSE',
-'        HTP.P(''{"success": true}'');',
+'        UPDATE NIT004',
+'        SET QTY = QTY - v_from_no_of_units',
+'        WHERE ITEM_ID = v_from_item_id',
+'            AND UOM_ID = v_from_uom_id',
+'            AND WAREHOUSE_ID = v_warehouse_id;',
 '    END IF;',
 '',
-'    COMMIT;',
+'    SELECT COUNT(*)',
+'    INTO v_exists',
+'    FROM NIT004',
+'    WHERE ITEM_ID = v_to_item_id',
+'        AND UOM_ID = v_to_uom_id',
+'        AND WAREHOUSE_ID = v_warehouse_id;',
+'',
+'    IF v_exists = 0 THEN',
+'        INSERT INTO NIT004 (item_id, warehouse_id, create_user, create_date, qty, uom_id)',
+'        VALUES (v_to_item_id, v_warehouse_id, V(''APP_USER''), SYSDATE, v_to_no_of_units, v_to_uom_id);',
+'        ',
+'        HTP.P(''{"success": true}'');',
+'    ELSE',
+'        SELECT qty',
+'        INTO v_to_qty',
+'        FROM NIT004',
+'        WHERE ITEM_ID = v_to_item_id',
+'            AND UOM_ID = v_to_uom_id',
+'            AND WAREHOUSE_ID = v_warehouse_id;',
+'',
+'        UPDATE NIT004',
+'        SET QTY = QTY + v_to_no_of_units,',
+'            UPDATE_USER = V(''APP_USER''),',
+'            UPDATE_DATE = SYSDATE',
+'        WHERE ITEM_ID = v_to_item_id',
+'            AND UOM_ID = v_to_uom_id',
+'            AND WAREHOUSE_ID = v_warehouse_id;',
+'            ',
+'        HTP.P(''{"success": true}'');',
+'    END IF;',
 'END;'))
 ,p_process_clob_language=>'PLSQL'
 ,p_internal_uid=>40827780260330213
 );
 wwv_flow_imp_page.create_page_process(
- p_id=>wwv_flow_imp.id(40827840996330214)
+ p_id=>wwv_flow_imp.id(71622523526549146)
 ,p_process_sequence=>50
+,p_process_point=>'ON_DEMAND'
+,p_process_type=>'NATIVE_PLSQL'
+,p_process_name=>'INSERT_TO_NIT022'
+,p_process_sql_clob=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'DECLARE',
+'    v_from_item_id NIT020.from_item_id%TYPE;',
+'    v_to_item_id NIT020.to_item_id%TYPE;',
+'    v_warehouse_id NIT020.warehouse_id%TYPE;',
+'    v_from_uom_id NIT020.from_uom_id%TYPE;',
+'    v_to_uom_id NIT020.to_uom_id%TYPE;',
+'    v_convert_id NIT020.convert_id%TYPE := :P91_CONVERT_ID;',
+'    v_processing_date NIT020.processing_date%TYPE;',
+'    v_from_no_of_units NIT020.from_no_of_units%TYPE;',
+'    v_to_no_of_units NIT020.to_no_of_units%TYPE;',
+'BEGIN',
+'    SELECT from_item_id, to_item_id, warehouse_id, from_uom_id, to_uom_id, processing_date,',
+'           from_no_of_units, to_no_of_units',
+'    INTO v_from_item_id, v_to_item_id, v_warehouse_id, v_from_uom_id, v_to_uom_id, v_processing_date,',
+'         v_from_no_of_units, v_to_no_of_units',
+'    FROM NIT020',
+'    WHERE convert_id = v_convert_id;',
+'',
+'    item_trans_pkg.log_item_transaction(v_from_item_id, v_warehouse_id, v_from_uom_id, v_convert_id,',
+'    v_processing_date, ''O'', '''', v_from_no_of_units);',
+'',
+'    item_trans_pkg.log_item_transaction(v_to_item_id, v_warehouse_id, v_to_uom_id, v_convert_id,',
+'    v_processing_date, ''I'', '''', v_to_no_of_units);',
+'',
+'    HTP.P(''{"success": true}'');',
+'END;'))
+,p_process_clob_language=>'PLSQL'
+,p_internal_uid=>71622523526549146
+);
+wwv_flow_imp_page.create_page_process(
+ p_id=>wwv_flow_imp.id(40827840996330214)
+,p_process_sequence=>60
 ,p_process_point=>'ON_DEMAND'
 ,p_process_type=>'NATIVE_PLSQL'
 ,p_process_name=>'UPDATE_IS_POSTED'

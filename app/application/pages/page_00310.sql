@@ -35,7 +35,14 @@ wwv_flow_imp_page.create_page(
 '        $("#i").trigger("click");',
 '    },',
 '    p : (v) => {',
-'        $("#p").trigger("click");',
+'        setTimeout(() => {',
+'            $(document).ready(function() {',
+'                $("#p").trigger("click");',
+'            });',
+'        }, 350);',
+'    },',
+'    t : (v) => {',
+'        $("#t").trigger("click");',
 '    },',
 '    r : (v) => {',
 '        $("#r").trigger("click");',
@@ -44,7 +51,11 @@ wwv_flow_imp_page.create_page(
 '        $("#v").trigger("click");',
 '    },',
 '    n : (v) => {',
-'        $("#n").trigger("click");',
+'        setTimeout(() => {',
+'            $(document).ready(function() {',
+'                $("#n").trigger("click");',
+'            });',
+'        }, 350);',
 '    },',
 '}',
 '',
@@ -191,19 +202,19 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 '#table .a-IG {',
-'    height: calc(75vh + 2px) !important;',
+'    height: calc(73vh + 2px) !important;',
 '} ',
 '',
 '#table .a-IG-contentContainer {',
-'    height: 75vh !important;',
+'    height: 73vh !important;',
 '}',
 '',
 '#table .a-IG-gridView.a-GV {',
-'    height: 75vh !important;',
+'    height: 73vh !important;',
 '}',
 '',
 '#table .a-GV-bdy {',
-'    height: calc(75vh - 2.5625rem) !important;',
+'    height: calc(73vh - 2.5625rem) !important;',
 '}',
 '',
 '/* View height dependent table and buttons - END */',
@@ -224,6 +235,22 @@ wwv_flow_imp_page.create_page(
 '',
 '.a-GV-header-sort {',
 '    display: none;',
+'}',
+'',
+'.a-GV-table tr.is-selected {',
+'    --a-gv-background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused',
+'{',
+'    box-shadow: inset 0 0 0 1px black;',
+'}',
+'',
+'#P310_TOGGLE_LABEL,',
+'#P310_TOGGLE_DISPLAY {',
+'    font-size: 1.125rem;',
+'    color: white;',
+'    font-weight: 600;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
@@ -233,7 +260,7 @@ wwv_flow_imp_page.create_page(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(18625585793263501)
 ,p_plug_name=>'Buttons'
-,p_plug_display_sequence=>110
+,p_plug_display_sequence=>140
 ,p_plug_grid_row_css_classes=>'buttons-row'
 ,p_location=>null
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
@@ -248,36 +275,132 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#:margin-top-md'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>100
+,p_plug_display_sequence=>130
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT ',
-'    ROWNUM AS "Primary Key",',
-'    npt020.GIFT_CERTIFICATE_ID AS "GC_NO",',
-'    npt020.DESCRIPTION_1 AS "DESCRIPTION_1",',
-'    npt020.DESCRIPTION_2 AS "DESCRIPTION_2",',
-'    npt020.AMOUNT AS "AMOUNT",',
-'    npt020.BALANCE AS "BALANCE",',
-'    npt020.ISSUE_DATE AS "ISSUE_DATE",',
-'    npt020.EXPIRY_DATE AS "EXPIRY_DATE",',
-'    npt020.RELEASE_DATE AS "RELEASE_DATE",',
-'    npm014.GC_STATUS_NAME AS "STATUS"',
-'FROM',
-'    NPT020 npt020',
-'JOIN ',
-'    NPM014 npm014 ON npt020.GC_STATUS_ID = npm014.GC_STATUS_ID',
+'WITH ALL_GC AS (',
+'    SELECT ',
+'        -- Create ranking for sorting order',
+'        CASE ',
+'            WHEN extract(year from npt020.ISSUE_DATE) = :P310_ISSUE_YR THEN TO_CHAR(npt020.DONATION_GC_NO - 1000000000000)',
+'            WHEN npt020.DONATION_GC_NO = :P310_GC_NO THEN 2 || npt020.DONATION_GC_NO',
+'            WHEN npt020.DONATION_GC_NO LIKE :P310_GC_NO || ''%'' THEN 3 || npt020.DONATION_GC_NO',
+'            WHEN npt020.DONATION_GC_NO LIKE ''%'' || :P310_GC_NO || ''%'' THEN 4 || npt020.DONATION_GC_NO',
+'            ELSE 5 || npt020.DONATION_GC_NO',
+'        END AS "Primary Key",',
+'        npt020.DONATION_GC_NO AS "GC_NO",',
+'        npt020.DESCRIPTION_1 AS "DESCRIPTION_1",',
+'        npt020.DESCRIPTION_2 AS "DESCRIPTION_2",',
+'        CASE ',
+'            WHEN npt020.AMOUNT = 0 THEN ''0.00''',
+'            ELSE TO_CHAR(npt020.AMOUNT, ''999,999,999.00'')',
+'        END AS "AMOUNT",',
+'        CASE ',
+'            WHEN npt020.BALANCE = 0 THEN ''0.00''',
+'            ELSE TO_CHAR(npt020.BALANCE, ''999,999,999.00'')',
+'        END AS "BALANCE",',
+'        TO_CHAR(npt020.ISSUE_DATE, ''MM/DD/YYYY'') AS "ISSUE_DATE",',
+'        TO_CHAR(npt020.EXPIRY_DATE, ''MM/DD/YYYY'') AS "EXPIRY_DATE",',
+'        TO_CHAR(npt020.RELEASE_DATE, ''MM/DD/YYYY'') AS "RELEASE_DATE",',
+'        npm014.GC_STATUS_NAME AS "STATUS",',
+'        (SELECT ',
+'            CASE ',
+'                WHEN npm013.DONATION = ''Y'' THEN ''D''',
+'                ELSE ''N''',
+'            END',
+'         FROM NPM013 npm013 ',
+'         WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) AS "D/N"',
+'    FROM',
+'        NPT020 npt020',
+'    JOIN ',
+'        NPM014 npm014 ON npt020.GC_STATUS_ID = npm014.GC_STATUS_ID',
+'    WHERE ',
+'        (',
+'            -- Search by ISSUE YEAR if provided',
+'            (:P310_ISSUE_YR IS NOT NULL OR :P310_ISSUE_YR != '''') AND',
+'            extract(year from npt020.ISSUE_DATE) = :P310_ISSUE_YR AND ',
+'            npt020.DONATION_GC_NO IS NOT NULL',
+'        )',
+'        OR',
+'        (',
+'            -- Search by GC NO if provided',
+'            (:P310_ISSUE_YR IS NULL AND (:P310_GC_NO IS NOT NULL OR :P310_GC_NO != '''')) AND',
+'            (',
+'                npt020.DONATION_GC_NO = :P310_GC_NO',
+'                OR npt020.DONATION_GC_NO LIKE :P310_GC_NO || ''%''',
+'                OR npt020.DONATION_GC_NO LIKE ''%'' || :P310_GC_NO || ''%''',
+'                OR npt020.DONATION_GC_NO LIKE ''%'' || :P310_GC_NO',
+'            )',
+'            AND npt020.DONATION_GC_NO IS NOT NULL',
+'        )',
+'',
+'    UNION ALL',
+'',
+'    SELECT ',
+'        -- Create ranking for sorting order',
+'        CASE ',
+'            WHEN extract(year from npt020.ISSUE_DATE) = :P310_ISSUE_YR THEN TO_CHAR(npt020.REGULAR_GC_NO - 100000000001)',
+'            WHEN npt020.REGULAR_GC_NO = :P310_GC_NO THEN 2 || npt020.REGULAR_GC_NO || 1',
+'            WHEN npt020.REGULAR_GC_NO LIKE :P310_GC_NO || ''%'' THEN 3 || npt020.REGULAR_GC_NO || 1',
+'            WHEN npt020.REGULAR_GC_NO LIKE ''%'' || :P310_GC_NO || ''%'' THEN 4 || npt020.REGULAR_GC_NO || 1',
+'            ELSE 5 || npt020.REGULAR_GC_NO || 1',
+'        END AS "Primary Key",',
+'        npt020.REGULAR_GC_NO AS "GC_NO",',
+'        npt020.DESCRIPTION_1 AS "DESCRIPTION_1",',
+'        npt020.DESCRIPTION_2 AS "DESCRIPTION_2",',
+'        CASE ',
+'            WHEN npt020.AMOUNT = 0 THEN ''0.00''',
+'            ELSE TO_CHAR(npt020.AMOUNT, ''999,999,999.00'')',
+'        END AS "AMOUNT",',
+'        CASE ',
+'            WHEN npt020.BALANCE = 0 THEN ''0.00''',
+'            ELSE TO_CHAR(npt020.BALANCE, ''999,999,999.00'')',
+'        END AS "BALANCE",',
+'        TO_CHAR(npt020.ISSUE_DATE, ''MM/DD/YYYY'') AS "ISSUE_DATE",',
+'        TO_CHAR(npt020.EXPIRY_DATE, ''MM/DD/YYYY'') AS "EXPIRY_DATE",',
+'        TO_CHAR(npt020.RELEASE_DATE, ''MM/DD/YYYY'') AS "RELEASE_DATE",',
+'        npm014.GC_STATUS_NAME AS "STATUS",',
+'        (SELECT ',
+'            CASE ',
+'                WHEN npm013.DONATION = ''Y'' THEN ''D''',
+'                ELSE ''N''',
+'            END',
+'         FROM NPM013 npm013 ',
+'         WHERE npm013.GC_TYPE_ID = npt020.GC_TYPE_ID) AS "D/N"',
+'    FROM',
+'        NPT020 npt020',
+'    JOIN ',
+'        NPM014 npm014 ON npt020.GC_STATUS_ID = npm014.GC_STATUS_ID',
+'    WHERE ',
+'        (',
+'            -- Search by ISSUE YEAR if provided',
+'            (:P310_ISSUE_YR IS NOT NULL OR :P310_ISSUE_YR != '''') AND',
+'            extract(year from npt020.ISSUE_DATE) = :P310_ISSUE_YR AND ',
+'            npt020.REGULAR_GC_NO IS NOT NULL',
+'        )',
+'        OR',
+'        (',
+'            -- Search by GC NO if provided',
+'            (:P310_ISSUE_YR IS NULL AND (:P310_GC_NO IS NOT NULL OR :P310_GC_NO != '''')) AND',
+'            (',
+'                npt020.REGULAR_GC_NO = :P310_GC_NO',
+'                OR npt020.REGULAR_GC_NO LIKE :P310_GC_NO || ''%''',
+'                OR npt020.REGULAR_GC_NO LIKE ''%'' || :P310_GC_NO || ''%''',
+'                OR npt020.REGULAR_GC_NO LIKE ''%'' || :P310_GC_NO',
+'            )',
+'            AND npt020.REGULAR_GC_NO IS NOT NULL',
+'        )',
+')',
+'SELECT *',
+'FROM ALL_GC',
 'WHERE ',
-'',
-'    -- check if SEARCH BY ISSUE YEAR has a value',
-'    (:P310_ISSUE_YR IS NOT NULL OR :P310_ISSUE_YR != '''') AND',
-'        extract(year from npt020.ISSUE_DATE) = :P310_ISSUE_YR',
+'    (:P310_TOGGLE = ''Both'' AND ("D/N" = ''D'' OR "D/N" = ''N''))',
 '    OR',
-'',
-'    -- else, check if SEARCH BY GC NO has a value',
-'       (:P310_ISSUE_YR IS NULL AND (:P310_GC_NO IS NOT NULL OR :P310_GC_NO != '''')) AND',
-'        npt020.GIFT_CERTIFICATE_ID = :P310_GC_NO;'))
+'    (:P310_TOGGLE = ''Regular Only'' AND ("D/N" = ''N''))',
+'    OR',
+'    (:P310_TOGGLE = ''Donation Only'' AND ("D/N" = ''D''));'))
 ,p_plug_source_type=>'NATIVE_IG'
-,p_ajax_items_to_submit=>'P310_ISSUE_YR,P310_GC_NO'
+,p_ajax_items_to_submit=>'P310_ISSUE_YR,P310_GC_NO,P310_TOGGLE'
 );
 wwv_flow_imp_page.create_region_column(
  p_id=>wwv_flow_imp.id(28430705968015711)
@@ -289,7 +412,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'GC No'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>20
+,p_display_sequence=>30
 ,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
@@ -304,9 +427,8 @@ wwv_flow_imp_page.create_region_column(
 '    };',
 '    return options;',
 '}'))
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
@@ -321,7 +443,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Description 1'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>30
+,p_display_sequence=>40
 ,p_value_alignment=>'LEFT'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
@@ -332,9 +454,8 @@ wwv_flow_imp_page.create_region_column(
 ,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -349,7 +470,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Description 2'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>40
+,p_display_sequence=>50
 ,p_value_alignment=>'LEFT'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>false
@@ -360,9 +481,8 @@ wwv_flow_imp_page.create_region_column(
 ,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -372,23 +492,24 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'AMOUNT'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'AMOUNT'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_NUMBER_FIELD'
 ,p_heading=>'Amount'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>50
+,p_display_sequence=>60
 ,p_value_alignment=>'RIGHT'
 ,p_attribute_03=>'left'
 ,p_attribute_04=>'decimal'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
 ,p_filter_lov_type=>'NONE'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -398,22 +519,24 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'BALANCE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'BALANCE'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Balance'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>60
+,p_display_sequence=>70
 ,p_value_alignment=>'RIGHT'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -423,23 +546,24 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'ISSUE_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'ISSUE_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Issue Date'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>70
+,p_display_sequence=>80
 ,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -449,12 +573,12 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'EXPIRY_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'EXPIRY_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_DATE_PICKER_APEX'
 ,p_heading=>'Expiry Date'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>80
+,p_display_sequence=>90
 ,p_value_alignment=>'CENTER'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'POPUP'
@@ -464,13 +588,14 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_11=>'Y'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -480,23 +605,24 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'RELEASE_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'RELEASE_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Release Date'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>90
+,p_display_sequence=>100
 ,p_value_alignment=>'CENTER'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>false
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -511,10 +637,65 @@ wwv_flow_imp_page.create_region_column(
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Status'
 ,p_heading_alignment=>'CENTER'
-,p_display_sequence=>100
+,p_display_sequence=>110
 ,p_value_alignment=>'LEFT'
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
+,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
+,p_use_as_row_header=>false
+,p_enable_sort_group=>false
+,p_enable_hide=>false
+,p_is_primary_key=>false
+,p_duplicate_value=>true
+,p_include_in_export=>true
+);
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(30147016525825001)
+,p_name=>'Primary Key'
+,p_source_type=>'DB_COLUMN'
+,p_source_expression=>'Primary Key'
+,p_data_type=>'VARCHAR2'
+,p_is_query_only=>false
+,p_item_type=>'NATIVE_TEXT_FIELD'
+,p_heading_alignment=>'LEFT'
+,p_display_sequence=>10
+,p_value_alignment=>'LEFT'
+,p_attribute_05=>'BOTH'
+,p_is_required=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
+,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
+,p_use_as_row_header=>false
+,p_enable_sort_group=>true
+,p_enable_control_break=>true
+,p_enable_hide=>true
+,p_is_primary_key=>true
+,p_duplicate_value=>true
+,p_include_in_export=>false
+);
+wwv_flow_imp_page.create_region_column(
+ p_id=>wwv_flow_imp.id(77935224464036536)
+,p_name=>'D/N'
+,p_source_type=>'DB_COLUMN'
+,p_source_expression=>'D/N'
+,p_data_type=>'VARCHAR2'
+,p_is_query_only=>false
+,p_item_type=>'NATIVE_TEXT_FIELD'
+,p_heading=>'D&#x2F;N'
+,p_heading_alignment=>'LEFT'
+,p_display_sequence=>120
+,p_value_alignment=>'LEFT'
+,p_attribute_05=>'BOTH'
+,p_is_required=>false
+,p_max_length=>4
 ,p_enable_filter=>true
 ,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
@@ -529,31 +710,13 @@ wwv_flow_imp_page.create_region_column(
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
 );
-wwv_flow_imp_page.create_region_column(
- p_id=>wwv_flow_imp.id(30147016525825001)
-,p_name=>'Primary Key'
-,p_source_type=>'DB_COLUMN'
-,p_source_expression=>'Primary Key'
-,p_data_type=>'NUMBER'
-,p_session_state_data_type=>'VARCHAR2'
-,p_is_query_only=>false
-,p_item_type=>'NATIVE_HIDDEN'
-,p_display_sequence=>10
-,p_attribute_01=>'Y'
-,p_filter_is_required=>false
-,p_use_as_row_header=>false
-,p_enable_sort_group=>false
-,p_is_primary_key=>true
-,p_duplicate_value=>true
-,p_include_in_export=>false
-);
 wwv_flow_imp_page.create_interactive_grid(
  p_id=>wwv_flow_imp.id(28430697845015710)
 ,p_internal_uid=>28430697845015710
 ,p_is_editable=>false
 ,p_lazy_loading=>false
 ,p_requires_filter=>false
-,p_select_first_row=>true
+,p_select_first_row=>false
 ,p_fixed_row_height=>true
 ,p_pagination_type=>'SCROLL'
 ,p_show_total_row_count=>true
@@ -615,9 +778,6 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_column_id=>wwv_flow_imp.id(28430705968015711)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_sort_order=>1
-,p_sort_direction=>'DESC'
-,p_sort_nulls=>'LAST'
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(28524898795006218)
@@ -688,6 +848,17 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_view_id=>wwv_flow_imp.id(28523464409006196)
 ,p_display_seq=>10
 ,p_column_id=>wwv_flow_imp.id(30147016525825001)
+,p_is_visible=>false
+,p_is_frozen=>false
+,p_sort_order=>1
+,p_sort_direction=>'ASC'
+,p_sort_nulls=>'LAST'
+);
+wwv_flow_imp_page.create_ig_report_column(
+ p_id=>wwv_flow_imp.id(81095343937846710)
+,p_view_id=>wwv_flow_imp.id(28523464409006196)
+,p_display_seq=>12
+,p_column_id=>wwv_flow_imp.id(77935224464036536)
 ,p_is_visible=>true
 ,p_is_frozen=>false
 );
@@ -703,7 +874,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>S </u>- Search'
 ,p_button_redirect_url=>'f?p=&APP_ID.:311:&SESSION.::&DEBUG.:::'
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ml-2 mt-3'
+,p_grid_column_css_classes=>'mt-3'
 ,p_grid_new_row=>'Y'
 ,p_grid_column_span=>2
 );
@@ -719,7 +890,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>A </u>- Add'
 ,p_button_redirect_url=>'f?p=&APP_ID.:312:&SESSION.::&DEBUG.:::'
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ms-1 mt-3'
+,p_grid_column_css_classes=>'mt-3'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
@@ -739,7 +910,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_condition2=>'PLSQL'
 ,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ms-1 mt-3'
+,p_grid_column_css_classes=>'mt-3'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
@@ -756,7 +927,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>I </u>- Inquire'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ms-1 mt-3'
+,p_grid_column_css_classes=>'mt-3'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
@@ -773,14 +944,31 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>P </u>- Print'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ms-1 mt-3'
+,p_grid_column_css_classes=>'mt-3'
+,p_grid_new_row=>'N'
+,p_grid_new_column=>'Y'
+,p_grid_column_span=>2
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(77936383768036547)
+,p_button_sequence=>90
+,p_button_plug_id=>wwv_flow_imp.id(18625585793263501)
+,p_button_name=>'Toggle'
+,p_button_static_id=>'t'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--noUI'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'<u>T </u>- Toggle'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'btns text-left'
+,p_grid_column_css_classes=>'mt-3'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(26313559983216515)
-,p_button_sequence=>90
+,p_button_sequence=>100
 ,p_button_plug_id=>wwv_flow_imp.id(18625585793263501)
 ,p_button_name=>'Release'
 ,p_button_static_id=>'r'
@@ -790,13 +978,13 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>R </u>- Release'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ml-2 mt-2'
+,p_grid_column_css_classes=>'mt-2'
 ,p_grid_new_row=>'Y'
 ,p_grid_column_span=>2
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(26313678375216516)
-,p_button_sequence=>100
+,p_button_sequence=>110
 ,p_button_plug_id=>wwv_flow_imp.id(18625585793263501)
 ,p_button_name=>'Void'
 ,p_button_static_id=>'v'
@@ -806,14 +994,14 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>V </u>- Void'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ms-1 mt-2'
+,p_grid_column_css_classes=>'mt-2'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(26313740483216517)
-,p_button_sequence=>110
+,p_button_sequence=>120
 ,p_button_plug_id=>wwv_flow_imp.id(18625585793263501)
 ,p_button_name=>'Void_And_Print_new'
 ,p_button_static_id=>'n'
@@ -823,14 +1011,14 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>N </u>- Void & Print New'
 ,p_warn_on_unsaved_changes=>null
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ms-1 mt-2'
+,p_grid_column_css_classes=>'mt-2'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(28430266277015706)
-,p_button_sequence=>120
+,p_button_sequence=>130
 ,p_button_plug_id=>wwv_flow_imp.id(18625585793263501)
 ,p_button_name=>'Back'
 ,p_button_static_id=>'exit'
@@ -840,7 +1028,7 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'Back'
 ,p_button_redirect_url=>'f?p=&APP_ID.:304:&SESSION.::&DEBUG.:::'
 ,p_button_css_classes=>'btns text-left'
-,p_grid_column_css_classes=>'ms-1 mt-2 hide'
+,p_grid_column_css_classes=>'mt-2 hide'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
@@ -876,7 +1064,7 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(30917104078029538)
 ,p_name=>'P310_GET_SUCCESS_MSG'
-,p_item_sequence=>40
+,p_item_sequence=>50
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
 );
@@ -901,25 +1089,27 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'N'
 );
-wwv_flow_imp_page.create_page_computation(
- p_id=>wwv_flow_imp.id(28432308116015727)
-,p_computation_sequence=>10
-,p_computation_item=>'P310_GC_NO'
-,p_computation_point=>'BEFORE_BOX_BODY'
-,p_computation_type=>'EXPRESSION'
-,p_computation_language=>'PLSQL'
-,p_computation=>'NULL'
-,p_computation_comment=>'this is used to clear the last assigned value'
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(74199711984493923)
+,p_name=>'P310_SELECTED_INDEX'
+,p_item_sequence=>100
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'N'
 );
-wwv_flow_imp_page.create_page_computation(
- p_id=>wwv_flow_imp.id(28432402264015728)
-,p_computation_sequence=>20
-,p_computation_item=>'P310_ISSUE_YR'
-,p_computation_point=>'BEFORE_BOX_BODY'
-,p_computation_type=>'EXPRESSION'
-,p_computation_language=>'PLSQL'
-,p_computation=>'NULL'
-,p_computation_comment=>'this is used to clear the last assigned value'
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(77936175750036545)
+,p_name=>'P310_TOGGLE'
+,p_item_sequence=>110
+,p_prompt=>'Toggle:'
+,p_display_as=>'NATIVE_DISPLAY_ONLY'
+,p_begin_on_new_line=>'N'
+,p_grid_column=>9
+,p_field_template=>wwv_flow_imp.id(4382028501084276)
+,p_item_template_options=>'#DEFAULT#'
+,p_attribute_01=>'Y'
+,p_attribute_02=>'VALUE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'PLAIN'
 );
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(30477801856245233)
@@ -1031,7 +1221,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(28434632925015750)
 ,p_event_id=>wwv_flow_imp.id(28431680511015720)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>60
+,p_action_sequence=>70
 ,p_execute_on_page_init=>'N'
 ,p_name=>'To select 1st cell of the table'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
@@ -1044,7 +1234,7 @@ wwv_flow_imp_page.create_page_da_action(
 ' });',
 '',
 '',
-'}, "1000");'))
+'}, "500");'))
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(28434269922015746)
@@ -1066,7 +1256,14 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'if (this.data.selectedRecords.length > 0) {',
 '    let itemNoSelected = this.data.selectedRecords[0][1];',
+'    let itemStatusSelected = this.data.selectedRecords[0][9];',
+'    let index = this.data.selectedRecords[0][0];',
+'    let isDonation = this.data.selectedRecords[0][10];',
+'',
 '    apex.item("P310_SELECTED_GC_NO").setValue(itemNoSelected);',
+'    apex.item("P310_SELECTED_GC_STATUS").setValue(itemStatusSelected);',
+'    apex.item("P310_SELECTED_INDEX").setValue(index);',
+'    apex.item("P310_IS_DONATION").setValue(isDonation === ''D'' ? ''Y'' : ''N'');',
 '}'))
 );
 wwv_flow_imp_page.create_page_da_event(
@@ -1075,8 +1272,8 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_event_sequence=>30
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_imp.id(18625845698263504)
-,p_condition_element=>'P310_SELECTED_GC_NO'
-,p_triggering_condition_type=>'NOT_NULL'
+,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_expression=>'apex.item("P310_SELECTED_GC_STATUS").getValue() !== "Voided" && apex.item("P310_SELECTED_GC_NO").getValue() !== null'
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'click'
@@ -1093,11 +1290,11 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    :P310_PREPARED_URL := apex_page.get_url(',
 '       p_page   => 317,',
-'       p_items  => ''P317_GC_NO'',',
-'       p_values => :P310_SELECTED_GC_NO',
+'       p_items  => ''P317_GC_NO,P317_IS_DONATION'',',
+'       p_values => :P310_SELECTED_GC_NO || '','' || :P310_IS_DONATION',
 '     );',
 'END;'))
-,p_attribute_02=>'P310_SELECTED_GC_NO'
+,p_attribute_02=>'P310_SELECTED_GC_NO,P310_IS_DONATION'
 ,p_attribute_03=>'P310_PREPARED_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
@@ -1123,8 +1320,8 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_event_sequence=>40
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_imp.id(26313559983216515)
-,p_condition_element=>'P310_SELECTED_GC_NO'
-,p_triggering_condition_type=>'NOT_NULL'
+,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_expression=>'apex.item("P310_SELECTED_GC_STATUS").getValue() !== "Voided" && apex.item("P310_SELECTED_GC_NO").getValue() !== null'
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'click'
@@ -1141,11 +1338,11 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    :P310_PREPARED_URL := apex_page.get_url(',
 '       p_page   => 315,',
-'       p_items  => ''P315_GET_SELECTED_GC_NO,P315_GET_SEARCHED_YEAR,P315_GET_SEARCHED_GC_NO'',',
-'       p_values => :P310_SELECTED_GC_NO || '','' || :P310_ISSUE_YR || '','' || :P310_GC_NO',
+'       p_items  => ''P315_GET_SELECTED_GC_NO,P315_GET_SEARCHED_YEAR,P315_GET_SEARCHED_GC_NO,P315_IS_DONATION'',',
+'       p_values => :P310_SELECTED_GC_NO || '','' || :P310_ISSUE_YR || '','' || :P310_GC_NO || '','' || :P310_IS_DONATION',
 '     );',
 'END;'))
-,p_attribute_02=>'P310_SELECTED_GC_NO'
+,p_attribute_02=>'P310_SELECTED_GC_NO,P310_IS_DONATION'
 ,p_attribute_03=>'P310_PREPARED_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
@@ -1190,11 +1387,11 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    :P310_PREPARED_URL := apex_page.get_url(',
 '       p_page   => 314,',
-'       p_items  => ''P314_GET_SELECTED_GC_NO'',',
-'       p_values => :P310_SELECTED_GC_NO',
+'       p_items  => ''P314_GET_SELECTED_GC_NO,P314_IS_DONATION'',',
+'       p_values => :P310_SELECTED_GC_NO || '','' || :P310_IS_DONATION',
 '     );',
 'END;'))
-,p_attribute_02=>'P310_SELECTED_GC_NO'
+,p_attribute_02=>'P310_SELECTED_GC_NO,P310_IS_DONATION'
 ,p_attribute_03=>'P310_PREPARED_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
@@ -1268,6 +1465,8 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_event_sequence=>70
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_imp.id(26313678375216516)
+,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_expression=>'apex.item("P310_SELECTED_GC_STATUS").getValue() !== "Voided" && apex.item("P310_SELECTED_GC_NO").getValue() !== null'
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'click'
@@ -1280,18 +1479,32 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
 'BEGIN',
-'    UPDATE NPT020',
-'        SET BALANCE = 0,',
-'            AMOUNT = 0,',
-'            GC_STATUS_ID = 5,',
-'            USER_UPDATE = :app_user, ',
-'            DATE_UPDATED = SYSDATE',
-'        WHERE GIFT_CERTIFICATE_ID = :P310_SELECTED_GC_NO;',
-'END;',
-''))
-,p_attribute_02=>'P310_SELECTED_GC_NO'
+'    sys.dbms_session.sleep(3);',
+'    ',
+'    IF :P310_IS_DONATION = ''Y'' THEN ',
+'        UPDATE NPT020 npt020',
+'            SET BALANCE = 0,',
+'                AMOUNT = 0,',
+'                GC_STATUS_ID = (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''VOIDED''),',
+'                USER_UPDATE = :app_user, ',
+'                DATE_UPDATED = SYSDATE',
+'            WHERE npt020.DONATION_GC_NO = :P310_SELECTED_GC_NO;',
+'    ELSE ',
+'        UPDATE NPT020',
+'            SET BALANCE = 0,',
+'                AMOUNT = 0,',
+'                GC_STATUS_ID = (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''VOIDED''),',
+'                USER_UPDATE = :app_user, ',
+'                DATE_UPDATED = SYSDATE',
+'            WHERE npt020.REGULAR_GC_NO = :P310_SELECTED_GC_NO;',
+'    END IF;',
+'END;'))
+,p_attribute_02=>'P310_SELECTED_GC_NO,P310_IS_DONATION'
 ,p_attribute_03=>'P310_PREPARED_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
@@ -1346,44 +1559,11 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_event_sequence=>80
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_imp.id(18626077494263506)
-,p_condition_element=>'P310_SELECTED_GC_NO'
-,p_triggering_condition_type=>'NOT_NULL'
+,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_expression=>'apex.item("P310_SELECTED_GC_STATUS").getValue().toUpperCase() !== "VOIDED" && apex.item("P310_SELECTED_GC_STATUS").getValue().toUpperCase() !== "EXPIRED" && apex.item("P310_SELECTED_GC_NO").getValue() !== null'
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'click'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(34718890448647748)
-,p_event_id=>wwv_flow_imp.id(34717047883647730)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'Y'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P310_SELECTED_GC_STATUS'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'',
-'l_return_value  VARCHAR(1) := NULL;',
-'',
-'BEGIN',
-'',
-'    IF LENGTH(:P310_SELECTED_GC_NO) > 0 THEN',
-'    ',
-'        SELECT GC_STATUS_ID INTO l_return_value',
-'        FROM NPT020',
-'        WHERE GIFT_CERTIFICATE_ID = :P310_SELECTED_GC_NO;',
-'',
-'    END IF;',
-'',
-'    RETURN l_return_value;',
-'',
-'END;'))
-,p_attribute_07=>'P310_SELECTED_GC_NO'
-,p_attribute_08=>'N'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(34717239692647732)
@@ -1395,31 +1575,54 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'BEGIN',
 '    :P310_PREPARED_URL := apex_page.get_url(',
-'       p_page   => 313,',
-'       p_items  => ''P313_SELECTED_GC_NO'',',
-'       p_values => :P310_SELECTED_GC_NO',
+'       p_page   => 362,',
+'       p_items  => ''P362_SELECTED_GC_NO,P362_IS_DONATION'',',
+'       p_values => :P310_SELECTED_GC_NO || '','' || :P310_IS_DONATION',
 '     );',
 'END;'))
-,p_attribute_02=>'P310_SELECTED_GC_NO'
+,p_attribute_02=>'P310_SELECTED_GC_NO,P310_IS_DONATION'
 ,p_attribute_03=>'P310_PREPARED_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
 ,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val() !== "4" && $("#P310_SELECTED_GC_STATUS").val() !== "5"'
+,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val().toUpperCase() === "PRINTED"'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(77933072171036514)
+,p_event_id=>wwv_flow_imp.id(34717047883647730)
+,p_event_result=>'TRUE'
+,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'BEGIN',
+'    :P310_PREPARED_URL := apex_page.get_url(',
+'       p_page   => 313,',
+'       p_items  => ''P313_SELECTED_GC_NO,P313_IS_DONATION'',',
+'       p_values => :P310_SELECTED_GC_NO || '','' || :P310_IS_DONATION',
+'     );',
+'END;'))
+,p_attribute_02=>'P310_SELECTED_GC_NO,P310_IS_DONATION'
+,p_attribute_03=>'P310_PREPARED_URL'
+,p_attribute_04=>'N'
+,p_attribute_05=>'PLSQL'
+,p_wait_for_result=>'Y'
+,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val().toUpperCase() !== "PRINTED"'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(34717329741647733)
 ,p_event_id=>wwv_flow_imp.id(34717047883647730)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>40
+,p_action_sequence=>50
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let url = $v("P310_PREPARED_URL");',
 'apex.navigation.redirect(url);'))
 ,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val() !== "4" && $("#P310_SELECTED_GC_STATUS").val() !== "5"'
+,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val().toUpperCase() !== "VOIDED" && $("#P310_SELECTED_GC_STATUS").val().toUpperCase() !== "EXPIRED"'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(37008869593700425)
@@ -1427,45 +1630,11 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_event_sequence=>100
 ,p_triggering_element_type=>'BUTTON'
 ,p_triggering_button_id=>wwv_flow_imp.id(26313740483216517)
-,p_condition_element=>'P310_SELECTED_GC_NO'
-,p_triggering_condition_type=>'NOT_NULL'
+,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_expression=>'apex.item("P310_SELECTED_GC_STATUS").getValue() !== "Voided" && $("#P310_SELECTED_GC_STATUS").val().toUpperCase() !== "EXPIRED" && apex.item("P310_SELECTED_GC_NO").getValue() !== null'
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'click'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(37008579984700422)
-,p_event_id=>wwv_flow_imp.id(37008869593700425)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'Y'
-,p_name=>'Get status'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P310_SELECTED_GC_STATUS'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'',
-'l_return_value  VARCHAR(1) := NULL;',
-'',
-'BEGIN',
-'',
-'    IF LENGTH(:P310_SELECTED_GC_NO) > 0 THEN',
-'    ',
-'        SELECT GC_STATUS_ID INTO l_return_value',
-'        FROM NPT020',
-'        WHERE GIFT_CERTIFICATE_ID = :P310_SELECTED_GC_NO;',
-'',
-'    END IF;',
-'',
-'    RETURN l_return_value;',
-'',
-'END;'))
-,p_attribute_07=>'P310_SELECTED_GC_NO'
-,p_attribute_08=>'N'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(38243280129771113)
@@ -1476,44 +1645,6 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_name=>'Trigger spinner'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'apex.widget.waitPopup()'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(37009555516700432)
-,p_event_id=>wwv_flow_imp.id(37008869593700425)
-,p_event_result=>'TRUE'
-,p_action_sequence=>50
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set donation type'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P310_IS_DONATION'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'',
-'l_return_value  VARCHAR(1) := NULL;',
-'',
-'BEGIN',
-'',
-'    IF LENGTH(:P310_SELECTED_GC_NO) > 0 THEN',
-'    ',
-'        SELECT DONATION INTO l_return_value',
-'        FROM NPM013 npm013',
-'        WHERE (SELECT npt020.GC_TYPE_ID',
-'               FROM NPT020 npt020',
-'               WHERE npt020.GIFT_CERTIFICATE_ID = :P310_SELECTED_GC_NO) = npm013.GC_TYPE_ID;',
-'',
-'    END IF;',
-'',
-'    RETURN l_return_value;',
-'',
-'END;'))
-,p_attribute_07=>'P310_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val() !== "4" && $("#P310_SELECTED_GC_STATUS").val() !== "5"'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(37009605551700433)
@@ -1536,16 +1667,12 @@ wwv_flow_imp_page.create_page_da_action(
 '    SELECT (NVL(MAX(npt020.PRINT_ID), 0) + 1) INTO l_return_value',
 '    FROM NPT020 npt020;',
 '',
-'    -- :P310_PRINT_ID := l_return_value;',
-'',
 '    RETURN l_return_value;',
 '',
 'END;'))
 ,p_attribute_08=>'N'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val() !== "4" && $("#P310_SELECTED_GC_STATUS").val() !== "5"'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(37009925833700436)
@@ -1553,24 +1680,54 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>70
 ,p_execute_on_page_init=>'N'
-,p_name=>'Update selected gc print id'
+,p_name=>'Insert copy of selected gc print id'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
 'BEGIN',
-'    UPDATE NPT020',
-'        SET PRINT_ID = :P310_PRINT_ID,',
-'            USER_UPDATE = :app_user,',
-'            DATE_UPDATED = SYSDATE,',
-'            PRINT_DATE = SYSDATE',
-'        WHERE GIFT_CERTIFICATE_ID = :P310_SELECTED_GC_NO;',
-'END;',
-''))
-,p_attribute_02=>'P310_SELECTED_GC_NO,P310_PRINT_ID'
+'',
+'    IF :P310_IS_DONATION = ''Y'' THEN ',
+'        INSERT INTO NPT020 (',
+'            GIFT_CERTIFICATE_ID,',
+'            GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
+'            DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
+'            BALANCE, GC_STATUS_ID, USER_CREATED, DATE_CREATED, PRINT_ID,',
+'            INVOICE_ID, CASH_INVOICE_ID, DONATION_GC_NO',
+'        )',
+'',
+'        SELECT (SELECT NVL(MAX(GIFT_CERTIFICATE_ID), 0) + 1 FROM NPT020),',
+'            GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
+'            DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
+'            BALANCE, (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''PRINTED''), ',
+'            :app_user, SYSDATE, :P310_PRINT_ID,',
+'            INVOICE_ID, CASH_INVOICE_ID, (SELECT NVL(MAX(DONATION_GC_NO), 0) + 1 FROM NPT020)',
+'        FROM NPT020',
+'        WHERE DONATION_GC_NO = :P310_SELECTED_GC_NO;',
+'    ELSE',
+'        INSERT INTO NPT020 (',
+'            GIFT_CERTIFICATE_ID,',
+'            GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
+'            DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
+'            BALANCE, GC_STATUS_ID, USER_CREATED, DATE_CREATED, PRINT_ID,',
+'            INVOICE_ID, CASH_INVOICE_ID, REGULAR_GC_NO',
+'        )',
+'',
+'        SELECT (SELECT NVL(MAX(GIFT_CERTIFICATE_ID), 0) + 1 FROM NPT020),',
+'            GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
+'            DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
+'            BALANCE, (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''PRINTED''), ',
+'            :app_user, SYSDATE, :P310_PRINT_ID,',
+'            INVOICE_ID, CASH_INVOICE_ID, (SELECT NVL(MAX(REGULAR_GC_NO), 0) + 1 FROM NPT020)',
+'        FROM NPT020',
+'        WHERE REGULAR_GC_NO = :P310_SELECTED_GC_NO;',
+'    END IF;',
+'END;'))
+,p_attribute_02=>'P310_SELECTED_GC_NO,P310_PRINT_ID,P310_IS_DONATION'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val() !== "4" && $("#P310_SELECTED_GC_STATUS").val() !== "5"'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(37009296567700429)
@@ -1609,23 +1766,34 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_name=>'Set selected gc to void'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
 'BEGIN',
 '    sys.dbms_session.sleep(3);',
-'    UPDATE NPT020',
-'        SET BALANCE = 0,',
-'            AMOUNT = 0,',
-'            GC_STATUS_ID = 5,',
-'            USER_UPDATE = :app_user, ',
-'            DATE_UPDATED = SYSDATE',
-'        WHERE GIFT_CERTIFICATE_ID = :P310_SELECTED_GC_NO;',
-'END;',
-''))
-,p_attribute_02=>'P310_SELECTED_GC_NO'
+'    ',
+'    IF :P310_IS_DONATION = ''Y'' THEN ',
+'        UPDATE NPT020 npt020',
+'            SET BALANCE = 0,',
+'                AMOUNT = 0,',
+'                GC_STATUS_ID = (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''VOIDED''),',
+'                USER_UPDATE = :app_user, ',
+'                DATE_UPDATED = SYSDATE',
+'            WHERE npt020.DONATION_GC_NO = :P310_SELECTED_GC_NO;',
+'    ELSE ',
+'        UPDATE NPT020',
+'            SET BALANCE = 0,',
+'                AMOUNT = 0,',
+'                GC_STATUS_ID = (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''VOIDED''),',
+'                USER_UPDATE = :app_user, ',
+'                DATE_UPDATED = SYSDATE',
+'            WHERE npt020.REGULAR_GC_NO = :P310_SELECTED_GC_NO;',
+'    END IF;',
+'END;'))
+,p_attribute_02=>'P310_SELECTED_GC_NO,P310_IS_DONATION'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$("#P310_SELECTED_GC_STATUS").val() !== "4" && $("#P310_SELECTED_GC_STATUS").val() !== "5"'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(37009788882700434)
@@ -1649,6 +1817,12 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'setTimeout(function() {',
 '    $(''.t-Button--closeAlert'').click();',
+'',
+'    setTimeout(() => {',
+'    $( document ).ready(function() {',
+'        $(".a-GV-cell").first().trigger("click");',
+'    });',
+'    }, "500");',
 '}, 3000);'))
 ,p_client_condition_type=>'GREATER_THAN'
 ,p_client_condition_element=>'P310_SELECTED_GC_NO'
@@ -1734,6 +1908,124 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_client_condition_type=>'EQUALS'
 ,p_client_condition_element=>'P310_GET_SUCCESS_MSG_1'
 ,p_client_condition_expression=>'true'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(70199894602373441)
+,p_name=>'Closed or Cancelled'
+,p_event_sequence=>130
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(18625619398263502)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'apexafterclosecanceldialog'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70199958001373442)
+,p_event_id=>wwv_flow_imp.id(70199894602373441)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'setTimeout(() => {',
+'  $( document ).ready(function() {',
+'    $(".a-GV-cell").first().trigger("click");',
+' });',
+'}, "700");'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(77936472859036548)
+,p_name=>'Change Toggle'
+,p_event_sequence=>140
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(77936383768036547)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'click'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(77936526691036549)
+,p_event_id=>wwv_flow_imp.id(77936472859036548)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if (apex.item("P310_TOGGLE").getValue() === "Both") {',
+'    apex.item("P310_TOGGLE").setValue("Regular Only");',
+'} else if (apex.item("P310_TOGGLE").getValue() === "Regular Only") {',
+'    apex.item("P310_TOGGLE").setValue("Donation Only");',
+'} else {',
+'    apex.item("P310_TOGGLE").setValue("Both");',
+'}'))
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(82190058860156601)
+,p_event_id=>wwv_flow_imp.id(77936472859036548)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(28430546326015709)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(82190193920156602)
+,p_event_id=>wwv_flow_imp.id(77936472859036548)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'setTimeout(() => {',
+'  $( document ).ready(function() {',
+'    $(".a-GV-cell").first().trigger("click");',
+' });',
+'}, "700");'))
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(82190369745156604)
+,p_event_id=>wwv_flow_imp.id(77936472859036548)
+,p_event_result=>'TRUE'
+,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'BEGIN',
+'    APEX_UTIL.SET_SESSION_STATE(''P310_TOGGLE'', :P310_TOGGLE);',
+'END;'))
+,p_attribute_02=>'P310_TOGGLE'
+,p_attribute_05=>'PLSQL'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(82190599824156606)
+,p_name=>'Set Toggle'
+,p_event_sequence=>150
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(82190601030156607)
+,p_event_id=>wwv_flow_imp.id(82190599824156606)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'Y'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P310_TOGGLE'
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'BEGIN',
+'    IF APEX_UTIL.GET_SESSION_STATE(''P310_TOGGLE'') IS NOT NULL THEN',
+'        RETURN APEX_UTIL.GET_SESSION_STATE(''P310_TOGGLE'');',
+'    ELSE ',
+'        RETURN ''Both'';',
+'    END IF;',
+'END;'))
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(30917312403029540)

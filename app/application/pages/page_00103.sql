@@ -346,15 +346,36 @@ wwv_flow_imp_page.create_page_plug(
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(31309849085578730)
-,p_button_sequence=>90
+,p_button_sequence=>110
 ,p_button_name=>'GO_TO_LINE_ITEMS'
 ,p_button_static_id=>'to-line-items'
 ,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--noUI'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
 ,p_button_image_alt=>'<u>F2</u> - Line Item Details'
-,p_button_redirect_url=>'f?p=&APP_ID.:104:&SESSION.::&DEBUG.:104:P104_SHIPMENT_ID:&P103_SHIPMENT_ID.'
+,p_button_redirect_url=>'f?p=&APP_ID.:104:&SESSION.::&DEBUG.:104:P104_SHIPMENT_ID,P104_QSEARCH,P104_QSORT:&P103_SHIPMENT_ID.,&P103_QSEARCH.,&P103_QSORT.'
 ,p_grid_new_row=>'Y'
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(47037883460224207)
+,p_button_sequence=>120
+,p_button_name=>'BACK_TO_SHIPMENT_LIST'
+,p_button_static_id=>'esc'
+,p_button_action=>'REDIRECT_PAGE'
+,p_button_template_options=>'#DEFAULT#:t-Button--noUI'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'<u>Esc</u> - Shipment List'
+,p_button_redirect_url=>'f?p=&APP_ID.:100:&SESSION.::&DEBUG.::P100_SEARCH,P100_SORT:&P103_QSEARCH.,&P103_QSORT.'
+,p_grid_new_row=>'Y'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(42428074794064050)
+,p_name=>'P103_QSORT'
+,p_item_sequence=>70
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+,p_item_comment=>'PK for this shipment record'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(45965763705656670)
@@ -556,10 +577,9 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(45968008719656687)
 ,p_name=>'P103_LABEL'
-,p_item_sequence=>70
+,p_item_sequence=>90
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
-,p_ai_enabled=>false
 ,p_item_comment=>'Label identifying if current task is Add or Update'
 );
 wwv_flow_imp_page.create_page_item(
@@ -687,14 +707,27 @@ wwv_flow_imp_page.create_page_item(
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(46561410497589672)
 ,p_name=>'P103_SRURL'
-,p_item_sequence=>80
-,p_item_default=>'APEX_PAGE.GET_URL(p_page => 100)'
+,p_item_sequence=>100
+,p_item_default=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'APEX_PAGE.GET_URL(',
+'    p_page => 100,',
+'    p_items => ''P100_SEARCH,P100_SORT,P100_SELECTED_ID,P100_SMSG'',',
+'    p_values => :P103_QSEARCH || '','' || :P103_QSORT || '','' || :P103_SHIPMENT_ID || '','',',
+'    p_clear_cache => ''100''',
+')'))
 ,p_item_default_type=>'EXPRESSION'
 ,p_item_default_language=>'PLSQL'
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
-,p_ai_enabled=>false
 ,p_item_comment=>'URL for when returning to main shipment screen'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(47037245646224201)
+,p_name=>'P103_QSEARCH'
+,p_item_sequence=>80
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+,p_item_comment=>'PK for this shipment record'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(48822676077291629)

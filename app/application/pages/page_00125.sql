@@ -13,24 +13,58 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>125
-,p_name=>'Add Refund'
+,p_name=>'Add Refund CM'
 ,p_alias=>'CREDIT-MEMO-ADD-REFUND'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Add Refund'
+,p_step_title=>'Add Return'
 ,p_autocomplete_on_off=>'OFF'
+,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'let lastSelected = null;',
+'const p125KeyMap = {',
+'',
+'    enter: (v) => {',
+'        $("#enter").trigger("click");',
+'    }',
+'}',
+'',
+'function mapP125Keys() {',
+'    $(document).off(''keydown.p125keyevents'');',
+'    $(document).on(''keydown.p125keyevents'', (ev) => {',
+'        var key = ev.key?.toLowerCase();',
+'        if (p125KeyMap[key]) {',
+'            ev.preventDefault();',
+'            p125KeyMap[key]();',
+'        }',
+'    });',
+'}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'',
-'',
-''))
+'setInputFilter($("#P125_SEARCH_QUERY"), function(value) {  return /^\d*$/.test(value);}, "Only digits are allowed");',
+'mapP125Keys()'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.format-size{',
 '    font-size: 1.125rem;',
 '    font-family: Arial;',
+'}',
+'',
+'#enter{',
+'    display: none;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'500'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'11'
+);
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(58656189188535207)
+,p_button_sequence=>50
+,p_button_name=>'Enter'
+,p_button_static_id=>'enter'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'Enter'
+,p_warn_on_unsaved_changes=>null
+,p_grid_new_row=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(46317751861497902)
@@ -42,6 +76,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_tag_css_classes=>'format-size'
 ,p_field_template=>wwv_flow_imp.id(4381902469084273)
 ,p_item_template_options=>'#DEFAULT#:t-Form-fieldContainer--stretchInputs'
+,p_warn_on_unsaved_changes=>'I'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
 ,p_attribute_02=>'N'
@@ -80,18 +115,18 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_affected_elements=>'P125_SEARCH_QUERY'
 );
 wwv_flow_imp_page.create_page_da_event(
- p_id=>wwv_flow_imp.id(46318016383497905)
-,p_name=>'Change'
-,p_event_sequence=>20
-,p_triggering_element_type=>'ITEM'
-,p_triggering_element=>'P125_SEARCH_QUERY'
+ p_id=>wwv_flow_imp.id(58656274822535208)
+,p_name=>'Enter'
+,p_event_sequence=>30
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(58656189188535207)
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
-,p_bind_event_type=>'change'
+,p_bind_event_type=>'click'
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46318172547497906)
-,p_event_id=>wwv_flow_imp.id(46318016383497905)
+,p_event_id=>wwv_flow_imp.id(58656274822535208)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
 ,p_execute_on_page_init=>'N'
@@ -101,7 +136,7 @@ wwv_flow_imp_page.create_page_da_action(
 '    l_invoice VARCHAR2(10);',
 'BEGIN',
 '    SELECT',
-'        TO_CHAR(:P99_SEARCH_QUERY, ''000000'')',
+'        TO_CHAR(:P125_SEARCH_QUERY, ''000000'')',
 '    INTO',
 '        l_invoice',
 '    FROM',
@@ -121,46 +156,66 @@ wwv_flow_imp_page.create_page_da_action(
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46318285354497907)
-,p_event_id=>wwv_flow_imp.id(46318016383497905)
+,p_event_id=>wwv_flow_imp.id(58656274822535208)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>20
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DECLARE',
-'    l_refundable NUMBER := 0;',
+'    l_returnable NUMBER := 0;',
 '    l_check NUMBER;',
+'    l_create_check NUMBER;',
 'BEGIN',
 '    SELECT',
-'        CASH_INVOICE_ID',
+'        INVOICE_ID',
 '    INTO',
 '        l_check',
 '    FROM',
-'        NPT033',
+'        NPT001',
 '    WHERE',
-'        CASH_INVOICE_ID = :P125_SEARCH_QUERY;',
+'        INVOICE_ID = :P125_SEARCH_QUERY;',
+'',
+'    SELECT ',
+'        MAX(npt15.RETURN_ID)',
+'    INTO',
+'        l_create_check',
+'    FROM ',
+'        NPT002 npt2, ',
+'        NPT015 npt15, ',
+'        NPT037 npt37, ',
+'        NPM017 npm17',
+'    WHERE npt15.CM_STATUS_ID = npm17.CM_STATUS_ID AND',
+'          npt2.ITEM_INVOICE_ID = npt37.ITEM_INVOICE_ID AND',
+'          npt37.RETURN_ID = npt15.RETURN_ID AND',
+'          npm17.CM_STATUS_NAME = ''CREATED'' AND',
+'          npt2.INVOICE_ID = 9;',
 '',
 '    :P125_VALID := 0;',
 '    IF l_check IS NOT NULL THEN',
-'        DELETE FROM NPT035 WHERE REFUND_ID IS NULL AND USER_CREATED = :APP_USER;',
-'        FOR i in (SELECT ITEM_INVOICE_ID, QUANTITY FROM NPT002 WHERE CASH_INVOICE_ID = :P125_SEARCH_QUERY) LOOP',
+'        DELETE FROM NPT037 WHERE RETURN_ID IS NULL AND USER_CREATED = :APP_USER;',
+'        FOR i in (SELECT ITEM_INVOICE_ID, QUANTITY FROM NPT002 WHERE INVOICE_ID = :P125_SEARCH_QUERY) LOOP',
 '            SELECT ',
-'                SUM(REFUND_QUANTITY)',
+'                SUM(RETURN_QUANTITY)',
 '            INTO',
-'                l_refundable',
+'                l_returnable',
 '            FROM',
-'                NPT035',
+'                NPT037',
 '            WHERE',
 '                ITEM_INVOICE_ID = i.ITEM_INVOICE_ID;',
 '',
-'            IF l_refundable IS NULL THEN',
-'                l_refundable := 0;',
+'            IF l_returnable IS NULL THEN',
+'                l_returnable := 0;',
 '            END IF;',
 '',
-'            INSERT INTO NPT035 (ITEM_INVOICE_ID, REFUNDABLE_QUANTITY, USER_CREATED) ',
-'            VALUES (i.ITEM_INVOICE_ID, i.QUANTITY - l_refundable, :APP_USER);',
+'            INSERT INTO NPT037 (ITEM_INVOICE_ID, RETURNABLE_QUANTITY, USER_CREATED) ',
+'            VALUES (i.ITEM_INVOICE_ID, i.QUANTITY - l_returnable, :APP_USER);',
 '        END LOOP;',
 '        :P125_VALID := 1;',
+'    END IF;',
+'',
+'    IF l_create_check IS NOT NULL THEN',
+'        :P125_VALID := 2;',
 '    END IF;',
 'EXCEPTION',
 '    WHEN NO_DATA_FOUND THEN',
@@ -174,7 +229,7 @@ wwv_flow_imp_page.create_page_da_action(
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(46318378565497908)
-,p_event_id=>wwv_flow_imp.id(46318016383497905)
+,p_event_id=>wwv_flow_imp.id(58656274822535208)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>30
 ,p_execute_on_page_init=>'N'
@@ -182,6 +237,20 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'let url = $v("P125_PREPARED_URL");',
 'apex.navigation.redirect(url);'))
+,p_client_condition_type=>'EQUALS'
+,p_client_condition_element=>'P125_VALID'
+,p_client_condition_expression=>'1'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(49390148496289426)
+,p_event_id=>wwv_flow_imp.id(58656274822535208)
+,p_event_result=>'TRUE'
+,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_DIALOG_CLOSE'
+,p_attribute_01=>'P125_VALID'
+,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
+,p_client_condition_expression=>'$v("P125_VALID") == 0 || $v("P125_VALID") == 2'
 );
 wwv_flow_imp.component_end;
 end;

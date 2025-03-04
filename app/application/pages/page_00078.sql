@@ -23,6 +23,9 @@ wwv_flow_imp_page.create_page(
 '    escape : (v) => {',
 '        $("#esc").trigger("click");',
 '    },',
+'    enter : (v) => {',
+'        $("#enter").trigger("click");',
+'    },',
 '    c : (v) => {',
 '        $("#c").trigger("click");',
 '    },',
@@ -57,6 +60,9 @@ wwv_flow_imp_page.create_page(
 '}',
 '',
 'const p78KeyMapDBA = {',
+'    enter : (v) => {',
+'        $("#enter").trigger("click");',
+'    },',
 '    escape : (v) => {',
 '        $("#esc").trigger("click");',
 '    }',
@@ -93,11 +99,40 @@ wwv_flow_imp_page.create_page(
 '            p78KeyMapPrint[key]();',
 '        }',
 '    });',
-'}'))
-,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'setTitle("Summary of Invoices");',
-'$x(''P78_DBA'').focus();',
-'// mapP78KeysMenu();'))
+'}',
+'',
+'$("#P78_DATE_FROM, #P78_DATE_TO")',
+'    .keypress(function(e){',
+'        if(',
+'            e.key == "1" || e.key == "2" ||',
+'            e.key == "3" || e.key == "4" ||',
+'            e.key == "5" || e.key == "6" ||',
+'            e.key == "7" || e.key == "8" ||',
+'            e.key == "9" || e.key == "0" || e.key == "/"',
+'        ){',
+'            if( $(this).val().length == 0 ){',
+'                if (e.key == "0" || e.key == "1") {',
+'                    return true;',
+'                } else return false;',
+'            } else if( $(this).val().length == 1 ){',
+'                if ($(this).val()[0] == "1" ) {',
+'                    if ( e.key == "0" || e.key == "1" || e.key == "2" ){',
+'                        return true;',
+'                    }',
+'                    else return false;',
+'                } else return true;',
+'            }else if( $(this).val().length == 2 ){',
+'                $(this).val( $(this).val() + "/" )',
+'                return true;',
+'            } else if( $(this).val().length == 5 ){',
+'                $(this).val( $(this).val() + "/" )',
+'                return true;',
+'            }',
+'        } else {',
+'            return false;',
+'        }',
+'});'))
+,p_javascript_code_onload=>'setTitle("Summary of Invoices");'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.btns {',
 '    font-size: 1.125rem;',
@@ -152,7 +187,7 @@ wwv_flow_imp_page.create_page(
 '    color: rgb(30, 58, 138) !important;',
 '}',
 '',
-'#esc {',
+'#esc, #enter {',
 '    display: none;',
 '}',
 '',
@@ -206,34 +241,32 @@ wwv_flow_imp_page.create_page(
 '    width: 100% !important;',
 '}',
 '',
-' /* Hide scrollbar for Chrome, Safari and Opera */',
-'html::-webkit-scrollbar {',
-'  display: none;',
-'}',
-'',
-'/* Hide scrollbar for IE, Edge and Firefox */',
-'html {',
-'  -ms-overflow-style: none;  /* IE and Edge */',
-'  scrollbar-width: none;  /* Firefox */',
-'} ',
-'',
-' /* Hide scrollbar for Chrome, Safari and Opera */',
-'.a-GV-w-scroll::-webkit-scrollbar {',
-'  display: none;',
-'}',
-'',
-'/* Hide scrollbar for IE, Edge and Firefox */',
-'.a-GV-w-scroll {',
-'  -ms-overflow-style: none;  /* IE and Edge */',
-'  scrollbar-width: none;  /* Firefox */',
-'}',
-'',
 '#printing-options .t-DialogRegion-body{',
 '    background-color: #056AC8;',
 '}',
 '',
 '.ui-resizable-s{',
 '    background-color: #056AC8;',
+'}',
+'',
+'.is-selected td{',
+'    background-color: #F5DC1C !important;',
+'}',
+'',
+'.is-focused {',
+'    box-shadow: 0 0 0 1px black inset !important;',
+'}',
+'',
+'.ui-dialog-titlebar-close{',
+'    display: none;',
+'}',
+'',
+'.a-Form-error{',
+'    color: #FFD700;',
+'}',
+'',
+'.icon-irr-sort-desc {',
+'    display: none;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
@@ -243,7 +276,7 @@ wwv_flow_imp_page.create_page(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(25314193024942606)
 ,p_plug_name=>'Buttons'
-,p_plug_display_sequence=>80
+,p_plug_display_sequence=>90
 ,p_plug_grid_row_css_classes=>'buttons-row'
 ,p_plug_grid_column_span=>10
 ,p_plug_display_column=>2
@@ -258,7 +291,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'dba-and-date'
 ,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--noUI:t-Region--scrollBody'
 ,p_plug_template=>wwv_flow_imp.id(4319920360084164)
-,p_plug_display_sequence=>30
+,p_plug_display_sequence=>40
 ,p_plug_grid_column_span=>10
 ,p_plug_display_column=>2
 ,p_location=>null
@@ -273,42 +306,47 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>50
+,p_plug_display_sequence=>60
 ,p_plug_new_grid_row=>false
 ,p_plug_grid_column_span=>4
 ,p_plug_display_column=>2
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'SELECT  TO_CHAR(a.INVOICE_ID, ''000000'') AS INVOICE_NUMBER, ',
-'        a.DATE_CREATED AS INVOICE_DATE,',
-'        TO_CHAR(a.TOTAL_AMOUNT, ''999G999G990D99'') AS AMOUNT',
-'FROM NPT001 a, NPT009 b',
-'WHERE   ',
-'    :P78_DBA IS NOT NULL AND',
-'    :P78_DATE_FROM IS NOT NULL AND',
-'    :P78_DATE_TO IS NOT NULL AND',
-'    a.CUSTOMER_ID = b.CUSTOMER_ID AND',
-'    UPPER(b.DBA) = UPPER(:P78_DBA) AND',
-'    a.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, ''MM/DD/YYYY'') AND',
-'    a.DATE_CREATED <= TO_DATE(:P78_DATE_TO, ''MM/DD/YYYY'')',
-'-- UNION',
-'-- SELECT  TO_CHAR(c.CASH_INVOICE_ID, ''000000'') AS INVOICE_NUMBER, ',
-'--         c.DATE_CREATED AS INVOICE_DATE,',
-'--         TO_CHAR(c.TOTAL_AMOUNT, ''999G999G990D99'') AS AMOUNT',
-'-- FROM NPT033 c, NPT009 d',
-'-- WHERE ',
-'--     :P78_DBA IS NOT NULL AND',
-'--     :P78_DATE_FROM IS NOT NULL AND',
-'--     :P78_DATE_TO IS NOT NULL AND',
-'--     c.CUSTOMER_ID = d.CUSTOMER_ID AND',
-'--     UPPER(d.DBA) = UPPER(:P78_DBA) AND',
-'--     c.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, ''MM/DD/YYYY'') AND',
-'--     c.DATE_CREATED <= TO_DATE(:P78_DATE_TO, ''MM/DD/YYYY'')',
-'',
-'-- SELECT TO_CHAR(1, ''000000'') AS INVOICE_NUMBER,',
-'--        ''09/21/2024'' AS INVOICE_DATE,',
-'--        TO_CHAR(13.90, ''999G999G990D99'') AS AMOUNT',
-'-- FROM DUAL'))
+'WITH my_select AS (    ',
+'    SELECT  INVOICE_ID AS ID,',
+'            ''CH-'' || TRIM( TO_CHAR(a.INVOICE_ID, ''000000'') ) AS INVOICE_NUMBER, ',
+'            TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') AS INVOICE_DATE,',
+'            TO_CHAR(a.TOTAL_AMOUNT, ''999G999G990D99'') AS AMOUNT',
+'    FROM NPT001 a, NPT009 b',
+'    WHERE   ',
+'        :P78_DBA IS NOT NULL AND',
+'        :P78_DATE_FROM IS NOT NULL AND',
+'        :P78_DATE_TO IS NOT NULL AND',
+'        a.CUSTOMER_ID = b.CUSTOMER_ID AND',
+'        UPPER(b.DBA) = UPPER(:P78_DBA) AND',
+'        (a.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, ''MM/DD/YYYY'') OR TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') = :P78_DATE_FROM) AND',
+'        (a.DATE_CREATED <= TO_DATE(:P78_DATE_TO, ''MM/DD/YYYY'') OR TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') = :P78_DATE_TO)',
+'    UNION',
+'    SELECT  CASH_INVOICE_ID AS ID,',
+'            ''CA-'' || TRIM( TO_CHAR(a.CASH_INVOICE_ID, ''000000'') ) AS INVOICE_NUMBER, ',
+'            TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') AS INVOICE_DATE,',
+'            TO_CHAR(a.TOTAL_AMOUNT, ''999G999G990D99'') AS AMOUNT',
+'    FROM NPT033 a, NPT009 b',
+'    WHERE   ',
+'        :P78_DBA IS NOT NULL AND',
+'        :P78_DATE_FROM IS NOT NULL AND',
+'        :P78_DATE_TO IS NOT NULL AND',
+'        a.CUSTOMER_ID = b.CUSTOMER_ID AND',
+'        UPPER(b.DBA) = UPPER(:P78_DBA) AND',
+'        (a.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, ''MM/DD/YYYY'') OR TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') = :P78_DATE_FROM) AND',
+'        (a.DATE_CREATED <= TO_DATE(:P78_DATE_TO, ''MM/DD/YYYY'') OR TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') = :P78_DATE_TO)',
+'    ORDER BY ID DESC',
+')',
+'SELECT ',
+'    INVOICE_NUMBER,',
+'    INVOICE_DATE,',
+'    AMOUNT',
+'FROM my_select'))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P78_DBA,P78_DATE_FROM,P78_DATE_TO'
 ,p_prn_units=>'INCHES'
@@ -375,7 +413,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'INVOICE_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'INVOICE_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Invoice Date'
@@ -385,8 +423,12 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_max_length=>10
-,p_enable_filter=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function( options ) {',
@@ -488,6 +530,7 @@ wwv_flow_imp_page.create_ig_report_view(
  p_id=>wwv_flow_imp.id(30061628897508387)
 ,p_report_id=>wwv_flow_imp.id(30061489325508387)
 ,p_view_type=>'GRID'
+,p_stretch_columns=>true
 ,p_srv_exclude_null_values=>false
 ,p_srv_only_display_columns=>true
 ,p_edit_mode=>false
@@ -499,6 +542,9 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_column_id=>wwv_flow_imp.id(25315058027942615)
 ,p_is_visible=>true
 ,p_is_frozen=>false
+,p_sort_order=>1
+,p_sort_direction=>'DESC'
+,p_sort_nulls=>'FIRST'
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(30063070543508404)
@@ -523,49 +569,33 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_template_options=>'#DEFAULT#'
 ,p_component_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>70
+,p_plug_display_sequence=>80
 ,p_plug_new_grid_row=>false
 ,p_plug_grid_column_span=>4
 ,p_plug_display_column=>7
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'-- SELECT 1 FROM DUAL',
-'',
+'WITH my_select AS (   ',
+'    SELECT ',
+'        TO_CHAR(a.CREDIT_MEMO_ID, ''000000'') AS CM_NUMBER, ',
+'        TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') AS CM_DATE,',
+'        TO_CHAR(a.TOTAL_AMOUNT, ''999G999G990D99'') AS AMOUNT',
+'    FROM NPT015 a, NPT009 b',
+'    WHERE ',
+'        :P78_DBA IS NOT NULL AND',
+'        :P78_DATE_FROM IS NOT NULL AND',
+'        :P78_DATE_TO IS NOT NULL AND',
+'        a.CUSTOMER_ID = b.CUSTOMER_ID AND',
+'        UPPER(b.DBA) = UPPER(:P78_DBA) AND',
+'        (a.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, ''MM/DD/YYYY'') OR TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') = :P78_DATE_FROM) AND',
+'        (a.DATE_CREATED <= TO_DATE(:P78_DATE_TO, ''MM/DD/YYYY'') OR TO_CHAR(a.DATE_CREATED, ''MM/DD/YYYY'') = :P78_DATE_TO)',
+'    ORDER BY CM_NUMBER DESC',
+')',
 'SELECT ',
-'    TO_CHAR(a.CREDIT_MEMO_ID, ''000000'') AS CM_NUMBER, ',
-'    a.DATE_CREATED AS CM_DATE,',
-'    TO_CHAR(a.TOTAL_AMOUNT, ''999G999G990D99'') AS AMOUNT',
-'FROM NPT015 a, NPT009 b',
-'WHERE ',
-'    :P78_DBA IS NOT NULL AND',
-'    :P78_DATE_FROM IS NOT NULL AND',
-'    :P78_DATE_TO IS NOT NULL AND',
-'    a.CUSTOMER_ID = b.CUSTOMER_ID AND',
-'    UPPER(b.DBA) = UPPER(:P78_DBA) AND',
-'    a.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, ''MM/DD/YYYY'') AND',
-'    a.DATE_CREATED <= TO_DATE(:P78_DATE_TO, ''MM/DD/YYYY'')',
-'',
-'-- SELECT ',
-'--         TO_CHAR(e.CREDIT_MEMO_ID, ''000000'') AS CM_NUMBER, ',
-'--         e.DATE_CREATED AS CM_DATE,',
-'--         TO_CHAR(e.TOTAL_AMOUNT, ''999G999G990D99'') AS AMOUNT',
-'-- FROM NPT001 a, NPT009 b, NPT002 c, NPT016 d, NPT015 e',
-'-- WHERE',
-'--     :P78_DBA IS NOT NULL AND',
-'--     :P78_DATE_FROM IS NOT NULL AND',
-'--     :P78_DATE_TO IS NOT NULL AND',
-'--     a.CUSTOMER_ID = b.CUSTOMER_ID AND',
-'--     UPPER(b.DBA) = UPPER(:P78_DBA) AND',
-'--     a.INVOICE_ID = c.INVOICE_ID AND',
-'--     c.ITEM_INVOICE_ID = d.ITEM_INVOICE_ID AND',
-'--     d.REFUND_ID = e.REFUND_ID AND',
-'--     e.DATE_CREATED >= TO_DATE(:P78_DATE_FROM, ''MM/DD/YYYY'') AND',
-'--     e.DATE_CREATED <= TO_DATE(:P78_DATE_TO, ''MM/DD/YYYY'')',
-'',
-'-- SELECT TO_CHAR(1, ''000000'') AS CM_NUMBER,',
-'--        ''09/02/2024'' AS CM_DATE,',
-'--        TO_CHAR(50, ''999G999G990D99'') AS AMOUNT',
-'-- FROM DUAL'))
+'    CM_NUMBER,',
+'    CM_DATE,',
+'    AMOUNT',
+'FROM my_select'))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P78_DBA,P78_DATE_FROM,P78_DATE_TO'
 ,p_prn_units=>'INCHES'
@@ -623,7 +653,7 @@ wwv_flow_imp_page.create_region_column(
 '}'))
 ,p_enable_sort_group=>false
 ,p_enable_hide=>false
-,p_is_primary_key=>false
+,p_is_primary_key=>true
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
 );
@@ -632,7 +662,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'CM_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'CM_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_DATE_PICKER_APEX'
 ,p_heading=>'CM Date'
@@ -646,8 +676,12 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_09=>'N'
 ,p_attribute_11=>'Y'
 ,p_is_required=>true
-,p_enable_filter=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'function( options ) {',
@@ -780,7 +814,7 @@ wwv_flow_imp_page.create_ig_report_column(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(25316061359942625)
 ,p_plug_name=>'Invoices Header'
-,p_plug_display_sequence=>40
+,p_plug_display_sequence=>50
 ,p_plug_grid_column_span=>4
 ,p_plug_display_column=>2
 ,p_location=>null
@@ -792,7 +826,7 @@ wwv_flow_imp_page.create_page_plug(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(25316256414942627)
 ,p_plug_name=>'Credit Memos Header'
-,p_plug_display_sequence=>60
+,p_plug_display_sequence=>70
 ,p_plug_new_grid_row=>false
 ,p_plug_grid_column_span=>4
 ,p_plug_display_column=>7
@@ -809,7 +843,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'printing-options'
 ,p_region_template_options=>'#DEFAULT#:js-dialog-autoheight:js-dialog-size480x320'
 ,p_plug_template=>wwv_flow_imp.id(4296448473084118)
-,p_plug_display_sequence=>90
+,p_plug_display_sequence=>100
 ,p_location=>null
 ,p_ai_enabled=>false
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
@@ -858,9 +892,6 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>P</u> - Print'
 ,p_button_execute_validations=>'N'
 ,p_warn_on_unsaved_changes=>null
-,p_button_condition=>'has_access(:APP_USER, 9, 34) = ''Y'''
-,p_button_condition2=>'PLSQL'
-,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns text-left'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
@@ -891,9 +922,6 @@ wwv_flow_imp_page.create_page_button(
 ,p_button_image_alt=>'<u>H</u> - Export'
 ,p_button_execute_validations=>'N'
 ,p_warn_on_unsaved_changes=>null
-,p_button_condition=>'has_access(:APP_USER, 9, 35) = ''Y'''
-,p_button_condition2=>'PLSQL'
-,p_button_condition_type=>'EXPRESSION'
 ,p_button_css_classes=>'btns text-left'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
@@ -976,15 +1004,54 @@ wwv_flow_imp_page.create_page_button(
 ,p_grid_new_column=>'Y'
 ,p_grid_column_span=>2
 );
+wwv_flow_imp_page.create_page_button(
+ p_id=>wwv_flow_imp.id(58837968367496538)
+,p_button_sequence=>90
+,p_button_plug_id=>wwv_flow_imp.id(25314193024942606)
+,p_button_name=>'Enter'
+,p_button_static_id=>'enter'
+,p_button_action=>'DEFINED_BY_DA'
+,p_button_template_options=>'#DEFAULT#:t-Button--noUI'
+,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
+,p_button_image_alt=>'-'
+,p_warn_on_unsaved_changes=>null
+,p_button_css_classes=>'btns text-left'
+,p_grid_new_row=>'N'
+,p_grid_new_column=>'Y'
+,p_grid_column_span=>2
+);
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(25314415578942609)
 ,p_name=>'P78_DBA'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(25314297244942607)
 ,p_prompt=>'DBA:'
-,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_display_as=>'NATIVE_AUTO_COMPLETE'
+,p_lov=>'SELECT DBA FROM NPT009'
 ,p_cSize=>30
 ,p_colspan=>6
+,p_grid_label_column_span=>1
+,p_field_template=>wwv_flow_imp.id(4382028501084276)
+,p_item_template_options=>'#DEFAULT#'
+,p_is_persistent=>'N'
+,p_lov_display_extra=>'YES'
+,p_attribute_01=>'CONTAINS_IGNORE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'7'
+,p_attribute_09=>'1'
+,p_attribute_10=>'Y'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(25314504179942610)
+,p_name=>'P78_DATE_FROM'
+,p_item_sequence=>10
+,p_item_plug_id=>wwv_flow_imp.id(25314297244942607)
+,p_prompt=>'Date: '
+,p_placeholder=>'MM/DD/YYYY'
+,p_format_mask=>'MM/DD/YYYY'
+,p_display_as=>'NATIVE_TEXT_FIELD'
+,p_cSize=>30
+,p_colspan=>3
 ,p_grid_label_column_span=>1
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
@@ -995,32 +1062,14 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_05=>'BOTH'
 );
 wwv_flow_imp_page.create_page_item(
- p_id=>wwv_flow_imp.id(25314504179942610)
-,p_name=>'P78_DATE_FROM'
-,p_item_sequence=>10
-,p_item_plug_id=>wwv_flow_imp.id(25314297244942607)
-,p_prompt=>'Date: '
-,p_display_as=>'NATIVE_DATE_PICKER_APEX'
-,p_cSize=>30
-,p_colspan=>3
-,p_grid_label_column_span=>1
-,p_field_template=>wwv_flow_imp.id(4382028501084276)
-,p_item_template_options=>'#DEFAULT#'
-,p_is_persistent=>'N'
-,p_attribute_01=>'N'
-,p_attribute_02=>'POPUP'
-,p_attribute_03=>'NONE'
-,p_attribute_06=>'NONE'
-,p_attribute_09=>'N'
-,p_attribute_11=>'Y'
-);
-wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(25314662493942611)
 ,p_name=>'P78_DATE_TO'
 ,p_item_sequence=>10
 ,p_item_plug_id=>wwv_flow_imp.id(25314297244942607)
 ,p_prompt=>'To'
-,p_display_as=>'NATIVE_DATE_PICKER_APEX'
+,p_placeholder=>'MM/DD/YYYY'
+,p_format_mask=>'MM/DD/YYYY'
+,p_display_as=>'NATIVE_TEXT_FIELD'
 ,p_cSize=>30
 ,p_begin_on_new_line=>'N'
 ,p_colspan=>3
@@ -1029,13 +1078,9 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
-,p_attribute_02=>'POPUP'
-,p_attribute_03=>'ITEM'
-,p_attribute_05=>'P78_DATE_FROM'
-,p_attribute_06=>'ITEM'
-,p_attribute_08=>'P78_DATE_TODAY'
-,p_attribute_09=>'N'
-,p_attribute_11=>'Y'
+,p_attribute_02=>'N'
+,p_attribute_04=>'TEXT'
+,p_attribute_05=>'BOTH'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(36261903978538813)
@@ -1051,6 +1096,14 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_is_persistent=>'N'
 ,p_attribute_01=>'N'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(70296426823784917)
+,p_name=>'P78_VALID_DATE'
+,p_item_sequence=>30
+,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
+,p_attribute_01=>'Y'
 );
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(36262001698538814)
@@ -1079,11 +1132,15 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'var isInvoicesSelected = $("#invoices_ig_grid_vc .a-GV-bdy").find(".is-focused").length;',
+'var isInvoicesEmpty = $("#invoices_ig_grid_vc .a-GV-bdy ").find(".a-GV-noDataMsg");',
+'var isCreditMemosEmpty = $("#credit-memos_ig_grid_vc .a-GV-bdy ").find(".a-GV-noDataMsg");',
 'console.log(isInvoicesSelected)',
-'if(isInvoicesSelected >= 1) {',
+'if(isInvoicesSelected >= 1 || isInvoicesEmpty.is('':visible'')) {',
 '    $("#credit-memos_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");',
-'} else {',
+'    $("#invoices_ig_grid_vc .a-GV-bdy .is-selected").removeClass("is-selected");',
+'} else if (isInvoicesSelected <= 0 || isCreditMemosEmpty.is('':visible'')) {',
 '    $("#invoices_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");',
+'    $("#credit-memos_ig_grid_vc .a-GV-bdy .is-selected").removeClass("is-selected");',
 '}'))
 );
 wwv_flow_imp_page.create_page_da_event(
@@ -1095,6 +1152,7 @@ wwv_flow_imp_page.create_page_da_event(
 ,p_bind_type=>'bind'
 ,p_execution_type=>'IMMEDIATE'
 ,p_bind_event_type=>'change'
+,p_required_patch=>wwv_flow_imp.id(4207224469083906)
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(25318110482942646)
@@ -1153,26 +1211,6 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'mapP78KeysMenu();'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(30857827732955707)
-,p_event_id=>wwv_flow_imp.id(30857269991955701)
-,p_event_result=>'TRUE'
-,p_action_sequence=>20
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_imp.id(25314830452942613)
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(30857971514955708)
-,p_event_id=>wwv_flow_imp.id(30857269991955701)
-,p_event_result=>'TRUE'
-,p_action_sequence=>30
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_REFRESH'
-,p_affected_elements_type=>'REGION'
-,p_affected_region_id=>wwv_flow_imp.id(25315388491942618)
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(30857470298955703)
@@ -1261,52 +1299,11 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'var isInvoicesSelected = $("#invoices_ig_grid_vc .a-GV-bdy").find(".is-focused").length;',
-'console.log(isInvoicesSelected)',
 'if(isInvoicesSelected >= 1) {',
 '    focusOnIGLastRecordFirstCell("invoices");',
-'    // $("#credit-memos_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");',
 '} else {',
 '    focusOnIGLastRecordFirstCell("credit-memos");',
-'    // $("#invoices_ig_grid_vc .a-GV-bdy .a-GV-cell").first().trigger("click");',
 '}'))
-);
-wwv_flow_imp_page.create_page_da_event(
- p_id=>wwv_flow_imp.id(30858540374955714)
-,p_name=>'Print'
-,p_event_sequence=>90
-,p_triggering_element_type=>'BUTTON'
-,p_triggering_button_id=>wwv_flow_imp.id(25316920158942634)
-,p_triggering_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_triggering_expression=>'($v(''P78_DBA'').length > 0 && $v(''P78_DATE_FROM'').length > 0 && $v(''P78_DATE_TO'').length > 0);'
-,p_bind_type=>'bind'
-,p_execution_type=>'IMMEDIATE'
-,p_bind_event_type=>'click'
-,p_required_patch=>wwv_flow_imp.id(4207224469083906)
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(30858652486955715)
-,p_event_id=>wwv_flow_imp.id(30858540374955714)
-,p_event_result=>'TRUE'
-,p_action_sequence=>30
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'var c_code = $(''#P78_CUSTOMER_CODE'').val();',
-'console.log($(''#P78_CUSTOMER_CODE'').val())',
-'var d = new Date();',
-'var fileDate = d.getFullYear() + ',
-'    ( (d.getMonth() + 1) >= 10 ? ( d.getMonth() + 1) + "" : "0" + (d.getMonth() + 1)) + ',
-'    (d.getDate >= 10 ? (d.getDate() + "") : "0" + d.getDate() );',
-'',
-'generateReport("SUMMARY_OF_INVOICES_COURIER_NEW_PDF", "pdf", { ',
-'    fileName: c_code+"_Inv_List_"+fileDate+".pdf",',
-'    mode : "print",',
-'    parameters : {',
-'        P_SEARCH_DBA : $v("P78_DBA"),',
-'        P_DATE_FROM : $v("P78_DATE_FROM"),',
-'        P_DATE_TO : $v("P78_DATE_TO")',
-'    }',
-'});'))
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(30858798002955716)
@@ -1360,7 +1357,8 @@ wwv_flow_imp_page.create_page_da_action(
 '        P_SEARCH_DBA : $v("P78_DBA"),',
 '        P_DATE_FROM : $v("P78_DATE_FROM"),',
 '        P_DATE_TO : $v("P78_DATE_TO")',
-'    }',
+'    },',
+'    spinnerEnabled : true',
 '});'))
 );
 wwv_flow_imp_page.create_page_da_event(
@@ -1518,6 +1516,140 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>'mapP78KeysMenu();'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(58837762575496536)
+,p_name=>'Focus on DBA Page Load'
+,p_event_sequence=>140
+,p_bind_type=>'bind'
+,p_bind_event_type=>'ready'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(58837845696496537)
+,p_event_id=>wwv_flow_imp.id(58837762575496536)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_FOCUS'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P78_DBA'
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(58838056083496539)
+,p_name=>'Enter Click'
+,p_event_sequence=>150
+,p_triggering_element_type=>'BUTTON'
+,p_triggering_button_id=>wwv_flow_imp.id(58837968367496538)
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'click'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70296523723784918)
+,p_event_id=>wwv_flow_imp.id(58838056083496539)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_SET_VALUE'
+,p_affected_elements_type=>'ITEM'
+,p_affected_elements=>'P78_VALID_DATE'
+,p_attribute_01=>'FUNCTION_BODY'
+,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'IF ( TO_DATE(:P78_DATE_FROM, ''MM/DD/YYYY'') <= TO_DATE(:P78_DATE_TO, ''MM/DD/YYYY'') ) THEN',
+'    RETURN ''TRUE'';',
+'ELSE',
+'    RETURN ''FALSE'';',
+'END IF;',
+'exception when others then return ''FALSE'';'))
+,p_attribute_07=>'P78_DATE_FROM,P78_DATE_TO'
+,p_attribute_08=>'Y'
+,p_attribute_09=>'N'
+,p_wait_for_result=>'Y'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(69541269900893521)
+,p_event_id=>wwv_flow_imp.id(58838056083496539)
+,p_event_result=>'TRUE'
+,p_action_sequence=>40
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'if( $v("P78_VALID_DATE") == "TRUE" ){',
+'    $.event.trigger("dateTrue"); ',
+'} else {',
+'    $.event.trigger("dateFalse"); ',
+'}'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(70296679414784919)
+,p_name=>'Date Valid True'
+,p_event_sequence=>160
+,p_triggering_element_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_element=>'document'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'custom'
+,p_bind_event_type_custom=>'dateTrue'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70296791248784920)
+,p_event_id=>wwv_flow_imp.id(70296679414784919)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(25314830452942613)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70296846452784921)
+,p_event_id=>wwv_flow_imp.id(70296679414784919)
+,p_event_result=>'TRUE'
+,p_action_sequence=>20
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_REFRESH'
+,p_affected_elements_type=>'REGION'
+,p_affected_region_id=>wwv_flow_imp.id(25315388491942618)
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70296911995784922)
+,p_event_id=>wwv_flow_imp.id(70296679414784919)
+,p_event_result=>'TRUE'
+,p_action_sequence=>30
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'setTimeout(() => {',
+'    $( document ).ready(function() {',
+'        $(".a-GV-cell").first().trigger("click");',
+'    });',
+'}, "500");',
+'',
+'$("#P78_DATE_FROM, P78_DATE_TO").removeClass("apex-page-item-error");',
+'$("#P78_DATE_FROM_error_placeholder, #P78_DATE_TO_error_placeholder").addClass("u-hidden");'))
+);
+wwv_flow_imp_page.create_page_da_event(
+ p_id=>wwv_flow_imp.id(70297037551784923)
+,p_name=>'Date Valid False'
+,p_event_sequence=>170
+,p_triggering_element_type=>'JAVASCRIPT_EXPRESSION'
+,p_triggering_element=>'document'
+,p_bind_type=>'bind'
+,p_execution_type=>'IMMEDIATE'
+,p_bind_event_type=>'custom'
+,p_bind_event_type_custom=>'dateFalse'
+);
+wwv_flow_imp_page.create_page_da_action(
+ p_id=>wwv_flow_imp.id(70297450594784927)
+,p_event_id=>wwv_flow_imp.id(70297037551784923)
+,p_event_result=>'TRUE'
+,p_action_sequence=>10
+,p_execute_on_page_init=>'N'
+,p_action=>'NATIVE_JAVASCRIPT_CODE'
+,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'$("#P78_DATE_FROM, P78_DATE_TO").addClass("apex-page-item-error");',
+'$("#P78_DATE_FROM_error_placeholder, #P78_DATE_TO_error_placeholder").removeClass("u-hidden");',
+'$("#P78_DATE_FROM_error_placeholder, #P78_DATE_TO_error_placeholder").html("Invalid Date.");'))
 );
 wwv_flow_imp.component_end;
 end;

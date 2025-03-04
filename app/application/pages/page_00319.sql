@@ -223,6 +223,15 @@ wwv_flow_imp_page.create_page(
 '',
 '.a-GV-header-sort {',
 '    display: none;',
+'}',
+'',
+'.a-GV-table tr.is-selected {',
+'    --a-gv-background-color: #F5DC1C;',
+'}',
+'',
+'.a-GV-table .a-GV-cell.is-focused',
+'{',
+'    box-shadow: inset 0 0 0 1px black;',
 '}'))
 ,p_step_template=>wwv_flow_imp.id(5671392681337017)
 ,p_page_template_options=>'#DEFAULT#'
@@ -234,7 +243,7 @@ wwv_flow_imp_page.create_page_plug(
 ,p_plug_name=>'Search Input'
 ,p_region_template_options=>'#DEFAULT#:t-Region--removeHeader js-removeLandmark:t-Region--noUI:t-Region--hiddenOverflow:t-Form--leftLabels:margin-top-sm:margin-left-sm'
 ,p_plug_template=>wwv_flow_imp.id(4319920360084164)
-,p_plug_display_sequence=>50
+,p_plug_display_sequence=>60
 ,p_location=>null
 ,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
   'expand_shortcuts', 'N',
@@ -247,48 +256,142 @@ wwv_flow_imp_page.create_page_plug(
 ,p_region_name=>'table'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4267456689084067)
-,p_plug_display_sequence=>60
+,p_plug_display_sequence=>70
 ,p_plug_grid_column_span=>10
 ,p_plug_display_column=>2
 ,p_query_type=>'SQL'
 ,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT ',
-'    ROWNUM AS "Primary Key",',
-'    npt020.GIFT_CERTIFICATE_ID AS "GC_NO",',
-'    npt020.ISSUE_DATE AS "ISSUE_DATE",',
-'    npt020.EXPIRY_DATE AS "EXPIRY_DATE",',
+'    CASE ',
+'        WHEN (:P319_RECIPIENT IS NOT NULL OR :P319_RECIPIENT != '''') AND (:P319_EVENT IS NOT NULL OR :P319_EVENT != '''') THEN',
+'            CASE ',
+'                WHEN UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) = UPPER(:P319_EVENT) THEN 1 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) LIKE UPPER(:P319_EVENT) || ''%'' THEN 2 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) THEN 3 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) || ''%'' THEN 4 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE UPPER(:P319_RECIPIENT) || ''%'' AND UPPER(npt020.EVENT) = UPPER(:P319_EVENT) THEN 5 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) = UPPER(:P319_EVENT) THEN 6 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) || ''%'' AND UPPER(npt020.EVENT) = UPPER(:P319_EVENT) THEN 7 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE UPPER(:P319_RECIPIENT) || ''%'' AND UPPER(npt020.EVENT) LIKE UPPER(:P319_EVENT) || ''%'' THEN 8 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) THEN 9 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) || ''%'' AND UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) || ''%'' THEN 10 || npt020.GIFT_CERTIFICATE_ID',
+'            END',
+'        WHEN (:P319_RECIPIENT IS NOT NULL OR :P319_RECIPIENT != '''') AND (:P319_EVENT IS NULL OR :P319_EVENT = '''') THEN',
+'            CASE ',
+'                WHEN UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) THEN 11 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE UPPER(:P319_RECIPIENT) || ''%'' THEN 12 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) THEN 13 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) || ''%'' THEN 14 || npt020.GIFT_CERTIFICATE_ID',
+'            END',
+'        WHEN (:P319_RECIPIENT IS NULL OR :P319_RECIPIENT = '''') AND (:P319_EVENT IS NOT NULL OR :P319_EVENT != '''') THEN',
+'            CASE',
+'                WHEN UPPER(npt020.EVENT) = UPPER(:P319_EVENT) THEN 15 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.EVENT) LIKE UPPER(:P319_EVENT) || ''%'' THEN 16 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) THEN 17 || npt020.GIFT_CERTIFICATE_ID',
+'                WHEN UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) || ''%'' THEN 18 || npt020.GIFT_CERTIFICATE_ID',
+'            END',
+'        WHEN (:P319_RECIPIENT IS NULL OR :P319_RECIPIENT = '''') AND (:P319_EVENT IS NULL OR :P319_EVENT = '''') THEN ',
+'                TO_CHAR(npt020.GIFT_CERTIFICATE_ID - 100000000000)',
+'    END AS "Primary Key",',
+'    npt020.DONATION_GC_NO AS "GC_NO",',
+'    TO_CHAR(npt020.ISSUE_DATE, ''MM/DD/YYYY'') AS "ISSUE_DATE",',
+'    TO_CHAR(npt020.EXPIRY_DATE, ''MM/DD/YYYY'') AS "EXPIRY_DATE",',
 '    npt020.RECIPIENT AS "RECIPIENT",',
 '    npt020.EVENT AS "EVENT",',
-'    npt020.AMOUNT AS "AMOUNT"',
+'    CASE ',
+'        WHEN npt020.AMOUNT = 0 THEN ''0.00''',
+'        ELSE TO_CHAR(npt020.AMOUNT, ''999,999,999.00'')',
+'    END AS "AMOUNT"',
 'FROM',
 '    NPT020 npt020',
-'WHERE ',
-'',
-'    -- SEARCH BY YEAR, RECIPIENT, AND EVENT',
-'       ((:P319_ISSUE_YR IS NOT NULL OR :P319_ISSUE_YR != '''') AND (:P319_RECIPIENT IS NOT NULL OR :P319_RECIPIENT != '''') AND (:P319_EVENT IS NOT NULL OR :P319_EVENT != '''')) AND',
-'        (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
-'        npt020.RECIPIENT = :P319_RECIPIENT AND',
-'        npt020.EVENT = :P319_EVENT)',
-'',
-'    OR',
-'',
-'    -- SEARCH BY YEAR and RECIPIENT',
-'       ((:P319_ISSUE_YR IS NOT NULL OR :P319_ISSUE_YR != '''') AND (:P319_RECIPIENT IS NOT NULL OR :P319_RECIPIENT != '''') AND (:P319_EVENT IS NULL OR :P319_EVENT = '''')) AND',
-'        (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
-'        npt020.RECIPIENT = :P319_RECIPIENT)',
-'',
-'    OR',
-'',
-'    -- SEARCH BY YEAR and EVENT',
-'       ((:P319_ISSUE_YR IS NOT NULL OR :P319_ISSUE_YR != '''') AND (:P319_RECIPIENT IS NULL OR :P319_RECIPIENT = '''') AND (:P319_EVENT IS NOT NULL OR :P319_EVENT != '''')) AND',
-'        (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
-'        npt020.EVENT = :P319_EVENT)',
-'    ',
-'    OR',
-'',
-'    -- else, check if SEARCH BY ISSUE YEAR',
-'    ((:P319_ISSUE_YR IS NOT NULL OR :P319_ISSUE_YR != '''')  AND (:P319_RECIPIENT IS NULL OR :P319_RECIPIENT = '''') AND (:P319_EVENT IS NULL OR :P319_EVENT = '''')) AND',
-'        extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR;'))
+'JOIN ',
+'    NPM013 npm013 ON npt020.GC_TYPE_ID = npm013.GC_TYPE_ID',
+'WHERE',
+'    npm013.DONATION = ''Y'' AND',
+'    (',
+'        (',
+'            -- BOTH ARE NOT NULL',
+'            (:P319_RECIPIENT IS NOT NULL OR :P319_RECIPIENT != '''') ',
+'            AND (:P319_EVENT IS NOT NULL OR :P319_EVENT != '''')',
+'            AND (',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) = UPPER(:P319_EVENT))',
+'                OR ',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) LIKE UPPER(:P319_EVENT) || ''%'')',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) || ''%'')',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE UPPER(:P319_RECIPIENT) || ''%'' AND UPPER(npt020.EVENT) = UPPER(:P319_EVENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) = UPPER(:P319_EVENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) || ''%'' AND UPPER(npt020.EVENT) = UPPER(:P319_EVENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE UPPER(:P319_RECIPIENT) || ''%'' AND UPPER(npt020.EVENT) LIKE UPPER(:P319_EVENT) || ''%'')',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) AND UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) || ''%'' AND UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) || ''%'')',
+'            )',
+'        )',
+'        OR',
+'        (',
+'            -- RECIPIENT ONLY',
+'            (:P319_RECIPIENT IS NOT NULL OR :P319_RECIPIENT != '''') ',
+'            AND (:P319_EVENT IS NULL OR :P319_EVENT = '''')',
+'            AND (',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) = UPPER(:P319_RECIPIENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE UPPER(:P319_RECIPIENT) || ''%'')',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.RECIPIENT) LIKE ''%'' || UPPER(:P319_RECIPIENT) || ''%'')',
+'            )',
+'        )',
+'        OR',
+'        (',
+'            -- EVENT ONLY',
+'            (:P319_RECIPIENT IS NULL OR :P319_RECIPIENT = '''') ',
+'            AND (:P319_EVENT IS NOT NULL OR :P319_EVENT != '''')',
+'            AND (',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.EVENT) = UPPER(:P319_EVENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.EVENT) LIKE UPPER(:P319_EVENT) || ''%'')',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT))',
+'                OR',
+'                (extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR AND ',
+'                UPPER(npt020.EVENT) LIKE ''%'' || UPPER(:P319_EVENT) || ''%'')',
+'            )',
+'        )',
+'        OR',
+'        (',
+'            -- BOTH ARE NULL',
+'            (:P319_RECIPIENT IS NULL OR :P319_RECIPIENT = '''') ',
+'            AND (:P319_EVENT IS NULL OR :P319_EVENT = '''')',
+'            AND extract(year from npt020.ISSUE_DATE) = :P319_ISSUE_YR',
+'        )',
+'    )',
+''))
 ,p_plug_source_type=>'NATIVE_IG'
 ,p_ajax_items_to_submit=>'P319_ISSUE_YR,P319_RECIPIENT,P319_EVENT'
 ,p_prn_units=>'INCHES'
@@ -361,16 +464,25 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'Primary Key'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'Primary Key'
-,p_data_type=>'NUMBER'
-,p_session_state_data_type=>'VARCHAR2'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
-,p_item_type=>'NATIVE_HIDDEN'
+,p_item_type=>'NATIVE_TEXT_FIELD'
+,p_heading_alignment=>'LEFT'
 ,p_display_sequence=>10
-,p_attribute_01=>'Y'
+,p_value_alignment=>'LEFT'
+,p_attribute_05=>'BOTH'
+,p_is_required=>false
+,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
+,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
-,p_enable_sort_group=>false
-,p_is_primary_key=>true
+,p_enable_sort_group=>true
+,p_enable_control_break=>true
+,p_enable_hide=>true
+,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>false
 );
@@ -414,7 +526,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'AMOUNT'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'AMOUNT'
-,p_data_type=>'NUMBER'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_NUMBER_FIELD'
 ,p_heading=>'Amount'
@@ -425,7 +537,9 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_04=>'decimal'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
+,p_filter_text_case=>'MIXED'
 ,p_filter_lov_type=>'NONE'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -447,7 +561,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'EXPIRY_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'EXPIRY_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Expiry Date'
@@ -457,8 +571,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -500,9 +616,8 @@ wwv_flow_imp_page.create_region_column(
 '    };',
 '    return options;',
 '}'))
-,p_enable_sort_group=>true
-,p_enable_control_break=>true
-,p_enable_hide=>true
+,p_enable_sort_group=>false
+,p_enable_hide=>false
 ,p_is_primary_key=>false
 ,p_duplicate_value=>true
 ,p_include_in_export=>true
@@ -512,7 +627,7 @@ wwv_flow_imp_page.create_region_column(
 ,p_name=>'ISSUE_DATE'
 ,p_source_type=>'DB_COLUMN'
 ,p_source_expression=>'ISSUE_DATE'
-,p_data_type=>'DATE'
+,p_data_type=>'VARCHAR2'
 ,p_is_query_only=>false
 ,p_item_type=>'NATIVE_TEXT_FIELD'
 ,p_heading=>'Issue Date'
@@ -522,8 +637,10 @@ wwv_flow_imp_page.create_region_column(
 ,p_attribute_05=>'BOTH'
 ,p_is_required=>true
 ,p_enable_filter=>true
+,p_filter_operators=>'C:S:CASE_INSENSITIVE:REGEXP'
 ,p_filter_is_required=>false
-,p_filter_date_ranges=>'ALL'
+,p_filter_text_case=>'MIXED'
+,p_filter_exact_match=>true
 ,p_filter_lov_type=>'DISTINCT'
 ,p_use_as_row_header=>false
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -614,8 +731,11 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_view_id=>wwv_flow_imp.id(74391890136044271)
 ,p_display_seq=>6
 ,p_column_id=>wwv_flow_imp.id(32481758719104125)
-,p_is_visible=>true
+,p_is_visible=>false
 ,p_is_frozen=>false
+,p_sort_order=>1
+,p_sort_direction=>'ASC'
+,p_sort_nulls=>'LAST'
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(55715855226331836)
@@ -648,9 +768,6 @@ wwv_flow_imp_page.create_ig_report_column(
 ,p_column_id=>wwv_flow_imp.id(82014675769514183)
 ,p_is_visible=>true
 ,p_is_frozen=>false
-,p_sort_order=>1
-,p_sort_direction=>'DESC'
-,p_sort_nulls=>'LAST'
 );
 wwv_flow_imp_page.create_ig_report_column(
  p_id=>wwv_flow_imp.id(82586796674169037)
@@ -663,7 +780,7 @@ wwv_flow_imp_page.create_ig_report_column(
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(74327371703561176)
 ,p_plug_name=>'Buttons'
-,p_plug_display_sequence=>70
+,p_plug_display_sequence=>80
 ,p_plug_grid_row_css_classes=>'buttons-row ml-3'
 ,p_location=>null
 ,p_ai_enabled=>false
@@ -827,6 +944,13 @@ wwv_flow_imp_page.create_page_item(
 ,p_display_as=>'NATIVE_HIDDEN'
 ,p_attribute_01=>'Y'
 );
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(77935883811036542)
+,p_name=>'P319_IS_DONATION'
+,p_item_sequence=>50
+,p_display_as=>'NATIVE_HIDDEN'
+,p_attribute_01=>'Y'
+);
 wwv_flow_imp_page.create_page_computation(
  p_id=>wwv_flow_imp.id(32482288693104130)
 ,p_computation_sequence=>10
@@ -880,6 +1004,15 @@ wwv_flow_imp_page.create_page_computation(
 ,p_computation_type=>'EXPRESSION'
 ,p_computation_language=>'PLSQL'
 ,p_computation=>'Null'
+);
+wwv_flow_imp_page.create_page_computation(
+ p_id=>wwv_flow_imp.id(77935911252036543)
+,p_computation_sequence=>70
+,p_computation_item=>'P319_IS_DONATION'
+,p_computation_point=>'BEFORE_BOX_BODY'
+,p_computation_type=>'EXPRESSION'
+,p_computation_language=>'PLSQL'
+,p_computation=>'''Y'''
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(27797033566719112)
@@ -1007,11 +1140,11 @@ wwv_flow_imp_page.create_page_da_action(
 'BEGIN',
 '    :P319_PREPARED_URL := apex_page.get_url(',
 '       p_page   => 314,',
-'       p_items  => ''P314_GET_SELECTED_GC_NO'',',
-'       p_values => :P319_SELECTED_GC_NO',
+'       p_items  => ''P314_GET_SELECTED_GC_NO,P314_IS_DONATION'',',
+'       p_values => :P319_SELECTED_GC_NO || '','' || :P319_IS_DONATION',
 '     );',
 'END;'))
-,p_attribute_02=>'P319_SELECTED_GC_NO'
+,p_attribute_02=>'P319_SELECTED_GC_NO,P319_IS_DONATION'
 ,p_attribute_03=>'P319_PREPARED_URL'
 ,p_attribute_04=>'N'
 ,p_attribute_05=>'PLSQL'
@@ -1072,9 +1205,9 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'BEGIN',
 '    :P319_PREPARED_URL := apex_page.get_url(',
-'       p_page   => 318',
-'    --    p_items  => ''P314_GET_SELECTED_GC_NO'',',
-'    --    p_values => :P316_SELECTED_GC_NO',
+'       p_page   => 318,',
+'       p_items  => ''P318_FROM_PAGE'',',
+'       p_values => ''DONATION''',
 '     );',
 'END;'))
 ,p_attribute_03=>'P319_PREPARED_URL'

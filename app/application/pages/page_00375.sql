@@ -16,13 +16,16 @@ wwv_flow_imp_page.create_page(
 ,p_name=>'Reservation Customer Details'
 ,p_alias=>'RESERVATION-CUSTOMER-DETAILS'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Reservation Customer Details'
+,p_step_title=>'Customer Details'
 ,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'const p7KeyMap = {',
 '    enter: (v) => {',
 '        $("#enter").trigger("click");',
+'    },',
+'    escape: (v) => {',
+'        $("#esc").trigger("click");',
 '    }',
 '}',
 '',
@@ -70,7 +73,10 @@ wwv_flow_imp_page.create_page(
 '// Fax number validation',
 'setInputFilter($("#P375_FAX_NUMBER"), function(value) {',
 '    return /^(\d{0,3}|\d{3}-|\d{3}-\d{0,3}|\d{3}-\d{0,3}-|\d{3}-\d{3}-\d{0,4})$/.test(value);',
-'}, "Invalid input.");'))
+'}, "Invalid input.");',
+'',
+'',
+'document.getElementById("P375_POINT_PERSON").focus();'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.t-Dialog-header {',
 '    background-color: #056AC8;',
@@ -128,46 +134,35 @@ wwv_flow_imp_page.create_page(
 '.error-msg {',
 '    color: red;',
 '    font-size: 0.75rem;',
+'    font-weight: 600;',
 '    padding-left: 0.7rem;',
 '    padding-bottom: 0.5rem;',
 '}',
 '',
-'#P375_CUSTOMER_DBA,',
-'#P375_CONTACT_PERSON,',
+'#P375_POINT_PERSON,',
 '#P375_TELEPHONE_NUMBER,',
 '#P375_FAX_NUMBER,',
 '#P375_EMAIL {',
+'    font-size: 1.125rem;',
+'}',
+'',
+'#P375_CUSTOMER_DBA > input {',
 '    font-size: 1.125rem;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
 ,p_dialog_width=>'420px'
 ,p_dialog_max_width=>'420px'
+,p_dialog_attributes=>'closeOnEscape:false'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'02'
 );
 wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(100581766490220588)
-,p_plug_name=>'Title'
-,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--removeHeader js-removeLandmark:t-Region--noUI:t-Region--hiddenOverflow'
-,p_plug_template=>wwv_flow_imp.id(4319920360084164)
-,p_plug_display_sequence=>10
-,p_plug_display_point=>'REGION_POSITION_01'
-,p_location=>null
-,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<span>',
-'    <text style="display: block; height: 1.6rem;">Customer Details</text>',
-'</span>'))
-,p_ai_enabled=>false
-,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
-  'expand_shortcuts', 'N',
-  'output_as', 'HTML')).to_clob
-);
-wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(100701111378048069)
-,p_plug_name=>'Reservation Search'
+,p_plug_name=>'Customer Details'
+,p_region_name=>'details'
 ,p_region_template_options=>'#DEFAULT#'
 ,p_plug_template=>wwv_flow_imp.id(4329702440084182)
-,p_plug_display_sequence=>20
+,p_plug_display_sequence=>30
 ,p_query_type=>'TABLE'
 ,p_query_table=>'NPT009'
 ,p_include_rowid_column=>false
@@ -197,7 +192,7 @@ wwv_flow_imp_page.create_page_plug(
 );
 wwv_flow_imp_page.create_page_button(
  p_id=>wwv_flow_imp.id(41329151978926718)
-,p_button_sequence=>90
+,p_button_sequence=>80
 ,p_button_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_button_name=>'SEARCH_BTN'
 ,p_button_static_id=>'enter'
@@ -210,15 +205,16 @@ wwv_flow_imp_page.create_page_button(
 ,p_grid_new_row=>'Y'
 );
 wwv_flow_imp_page.create_page_button(
- p_id=>wwv_flow_imp.id(41328706015926717)
-,p_button_sequence=>100
+ p_id=>wwv_flow_imp.id(61723681210086215)
+,p_button_sequence=>90
 ,p_button_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_button_name=>'CLOSE_BTN'
-,p_button_action=>'DEFINED_BY_DA'
+,p_button_static_id=>'esc'
+,p_button_action=>'REDIRECT_PAGE'
 ,p_button_template_options=>'#DEFAULT#:t-Button--stretch'
 ,p_button_template_id=>wwv_flow_imp.id(4384771944084285)
-,p_button_image_alt=>'Close Btn'
-,p_warn_on_unsaved_changes=>null
+,p_button_image_alt=>'Close'
+,p_button_redirect_url=>'f?p=&APP_ID.:370:&SESSION.::&DEBUG.:::'
 ,p_grid_column_css_classes=>'hide'
 ,p_grid_new_row=>'N'
 ,p_grid_new_column=>'Y'
@@ -227,7 +223,7 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(40130935879188932)
 ,p_name=>'P375_FAX_NUMBER'
 ,p_source_data_type=>'DATE'
-,p_item_sequence=>70
+,p_item_sequence=>60
 ,p_item_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_item_source_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_prompt=>'<span style="padding-left:4rem">Fax Number:</span>'
@@ -248,7 +244,7 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(40131014500188933)
 ,p_name=>'P375_EMAIL'
 ,p_source_data_type=>'DATE'
-,p_item_sequence=>80
+,p_item_sequence=>70
 ,p_item_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_item_source_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_prompt=>'<span style="padding-left:7.5rem">Email:</span>'
@@ -269,7 +265,7 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(81459809477115644)
 ,p_name=>'P375_POINT_PERSON'
 ,p_source_data_type=>'DATE'
-,p_item_sequence=>50
+,p_item_sequence=>40
 ,p_item_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_item_source_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_prompt=>'<span style="padding-left:3.8rem">Point Person:</span>'
@@ -292,27 +288,26 @@ wwv_flow_imp_page.create_page_item(
 ,p_item_sequence=>20
 ,p_item_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_prompt=>'<span style="padding-left:2.35rem">Customer DBA<span style="color:red;">*</span>:</span>'
-,p_display_as=>'NATIVE_POPUP_LOV'
+,p_display_as=>'NATIVE_AUTO_COMPLETE'
 ,p_lov=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'SELECT DBA',
 'FROM NPT009'))
-,p_lov_display_null=>'YES'
 ,p_cSize=>30
 ,p_cMaxlength=>40
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'#DEFAULT#'
 ,p_is_persistent=>'N'
 ,p_lov_display_extra=>'YES'
-,p_attribute_01=>'POPUP'
-,p_attribute_02=>'FIRST_ROWSET'
-,p_attribute_04=>'N'
-,p_attribute_05=>'Y'
-,p_attribute_06=>'0'
+,p_attribute_01=>'EXACT_IGNORE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'7'
+,p_attribute_09=>'1'
+,p_attribute_10=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(100707009707048141)
 ,p_name=>'P375_TELEPHONE_NUMBER'
-,p_item_sequence=>60
+,p_item_sequence=>50
 ,p_item_plug_id=>wwv_flow_imp.id(100701111378048069)
 ,p_prompt=>'<span style="padding-left:0rem">Telephone Number<span style="color:red;">*</span>:</span>'
 ,p_display_as=>'NATIVE_TEXT_FIELD'
@@ -325,24 +320,6 @@ wwv_flow_imp_page.create_page_item(
 ,p_attribute_02=>'N'
 ,p_attribute_04=>'TEXT'
 ,p_attribute_05=>'BOTH'
-);
-wwv_flow_imp_page.create_page_da_event(
- p_id=>wwv_flow_imp.id(41335416976926748)
-,p_name=>'Cancel Dialog'
-,p_event_sequence=>10
-,p_triggering_element_type=>'BUTTON'
-,p_triggering_button_id=>wwv_flow_imp.id(41328706015926717)
-,p_bind_type=>'bind'
-,p_execution_type=>'IMMEDIATE'
-,p_bind_event_type=>'click'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(41335909165926750)
-,p_event_id=>wwv_flow_imp.id(41335416976926748)
-,p_event_result=>'TRUE'
-,p_action_sequence=>10
-,p_execute_on_page_init=>'N'
-,p_action=>'NATIVE_DIALOG_CANCEL'
 );
 wwv_flow_imp_page.create_page_da_event(
  p_id=>wwv_flow_imp.id(41333150127926745)
@@ -379,7 +356,8 @@ wwv_flow_imp_page.create_page_da_action(
 '    errorArea4.style.display = "none"',
 '    document.getElementById("P375_CUSTOMER_DBA").focus();',
 '    return false;',
-'}'))
+'}',
+''))
 );
 wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(41335005996926748)
@@ -449,7 +427,7 @@ wwv_flow_imp_page.create_page_da_action(
 'var errorArea3 = document.getElementById("errorArea3")',
 'var errorArea4 = document.getElementById("errorArea4")',
 '',
-'var regex = /^(\d{0,3}|\d{3}-|\d{3}-\d{0,3}|\d{3}-\d{0,3}-|\d{3}-\d{3}-\d{0,4})$/;',
+'var regex = /^(\d{3}-\d{3}-\d{4})$/;',
 '',
 'if (!regex.test(telNo)) {',
 '    errorArea.style.display = "none";',
@@ -477,7 +455,7 @@ wwv_flow_imp_page.create_page_da_action(
 'var errorArea3 = document.getElementById("errorArea3")',
 'var errorArea4 = document.getElementById("errorArea4")',
 '',
-'var regex = /^(\d{0,3}|\d{3}-|\d{3}-\d{0,3}|\d{3}-\d{0,3}-|\d{3}-\d{3}-\d{0,4})$/;',
+'var regex = /^(\d{3}-\d{3}-\d{4})$/;',
 '',
 'if (faxNo.length > 0 && !regex.test(faxNo)) {',
 '    errorArea.style.display = "none";',
@@ -493,7 +471,7 @@ wwv_flow_imp_page.create_page_da_action(
  p_id=>wwv_flow_imp.id(41334040545926746)
 ,p_event_id=>wwv_flow_imp.id(41333150127926745)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>70
+,p_action_sequence=>80
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_DIALOG_CLOSE'
 ,p_attribute_01=>'P375_CUSTOMER_DBA,P375_POINT_PERSON,P375_TELEPHONE_NUMBER,P375_FAX_NUMBER,P375_EMAIL'
@@ -513,7 +491,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_event_id=>wwv_flow_imp.id(42996420895872707)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>10
-,p_execute_on_page_init=>'Y'
+,p_execute_on_page_init=>'N'
 ,p_name=>'Set Point Person'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
@@ -558,7 +536,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_event_id=>wwv_flow_imp.id(42996420895872707)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>20
-,p_execute_on_page_init=>'Y'
+,p_execute_on_page_init=>'N'
 ,p_name=>'Set Tel No'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
@@ -603,7 +581,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_event_id=>wwv_flow_imp.id(42996420895872707)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>30
-,p_execute_on_page_init=>'Y'
+,p_execute_on_page_init=>'N'
 ,p_name=>'Set Fax No'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
@@ -648,7 +626,7 @@ wwv_flow_imp_page.create_page_da_action(
 ,p_event_id=>wwv_flow_imp.id(42996420895872707)
 ,p_event_result=>'TRUE'
 ,p_action_sequence=>40
-,p_execute_on_page_init=>'Y'
+,p_execute_on_page_init=>'N'
 ,p_name=>'Set Email'
 ,p_action=>'NATIVE_SET_VALUE'
 ,p_affected_elements_type=>'ITEM'
@@ -704,10 +682,11 @@ wwv_flow_imp_page.create_page_process(
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(41332701976926743)
-,p_process_sequence=>50
+,p_process_sequence=>80
 ,p_process_point=>'AFTER_SUBMIT'
 ,p_process_type=>'NATIVE_CLOSE_WINDOW'
 ,p_process_name=>'Close Dialog'
+,p_attribute_02=>'Y'
 ,p_error_display_location=>'INLINE_IN_NOTIFICATION'
 ,p_process_when=>'CREATE,SAVE,DELETE'
 ,p_process_when_type=>'REQUEST_IN_CONDITION'

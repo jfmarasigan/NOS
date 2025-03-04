@@ -13,10 +13,10 @@ wwv_flow_imp.component_begin (
 );
 wwv_flow_imp_page.create_page(
  p_id=>376
-,p_name=>'Reservation Change Expiry Date'
+,p_name=>'Reservation New Expiry Date'
 ,p_alias=>'RESERVATION-CHANGE-EXPIRY-DATE'
 ,p_page_mode=>'MODAL'
-,p_step_title=>'Reservation Change Expiry Date'
+,p_step_title=>'Change Expiry Date'
 ,p_first_item=>'AUTO_FIRST_ITEM'
 ,p_autocomplete_on_off=>'OFF'
 ,p_javascript_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -35,20 +35,49 @@ wwv_flow_imp_page.create_page(
 '            p7KeyMap[key]();',
 '        }',
 '    });',
+'}',
+'',
+'function highlightValue() {',
+'    const inputFieldIds = ["P376_NEW_EXPIRY_DATE"];',
+'',
+'    inputFieldIds.forEach((fieldId) => {',
+'        $(`#${fieldId}`).on("focus", function() {',
+'            $(this).select();',
+'        });',
+'    })',
 '}'))
 ,p_javascript_code_onload=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'mapP7Keys();',
 '',
-'',
 '// MM/DD/YYYY validation',
-'setInputFilter($("#P376_NEW_EXPIRY_DATE"), function(value) {',
-'    return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only',
-'}, "Invalid input. Date should be in MM/DD/YYYY format.");',
+'// setInputFilter($("#P376_NEW_EXPIRY_DATE"), function(value) {',
+'//     return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,2}|\d{0,2}\/\d{0,2}\/|\d{0,2}\/\d{0,2}\/\d{0,4}))$/.test(value); // numbers only',
+'// }, "Invalid input. Date should be in MM/DD/YYYY format.");',
 '',
-'// MM/YYYY validation',
-'// setInputFilter($("#P374_MONTH_DATE"), function(value) {',
-'//     return /^((\d{0,2}|\d{0,2}\/|\d{0,2}\/\d{0,4}))$/.test(value); // numbers only',
-'// }, "Invalid input. Date should be in MM/YYYY format.");'))
+'highlightValue();',
+'',
+'const fullDate = [''P376_NEW_EXPIRY_DATE''];',
+'',
+'fullDate.forEach((fieldId) => {',
+'  const dateField = document.getElementById(fieldId);',
+'',
+'  dateField.addEventListener(''input'', function () {',
+'    let value = dateField.value.replace(/\D/g, '''');',
+'',
+'    if (value.length > 2) {',
+'      value = value.substring(0, 2) + ''/'' + value.substring(2);',
+'    }',
+'    if (value.length > 5) {',
+'      value = value.substring(0, 5) + ''/'' + value.substring(5, 9);',
+'    }',
+'',
+'    if (value.length > 10) {',
+'      value = value.substring(0, 10);',
+'    }',
+'',
+'    dateField.value = value;',
+'  });',
+'});'))
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '.t-Dialog-header {',
 '    /* background-color: #056BC9; */',
@@ -107,13 +136,13 @@ wwv_flow_imp_page.create_page(
 '.error-msg {',
 '    color: red;',
 '    font-size: 0.75rem;',
+'    font-weight: 600;',
 '    padding-left: 0.7rem;',
 '    padding-bottom: 0.1rem;',
 '}',
 '',
 '#P376_NEW_EXPIRY_DATE {',
 '    font-size: 1.125rem;',
-'    text-align: center;',
 '    margin: 0 auto;',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
@@ -122,23 +151,6 @@ wwv_flow_imp_page.create_page(
 ,p_dialog_max_width=>'430px'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'02'
-);
-wwv_flow_imp_page.create_page_plug(
- p_id=>wwv_flow_imp.id(100590615222224815)
-,p_plug_name=>'Title'
-,p_region_template_options=>'#DEFAULT#:t-Region--noPadding:t-Region--removeHeader js-removeLandmark:t-Region--noUI:t-Region--hiddenOverflow'
-,p_plug_template=>wwv_flow_imp.id(4319920360084164)
-,p_plug_display_sequence=>10
-,p_plug_display_point=>'REGION_POSITION_01'
-,p_location=>null
-,p_plug_source=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'<span>',
-'    <text style="display: block; height: 1.6rem;">Change Expiry Date:</text>',
-'</span>'))
-,p_ai_enabled=>false
-,p_attributes=>wwv_flow_t_plugin_attributes(wwv_flow_t_varchar2(
-  'expand_shortcuts', 'N',
-  'output_as', 'HTML')).to_clob
 );
 wwv_flow_imp_page.create_page_plug(
  p_id=>wwv_flow_imp.id(100709960110052296)
@@ -273,11 +285,6 @@ wwv_flow_imp_page.create_page_da_action(
 'var errorArea = document.getElementById("errorArea");',
 'var errorArea1 = document.getElementById("errorArea1");',
 'var errorArea2 = document.getElementById("errorArea2")',
-'',
-'console.log("herehere")',
-'console.log($("#P376_RESERVE_NO").val())',
-'console.log($v("P376_RESERVE_NO"))',
-'console.log("herehere111")',
 '',
 'if(!newExpiryDate) {',
 '    errorArea.style.display = "block"',

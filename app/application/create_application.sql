@@ -35,7 +35,7 @@ wwv_imp_workspace.create_flow(
 ,p_authentication_id=>wwv_flow_imp.id(5653247844266906)
 ,p_application_tab_set=>1
 ,p_logo_type=>'T'
-,p_logo_text=>'National Office Supply'
+,p_logo_text=>'Computer Professionals Inc'
 ,p_public_user=>'APEX_PUBLIC_USER'
 ,p_proxy_server=>nvl(wwv_flow_application_install.get_proxy,'')
 ,p_no_proxy_domains=>nvl(wwv_flow_application_install.get_no_proxy_domains,'')
@@ -55,7 +55,7 @@ wwv_imp_workspace.create_flow(
 ,p_substitution_string_03=>'APP_ENV'
 ,p_substitution_value_03=>'default'
 ,p_file_prefix => nvl(wwv_flow_application_install.get_static_app_file_prefix,'')
-,p_files_version=>2278
+,p_files_version=>2541
 ,p_print_server_type=>'NATIVE'
 ,p_file_storage=>'DB'
 ,p_is_pwa=>'Y'

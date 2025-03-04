@@ -61,7 +61,7 @@ wwv_flow_imp_page.create_page(
 '    text-align: start;    ',
 '}'))
 ,p_page_template_options=>'#DEFAULT#'
-,p_dialog_width=>'700'
+,p_dialog_width=>'750'
 ,p_dialog_attributes=>'close: function() { customEvent(''customDialogClose'', {modalPageId: ''MODAL_CLOSE_FIXED''});} '
 ,p_dialog_css_classes=>'no-bg font-1rem inv-qby-w'
 ,p_dialog_chained=>'N'
@@ -88,6 +88,7 @@ wwv_flow_imp_page.create_page_plug(
 '    V.FAX_NUMBER,',
 '    V.EMAIL_ADDRESS1,',
 '    V.PAYMENT_TERM,',
+'    V.ACCOUNT_NUMBER,',
 '    B.STREET || '', '' || B.CITY || '', '' || B.STATE || '', '' || B.ZIPCODE || '', '' || B.COUNTRY AS BILLING_ADDRESS,',
 '    S.STREET || '', '' || S.CITY || '', '' || S.STATE || '', '' || S.ZIPCODE || '', '' || S.COUNTRY AS SHIPPING_ADDRESS',
 'FROM NIT006 V, NIT009 B, NIT009 S',
@@ -123,7 +124,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'VENDOR_CODE'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
 ,p_is_persistent=>'N'
@@ -143,7 +144,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'VENDOR_NAME'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
@@ -164,7 +165,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'VENDOR_TYPE'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
@@ -185,7 +186,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'CONTACT_PERSON'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay'
@@ -206,7 +207,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'PHONE_NUMBER'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
@@ -227,7 +228,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'EMAIL_ADDRESS1'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
@@ -248,7 +249,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'PAYMENT_TERM'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
@@ -262,14 +263,14 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(6690622415653724)
 ,p_name=>'P7_BILLING_ADDRESS'
 ,p_source_data_type=>'VARCHAR2'
-,p_item_sequence=>100
+,p_item_sequence=>110
 ,p_item_plug_id=>wwv_flow_imp.id(6689621790653714)
 ,p_item_source_plug_id=>wwv_flow_imp.id(6689621790653714)
 ,p_prompt=>'Billing Address:'
 ,p_source=>'BILLING_ADDRESS'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
@@ -283,14 +284,14 @@ wwv_flow_imp_page.create_page_item(
  p_id=>wwv_flow_imp.id(6690715166653725)
 ,p_name=>'P7_SHIPPING_ADDRESS'
 ,p_source_data_type=>'VARCHAR2'
-,p_item_sequence=>110
+,p_item_sequence=>120
 ,p_item_plug_id=>wwv_flow_imp.id(6689621790653714)
 ,p_item_source_plug_id=>wwv_flow_imp.id(6689621790653714)
 ,p_prompt=>'Shipping Address:'
 ,p_source=>'SHIPPING_ADDRESS'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
@@ -326,7 +327,28 @@ wwv_flow_imp_page.create_page_item(
 ,p_source=>'FAX_NUMBER'
 ,p_source_type=>'REGION_SOURCE_COLUMN'
 ,p_display_as=>'NATIVE_DISPLAY_ONLY'
-,p_grid_label_column_span=>4
+,p_grid_label_column_span=>3
+,p_field_template=>wwv_flow_imp.id(4382028501084276)
+,p_item_css_classes=>'inquire-text'
+,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'
+,p_is_persistent=>'N'
+,p_attribute_01=>'N'
+,p_attribute_02=>'VALUE'
+,p_attribute_04=>'Y'
+,p_attribute_05=>'PLAIN'
+);
+wwv_flow_imp_page.create_page_item(
+ p_id=>wwv_flow_imp.id(65480334860001910)
+,p_name=>'P7_ACCOUNT_NUMBER'
+,p_source_data_type=>'VARCHAR2'
+,p_item_sequence=>100
+,p_item_plug_id=>wwv_flow_imp.id(6689621790653714)
+,p_item_source_plug_id=>wwv_flow_imp.id(6689621790653714)
+,p_prompt=>'Account Number:'
+,p_source=>'ACCOUNT_NUMBER'
+,p_source_type=>'REGION_SOURCE_COLUMN'
+,p_display_as=>'NATIVE_DISPLAY_ONLY'
+,p_grid_label_column_span=>3
 ,p_field_template=>wwv_flow_imp.id(4382028501084276)
 ,p_item_css_classes=>'inquire-text'
 ,p_item_template_options=>'t-Form-fieldContainer--stretchInputs:t-Form-fieldContainer--normalDisplay:#DEFAULT#'

@@ -106,6 +106,7 @@ wwv_flow_imp_page.create_page(
 ,p_dialog_height=>'135'
 ,p_dialog_width=>'300'
 ,p_dialog_max_width=>'300'
+,p_dialog_chained=>'N'
 ,p_protection_level=>'C'
 ,p_page_component_map=>'17'
 );
@@ -189,6 +190,7 @@ wwv_flow_imp_page.create_page_item(
 ,p_name=>'P313_IS_DONATION'
 ,p_item_sequence=>20
 ,p_display_as=>'NATIVE_HIDDEN'
+,p_is_persistent=>'N'
 ,p_attribute_01=>'Y'
 );
 wwv_flow_imp_page.create_page_item(
@@ -252,56 +254,10 @@ wwv_flow_imp_page.create_page_da_action(
 '}'))
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(37011162656700448)
+ p_id=>wwv_flow_imp.id(71103644255160557)
 ,p_event_id=>wwv_flow_imp.id(34716685323647726)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>60
-,p_execute_on_page_init=>'N'
-,p_name=>'Trigger spinner'
-,p_action=>'NATIVE_JAVASCRIPT_CODE'
-,p_attribute_01=>'apex.widget.waitPopup();'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(34717695761647736)
-,p_event_id=>wwv_flow_imp.id(34716685323647726)
-,p_event_result=>'TRUE'
-,p_action_sequence=>70
-,p_execute_on_page_init=>'Y'
-,p_name=>'Set donation type'
-,p_action=>'NATIVE_SET_VALUE'
-,p_affected_elements_type=>'ITEM'
-,p_affected_elements=>'P313_IS_DONATION'
-,p_attribute_01=>'FUNCTION_BODY'
-,p_attribute_06=>wwv_flow_string.join(wwv_flow_t_varchar2(
-'DECLARE',
-'',
-'l_return_value  VARCHAR(1) := NULL;',
-'',
-'BEGIN',
-'',
-'    IF LENGTH(:P313_SELECTED_GC_NO) > 0 THEN',
-'    ',
-'        SELECT DONATION INTO l_return_value',
-'        FROM NPM013 npm013',
-'        WHERE (SELECT npt020.GC_TYPE_ID',
-'               FROM NPT020 npt020',
-'               WHERE npt020.GIFT_CERTIFICATE_ID = :P313_SELECTED_GC_NO) = npm013.GC_TYPE_ID;',
-'',
-'    END IF;',
-'',
-'    RETURN l_return_value;',
-'',
-'END;'))
-,p_attribute_07=>'P313_SELECTED_GC_NO'
-,p_attribute_08=>'Y'
-,p_attribute_09=>'N'
-,p_wait_for_result=>'Y'
-);
-wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(34718127491647741)
-,p_event_id=>wwv_flow_imp.id(34716685323647726)
-,p_event_result=>'TRUE'
-,p_action_sequence=>80
+,p_action_sequence=>40
 ,p_execute_on_page_init=>'Y'
 ,p_name=>'Set new PRINT_ID'
 ,p_action=>'NATIVE_SET_VALUE'
@@ -323,38 +279,54 @@ wwv_flow_imp_page.create_page_da_action(
 '    RETURN l_return_value;',
 '',
 'END;'))
-,p_attribute_08=>'N'
+,p_attribute_08=>'Y'
 ,p_attribute_09=>'N'
 ,p_wait_for_result=>'Y'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(34718019275647740)
+ p_id=>wwv_flow_imp.id(71101675654160554)
 ,p_event_id=>wwv_flow_imp.id(34716685323647726)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>90
+,p_action_sequence=>50
 ,p_execute_on_page_init=>'N'
 ,p_name=>'Update selected GC'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'DECLARE',
 'BEGIN',
-'    UPDATE NPT020',
-'        SET PRINT_ID = :P313_PRINT_ID,',
-'            GC_STATUS_ID = 1,',
-'            USER_UPDATE = :app_user, ',
-'            DATE_UPDATED = SYSDATE,',
-'            PRINT_DATE = SYSDATE',
-'        WHERE GIFT_CERTIFICATE_ID = :P313_SELECTED_GC_NO;',
+'    IF :P313_IS_DONATION = ''Y'' THEN ',
+'        UPDATE NPT020',
+'            SET PRINT_ID = :P313_PRINT_ID,',
+'                GC_STATUS_ID = (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''PRINTED''),',
+'                USER_UPDATE = :app_user, ',
+'                DATE_UPDATED = SYSDATE,',
+'                PRINT_DATE = SYSDATE',
+'            WHERE ',
+'                npt020.DONATION_GC_NO = :P313_SELECTED_GC_NO;',
+'    ELSE',
+'        UPDATE NPT020',
+'            SET PRINT_ID = :P313_PRINT_ID,',
+'                GC_STATUS_ID = (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''PRINTED''),',
+'                USER_UPDATE = :app_user, ',
+'                DATE_UPDATED = SYSDATE,',
+'                PRINT_DATE = SYSDATE',
+'            WHERE ',
+'                npt020.REGULAR_GC_NO = :P313_SELECTED_GC_NO;',
+'    END IF;',
 'END;'))
-,p_attribute_02=>'P313_SELECTED_GC_NO'
+,p_attribute_02=>'P313_SELECTED_GC_NO,P313_PRINT_ID,P313_IS_DONATION'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(34717842701647738)
+ p_id=>wwv_flow_imp.id(71102103791160556)
 ,p_event_id=>wwv_flow_imp.id(34716685323647726)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>100
+,p_action_sequence=>60
 ,p_execute_on_page_init=>'N'
 ,p_name=>'Insert new rows'
 ,p_action=>'NATIVE_EXECUTE_PLSQL_CODE'
@@ -366,19 +338,46 @@ wwv_flow_imp_page.create_page_da_action(
 '    l_copies := TO_NUMBER(:P313_COPIES);',
 '    LOOP',
 '        IF counter < l_copies THEN',
-'            INSERT INTO NPT020 (',
-'                GIFT_CERTIFICATE_ID,',
-'                GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
-'                DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
-'                BALANCE, GC_STATUS_ID, USER_CREATED, DATE_CREATED, PRINT_ID',
-'            )',
 '',
-'            SELECT (SELECT NVL(MAX(GIFT_CERTIFICATE_ID), 0) + 1 FROM NPT020),',
-'                GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
-'                DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
-'                BALANCE, 1, :app_user, SYSDATE, :P313_PRINT_ID',
-'            FROM NPT020',
-'            WHERE GIFT_CERTIFICATE_ID = :P313_SELECTED_GC_NO;',
+'            IF :P313_IS_DONATION = ''Y'' THEN ',
+'                INSERT INTO NPT020 (',
+'                    GIFT_CERTIFICATE_ID,',
+'                    GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
+'                    DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
+'                    BALANCE, GC_STATUS_ID, USER_CREATED, DATE_CREATED, PRINT_ID,',
+'                    INVOICE_ID, CASH_INVOICE_ID, DONATION_GC_NO',
+'                )',
+'',
+'                SELECT (SELECT NVL(MAX(GIFT_CERTIFICATE_ID), 0) + 1 FROM NPT020),',
+'                    GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
+'                    DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
+'                    BALANCE, (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''PRINTED''),',
+'                    :app_user, SYSDATE, :P313_PRINT_ID,',
+'                    INVOICE_ID, CASH_INVOICE_ID, (SELECT NVL(MAX(DONATION_GC_NO), 0) + 1 FROM NPT020)',
+'                FROM NPT020',
+'                WHERE DONATION_GC_NO = :P313_SELECTED_GC_NO;',
+'            ELSE ',
+'                INSERT INTO NPT020 (',
+'                    GIFT_CERTIFICATE_ID,',
+'                    GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
+'                    DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
+'                    BALANCE, GC_STATUS_ID, USER_CREATED, DATE_CREATED, PRINT_ID,',
+'                    INVOICE_ID, CASH_INVOICE_ID, REGULAR_GC_NO',
+'                )',
+'',
+'                SELECT (SELECT NVL(MAX(GIFT_CERTIFICATE_ID), 0) + 1 FROM NPT020),',
+'                    GC_TYPE_ID, AMOUNT, ISSUE_DATE, EXPIRY_DATE, DESCRIPTION_1, ',
+'                    DESCRIPTION_2, THIS_ENTITLES, REMARKS, BEST_WISHES, RECIPIENT, EVENT, ',
+'                    BALANCE, (SELECT npm014.GC_STATUS_ID',
+'                                FROM NPM014 npm014',
+'                                WHERE UPPER(npm014.GC_STATUS_NAME) = ''PRINTED''), ',
+'                    :app_user, SYSDATE, :P313_PRINT_ID,',
+'                    INVOICE_ID, CASH_INVOICE_ID, (SELECT NVL(MAX(REGULAR_GC_NO), 0) + 1 FROM NPT020)',
+'                FROM NPT020',
+'                WHERE REGULAR_GC_NO = :P313_SELECTED_GC_NO;',
+'            END IF;',
 '        ',
 '        ELSE',
 '            EXIT;',
@@ -387,15 +386,15 @@ wwv_flow_imp_page.create_page_da_action(
 '    END LOOP;',
 '',
 'END;'))
-,p_attribute_02=>'P313_SELECTED_GC_NO,P313_COPIES'
+,p_attribute_02=>'P313_SELECTED_GC_NO,P313_COPIES,P313_IS_DONATION'
 ,p_attribute_05=>'PLSQL'
 ,p_wait_for_result=>'Y'
 );
 wwv_flow_imp_page.create_page_da_action(
- p_id=>wwv_flow_imp.id(34717429673647734)
+ p_id=>wwv_flow_imp.id(71102631856160556)
 ,p_event_id=>wwv_flow_imp.id(34716685323647726)
 ,p_event_result=>'TRUE'
-,p_action_sequence=>110
+,p_action_sequence=>70
 ,p_execute_on_page_init=>'N'
 ,p_action=>'NATIVE_JAVASCRIPT_CODE'
 ,p_attribute_01=>wwv_flow_string.join(wwv_flow_t_varchar2(
@@ -407,12 +406,9 @@ wwv_flow_imp_page.create_page_da_action(
 '            P_SELECTED_PRINT_ID : $v("P313_PRINT_ID")',
 '        },',
 '        printCallback : function () {',
-'            $("#apex_wait_popup").remove();',
-'            $("#apex_wait_overlay").remove();',
-'            $(".u-Processing").remove();',
 '            apex.navigation.dialog.close(true);',
 '        },',
-'        spinnerEnabled : false',
+'        spinnerEnabled : true',
 '    });',
 '} else {',
 '    generateReport("GC_NORMAL", "pdf", { ',
@@ -422,16 +418,11 @@ wwv_flow_imp_page.create_page_da_action(
 '            P_SELECTED_PRINT_ID : $v("P313_PRINT_ID")',
 '        },',
 '        printCallback : function () {',
-'            $("#apex_wait_popup").remove();',
-'            $("#apex_wait_overlay").remove();',
-'            $(".u-Processing").remove();',
 '            apex.navigation.dialog.close(true);',
 '        },',
-'        spinnerEnabled : false',
+'        spinnerEnabled : true',
 '    });',
 '}'))
-,p_client_condition_type=>'JAVASCRIPT_EXPRESSION'
-,p_client_condition_expression=>'$("#P313_STATUS_ID").val() !== 4 && $("#P313_STATUS_ID").val() !== 5'
 );
 wwv_flow_imp_page.create_page_process(
  p_id=>wwv_flow_imp.id(19469904593761268)

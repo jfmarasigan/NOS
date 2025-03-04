@@ -34,19 +34,7 @@ wwv_flow_imp_page.create_page(
 '        }',
 '    });',
 '}',
-'',
-'',
-'',
-'// function mapP28Keys() {',
-'//     $(document).off(''keydown.p28keyevents'');',
-'//     $(document).on(''keydown.p28keyevents'', (ev) => {',
-'//         var key = ev.key?.toLowerCase();',
-'//         if (p28KeyMap[key]) {',
-'//             ev.preventDefault();',
-'//             p28KeyMap[key]();',
-'//         }',
-'//     });',
-'// }'))
+''))
 ,p_javascript_code_onload=>'mapP63Keys();'
 ,p_css_file_urls=>'#APP_FILES#css/cmn#MIN#.css'
 ,p_inline_css=>wwv_flow_string.join(wwv_flow_t_varchar2(
